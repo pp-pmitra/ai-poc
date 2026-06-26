@@ -9,12 +9,13 @@ Feature: HCP Audience Workspace in Studio Application
   Background:
     Given This scenario will be executed in the "Pre-release" environment as a "User"
     And "Studio" application is logged in successfully with Account "automation@pulsepoint"
-    When User navigates to Administrative section and go to Accounts Tab
+    When User navigates to Administrative section
+    And User navigates to Accounts Tab
     And User searches the account "PP engineering test" and checks Studio permissions
     And User clicks PulsePoint icon to navigate back to Life
     And User navigates to Studio application
 
-  @todo
+  @todo @ps @regression
   Scenario Outline: Create and save an HCP Audience Expansion workspace with Expansion Audience
     Given This scenario will be executed in the "Pre-release" environment as a "User"
     And "Studio" application is logged in successfully with Account "automation@pulsepoint"
@@ -35,7 +36,7 @@ Feature: HCP Audience Workspace in Studio Application
       | Abbvie     | HCP_Expansion  | NPI List         | PB_Test_List | Expand with Care Team         |
       | Abbvie     | HCP_Expansion  | NPI List         | PB_Test_List | Expand with Affiliation Graph |
 
-  @todo
+  @todo @regression
   Scenario Outline: Create and save an HCP Audience Expansion workspace and publish the workspace
     Given This scenario will be executed in the "Pre-release" environment as a "User"
     And "Studio" application is logged in successfully with Account "automation@pulsepoint"
@@ -84,7 +85,7 @@ Feature: HCP Audience Workspace in Studio Application
       | Abbvie     | NPI List         | PB_Test_List | Expand with Affiliation Graph                               | Static    | Life, HCP365,Audience Manager |
       | Abbvie     | NPI List         | PB_Test_List | Expand with Affiliation Graph                               | Live      | Life, HCP365,Audience Manager |
 
-  @todo
+  @todo @regression
   Scenario Outline: Create and save Private/Public HCP Audience Expansion workspace and check workspace is visible in respective user accordingly
     Given This scenario will be executed in the "Pre-release" environment as a "User"
     And "Studio" application is logged in successfully with Account "automation@pulsepoint"
@@ -94,7 +95,7 @@ Feature: HCP Audience Workspace in Studio Application
     And User selects the advertiser "<ADVERTISER>"
     Then User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
-    Then User selects Draft option as "<DRAFT>"
+    Then User selects Draft option as "<DRAFT_OPTION>"
     And User updates the workspace name as "<WORKSPACE_NAME>"
     And User saves the "HCP Audience Expansion" workspace
     Then Verify the "HCP Audience Expansion" Workspace is saved
@@ -102,14 +103,14 @@ Feature: HCP Audience Workspace in Studio Application
     And "Internal User" logs out from the "Studio" application
     Given This scenario will be executed in the "Pre-release" environment as a "External User"
     And "Studio" application is logged in successfully with Account "<ACCOUNT_NAME>"
-    When External user Searches the workspace name in studio application with "<DRAFT_OPTION>" draft option
-    Then External user Verifies whether the workspace with "<DRAFT_OPTION>" is visible in workspace management page
+    When External user searches the workspace name in studio application with "<DRAFT_OPTION>" draft option
+    Then External user verifies whether the workspace with "<DRAFT_OPTION>" is visible in workspace management page
     Examples:
-      | ADVERTISER | SOURCE_AUDIENCE  | OPTIONS | EXPANDED_AUDIENCE             | DRAFT   | WORKSPACE_NAME |
-      | Abbvie     | Studio Workspace | PB_Test | Expand with Care Team         | PRIVATE | HCP_Expansion  |
-      | Abbvie     | Studio Workspace | PB_Test | Expand with Affiliation Graph | PUBLIC  | HCP_Expansion  |
+      | ADVERTISER | SOURCE_AUDIENCE  | OPTIONS | EXPANDED_AUDIENCE             | DRAFT_OPTION | WORKSPACE_NAME | ACCOUNT_NAME        |
+      | Abbvie     | Studio Workspace | PB_Test | Expand with Care Team         | Private      | HCP_Expansion  | PP engineering test |
+      | Abbvie     | Studio Workspace | PB_Test | Expand with Affiliation Graph | Public       | HCP_Expansion  | PP engineering test |
 
-  @todo
+  @todo @regression
   Scenario Outline: Create Private HCP Audience Expansion workspace then save and publish the workspace then check the change in status
     Given This scenario will be executed in the "Pre-release" environment as a "User"
     And "Studio" application is logged in successfully with Account "automation@pulsepoint"
@@ -138,7 +139,7 @@ Feature: HCP Audience Workspace in Studio Application
       | Abbvie     | NPI List         | PB_Test_List | Expand with Affiliation Graph                               | Static    | Life, HCP365,Audience Manager |
       | Abbvie     | NPI List         | PB_Test_List | Expand with Affiliation Graph                               | Live      | Life, HCP365,Audience Manager |
 
-  @todo
+  @todo @regression
   Scenario Outline: Create and save an HCP Audience Expansion workspace and Download NPI's
     Given This scenario will be executed in the "Pre-release" environment as a "User"
     And "Studio" application is logged in successfully with Account "automation@pulsepoint"
@@ -159,7 +160,7 @@ Feature: HCP Audience Workspace in Studio Application
       | Abbvie     | Studio Workspace | PB_Test | Expand with Care Team         | CSV    | HCP_Expansion  |
       | Abbvie     | Studio Workspace | PB_Test | Expand with Affiliation Graph | EXCEL  | HCP_Expansion  |
 
-  @todo
+  @todo @regression
   Scenario Outline: Create and save an HCP Audience Expansion workspace and Schedule NPI's
     Given This scenario will be executed in the "Pre-release" environment as a "User"
     And "Studio" application is logged in successfully with Account "automation@pulsepoint"
@@ -180,7 +181,7 @@ Feature: HCP Audience Workspace in Studio Application
       | Abbvie     | Studio Workspace | PB_Test | Expand with Care Team         | HCP_Expansion  |
       | Abbvie     | Studio Workspace | PB_Test | Expand with Affiliation Graph | HCP_Expansion  |
 
-  @todo
+  @todo @regression
   Scenario Outline: Create and save an HCP Audience Expansion workspace and Download Report
     Given This scenario will be executed in the "Pre-release" environment as a "User"
     And "Studio" application is logged in successfully with Account "automation@pulsepoint"
@@ -202,7 +203,7 @@ Feature: HCP Audience Workspace in Studio Application
       | Abbvie     | Studio Workspace | PB_Test | Expand with Care Team         | CSV    | HCP_Expansion  |
       | Abbvie     | Studio Workspace | PB_Test | Expand with Affiliation Graph | EXCEL  | HCP_Expansion  |
 
-  @todo
+  @todo @regression
   Scenario Outline: Create and save an HCP Audience Expansion workspace and Schedule Report
     Given This scenario will be executed in the "Pre-release" environment as a "User"
     And "Studio" application is logged in successfully with Account "automation@pulsepoint"
