@@ -4,6 +4,8 @@ import com.microsoft.playwright.FrameLocator;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 import utils.WaitUtility;
 
@@ -11,7 +13,6 @@ public class ExpansionWorkspace {
     private final Page page;
     private final Locator HCP_AUDIENCEEXP;
     private final Locator ADVERTISER_DROPDOWN;
-    private final Locator SELECT_ADVERTISER;
     private final Locator SOURCE_AUDIENCE;
     private final Locator NPILIST;
     private final Locator SELECT_SOURCE_AUDIENCE;
@@ -23,11 +24,10 @@ public class ExpansionWorkspace {
     private final Locator OK_FILTER;
     private final Locator SAVE;
     private final Locator WORKSPACE_NAME;
-    private final Locator ENTER_MY_PLAYGROUND;
+    private final Locator SOURCE_SEARCH;
     private final Locator POPUP_CLOSE;
     private final Locator DROPDOWN_CARE_TEAM;
     private final Locator DROPDOWN_CARETEAM_VALUE;
-    private final Locator NPILIST_SEARCH;
     private final Locator EXPANDED_AUDIENCE_COUNT;
     private final Locator DRAFT_PRIVATE;
     private final Locator DRAFT_PUBLIC;
@@ -43,14 +43,13 @@ public class ExpansionWorkspace {
         this.FRAME = page.frameLocator("iframe").frameLocator("iframe");
         this.HCP_AUDIENCEEXP = FRAME.getByRole(AriaRole.IMG).nth(2);
         this.ADVERTISER_DROPDOWN = FRAME.getByPlaceholder("Select Advertiser");
-        this.SELECT_ADVERTISER =
-                FRAME.getByRole(AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName("Abbvie"));
-        this.SOURCE_AUDIENCE = FRAME.getByRole(
-                AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Studio Workspace Extend"));
-        this.NPILIST = FRAME.locator("//div[@class='styles__StyledIcon-sc-d00f7j-2 QkzJU']");
+        this.SOURCE_AUDIENCE =
+                FRAME.locator("button").filter(new Locator.FilterOptions().setHasText("Studio Workspace"));
+        this.NPILIST = FRAME.locator("button").filter(new Locator.FilterOptions().setHasText("NPI List"));
         this.SELECT_SOURCE_AUDIENCE = FRAME.getByText("My playground");
-        this.ENTER_MY_PLAYGROUND =
-                FRAME.getByRole(AriaRole.TEXTBOX, new FrameLocator.GetByRoleOptions().setName("Search"));
+        // The Studio Workspace / NPI List picker exposes a search box (placeholder "Search") once the source card
+        // is selected and its list has loaded.
+        this.SOURCE_SEARCH = FRAME.getByPlaceholder("Search");
         this.EXPAND_CARE_TEAM = FRAME.getByText("Expand With Care Team");
         this.EXPAND_AFF_GRAPH = FRAME.getByText("Expand With Affiliation Graph");
         this.ADD_FILTER = FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Add Filters"));
@@ -69,25 +68,28 @@ public class ExpansionWorkspace {
                 .getByRole(AriaRole.TEXTBOX);
         this.DROPDOWN_CARETEAM_VALUE =
                 FRAME.getByRole(AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName("Basic"));
-        this.NPILIST_SEARCH = FRAME.getByRole(AriaRole.TEXTBOX, new FrameLocator.GetByRoleOptions().setName("Search"));
-        this.EXPANDED_AUDIENCE_COUNT = FRAME.locator(
-                "//span[contains(@class,'count')] | //*[contains(text(),'Expanded')]//following-sibling::*[contains(@class,'count')]");
+        // After expansion the left panel shows an "Expanded with <n> NPIs" summary line.
+        this.EXPANDED_AUDIENCE_COUNT = FRAME.getByText("Expanded with");
         this.DRAFT_PRIVATE = FRAME.getByRole(AriaRole.RADIO, new FrameLocator.GetByRoleOptions().setName("Private"));
         this.DRAFT_PUBLIC = FRAME.getByRole(AriaRole.RADIO, new FrameLocator.GetByRoleOptions().setName("Public"));
     }
 
     public void clickAdvertiserDropdown(String advertiser) {
         ADVERTISER_DROPDOWN.click();
-        ADVERTISER_DROPDOWN.fill(advertiser);
-        FRAME.getByRole(AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName(advertiser))
+        Locator listbox = FRAME.locator("ul[role='listbox']");
+        listbox.locator("li")
+                .filter(new Locator.FilterOptions().setHasText(advertiser))
+                .first()
                 .click();
+        page.keyboard().press("Escape");
+        waitUtility.waitForLocatorHidden(listbox);
     }
 
     public void selectSourceAudience(String string) {
         page.waitForLoadState();
         if (string.equals("Studio Workspace")) {
             SOURCE_AUDIENCE.click();
-            ENTER_MY_PLAYGROUND.fill("My playground");
+            SOURCE_SEARCH.fill("My playground");
             SELECT_SOURCE_AUDIENCE.click();
         } else {
             System.out.println("ok");
@@ -126,31 +128,63 @@ public class ExpansionWorkspace {
         WORKSPACE_NAME.fill(workspaceName);
     }
 
+    /** The advertiser combobox can intermittently re-open; its modal-root option list then intercepts clicks. */
+    private void dismissOpenListbox() {
+        Locator listbox = FRAME.locator("ul[role='listbox']");
+        if (listbox.isVisible()) {
+            page.keyboard().press("Escape");
+            waitUtility.waitForLocatorHidden(listbox);
+        }
+    }
+
     public void selectSourceAudienceWithOptions(String sourceAudience, String options) {
         page.waitForLoadState();
+        dismissOpenListbox();
         if (sourceAudience.equals("Studio Workspace")) {
             SOURCE_AUDIENCE.click();
-            ENTER_MY_PLAYGROUND.fill(options);
-            FRAME.getByText(options).first().click();
         } else if (sourceAudience.equals("NPI List")) {
             NPILIST.click();
-            NPILIST_SEARCH.fill(options);
-            FRAME.getByText(options).first().click();
         }
+        // The picker's list/search loads asynchronously after the source card is selected.
+        waitUtility.waitForLocatorVisible(SOURCE_SEARCH);
+        // Filter by name, then click the row whose name matches exactly. Exact matches sort first, so the leading
+        // result is the intended workspace and not a PB_Test_* sibling.
+        SOURCE_SEARCH.fill(options);
+        page.waitForTimeout(2000);
+        FRAME.getByText(options, new FrameLocator.GetByTextOptions().setExact(true))
+                .first()
+                .click();
     }
 
     public void selectExpandedAudience(String expandedAudience) {
         page.waitForLoadState();
-        for (String type : expandedAudience.split(",\\s*")) {
-            String trimmed = type.trim();
-            if (trimmed.equalsIgnoreCase("Expand with Care Team")) {
-                selectExpandCareTeam();
-            } else if (trimmed.equalsIgnoreCase("Expand with Affiliation Graph")) {
-                selectExpandAffGraph();
-            } else {
-                FRAME.getByRole(AriaRole.CHECKBOX, new FrameLocator.GetByRoleOptions().setName(trimmed))
-                        .check();
+        List<String> tokens = Arrays.stream(expandedAudience.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
+        boolean wantsAffiliationGraph =
+                tokens.stream().anyMatch(t -> t.equalsIgnoreCase("Expand with Affiliation Graph"));
+        // "Expand with Care Team" means the Care Team checkbox with its default type (Basic); the Basic / Exact
+        // Diagnosis / Extended / Professions / Specialities values are options of the "Care Team Type" dropdown.
+        List<String> careTeamTypes = tokens.stream()
+                .filter(t -> !t.equalsIgnoreCase("Expand with Affiliation Graph"))
+                .map(t -> t.equalsIgnoreCase("Expand with Care Team") ? "Basic" : t)
+                .toList();
+        if (!careTeamTypes.isEmpty()) {
+            EXPAND_CARE_TEAM.click();
+            // "Care Team Type" is a single-select dropdown, so when several types are supplied each selection
+            // replaces the previous one (the last wins). Wait for the count to settle between selections, otherwise
+            // the dashboard recompute spinner intercepts the dropdown.
+            for (String careTeamType : careTeamTypes) {
+                waitUtility.waitForLocatorVisible(DROPDOWN_CARE_TEAM);
+                DROPDOWN_CARE_TEAM.click();
+                FRAME.getByRole(AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName(careTeamType))
+                        .click();
+                waitUtility.waitForLocatorVisible(EXPANDED_AUDIENCE_COUNT);
             }
+        }
+        if (wantsAffiliationGraph) {
+            selectExpandAffGraph();
         }
     }
 

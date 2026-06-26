@@ -242,6 +242,14 @@ public class StudioSteps {
         //        Assert.assertEquals("Workspace created successfully", alertText);
     }
 
+    @And("User selects the advertiser {string} for HCP Audience Expansion workspace")
+    public void userSelectsTheAdvertiserForHCPAudienceExpansionWorkspace(String advertiser) {
+        logger.info("Selecting advertiser for HCP Audience Expansion workspace: {}", advertiser);
+        DriverFactory.getPage().waitForLoadState();
+        expansionWorkspace.clickAdvertiserDropdown(advertiser);
+        DriverFactory.getPage().waitForLoadState();
+    }
+
     @And("User updates the workspace name as {string}")
     public void userUpdatesTheWorkspaceNameAs(String wName) {
         workspaceName = wName + '_' + CommonUtils.timeStampCalculation();

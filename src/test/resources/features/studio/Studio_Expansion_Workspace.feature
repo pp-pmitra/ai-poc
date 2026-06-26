@@ -22,7 +22,7 @@ Feature: HCP Audience Workspace in Studio Application
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
-    And User selects the advertiser "<ADVERTISER>"
+    And User selects the advertiser "<ADVERTISER>" for HCP Audience Expansion workspace
     Then User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
     Then User verifies the expanded audience count
@@ -43,7 +43,7 @@ Feature: HCP Audience Workspace in Studio Application
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
-    And User selects the advertiser "<ADVERTISER>"
+    And User selects the advertiser "<ADVERTISER>" for HCP Expansion workspace
     Then User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
     And User applies the following filters one by one and checks that NPI details are refined after each filter:
@@ -92,7 +92,7 @@ Feature: HCP Audience Workspace in Studio Application
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
-    And User selects the advertiser "<ADVERTISER>"
+    And User selects the advertiser "<ADVERTISER>" for HCP Expansion workspace
     Then User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
     Then User selects Draft option as "<DRAFT_OPTION>"
@@ -117,7 +117,7 @@ Feature: HCP Audience Workspace in Studio Application
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
-    And User selects the advertiser "<ADVERTISER>"
+    And User selects the advertiser "<ADVERTISER>" for HCP Expansion workspace
     Then User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
     Then User verifies the expanded audience count
@@ -146,7 +146,7 @@ Feature: HCP Audience Workspace in Studio Application
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
-    And User selects the advertiser "<ADVERTISER>"
+    And User selects the advertiser "<ADVERTISER>" for HCP Expansion workspace
     And User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
     And User updates the workspace name as "<WORKSPACE_NAME>"
@@ -167,7 +167,7 @@ Feature: HCP Audience Workspace in Studio Application
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
-    And User selects the advertiser "<ADVERTISER>"
+    And User selects the advertiser "<ADVERTISER>" for HCP Expansion workspace
     And User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
     And User updates the workspace name as "<WORKSPACE_NAME>"
@@ -188,7 +188,7 @@ Feature: HCP Audience Workspace in Studio Application
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
-    And User selects the advertiser "<ADVERTISER>"
+    And User selects the advertiser "<ADVERTISER>" for HCP Expansion workspace
     And User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
     And User updates the workspace name as "<WORKSPACE_NAME>"
@@ -210,7 +210,7 @@ Feature: HCP Audience Workspace in Studio Application
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
-    And User selects the advertiser "<ADVERTISER>"
+    And User selects the advertiser "<ADVERTISER>" for HCP Expansion workspace
     And User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
     And User updates the workspace name as "<WORKSPACE_NAME>"
