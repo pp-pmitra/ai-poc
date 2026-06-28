@@ -31,52 +31,46 @@ public class ExpansionWorkspace {
     private final Locator EXPANDED_AUDIENCE_COUNT;
     private final Locator DRAFT_PRIVATE;
     private final Locator DRAFT_PUBLIC;
-    private final FrameLocator FRAME;
+    private final FrameLocator WORKSPACE_FRAME;
     WaitUtility waitUtility;
 
     public ExpansionWorkspace(Page page) {
         this.page = page;
         this.waitUtility = new WaitUtility(page);
-        // The HCP Audience Expansion builder is rendered inside nested iframes (Studio -> Looker embed ->
-        // looker-extension). The iframes no longer carry title="overview", so resolve them positionally the same
-        // way Workspace.java does. All builder locators hang off this shared FrameLocator.
-        this.FRAME = page.frameLocator("iframe").frameLocator("iframe");
-        this.HCP_AUDIENCEEXP = FRAME.getByRole(AriaRole.IMG).nth(2);
-        this.ADVERTISER_DROPDOWN = FRAME.getByPlaceholder("Select Advertiser");
+        this.WORKSPACE_FRAME = page.frameLocator("iframe").frameLocator("iframe");
+        this.HCP_AUDIENCEEXP = WORKSPACE_FRAME.getByRole(AriaRole.IMG).nth(2);
+        this.ADVERTISER_DROPDOWN = WORKSPACE_FRAME.getByPlaceholder("Select Advertiser");
         this.SOURCE_AUDIENCE =
-                FRAME.locator("button").filter(new Locator.FilterOptions().setHasText("Studio Workspace"));
-        this.NPILIST = FRAME.locator("button").filter(new Locator.FilterOptions().setHasText("NPI List"));
-        this.SELECT_SOURCE_AUDIENCE = FRAME.getByText("My playground");
-        // The Studio Workspace / NPI List picker exposes a search box (placeholder "Search") once the source card
-        // is selected and its list has loaded.
-        this.SOURCE_SEARCH = FRAME.getByPlaceholder("Search");
-        this.EXPAND_CARE_TEAM = FRAME.getByText("Expand With Care Team");
-        this.EXPAND_AFF_GRAPH = FRAME.getByText("Expand With Affiliation Graph");
-        this.ADD_FILTER = FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Add Filters"));
-        this.NPI_AGE = FRAME.locator("div")
+                WORKSPACE_FRAME.locator("button").filter(new Locator.FilterOptions().setHasText("Studio Workspace"));
+        this.NPILIST = WORKSPACE_FRAME.locator("button").filter(new Locator.FilterOptions().setHasText("NPI List"));
+        this.SELECT_SOURCE_AUDIENCE = WORKSPACE_FRAME.getByText("My playground");
+        this.SOURCE_SEARCH = WORKSPACE_FRAME.getByPlaceholder("Search");
+        this.EXPAND_CARE_TEAM = WORKSPACE_FRAME.getByText("Expand With Care Team");
+        this.EXPAND_AFF_GRAPH = WORKSPACE_FRAME.getByText("Expand With Affiliation Graph");
+        this.ADD_FILTER = WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Add Filters"));
+        this.NPI_AGE = WORKSPACE_FRAME.locator("div")
                 .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^NPI Age$")))
                 .nth(3);
-        this.BELOW_25 = FRAME.getByLabel("Below");
-        this.OK_FILTER = FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Ok"));
-        this.SAVE = FRAME.locator(".styles__StyledResetUpdate-sc-njp72g-0 > button:nth-child(2)");
-        this.POPUP_CLOSE = FRAME.locator("div")
+        this.BELOW_25 = WORKSPACE_FRAME.getByLabel("Below");
+        this.OK_FILTER = WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Ok"));
+        this.SAVE = WORKSPACE_FRAME.locator(".styles__StyledResetUpdate-sc-njp72g-0 > button:nth-child(2)");
+        this.POPUP_CLOSE = WORKSPACE_FRAME.locator("div")
                 .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^Select Filter$")))
                 .getByRole(AriaRole.BUTTON);
-        this.WORKSPACE_NAME = FRAME.getByRole(AriaRole.TEXTBOX).nth(3);
-        this.DROPDOWN_CARE_TEAM = FRAME.getByRole(AriaRole.COMPLEMENTARY)
+        this.WORKSPACE_NAME = WORKSPACE_FRAME.getByRole(AriaRole.TEXTBOX).nth(3);
+        this.DROPDOWN_CARE_TEAM = WORKSPACE_FRAME.getByRole(AriaRole.COMPLEMENTARY)
                 .getByRole(AriaRole.COMBOBOX, new Locator.GetByRoleOptions().setName("undefined combobox"))
                 .getByRole(AriaRole.TEXTBOX);
         this.DROPDOWN_CARETEAM_VALUE =
-                FRAME.getByRole(AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName("Basic"));
-        // After expansion the left panel shows an "Expanded with <n> NPIs" summary line.
-        this.EXPANDED_AUDIENCE_COUNT = FRAME.getByText("Expanded with");
-        this.DRAFT_PRIVATE = FRAME.getByRole(AriaRole.RADIO, new FrameLocator.GetByRoleOptions().setName("Private"));
-        this.DRAFT_PUBLIC = FRAME.getByRole(AriaRole.RADIO, new FrameLocator.GetByRoleOptions().setName("Public"));
+                WORKSPACE_FRAME.getByRole(AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName("Basic"));
+        this.EXPANDED_AUDIENCE_COUNT = WORKSPACE_FRAME.getByText("Expanded with");
+        this.DRAFT_PRIVATE = WORKSPACE_FRAME.getByRole(AriaRole.RADIO, new FrameLocator.GetByRoleOptions().setName("Private"));
+        this.DRAFT_PUBLIC = WORKSPACE_FRAME.getByRole(AriaRole.RADIO, new FrameLocator.GetByRoleOptions().setName("Public"));
     }
 
     public void clickAdvertiserDropdown(String advertiser) {
         ADVERTISER_DROPDOWN.click();
-        Locator listbox = FRAME.locator("ul[role='listbox']");
+        Locator listbox = WORKSPACE_FRAME.locator("ul[role='listbox']");
         listbox.locator("li")
                 .filter(new Locator.FilterOptions().setHasText(advertiser))
                 .first()
@@ -130,7 +124,7 @@ public class ExpansionWorkspace {
 
     /** The advertiser combobox can intermittently re-open; its modal-root option list then intercepts clicks. */
     private void dismissOpenListbox() {
-        Locator listbox = FRAME.locator("ul[role='listbox']");
+        Locator listbox = WORKSPACE_FRAME.locator("ul[role='listbox']");
         if (listbox.isVisible()) {
             page.keyboard().press("Escape");
             waitUtility.waitForLocatorHidden(listbox);
@@ -151,7 +145,7 @@ public class ExpansionWorkspace {
         // result is the intended workspace and not a PB_Test_* sibling.
         SOURCE_SEARCH.fill(options);
         page.waitForTimeout(2000);
-        FRAME.getByText(options, new FrameLocator.GetByTextOptions().setExact(true))
+        WORKSPACE_FRAME.getByText(options, new FrameLocator.GetByTextOptions().setExact(true))
                 .first()
                 .click();
     }
@@ -178,7 +172,7 @@ public class ExpansionWorkspace {
             for (String careTeamType : careTeamTypes) {
                 waitUtility.waitForLocatorVisible(DROPDOWN_CARE_TEAM);
                 DROPDOWN_CARE_TEAM.click();
-                FRAME.getByRole(AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName(careTeamType))
+                WORKSPACE_FRAME.getByRole(AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName(careTeamType))
                         .click();
                 waitUtility.waitForLocatorVisible(EXPANDED_AUDIENCE_COUNT);
             }

@@ -1355,8 +1355,8 @@ public class StudioSteps {
         workspace.enterReportName();
     }
 
-    @And("User clicks Schedule Report button")
-    public void userClicksScheduleReportButton() {
+    @And("User clicks on Schedule Report button")
+    public void userClicksOnScheduleReportButton() {
         logger.info("User clicks Schedule Report button");
         workspace.clickScheduleReport();
     }
