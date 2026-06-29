@@ -52,12 +52,6 @@ public class Workspace {
     private final Locator NPI_LIST_PULLOUT_MENU;
     private final Locator OK_BUTTON;
     private final Locator NPI_PUBLISH_ALERT;
-    private final Locator SELECT_AUDIENCE_MANAGER;
-    private final Locator SCHEDULE_NPI_BUTTON;
-    private final Locator SCHEDULE_SAVE_BUTTON;
-    private final Locator DOWNLOAD_REPORT_BUTTON;
-    private final Locator REPORT_NAME_INPUT;
-    private final Locator SCHEDULE_REPORT_BUTTON;
     WaitUtility waitUtility;
 
     public Workspace(Page page) {
@@ -128,15 +122,6 @@ public class Workspace {
         this.NPI_LIST_PULLOUT_MENU = WORKSPACE_FRAME.locator("//ul[@data-tour-id='npi-list-pullout-menu']");
         this.OK_BUTTON = WORKSPACE_FRAME.locator("//div[contains(text(),'OK')]");
         this.NPI_PUBLISH_ALERT = WORKSPACE_FRAME.locator("//p[contains(text(), 'NPI list published successfully')]");
-        this.SELECT_AUDIENCE_MANAGER = WORKSPACE_FRAME.locator(
-                "//span[contains(text(),'Audience Manager')]/parent::label/preceding-sibling::div//input");
-        this.SCHEDULE_NPI_BUTTON =
-                WORKSPACE_FRAME.locator("//div[contains(text(),'Schedule NPIs') or contains(text(),'Schedule NPI')]");
-        this.SCHEDULE_SAVE_BUTTON = WORKSPACE_FRAME.locator("//button[@type='submit']");
-        this.DOWNLOAD_REPORT_BUTTON = WORKSPACE_FRAME.locator("//div[contains(text(),'Download Report')]");
-        this.REPORT_NAME_INPUT = WORKSPACE_FRAME.locator(
-                "//input[contains(@placeholder,'Report Name') or contains(@name,'reportName') or contains(@id,'reportName')]");
-        this.SCHEDULE_REPORT_BUTTON = WORKSPACE_FRAME.locator("//div[contains(text(),'Schedule Report')]");
     }
 
     public void studio() {
@@ -378,44 +363,5 @@ public class Workspace {
         } catch (PlaywrightException e) {
             return "";
         }
-    }
-
-    public void selectPublishPlatforms(List<String> platforms) {
-        for (String platform : platforms) {
-            String trimmed = platform.trim();
-            switch (trimmed) {
-                case "Life" -> {
-                    if (SELECT_LIFE.getAttribute("aria-checked").contains("false")) SELECT_LIFE.click();
-                }
-                case "HCP365" -> {
-                    if (SELECT_HCP.getAttribute("aria-checked").contains("false")) SELECT_HCP.click();
-                }
-                case "Audience Manager" -> {
-                    if (SELECT_AUDIENCE_MANAGER.getAttribute("aria-checked").contains("false"))
-                        SELECT_AUDIENCE_MANAGER.click();
-                }
-                default -> throw new IllegalArgumentException("Unsupported publish platform: " + trimmed);
-            }
-        }
-    }
-
-    public void clickScheduleNPIButton() {
-        SCHEDULE_NPI_BUTTON.first().click();
-    }
-
-    public void enterScheduleDataAndSave() {
-        SCHEDULE_SAVE_BUTTON.first().click();
-    }
-
-    public void clickDownloadReport() {
-        DOWNLOAD_REPORT_BUTTON.first().click();
-    }
-
-    public void enterReportName() {
-        REPORT_NAME_INPUT.fill("Report_" + CommonUtils.timeStampCalculation());
-    }
-
-    public void clickScheduleReport() {
-        SCHEDULE_REPORT_BUTTON.first().click();
     }
 }

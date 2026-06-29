@@ -48,6 +48,7 @@ public class StudioSteps {
     List<String> metricNames = new ArrayList<>();
     List<String> fetchedMetricNames = new ArrayList<>();
     String npiCount;
+    String totalNpiCount;
     Path targetFilePath;
 
     @When("the user clicks on Create New Workspace")
@@ -110,7 +111,7 @@ public class StudioSteps {
     @Then("the user saves the workspace and check the workspace is Saved")
     public void the_user_saves_the_workspace_and_check_the_workspace_is_Saved() {
         logger.info("Saving the workspace");
-        expansionWorkspace.saveExpansion();
+        expansionWorkspace.saveExpansionWorkspace();
         String workspaceSuccessMsg = explorerWorkspace.workspaceSuccess();
         logger.info("Workspace save message: {}", workspaceSuccessMsg);
         Assert.assertTrue("Unable to save workspace", workspaceSuccessMsg.contains("Workspace saved"));
@@ -245,9 +246,7 @@ public class StudioSteps {
     @And("User selects the advertiser {string} for HCP Audience Expansion workspace")
     public void userSelectsTheAdvertiserForHCPAudienceExpansionWorkspace(String advertiser) {
         logger.info("Selecting advertiser for HCP Audience Expansion workspace: {}", advertiser);
-        DriverFactory.getPage().waitForLoadState();
         expansionWorkspace.clickAdvertiserDropdown(advertiser);
-        DriverFactory.getPage().waitForLoadState();
     }
 
     @And("User updates the workspace name as {string}")
@@ -340,7 +339,7 @@ public class StudioSteps {
                 brandExplorerWorkspace.saveBrandExplorerWorkspace();
                 break;
             case "HCP Audience Expansion":
-                expansionWorkspace.saveExpansion();
+                expansionWorkspace.saveExpansionWorkspace();
                 break;
         }
     }
@@ -423,6 +422,13 @@ public class StudioSteps {
         logger.info("Identified NPI count fetched: {}", npiCount);
     }
 
+    @And("User fetches the Total NPI count from the workspace")
+    public void userFetchesTheTotalNPICountFromTheWorkspace() {
+        logger.info("Fetching Total NPI count from workspace");
+        totalNpiCount = expansionWorkspace.fetchTotalNPICount();
+        logger.info("Total NPI count fetched: {}", npiCount);
+    }
+
     @And("Download button is enabled to the user")
     public void download_button_is_enabled_to_the_user() {
         logger.info("Verifying Download button is enabled");
@@ -486,6 +492,24 @@ public class StudioSteps {
         if (!alertMsg.isEmpty()) {
             logger.info("Publish alert message: {}", alertMsg);
             Assert.assertEquals("NPI list published successfully", alertMsg);
+        } else {
+            Assert.assertFalse("Publish alert is not displayed", false);
+        }
+        logger.info("Verifying published NPI list");
+        workspace.clickFlyOrPageButton();
+        String publishedNpi = workspace.verifyPublishedNpi();
+        logger.info("Published NPI: {}", publishedNpi);
+        Assert.assertEquals("Published NPI List", publishedNpi);
+    }
+
+    @Then("Verify HCP Audience Expansion list is published")
+    public void verifyHCPAudienceExpansionListIsPublished() {
+        logger.info("Publishing HCP Audience Expansion list");
+        expansionWorkspace.clickPublish();
+        String alertMsg = expansionWorkspace.fetchNPIListPublishAlertDisplayed();
+        if (!alertMsg.isEmpty()) {
+            logger.info("Publish alert message: {}", alertMsg);
+            Assert.assertEquals("Workspace saved successfully", alertMsg);
         } else {
             Assert.assertFalse("Publish alert is not displayed", false);
         }
@@ -1247,7 +1271,7 @@ public class StudioSteps {
                 actual.equalsIgnoreCase(timeFrame));
     }
 
-    @Then("User selects Source Audience details as {string},{string}")
+    @Then("User selects Source Audience details as {string}, {string}")
     public void userSelectsSourceAudienceDetailsAs(String sourceAudience, String options) {
         logger.info("Selecting source audience: {} with options: {}", sourceAudience, options);
         expansionWorkspace.selectSourceAudienceWithOptions(sourceAudience, options);
@@ -1262,7 +1286,14 @@ public class StudioSteps {
     @Then("User verifies the expanded audience count")
     public void userVerifiesTheExpandedAudienceCount() {
         logger.info("Verifying the expanded audience count");
-        expansionWorkspace.verifyExpandedAudienceCount();
+        String expandedCount = expansionWorkspace.fetchTotalNPICountAfterExpansion();
+        int beforeCount = Integer.parseInt(totalNpiCount);
+        int afterCount = Integer.parseInt(expandedCount);
+        Assert.assertTrue(
+                "Expected expanded audience count (" + afterCount
+                        + ") to be greater than Total NPI count ("
+                        + beforeCount + ")",
+                afterCount > beforeCount);
     }
 
     @Then("Verify the workspace is visible in workspace management page")
@@ -1277,7 +1308,7 @@ public class StudioSteps {
     public void userSelectThePlatformToPublishTheList(String platform) {
         logger.info("Selecting platforms to publish: {}", platform);
         List<String> platforms = CommonUtils.parseCommaSeparatedString(platform);
-        workspace.selectPublishPlatforms(platforms);
+        expansionWorkspace.selectPublishPlatforms(platforms);
     }
 
     @And("User searches the workspace in {string} and selects it")
@@ -1317,10 +1348,9 @@ public class StudioSteps {
         accounts.internalUserLogout();
     }
 
-    @And("Status is updated to Public")
+    @And("Verify the workspace status is updated to {string}")
     public void statusIsUpdatedToPublic() {
         logger.info("Verifying workspace status is updated to Public after publish");
-        workspace.goToWorkspaceList();
         Assert.assertTrue(
                 "Workspace status is not updated to Public", workspaceCreation.isWorkspaceStatusPublic(workspaceName));
     }
@@ -1328,13 +1358,13 @@ public class StudioSteps {
     @And("User clicks Schedule NPI button")
     public void userClicksScheduleNPIButton() {
         logger.info("User clicks Schedule NPI button");
-        workspace.clickScheduleNPIButton();
+        expansionWorkspace.clickScheduleNPIButton();
     }
 
     @And("User enters data and clicks Save button")
     public void userEntersDataAndClicksSaveButton() {
         logger.info("User enters schedule data and clicks Save button");
-        workspace.enterScheduleDataAndSave();
+        expansionWorkspace.enterScheduleDataAndSave();
     }
 
     @And("Report button is enabled to the user")
@@ -1346,19 +1376,19 @@ public class StudioSteps {
     @And("User clicks on Download Report")
     public void userClicksOnDownloadReport() {
         logger.info("User clicks on Download Report");
-        workspace.clickDownloadReport();
+        expansionWorkspace.clickDownloadReport();
     }
 
     @And("User enters the Report Name")
     public void userEntersTheReportName() {
         logger.info("User enters the report name");
-        workspace.enterReportName();
+        expansionWorkspace.enterReportName();
     }
 
     @And("User clicks on Schedule Report button")
     public void userClicksOnScheduleReportButton() {
         logger.info("User clicks Schedule Report button");
-        workspace.clickScheduleReport();
+        expansionWorkspace.clickScheduleReport();
     }
 
     @And("Verify the Day column shows {int} dates in ascending order")

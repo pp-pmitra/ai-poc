@@ -83,8 +83,8 @@ Feature: HCP Audience Workspace in Studio Application
       | Abbvie     | NPI List         | PB_Test_List | Expand with Affiliation Graph                               | Static    | Life, HCP365,Audience Manager |
       | Abbvie     | NPI List         | PB_Test_List | Expand with Affiliation Graph                               | Live      | Life, HCP365,Audience Manager |
 
-  @todo @regression
-  Scenario Outline: Create and save Private/Public HCP Audience Expansion workspace and check workspace is visible in respective user accordingly
+  @regression
+  Scenario Outline: Create and save <DRAFT_OPTION> HCP Audience Expansion workspace and check workspace is visible in respective user accordingly
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
@@ -106,7 +106,7 @@ Feature: HCP Audience Workspace in Studio Application
       | Abbvie     | Studio Workspace | PB_Test | Expand with Care Team         | Private      | HCP_Expansion  | PP engineering test |
       | Abbvie     | Studio Workspace | PB_Test | Expand with Affiliation Graph | Public       | HCP_Expansion  | PP engineering test |
 
-  @todo @regression
+  @regression
   Scenario Outline: Create Private HCP Audience Expansion workspace then save and publish the workspace then check the change in status
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -123,17 +123,17 @@ Feature: HCP Audience Workspace in Studio Application
     And User selects publish "<LIST_TYPE>"
     And User select the "<PLATFORM>" to publish the list
     Then Verify the workspace is visible in workspace management page
-    And Status is updated to Public
+    Then Verify the workspace status is updated to "Public"
     Examples:
-      | ADVERTISER | SOURCE_AUDIENCE  | OPTIONS      | EXPANDED_AUDIENCE                                           | LIST_TYPE | PLATFORM                      |
-      | Abbvie     | Studio Workspace | PB_Test      | Basic, Exact Diagnosis, Extended, Professions, Specialities | Static    | Life, HCP365,Audience Manager |
-      | Abbvie     | Studio Workspace | PB_Test      | Basic, Exact Diagnosis, Extended, Professions, Specialities | Live      | Life, HCP365,Audience Manager |
-      | Abbvie     | Studio Workspace | PB_Test      | Expand with Affiliation Graph                               | Static    | Life, HCP365,Audience Manager |
-      | Abbvie     | NPI List         | PB_Test_List | Basic, Exact Diagnosis, Extended, Professions, Specialities | Live      | Life, HCP365,Audience Manager |
-      | Abbvie     | NPI List         | PB_Test_List | Expand with Affiliation Graph                               | Static    | Life, HCP365,Audience Manager |
-      | Abbvie     | NPI List         | PB_Test_List | Expand with Affiliation Graph                               | Live      | Life, HCP365,Audience Manager |
+      | ADVERTISER | SOURCE_AUDIENCE  | OPTIONS      | EXPANDED_AUDIENCE                                           | LIST_TYPE | PLATFORM                       |
+      | Abbvie     | Studio Workspace | PB_Test      | Basic, Exact Diagnosis, Extended, Professions, Specialities | Static    | Life, HCP365, Audience Manager |
+      | Abbvie     | Studio Workspace | PB_Test      | Basic, Exact Diagnosis, Extended, Professions, Specialities | Live      | Life, HCP365, Audience Manager |
+      | Abbvie     | Studio Workspace | PB_Test      | Expand with Affiliation Graph                               | Static    | Life, HCP365, Audience Manager |
+      | Abbvie     | NPI List         | PB_Test_List | Basic, Exact Diagnosis, Extended, Professions, Specialities | Live      | Life, HCP365, Audience Manager |
+      | Abbvie     | NPI List         | PB_Test_List | Expand with Affiliation Graph                               | Static    | Life, HCP365, Audience Manager |
+      | Abbvie     | NPI List         | PB_Test_List | Expand with Affiliation Graph                               | Live      | Life, HCP365, Audience Manager |
 
-  @todo @regression
+  @regression
   Scenario Outline: Create and save an HCP Audience Expansion workspace and Download NPI's
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -152,7 +152,7 @@ Feature: HCP Audience Workspace in Studio Application
       | Abbvie     | Studio Workspace | PB_Test | Expand with Care Team         | CSV    | HCP_Expansion  |
       | Abbvie     | Studio Workspace | PB_Test | Expand with Affiliation Graph | EXCEL  | HCP_Expansion  |
 
-  @todo @regression
+  @regression
   Scenario Outline: Create and save an HCP Audience Expansion workspace and Schedule NPI's
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -171,7 +171,7 @@ Feature: HCP Audience Workspace in Studio Application
       | Abbvie     | Studio Workspace | PB_Test | Expand with Care Team         | HCP_Expansion  |
       | Abbvie     | Studio Workspace | PB_Test | Expand with Affiliation Graph | HCP_Expansion  |
 
-  @todo @regression
+  @regression
   Scenario Outline: Create and save an HCP Audience Expansion workspace and Download Report
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -191,7 +191,7 @@ Feature: HCP Audience Workspace in Studio Application
       | Abbvie     | Studio Workspace | PB_Test | Expand with Care Team         | CSV    | HCP_Expansion  |
       | Abbvie     | Studio Workspace | PB_Test | Expand with Affiliation Graph | EXCEL  | HCP_Expansion  |
 
-  @todo @regression
+  @regression
   Scenario Outline: Create and save an HCP Audience Expansion workspace and Schedule Report
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
