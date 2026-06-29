@@ -15,19 +15,19 @@ Feature: HCP Audience Workspace in Studio Application
     And User clicks PulsePoint icon to navigate back to Life
     And User navigates to Studio application
 
-  @todo @ps @regression
+  @regression
   Scenario Outline: Create and save an HCP Audience Expansion workspace with Expansion Audience
-    Given This scenario will be executed in the "Pre-release" environment as a "User"
-    And "Studio" application is logged in successfully with Account "automation@pulsepoint"
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
     And User selects the advertiser "<ADVERTISER>" for HCP Audience Expansion workspace
-    Then User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
+    Then User selects Source Audience details as "<SOURCE_AUDIENCE>", "<OPTIONS>"
+    And User fetches the Total NPI count from the workspace
     And User selects "<EXPANDED_AUDIENCE>"
     Then User verifies the expanded audience count
     And User updates the workspace name as "<WORKSPACE_NAME>"
     And User saves the "HCP Audience Expansion" workspace
+    Then Verify the "HCP Audience Expansion" Workspace is saved
     Then Verify the workspace is visible in workspace management page
     Examples:
       | ADVERTISER | WORKSPACE_NAME | SOURCE_AUDIENCE  | OPTIONS      | EXPANDED_AUDIENCE             |
@@ -36,15 +36,13 @@ Feature: HCP Audience Workspace in Studio Application
       | Abbvie     | HCP_Expansion  | NPI List         | PB_Test_List | Expand with Care Team         |
       | Abbvie     | HCP_Expansion  | NPI List         | PB_Test_List | Expand with Affiliation Graph |
 
-  @todo @regression
+  @regression
   Scenario Outline: Create and save an HCP Audience Expansion workspace and publish the workspace
-    Given This scenario will be executed in the "Pre-release" environment as a "User"
-    And "Studio" application is logged in successfully with Account "automation@pulsepoint"
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
     And User selects the advertiser "<ADVERTISER>" for HCP Audience Expansion workspace
-    Then User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
+    Then User selects Source Audience details as "<SOURCE_AUDIENCE>", "<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
     And User applies the following filters one by one and checks that NPI details are refined after each filter:
       | FilterName         | Option                                                                                                                  |
@@ -71,7 +69,7 @@ Feature: HCP Audience Workspace in Studio Application
     And User clicks on Publish NPI List
     And User selects publish "<LIST_TYPE>"
     And User select the "<PLATFORM>" to publish the list
-    Then Verify list is published
+    Then Verify HCP Audience Expansion list is published
     And User navigates to NPI Lists page
     And User searches the workspace in "<PLATFORM>" and selects it
     And User clicks on the published workspace
@@ -87,13 +85,11 @@ Feature: HCP Audience Workspace in Studio Application
 
   @todo @regression
   Scenario Outline: Create and save Private/Public HCP Audience Expansion workspace and check workspace is visible in respective user accordingly
-    Given This scenario will be executed in the "Pre-release" environment as a "User"
-    And "Studio" application is logged in successfully with Account "automation@pulsepoint"
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
     And User selects the advertiser "<ADVERTISER>" for HCP Audience Expansion workspace
-    Then User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
+    Then User selects Source Audience details as "<SOURCE_AUDIENCE>", "<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
     Then User selects Draft option as "<DRAFT_OPTION>"
     And User updates the workspace name as "<WORKSPACE_NAME>"
@@ -112,13 +108,11 @@ Feature: HCP Audience Workspace in Studio Application
 
   @todo @regression
   Scenario Outline: Create Private HCP Audience Expansion workspace then save and publish the workspace then check the change in status
-    Given This scenario will be executed in the "Pre-release" environment as a "User"
-    And "Studio" application is logged in successfully with Account "automation@pulsepoint"
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
     And User selects the advertiser "<ADVERTISER>" for HCP Audience Expansion workspace
-    Then User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
+    Then User selects Source Audience details as "<SOURCE_AUDIENCE>", "<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
     Then User verifies the expanded audience count
     And User updates the workspace name as "<WORKSPACE_NAME>"
@@ -141,13 +135,11 @@ Feature: HCP Audience Workspace in Studio Application
 
   @todo @regression
   Scenario Outline: Create and save an HCP Audience Expansion workspace and Download NPI's
-    Given This scenario will be executed in the "Pre-release" environment as a "User"
-    And "Studio" application is logged in successfully with Account "automation@pulsepoint"
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
     And User selects the advertiser "<ADVERTISER>" for HCP Audience Expansion workspace
-    And User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
+    And User selects Source Audience details as "<SOURCE_AUDIENCE>", "<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
     And User updates the workspace name as "<WORKSPACE_NAME>"
     And User saves the "HCP Audience Expansion" workspace
@@ -162,13 +154,11 @@ Feature: HCP Audience Workspace in Studio Application
 
   @todo @regression
   Scenario Outline: Create and save an HCP Audience Expansion workspace and Schedule NPI's
-    Given This scenario will be executed in the "Pre-release" environment as a "User"
-    And "Studio" application is logged in successfully with Account "automation@pulsepoint"
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
     And User selects the advertiser "<ADVERTISER>" for HCP Audience Expansion workspace
-    And User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
+    And User selects Source Audience details as "<SOURCE_AUDIENCE>", "<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
     And User updates the workspace name as "<WORKSPACE_NAME>"
     And User saves the "HCP Audience Expansion" workspace
@@ -183,13 +173,11 @@ Feature: HCP Audience Workspace in Studio Application
 
   @todo @regression
   Scenario Outline: Create and save an HCP Audience Expansion workspace and Download Report
-    Given This scenario will be executed in the "Pre-release" environment as a "User"
-    And "Studio" application is logged in successfully with Account "automation@pulsepoint"
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
     And User selects the advertiser "<ADVERTISER>" for HCP Audience Expansion workspace
-    And User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
+    And User selects Source Audience details as "<SOURCE_AUDIENCE>", "<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
     And User updates the workspace name as "<WORKSPACE_NAME>"
     And User saves the "HCP Audience Expansion" workspace
@@ -205,13 +193,11 @@ Feature: HCP Audience Workspace in Studio Application
 
   @todo @regression
   Scenario Outline: Create and save an HCP Audience Expansion workspace and Schedule Report
-    Given This scenario will be executed in the "Pre-release" environment as a "User"
-    And "Studio" application is logged in successfully with Account "automation@pulsepoint"
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
     And User selects the advertiser "<ADVERTISER>" for HCP Audience Expansion workspace
-    And User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
+    And User selects Source Audience details as "<SOURCE_AUDIENCE>", "<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
     And User updates the workspace name as "<WORKSPACE_NAME>"
     And User saves the "HCP Audience Expansion" workspace
