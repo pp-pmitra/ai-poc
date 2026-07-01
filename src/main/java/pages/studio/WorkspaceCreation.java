@@ -432,11 +432,11 @@ public class WorkspaceCreation {
         HCP_EXPANSION.click();
     }
 
-    public boolean isWorkspaceStatusPublic(String workspaceName) {
+    public boolean isWorkspaceStatusPublic(String workspaceName, String status) {
         return WORKSPACE_FRAME
                 .locator(String.format(
-                        "//span[contains(text(),'%s')]/ancestor::tr//td[contains(@id,'status')]//span[text()='Public']",
-                        workspaceName))
+                        "//span[contains(text(),'%s')]/ancestor::tr//td[contains(@id,'status')]//span[text()='%s']",
+                        workspaceName, status))
                 .isVisible();
     }
 }

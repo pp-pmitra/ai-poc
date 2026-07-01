@@ -1349,10 +1349,11 @@ public class StudioSteps {
     }
 
     @And("Verify the workspace status is updated to {string}")
-    public void statusIsUpdatedToPublic() {
-        logger.info("Verifying workspace status is updated to Public after publish");
+    public void statusIsUpdatedToPublic(String status) {
+        logger.info("Verifying workspace status is updated to {} after publish", status);
         Assert.assertTrue(
-                "Workspace status is not updated to Public", workspaceCreation.isWorkspaceStatusPublic(workspaceName));
+                "Workspace status is not updated to " + status,
+                workspaceCreation.isWorkspaceStatusPublic(workspaceName, status));
     }
 
     @And("User clicks Schedule NPI button")
