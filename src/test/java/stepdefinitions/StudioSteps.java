@@ -2,6 +2,7 @@ package stepdefinitions;
 
 import factory.DriverFactory;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -29,7 +30,6 @@ public class StudioSteps {
     private static final Logger logger = LoggerFactory.getLogger(StudioSteps.class);
     static String workspaceName;
     static String newWorkspaceName;
-    static String draftOption;
     Boolean flag = true;
     Boolean isOverwritten = false;
     List<String[]> fileContent;
@@ -216,6 +216,7 @@ public class StudioSteps {
                         case "HCP Explorer" -> workspaceCreation.verifyHCPExplorer();
                         case "Brand Explorer" -> workspaceCreation.verifyBrandExplorer();
                         case "DTC Explorer" -> workspaceCreation.verifyDTCExplorer();
+                        case "HCP Audience Expansion" -> workspaceCreation.verifyHCPAudienceExpansion();
                         default -> throw new IllegalArgumentException(
                                 "Unsupported workspace verification: " + workspaceType);
                     };
@@ -228,6 +229,7 @@ public class StudioSteps {
             case "HCP Explorer" -> workspaceCreation.clickHCPExplorerWorkspace();
             case "Brand Explorer" -> workspaceCreation.clickBrandExplorerWorkspace();
             case "DTC Explorer" -> workspaceCreation.clickDTCExplorerWorkspace();
+            case "HCP Audience Expansion" -> workspaceCreation.clickHCPAudienceExpansionWorkspace();
             default -> throw new IllegalArgumentException("Unsupported workspace click: " + workspaceType);
         }
     }
@@ -335,6 +337,8 @@ public class StudioSteps {
             case "DTC Explorer":
                 dtcExplorerWorkspace.saveDTCExplorerWorkspace();
                 break;
+                case "HCP Audience Expansion":
+                expansionWorkspace.saveExpansion();
         }
     }
 
@@ -1310,6 +1314,12 @@ public class StudioSteps {
         Assert.assertEquals("First date in table does not match expected start", expectedStart, dates.get(0));
     }
 
+    @And("User selects Source Audience details as {string},{string}")
+    public void userSelectsSourceAudienceDetailsAs(String sourceAudience, String options) {
+        logger.info("Selecting source audience: {} with options: {}", sourceAudience, options);
+        expansionWorkspace.selectSourceAudienceWithOptions(sourceAudience, options);
+    }
+
     @Then("User captures the {string} count")
     public void userCapturesTheCount(String countType) {
         String countText = dtcExplorerWorkspace.getUniqueConsumerCount().replaceAll("[^0-9]", "");
@@ -1344,4 +1354,10 @@ public class StudioSteps {
         Assert.assertEquals("Dialog message does not match", expectedMessage, actualMessage);
     }
 
+    @And("User selects the advertiser {string} for HCP Audience Expansion workspace")
+    public void userSelectsTheAdvertiserForHCPAudienceExpansionWorkspace(String advertiser) {
+        logger.info("Selecting advertiser '{}' for HCP Audience Expansion workspace", advertiser);
+        expansionWorkspace.clickAdvertiserDropdown(advertiser);
+
+    }
 }

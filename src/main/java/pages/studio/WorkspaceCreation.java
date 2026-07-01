@@ -69,7 +69,7 @@ public class WorkspaceCreation {
         this.CREATE_WORKSPACE = WORKSPACE_FRAME.locator(
                 "//div[text()='Create New Workspace' or contains(text(),'Open New Workspace')]");
         this.HCP_EXPLORER = WORKSPACE_FRAME.locator("//p[contains(text(),'HCP Explorer')]");
-        this.HCP_EXPANSION = WORKSPACE_FRAME.locator("//label[contains(text(),'HCP Audience Expansion')]");
+        this.HCP_EXPANSION = WORKSPACE_FRAME.locator("//p[contains(text(),'HCP Audience Expansion')");
         this.BRAND_EXPLORER = WORKSPACE_FRAME.locator("//p[contains(text(),'Brand Explorer')]");
         this.DTC_EXPLORER = WORKSPACE_FRAME.locator("//p[contains(text(),'DTC Explorer')]");
         this.BACK_TO_WORKSPACE_DASHBOARD = WORKSPACE_FRAME.getByRole(AriaRole.BUTTON);
@@ -160,6 +160,8 @@ public class WorkspaceCreation {
     public void clickBrandExplorerWorkspace() {
         BRAND_EXPLORER.click();
     }
+
+    public void clickHCPAudienceExpansionWorkspace() {HCP_EXPANSION.click();}
 
     public void clickDTCExplorerWorkspace() {
         DTC_EXPLORER.click();
