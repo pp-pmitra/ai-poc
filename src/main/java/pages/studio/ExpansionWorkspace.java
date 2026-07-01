@@ -218,8 +218,10 @@ public class ExpansionWorkspace {
         page.waitForLoadState();
         if (draftOption.equalsIgnoreCase("Private")) {
             DRAFT_PRIVATE.click();
-        } else {
+        } else if (draftOption.equalsIgnoreCase("Public")) {
             DRAFT_PUBLIC.click();
+        } else {
+            throw new IllegalArgumentException("Unsupported draft option: " + draftOption);
         }
     }
 
