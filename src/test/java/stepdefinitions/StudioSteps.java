@@ -1313,11 +1313,13 @@ public class StudioSteps {
 
     @And("User searches the workspace in {string} and selects it")
     public void userSearchesTheWorkspaceInPlatformAndSelectsIt(String platform) {
-        logger.info("Searching workspace in {} platform: {}", platform, workspaceName);
-        if (platform.equalsIgnoreCase("Life") || platform.equalsIgnoreCase("LIFE")) {
+        logger.info("Searching workspace in {} platform(s): {}", platform, workspaceName);
+        List<String> platforms = CommonUtils.parseCommaSeparatedString(platform);
+        boolean hasLife = platforms.stream().anyMatch(p -> p.equalsIgnoreCase("Life"));
+        if (hasLife) {
             npiLists.searchNPILists(workspaceName);
         } else {
-            logger.warn("Platform '{}' navigation not yet implemented", platform);
+            logger.warn("Platform(s) '{}' navigation not yet implemented", platform);
             throw new PendingException();
         }
     }
