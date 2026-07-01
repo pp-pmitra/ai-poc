@@ -426,7 +426,7 @@ public class StudioSteps {
     public void userFetchesTheTotalNPICountFromTheWorkspace() {
         logger.info("Fetching Total NPI count from workspace");
         totalNpiCount = expansionWorkspace.fetchTotalNPICount();
-        logger.info("Total NPI count fetched: {}", npiCount);
+        logger.info("Total NPI count fetched: {}", totalNpiCount);
     }
 
     @And("Download button is enabled to the user")
