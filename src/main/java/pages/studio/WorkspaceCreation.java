@@ -161,7 +161,9 @@ public class WorkspaceCreation {
         BRAND_EXPLORER.click();
     }
 
-    public void clickHCPAudienceExpansionWorkspace() {HCP_EXPANSION.click();}
+    public void clickHCPAudienceExpansionWorkspace() {
+        HCP_EXPANSION.click();
+    }
 
     public void clickDTCExplorerWorkspace() {
         DTC_EXPLORER.click();

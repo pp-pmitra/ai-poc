@@ -337,8 +337,9 @@ public class StudioSteps {
             case "DTC Explorer":
                 dtcExplorerWorkspace.saveDTCExplorerWorkspace();
                 break;
-                case "HCP Audience Expansion":
+            case "HCP Audience Expansion":
                 expansionWorkspace.saveExpansion();
+                break;
         }
     }
 
