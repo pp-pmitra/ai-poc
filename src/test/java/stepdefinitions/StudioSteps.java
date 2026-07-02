@@ -339,6 +339,7 @@ public class StudioSteps {
                 break;
                 case "HCP Audience Expansion":
                 expansionWorkspace.saveExpansion();
+                break;
         }
     }
 
