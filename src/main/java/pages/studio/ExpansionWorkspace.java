@@ -41,7 +41,7 @@ public class ExpansionWorkspace {
         this.HCP_AUDIENCEEXP = page.locator("iframe[title=\"overview\"]").contentFrame().locator("iframe").contentFrame().getByRole(AriaRole.IMG).nth(2);
         this.ADVERTISER_DROPDOWN = WORKSPACE_FRAME.locator("//input[@placeholder='Select Advertiser']");
         this.SELECT_ADVERTISER = page.locator("iframe[title=\"overview\"]").contentFrame().locator("iframe").contentFrame().getByRole(AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName("Abbvie"));
-        this.SOURCE_AUDIENCE = WORKSPACE_FRAME.locator("button").filter(new Locator.FilterOptions().setHasText("Studio Workspace"));;
+        this.SOURCE_AUDIENCE = WORKSPACE_FRAME.locator("button").filter(new Locator.FilterOptions().setHasText("Studio Workspace"));
         this.NPILIST = page.locator("//div[@class='styles__StyledIcon-sc-d00f7j-2 QkzJU']");
         this.SELECT_SOURCE_AUDIENCE = page.locator("iframe[title=\"overview\"]").contentFrame().locator("iframe").contentFrame().getByText("My playground");
         this.ENTER_MY_PLAYGROUND = page.locator("iframe[title=\"overview\"]").contentFrame().locator("iframe").contentFrame().getByRole(AriaRole.TEXTBOX, new FrameLocator.GetByRoleOptions().setName("Search"));
