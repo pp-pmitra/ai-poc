@@ -63,9 +63,9 @@ public class ExpansionWorkspace {
     public void clickAdvertiserDropdown(String advertiser) {
         ADVERTISER_DROPDOWN.click();
         ADVERTISER_DROPDOWN.fill(advertiser);
-        Locator AdvertiserOption = WORKSPACE_FRAME.locator(String.format("//span[text()='%s']", advertiser));
-        waitUtility.waitForLocatorVisible(AdvertiserOption);
-        AdvertiserOption.click();
+        Locator advertiserOption = WORKSPACE_FRAME.locator(String.format("//span[text()='%s']", advertiser));
+        waitUtility.waitForLocatorVisible(advertiserOption);
+        advertiserOption.click();
     }
 
     public void selectSourceAudience(String string) {
