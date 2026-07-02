@@ -237,7 +237,7 @@ Feature: HCP Audience Workspace in Studio Application
     And Internal user logs out from the application
     Given This scenario will be executed in the "Pre-release" environment as a "External User"
     And "Studio" application is logged in successfully with Account "<ACCOUNT_NAME>"
-    #And External User switches the "<ACCOUNT_NAME>"account in Studio application -- commiting this step for future changes, if pp engineering test account does not appears in external user account list in studio application
+    #And External User switches the "<ACCOUNT_NAME>" account in Studio application -- committing this step for future changes, if pp engineering test account does not appear in external user account list in studio application
     When External user searches the workspace name in studio application with "<DRAFT_OPTION>" draft option
     Then External user verifies whether the workspace with "<DRAFT_OPTION>" is visible in workspace management page
     Examples:

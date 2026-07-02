@@ -2,7 +2,6 @@ package stepdefinitions;
 
 import factory.DriverFactory;
 import io.cucumber.datatable.DataTable;
-import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -337,7 +336,7 @@ public class StudioSteps {
             case "DTC Explorer":
                 dtcExplorerWorkspace.saveDTCExplorerWorkspace();
                 break;
-                case "HCP Audience Expansion":
+            case "HCP Audience Expansion":
                 expansionWorkspace.saveExpansion();
                 break;
         }

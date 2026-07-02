@@ -15,6 +15,7 @@ public class ExpansionWorkspace {
     private final Locator ADVERTISER_DROPDOWN;
     private final Locator SELECT_ADVERTISER;
     private final Locator SOURCE_AUDIENCE;
+    private final Locator NPILIST;
     private final Locator SELECT_SOURCE_AUDIENCE;
     private final Locator EXPAND_CARE_TEAM;
     private final Locator EXPAND_AFF_GRAPH;
@@ -41,7 +42,8 @@ public class ExpansionWorkspace {
         this.HCP_AUDIENCEEXP = page.locator("iframe[title=\"overview\"]").contentFrame().locator("iframe").contentFrame().getByRole(AriaRole.IMG).nth(2);
         this.ADVERTISER_DROPDOWN = WORKSPACE_FRAME.locator("//input[@placeholder='Select Advertiser']");
         this.SELECT_ADVERTISER = page.locator("iframe[title=\"overview\"]").contentFrame().locator("iframe").contentFrame().getByRole(AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName("Abbvie"));
-        this.SOURCE_AUDIENCE = WORKSPACE_FRAME.locator("button").filter(new Locator.FilterOptions().setHasText("Studio Workspace"));
+        this.SOURCE_AUDIENCE = WORKSPACE_FRAME.locator("button").filter(new Locator.FilterOptions().setHasText("Studio Workspace"));;
+        this.NPILIST = page.locator("//div[@class='styles__StyledIcon-sc-d00f7j-2 QkzJU']");
         this.SELECT_SOURCE_AUDIENCE = page.locator("iframe[title=\"overview\"]").contentFrame().locator("iframe").contentFrame().getByText("My playground");
         this.ENTER_MY_PLAYGROUND = page.locator("iframe[title=\"overview\"]").contentFrame().locator("iframe").contentFrame().getByRole(AriaRole.TEXTBOX, new FrameLocator.GetByRoleOptions().setName("Search"));
         this.EXPAND_CARE_TEAM = page.locator("iframe[title=\"overview\"]").contentFrame().locator("iframe").contentFrame().getByText("Expand With Care Team");
@@ -63,9 +65,9 @@ public class ExpansionWorkspace {
     public void clickAdvertiserDropdown(String advertiser) {
         ADVERTISER_DROPDOWN.click();
         ADVERTISER_DROPDOWN.fill(advertiser);
-        Locator AdvertiserOption = WORKSPACE_FRAME.locator(String.format("//span[text()='%s']", advertiser));
-        waitUtility.waitForLocatorVisible(AdvertiserOption);
-        AdvertiserOption.click();
+        Locator advertiserOption = WORKSPACE_FRAME.locator(String.format("//span[text()='%s']", advertiser));
+        waitUtility.waitForLocatorVisible(advertiserOption);
+        advertiserOption.click();
     }
 
     public void selectSourceAudience(String string) {
