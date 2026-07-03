@@ -254,7 +254,7 @@ public class CreateCreatives {
         this.SOURCE_FROM_CREATIVE_TILE = page.locator("//span[contains(text(),'Source:')]/following-sibling::span");
         this.LAST_UPDATED_FROM_CREATIVE_TILE =
                 page.locator("//span[contains(text(),'Last updated:')]/following-sibling::span");
-        this.ASSOCIATIONS_TAB = page.locator("//div[@class='creativeContainer']//a[contains(text(),'Associations')]");
+        this.ASSOCIATIONS_TAB = page.locator("//div[contains(@class,'creativeContainer')]//a[contains(text(),'Associations')]");
         this.COLUMN_SELECTION_ICON = page.locator("//span[@class='icon-bars']");
         this.COLUMN_NAME_FROM_SELECTION_ICON =
                 page.locator("//span[@class='icon-bars']/following-sibling::div//div[contains(@class,'item')]");
@@ -1123,8 +1123,8 @@ public class CreateCreatives {
         FILTER_END_DATE.click();
         CALENDAR_TITLE.scrollIntoViewIfNeeded();
         CALENDAR_TITLE.click();
-        CALENDAR_MONTH.getByText("Dec").scrollIntoViewIfNeeded();
-        CALENDAR_MONTH.getByText("Dec").click();
+        CALENDAR_MONTH.getByText("Dec ").scrollIntoViewIfNeeded();
+        CALENDAR_MONTH.getByText("Dec ").click();
         CALENDAR_DATE
                 .getByText("31", new Locator.GetByTextOptions().setExact(true))
                 .first()
