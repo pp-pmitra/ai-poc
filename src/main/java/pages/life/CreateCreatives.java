@@ -1123,8 +1123,8 @@ public class CreateCreatives {
         FILTER_END_DATE.click();
         CALENDAR_TITLE.scrollIntoViewIfNeeded();
         CALENDAR_TITLE.click();
-        CALENDAR_MONTH.getByText("Dec ").scrollIntoViewIfNeeded();
-        CALENDAR_MONTH.getByText("Dec ").click();
+        CALENDAR_MONTH.getByText("Dec").scrollIntoViewIfNeeded();
+        CALENDAR_MONTH.getByText("Dec").click();
         CALENDAR_DATE
                 .getByText("31", new Locator.GetByTextOptions().setExact(true))
                 .first()
