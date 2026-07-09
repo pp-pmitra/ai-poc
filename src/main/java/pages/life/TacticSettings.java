@@ -12,9 +12,6 @@ import java.util.stream.Collectors;
 import utils.WaitUtility;
 
 public class TacticSettings {
-
-    public final Set<String> ACTUAL_TARGET_RULE = new HashSet<>();
-    public final Set<String> EXPECTED_TARGET_RULE = new HashSet<>();
     private final Page page;
     private final Locator VERIFY_TACTIC_SETTINGS_PAGE;
     private final Locator SELECT_CHANNEL;
@@ -101,8 +98,10 @@ public class TacticSettings {
     private final Locator FETCH_BID_MULTIPLIER_RULE_TYPES;
     private final Locator FETCH_BID_MULTIPLIER_RULE_OPTIONS;
     private final Locator CREATIVE_TAB;
-    final Locator PERCENT_TYPE_FEE_INPUT;
-    final Locator DOLLAR_TYPE_FEE_INPUT;
+    private final Locator PERCENT_TYPE_FEE_INPUT;
+    private final Locator DOLLAR_TYPE_FEE_INPUT;
+    public final Set<String> ACTUAL_TARGET_RULE = new HashSet<>();
+    public final Set<String> EXPECTED_TARGET_RULE = new HashSet<>();
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
     List<Object> ruleTypes;
     List<Object> ruleOptions;
