@@ -15,8 +15,6 @@ public class TacticSettings {
 
     public final Set<String> ACTUAL_TARGET_RULE = new HashSet<>();
     public final Set<String> EXPECTED_TARGET_RULE = new HashSet<>();
-    final Locator PERCENT_TYPE_FEE_INPUT;
-    final Locator DOLLAR_TYPE_FEE_INPUT;
     private final Page page;
     private final Locator VERIFY_TACTIC_SETTINGS_PAGE;
     private final Locator SELECT_CHANNEL;
@@ -103,6 +101,8 @@ public class TacticSettings {
     private final Locator FETCH_BID_MULTIPLIER_RULE_TYPES;
     private final Locator FETCH_BID_MULTIPLIER_RULE_OPTIONS;
     private final Locator CREATIVE_TAB;
+    final Locator PERCENT_TYPE_FEE_INPUT;
+    final Locator DOLLAR_TYPE_FEE_INPUT;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
     List<Object> ruleTypes;
     List<Object> ruleOptions;
@@ -204,10 +204,6 @@ public class TacticSettings {
         this.MANAGEMENT_FEE_LABEL_VALUE = page.locator("//span[contains(@class,'fee-value')]");
         this.MANAGEMENT_FEE_OVERRIDE = page.locator("//label[contains(text(),'Override')]");
         this.MANAGEMENT_FEE_OPTIONS = page.locator("//div[contains(@class,'management-fee-contanier')]//div//button");
-        this.PERCENT_TYPE_FEE_INPUT = page.locator(
-                "//div[contains(@class,'management-fee-container')]//input[contains(@class,'percent-img')]");
-        this.DOLLAR_TYPE_FEE_INPUT = page.locator(
-                "//div[contains(@class,'management-fee-container')]//input[contains(@class,'doller-img')]");
         this.NEW_TARGETING_RULE_BUTTON = page.locator("//span[text()='New Targeting Rule']");
         this.ADD_BID_MULTIPLIER = page.locator(
                 "//div[contains(@class,'no_content_center')]//span[text()='Add Bid Multiplier']");
@@ -223,6 +219,10 @@ public class TacticSettings {
                 "//div[contains(@class,'bidMultiplierData')]//div[contains(@class,'bold')]");
         this.FETCH_BID_MULTIPLIER_RULE_OPTIONS = page.locator("//div[contains(@class,'bmtName')]");
         this.CREATIVE_TAB = page.locator("(//div[contains(@class,'navbar')]//a[contains(@class,'gaTabCreatives')])[1]");
+        this.PERCENT_TYPE_FEE_INPUT = page.locator(
+                "//div[contains(@class,'management-fee-container')]//input[contains(@class,'percent-img')]");
+        this.DOLLAR_TYPE_FEE_INPUT = page.locator(
+                "//div[contains(@class,'management-fee-container')]//input[contains(@class,'doller-img')]");
     }
 
     public String verifyTacticSettingsText() {
