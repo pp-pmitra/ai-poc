@@ -134,7 +134,6 @@ public class NPILists {
 
     public boolean areDownloadOptionsAvailable(int expectedDownloadOptions) {
         waitUtility.waitForLocatorVisible(DOWNLOAD_ICON.last());
-        System.out.println("Number of download options available: " + DOWNLOAD_ICON.count());
         return DOWNLOAD_ICON.count() == expectedDownloadOptions;
     }
 
