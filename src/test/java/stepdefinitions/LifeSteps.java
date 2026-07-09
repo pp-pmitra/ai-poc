@@ -7557,7 +7557,7 @@ public class LifeSteps {
         logger.info("Searching and selecting NPI list '{}'", npiListName);
         npiLists.searchList(npiListName);
         npiLists.openSearchedList(npiListName);
-        logger.info("Verifying two download options are available on the NPI list details page for {} list", listType);
+        logger.info("Verifying {} download option(s) are available on the NPI list details page for {} list", expectedDownloadOptions, listType);
         Assert.assertTrue("Download options are not available", npiLists.areDownloadOptionsAvailable(expectedDownloadOptions));
     }
 
