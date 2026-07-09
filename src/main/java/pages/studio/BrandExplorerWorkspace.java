@@ -4,6 +4,7 @@ import com.microsoft.playwright.FrameLocator;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.TimeoutError;
+import com.microsoft.playwright.options.AriaRole;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -113,6 +114,10 @@ public class BrandExplorerWorkspace {
         waitUtility.waitForLocatorHidden(SPINNER);
     }
 
+    public void waitForSpinnerToAppear() {
+        waitUtility.waitForLocatorVisible(SPINNER);
+    }
+
     public List<String> getTableDates(int days) {
         waitUtility.waitForLocatorVisible(DATE_CELLS.first());
         Set<String> seenDates = new LinkedHashSet<>();
@@ -213,5 +218,83 @@ public class BrandExplorerWorkspace {
     private String toDisplayFormat(String isoDate) {
         String[] parts = isoDate.split("-");
         return parts[1] + "/" + parts[2] + "/" + parts[0];
+    }
+
+    // Both Dimensions and Metrics are organized as accordion categories containing checkboxes,
+    // so these locators and the methods below serve either component type.
+    private Locator componentCategoryTab(String category) {
+        return WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName(category));
+    }
+
+    private Locator componentCheckbox(String component) {
+        return WORKSPACE_FRAME.getByRole(
+                AriaRole.CHECKBOX, new FrameLocator.GetByRoleOptions().setName(component).setExact(true));
+    }
+
+    private Locator tableColumnHeader(String columnName) {
+        return WORKSPACE_FRAME.locator(String.format("//th//p[text()='%s']", columnName));
+    }
+
+    public List<String> getMissingComponentCategories(List<String> categories) {
+        List<String> missing = new ArrayList<>();
+        for (String category : categories) {
+            try {
+                waitUtility.waitForLocatorVisible(componentCategoryTab(category));
+            } catch (TimeoutError e) {
+                missing.add(category);
+            }
+        }
+        return missing;
+    }
+
+    // Component checkboxes only render once their category accordion is expanded.
+    private void expandComponentCategory(String category) {
+        Locator categoryTab = componentCategoryTab(category);
+        waitUtility.waitForLocatorVisible(categoryTab);
+        if (!"true".equals(categoryTab.getAttribute("aria-expanded"))) {
+            categoryTab.click();
+        }
+    }
+
+    public void deselectComponent(String category, String component) {
+        expandComponentCategory(category);
+        Locator checkbox = componentCheckbox(component);
+        waitUtility.waitForLocatorVisible(checkbox);
+        checkbox.uncheck();
+    }
+
+    // Removes the workspace's default dimension (Day, under Time Frame) and default metric
+    // (Identified NPIs, under NPI Events) so later selections can be verified against an empty table.
+    public void removeDefaultDimensionAndMetric() {
+        deselectComponent("Time Frame", "Day");
+        deselectComponent("NPI Events", "Identified NPIs");
+    }
+
+    // Selects every item in the category (dimension or metric), verifies each renders as a table
+    // column, then deselects all of them and verifies the columns disappear - proves both the
+    // component list and the select/remove behavior for the whole category in one pass. Returns a
+    // human-readable failure per component that didn't behave as expected, empty if all passed.
+    public List<String> verifyComponentsSelectAndRemove(String category, List<String> components) {
+        expandComponentCategory(category);
+        List<String> failures = new ArrayList<>();
+        components.forEach(component -> componentCheckbox(component).check());
+        waitForSpinnerToAppear();
+        waitForSpinnerToDisappear();
+        for (String component : components) {
+            try {
+                waitUtility.waitForLocatorVisible(tableColumnHeader(component));
+            } catch (TimeoutError e) {
+                failures.add(component + ": did not appear as a table column after being selected");
+            }
+        }
+        components.forEach(component -> componentCheckbox(component).uncheck());
+        for (String component : components) {
+            try {
+                waitUtility.waitForLocatorHidden(tableColumnHeader(component));
+            } catch (TimeoutError e) {
+                failures.add(component + ": was not removed from the table after being deselected");
+            }
+        }
+        return failures;
     }
 }
