@@ -2662,7 +2662,7 @@ public class LifeSteps {
 
     @And("Verify the Total NPI count displayed in Matched NPI section is similar to NPI records present in {string}")
     public void verifyMatchedNPISectionIsDisplayedWithTheTotalNPICount(String fileName)
-            throws CsvValidationException, IOException {
+            throws IOException, CsvValidationException {
         logger.info(
                 "Verify the Total NPI count displayed in Matched NPI section is similar to NPI records present in {}",
                 fileName);
@@ -2991,13 +2991,13 @@ public class LifeSteps {
             "Verify the Uploaded Files section displays the entries count, includes download and delete icons after the file {string} is uploaded")
     public void
     verifyUploadedFilesSectionDisplaysEntriesIncludedInTheFileTimestampDownloadAndDeleteIconsOnceTheFileIsUploaded(
-            String fileName) throws CsvValidationException, IOException {
+            String fileName) throws IOException {
         logger.info(
                 "Verify the Uploaded Files section displays the entries count, includes download and delete icons after the file {} is uploaded",
                 fileName);
         String fetchedFileName = sharedList.fetchFileNameFromUploadedFilesSection(fileName);
         Assert.assertEquals(fileName, fetchedFileName);
-        int expectedCount = ExcelActions.countCsvRecords("src/main/resources/uploadfiles/" + fileName);
+        int expectedCount = FileActions.fetchRowCountExcludeHeaderFromCSVAndTxt(fileName);
         int actualCount = sharedList.fetchDomainCountFromUploadedFilesSection(fileName);
         Assert.assertEquals(expectedCount, actualCount);
         boolean isDownloadVisible = sharedList.isDownloadIconVisible(fileName);
@@ -3059,7 +3059,7 @@ public class LifeSteps {
         sharedList.uploadDomainFile(fileName);
         String fetchedFileName = sharedList.fetchFileNameFromUploadedFilesSection(fileName);
         Assert.assertEquals(fileName, fetchedFileName);
-        int expectedCount = ExcelActions.countCsvRecords("src/main/resources/uploadfiles/" + fileName);
+        int expectedCount = FileActions.fetchRowCountExcludeHeaderFromCSVAndTxt(fileName);
         int actualCount = sharedList.fetchDomainCountFromUploadedFilesSection(fileName);
         Assert.assertEquals(expectedCount, actualCount);
         Assert.assertTrue("No Download icon is available", sharedList.isDownloadIconVisible(fileName));
@@ -7550,5 +7550,20 @@ public class LifeSteps {
     public void verifyFileDetailsAreDisplayedInListDetailsPage() {
         logger.info("Verifying file details are displayed correctly in the list details page");
         Assert.assertTrue("File details are not displayed", npiMedscapeList.isMedscapeListContainerDisplayed());
+    }
+
+    @And("Verify {int} download options are available on the NPI list details page for {string} list {string}")
+    public void verifyTwoDownloadOptionsAreAvailableOnTheNPIListDetailsPage(int expectedDownloadOptions, String listType, String npiListName) {
+        logger.info("Searching and selecting NPI list '{}'", npiListName);
+        npiLists.searchList(npiListName);
+        npiLists.openSearchedList(npiListName);
+        logger.info("Verifying two download options are available on the NPI list details page for {} list", listType);
+        Assert.assertTrue("Download options are not available", npiLists.areDownloadOptionsAvailable(expectedDownloadOptions));
+    }
+
+    @And("User navigates back to NPI Lists landing page")
+    public void userNavigatesBackToNPIListsLandingPage() {
+        logger.info("Navigating back to NPI Lists landing page");
+        npiLists.navigateBackToNPIListsLandingPage();
     }
 }

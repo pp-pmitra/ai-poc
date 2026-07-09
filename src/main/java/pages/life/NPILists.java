@@ -23,6 +23,8 @@ public class NPILists {
     private final Locator AUTO_IMPORTED_LIST;
     private final Locator EDIT_ICON;
     private final Locator MEDSCAPE_LIST;
+    private final Locator DOWNLOAD_ICON;
+    private final Locator NPI_BACK_BUTTON;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
 
     public NPILists(Page page) {
@@ -43,6 +45,8 @@ public class NPILists {
         this.AUTO_IMPORTED_LIST = page.locator("//app-npilisttype[@listtypename='Auto-Imported List']");
         this.EDIT_ICON = page.locator("//img[@alt='edit' and contains(@src,'edit-inline.svg')]");
         this.MEDSCAPE_LIST = page.locator("//app-npilisttype[@listtypename='Medscape List']");
+        this.DOWNLOAD_ICON = page.locator("//span[contains(@class,'image download')]");
+        this.NPI_BACK_BUTTON = page.locator("//div[contains(@class,'npi-back-button')]");
     }
 
     public void clickNPILists() {
@@ -126,5 +130,17 @@ public class NPILists {
     public void clickMedscapeList() {
         MEDSCAPE_LIST.click();
         waitUtility.waitUntilSpinnerHidden();
+    }
+
+    public boolean areDownloadOptionsAvailable(int expectedDownloadOptions) {
+        waitUtility.waitForLocatorVisible(DOWNLOAD_ICON.last());
+        System.out.println("Number of download options available: " + DOWNLOAD_ICON.count());
+        return DOWNLOAD_ICON.count() == expectedDownloadOptions;
+    }
+
+    public void navigateBackToNPIListsLandingPage() {
+        NPI_BACK_BUTTON.click();
+        waitUtility.waitUntilSpinnerHidden();
+        waitUtility.waitForLocatorVisible(CREATE_NEW_LIST);
     }
 }
