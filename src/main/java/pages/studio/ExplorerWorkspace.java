@@ -231,7 +231,7 @@ public class ExplorerWorkspace {
                     Locator locator = WORKSPACE_FRAME.locator(String.format(
                             "//p[contains(text(),'%s')]/preceding-sibling::div/button[@data-testid='bi-include-exclude-check']",
                             option.trim()));
-                    TAB_PANEL_SEARCH.fill(option.trim());
+                    TAB_PANEL_SEARCH.first().fill(option.trim());
                     waitUtility.waitForLocatorVisible(locator.first());
                     page.waitForTimeout(1000);
                     if (SELECT_DESELECT_ALL.isVisible()) SELECT_DESELECT_ALL.click();

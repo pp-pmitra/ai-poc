@@ -45,6 +45,8 @@ public class ExpansionWorkspace {
     private final Locator DOWNLOAD_REPORT_BUTTON;
     private final Locator REPORT_NAME_INPUT;
     private final Locator SCHEDULE_REPORT_BUTTON;
+    private final Locator WORKSPACE_EDIT_BUTTON;
+    private final Locator SAVE_WORKSPACE_DETAILS;
     WaitUtility waitUtility;
 
     public ExpansionWorkspace(Page page) {
@@ -69,10 +71,9 @@ public class ExpansionWorkspace {
         this.POPUP_CLOSE = WORKSPACE_FRAME.locator("div")
                 .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^Select Filter$")))
                 .getByRole(AriaRole.BUTTON);
-        this.WORKSPACE_NAME = WORKSPACE_FRAME.getByRole(AriaRole.TEXTBOX).nth(3);
-        this.DROPDOWN_CARE_TEAM = WORKSPACE_FRAME.getByRole(AriaRole.COMPLEMENTARY)
-                .getByRole(AriaRole.COMBOBOX, new Locator.GetByRoleOptions().setName("undefined combobox"))
-                .getByRole(AriaRole.TEXTBOX);
+        this.WORKSPACE_NAME = WORKSPACE_FRAME.locator(
+                "//p[text()='Workspace Name']/following-sibling::div//input");
+        this.DROPDOWN_CARE_TEAM = WORKSPACE_FRAME.locator("input[id^='listbox-input']").last();
         this.DROPDOWN_CARE_TEAM_VALUE =
                 WORKSPACE_FRAME.getByRole(AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName("Basic"));
         this.EXPANDED_AUDIENCE_COUNT = WORKSPACE_FRAME.getByText("Expanded with");
@@ -82,10 +83,13 @@ public class ExpansionWorkspace {
                 WORKSPACE_FRAME.locator(" //span[contains(text(),'HCP')]/parent::label/preceding-sibling::div//input");
         this.SELECT_LIFE =
                 WORKSPACE_FRAME.locator(" //span[contains(text(),'Life')]/parent::label/preceding-sibling::div//input");
-        this.TOTAL_NPI_COUNT = WORKSPACE_FRAME.locator(
-                "//h3[text()='Total NPIs']"
-                        + "/ancestor::div[@data-testid='test-single-value-container']"
-                        + "//span[contains(@class,'StyleSpan')]");
+        this.TOTAL_NPI_COUNT = WORKSPACE_FRAME
+                .locator("#extension-root iframe")
+                .contentFrame()
+                .locator(
+                        "//h3[text()='Total NPIs']"
+                                + "/ancestor::div[@data-testid='test-single-value-container']"
+                                + "//span[contains(@class,'StyleSpan')]");
         this.PUBLISH_BUTTON =
                 WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Publish"));
         this.NPI_PUBLISH_ALERT = WORKSPACE_FRAME.locator("//p[contains(text(), 'Workspace saved successfully')]");
@@ -100,6 +104,9 @@ public class ExpansionWorkspace {
         this.REPORT_NAME_INPUT = WORKSPACE_FRAME.locator(
                 "//input[contains(@placeholder,'Report Name') or contains(@name,'reportName') or contains(@id,'reportName')]");
         this.SCHEDULE_REPORT_BUTTON = WORKSPACE_FRAME.locator("//div[normalize-space()='Schedule Report']");
+        this.WORKSPACE_EDIT_BUTTON = WORKSPACE_FRAME.locator("//button//div[text()='Edit']");
+        this.SAVE_WORKSPACE_DETAILS = WORKSPACE_FRAME.locator(
+                "//button[contains(@data-tour-id,'save-workspace-details-button')]//div[contains(text(),'Save')]");
     }
 
     public void clickAdvertiserDropdown(String advertiser) {
@@ -152,9 +159,12 @@ public class ExpansionWorkspace {
     }
 
     public void renameExpansion(String workspaceName) {
-        WORKSPACE_NAME.click();
-        WORKSPACE_NAME.click();
+        waitUtility.waitForLocatorVisible(WORKSPACE_EDIT_BUTTON);
+        WORKSPACE_EDIT_BUTTON.click();
+        waitUtility.waitForLocatorVisible(WORKSPACE_NAME);
+        WORKSPACE_NAME.clear();
         WORKSPACE_NAME.fill(workspaceName);
+        SAVE_WORKSPACE_DETAILS.click();
     }
 
     /** The advertiser combobox can intermittently re-open; its modal-root option list then intercepts clicks. */
@@ -198,20 +208,38 @@ public class ExpansionWorkspace {
                 .toList();
 
         if (!careTeamTypes.isEmpty()) {
+            waitUtility.waitForLocatorVisible(EXPAND_CARE_TEAM);
             EXPAND_CARE_TEAM.click();
+            page.waitForTimeout(2000);
 
             for (String careTeamType : careTeamTypes) {
-                waitUtility.waitForLocatorVisible(DROPDOWN_CARE_TEAM);
-                DROPDOWN_CARE_TEAM.click();
-                WORKSPACE_FRAME.getByRole(AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName(careTeamType))
-                        .click();
-                waitUtility.waitForLocatorVisible(EXPANDED_AUDIENCE_COUNT);
+                selectCareTeamType(careTeamType);
             }
         }
 
         if (wantsAffiliationGraph) {
+            waitUtility.waitForLocatorVisible(EXPAND_AFFILIATION_GRAPH);
             selectExpandAffGraph();
         }
+    }
+
+    /**
+     * The Care Team relationship selector is a single-select Looker combobox whose input is
+     * {@code readonly} (so {@code fill()}/{@code clear()} never work). "Basic" is pre-selected by default.
+     * We only open the list and pick an option when the requested type isn't already the current value.
+     */
+    private void selectCareTeamType(String careTeamType) {
+        waitUtility.waitForLocatorVisible(DROPDOWN_CARE_TEAM);
+        String current = DROPDOWN_CARE_TEAM.inputValue().trim();
+        if (careTeamType.equalsIgnoreCase(current)) {
+            return; // already selected (e.g. default "Basic")
+        }
+        DROPDOWN_CARE_TEAM.click(); // clicking the readonly input opens the listbox
+        Locator option = WORKSPACE_FRAME.getByRole(
+                AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName(careTeamType).setExact(true));
+        waitUtility.waitForLocatorVisible(option);
+        option.click();
+        page.waitForTimeout(2000);
     }
 
     public void selectDraftOption(String draftOption) {
@@ -226,14 +254,30 @@ public class ExpansionWorkspace {
     }
 
     public String fetchTotalNPICount() {
+        page.waitForLoadState();
         waitUtility.waitForLocatorVisible(TOTAL_NPI_COUNT);
-        return TOTAL_NPI_COUNT.textContent().replace(",", "");
+        String count = TOTAL_NPI_COUNT.textContent().replace(",", "");
+        int retries = 0;
+        while (("0".equals(count) || count.isEmpty()) && retries < 6) {
+            page.waitForTimeout(5000);
+            count = TOTAL_NPI_COUNT.textContent().replace(",", "");
+            retries++;
+        }
+        return count;
     }
 
-    public String fetchTotalNPICountAfterExpansion() {
+    public String fetchTotalNPICountAfterExpansion(String beforeCount) {
         page.waitForLoadState();
         waitUtility.waitForLocatorVisible(EXPANDED_AUDIENCE_COUNT.first());
-        return TOTAL_NPI_COUNT.textContent().replace(",", "");
+        page.waitForTimeout(5000);
+        String current = TOTAL_NPI_COUNT.textContent().replace(",", "");
+        int retries = 0;
+        while ((current.equals(beforeCount) || "0".equals(current) || current.isEmpty()) && retries < 6) {
+            page.waitForTimeout(5000);
+            current = TOTAL_NPI_COUNT.textContent().replace(",", "");
+            retries++;
+        }
+        return current;
     }
 
     public void clickPublish() {

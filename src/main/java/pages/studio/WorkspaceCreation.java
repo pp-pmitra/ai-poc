@@ -172,6 +172,7 @@ public class WorkspaceCreation {
     }
 
     public void verifyStudioWorkspaceFrame() {
+        closeAIPanel();
         OUTER_FRAME.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         CREATE_WORKSPACE.first().waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         waitForStudioWorkspacePage(CREATE_WORKSPACE);
@@ -432,11 +433,25 @@ public class WorkspaceCreation {
         HCP_EXPANSION.click();
     }
 
-    public boolean isWorkspaceStatusPublic(String workspaceName, String status) {
-        return WORKSPACE_FRAME
-                .locator(String.format(
-                        "//span[contains(text(),'%s')]/ancestor::tr//td[contains(@id,'status')]//span[text()='%s']",
-                        workspaceName, status))
-                .isVisible();
+    public boolean isWorkspacePublished(String workspaceName, String status) {
+        Locator workspaceRow = WORKSPACE_FRAME
+                .locator(String.format("//span[contains(text(),'%s')]/ancestor::tr", workspaceName));
+        waitUtility.waitForLocatorVisible(workspaceRow);
+        Locator icons = workspaceRow.locator("svg");
+        Locator firstIcon = icons.first();
+        waitUtility.waitForLocatorVisible(firstIcon);
+        Object result = firstIcon.evaluate(
+                "el => {"
+                        + "  const fill = el.getAttribute('fill') || '';"
+                        + "  const child = el.querySelector('path, circle, rect');"
+                        + "  const childFill = child ? (child.getAttribute('fill') || '') : '';"
+                        + "  const style = getComputedStyle(el).color || '';"
+                        + "  return (fill + '|' + childFill + '|' + style).toLowerCase();"
+                        + "}");
+        String colors = result != null ? result.toString() : "";
+        return colors.contains("green") || colors.contains("#4caf50") || colors.contains("#00c853")
+                || colors.contains("#2e7d32") || colors.contains("#43a047") || colors.contains("#66bb6a")
+                || colors.contains("rgb(76, 175, 80)") || colors.contains("rgb(0, 200, 83)")
+                || colors.contains("rgb(46, 125, 50)") || colors.contains("rgb(67, 160, 71)");
     }
 }

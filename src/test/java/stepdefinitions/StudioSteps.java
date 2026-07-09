@@ -30,6 +30,7 @@ public class StudioSteps {
     static String workspaceName;
     static String newWorkspaceName;
     static String draftOption;
+    static String activeWorkspaceType;
     Boolean flag = true;
     Boolean isOverwritten = false;
     List<String[]> fileContent;
@@ -209,6 +210,7 @@ public class StudioSteps {
     @And("User clicks on {string} workspace")
     public void userClicksOnWorkspace(String workspaceType) {
         logger.info("Selecting {} workspace", workspaceType);
+        activeWorkspaceType = workspaceType;
 
         if (fetchedMetricNames.contains(workspaceType)) {
             String explorer =
@@ -253,12 +255,16 @@ public class StudioSteps {
     public void userUpdatesTheWorkspaceNameAs(String wName) {
         workspaceName = wName + '_' + CommonUtils.timeStampCalculation();
         logger.info("Adding workspace name: {}", workspaceName);
-        explorerWorkspace.waitForDashboardLoad();
-        explorerWorkspace.clickEditWorkspace();
-        explorerWorkspace.enterWorkspaceName(workspaceName);
-        explorerWorkspace.saveWorkspaceName();
-        explorerWorkspace.waitUntilAlertDisappears();
-        explorerWorkspace.waitForDashboardLoad();
+        if ("HCP Audience Expansion".equals(activeWorkspaceType)) {
+            expansionWorkspace.renameExpansion(workspaceName);
+        } else {
+            explorerWorkspace.waitForDashboardLoad();
+            explorerWorkspace.clickEditWorkspace();
+            explorerWorkspace.enterWorkspaceName(workspaceName);
+            explorerWorkspace.saveWorkspaceName();
+            explorerWorkspace.waitUntilAlertDisappears();
+            explorerWorkspace.waitForDashboardLoad();
+        }
     }
 
     @When("User applies the filter and selects option")
@@ -1286,7 +1292,7 @@ public class StudioSteps {
     @Then("User verifies the expanded audience count")
     public void userVerifiesTheExpandedAudienceCount() {
         logger.info("Verifying the expanded audience count");
-        String expandedCount = expansionWorkspace.fetchTotalNPICountAfterExpansion();
+        String expandedCount = expansionWorkspace.fetchTotalNPICountAfterExpansion(totalNpiCount);
         int beforeCount = Integer.parseInt(totalNpiCount);
         int afterCount = Integer.parseInt(expandedCount);
         Assert.assertTrue(
@@ -1350,12 +1356,12 @@ public class StudioSteps {
         accounts.internalUserLogout();
     }
 
-    @And("Verify the workspace status is updated to {string}")
-    public void statusIsUpdatedToPublic(String status) {
-        logger.info("Verifying workspace status is updated to {} after publish", status);
+    @And("Verify the workspace status should be {string}")
+    public void workspaceStatusShouldBe(String status) {
+        logger.info("Verifying workspace is {}", status);
         Assert.assertTrue(
                 "Workspace status is not updated to " + status,
-                workspaceCreation.isWorkspaceStatusPublic(workspaceName, status));
+                workspaceCreation.isWorkspacePublished(workspaceName, status));
     }
 
     @And("User clicks Schedule NPI button")
