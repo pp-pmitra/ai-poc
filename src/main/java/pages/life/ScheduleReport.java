@@ -53,6 +53,7 @@ public class ScheduleReport {
     private final Locator THREE_DOT_MENU_CLOSE_BUTTON;
     private final Locator THREE_DOT_MENU;
     private final Locator DATE_TIME_FORMAT_OPTIONS;
+    private final Locator REPORT_SECOND_ROW;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
     RunReportPanel runReportPanel = new RunReportPanel(DriverFactory.getPage());
 
@@ -105,6 +106,8 @@ public class ScheduleReport {
         this.THREE_DOT_MENU_CLOSE_BUTTON = page.locator("//div[contains(@class,'icons_20-close')]");
         this.THREE_DOT_MENU = page.locator("//div[@class='variableTooltip']");
         this.DATE_TIME_FORMAT_OPTIONS = page.locator("//span[@class='variable-text']");
+        this.REPORT_SECOND_ROW = page.locator("//tr[contains(@class,'fixedrow ng-star-inserted')][3]");
+
     }
 
     public void clickScheduleReportButton() {
@@ -352,6 +355,7 @@ public class ScheduleReport {
 
     public void searchReport(String reportName) {
         Locator locator = page.locator(String.format("//div[contains(@title,'%s')]", reportName));
+        waitUtility.waitForLocatorVisible(REPORT_SECOND_ROW);
         SEARCH_TEXTBOX.fill(reportName);
         SEARCH_ICON.click();
         waitUtility.waitForLocatorVisible(locator);
