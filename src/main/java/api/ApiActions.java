@@ -87,4 +87,18 @@ public class ApiActions {
                         .setHeader("Content-Type", "application/json")
                         .setData(requestBody));
     }
+
+    public String getCleanJson(APIResponse response){
+        String rawResponse = response.text();
+        String cleanJson = "";
+        String[] lines = rawResponse.split("\\r?\\n");
+        for (String line : lines) {
+            if (line.trim().startsWith("data:")) {
+                int jsonStartIndex = line.indexOf("data:") + 5;
+                cleanJson = line.substring(jsonStartIndex).trim();
+                break;
+            }
+        }
+        return cleanJson;
+    }
 }
