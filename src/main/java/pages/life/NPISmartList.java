@@ -290,7 +290,7 @@ public class NPISmartList {
 
     public void selectSmartNPIListType(String smartListType) {
         SMART_LIST_POPULATION_OPTIONS.locator("text = " + smartListType).scrollIntoViewIfNeeded();
-        SMART_LIST_POPULATION_OPTIONS.locator("text = " + smartListType).click();
+        SMART_LIST_POPULATION_OPTIONS.locator("text = " + smartListType).dispatchEvent("click");
         waitUtility.waitUntilSpinnerHidden();
     }
 
@@ -346,7 +346,7 @@ public class NPISmartList {
     }
 
     public void clickSearchKeywordsCheckbox() {
-        SEARCH_KEYWORDS_CHECKBOX.click();
+        SEARCH_KEYWORDS_CHECKBOX.dispatchEvent("click");
     }
 
     public void enterSearchKeywords(List<String> keywordList) {
@@ -560,8 +560,8 @@ public class NPISmartList {
     }
 
     public String hoverAndFetchTooltip(String contextualCategory) {
-        page.locator(String.format("//div[contains(text(),'%s')]//span[@class='question-icon']", contextualCategory))
-                .hover();
+               page.locator(String.format("//div[contains(text(),'%s')]//span[@class='question-icon']", contextualCategory))
+                       .click();
         waitUtility.waitForLocatorVisible(TOOL_TIP);
         return TOOL_TIP.innerText().trim();
     }
