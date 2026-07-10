@@ -198,7 +198,8 @@ public class ReportTemplates {
         }
         optionLocator.click();
         SELECT_TACTIC.fill(tactic);
-            page.locator(String.format("//div[@id='tacticLookup']//div[@data-text='%s']",tactic)).click();
+        page.locator(String.format("//div[@id='tacticLookup']//div[@data-text='%s']", tactic))
+                .click();
         REPORT_PANEL.click();
         SELECT_LIFETIME.click();
     }

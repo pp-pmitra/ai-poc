@@ -52,7 +52,8 @@ public class NPIAttributesList {
         this.BACK_TO_NPI_LISTS =
                 page.locator("//img[@alt='BackButton_NPI_Lists' and contains(@src,'BackButton_NPI_Lists.svg')]");
         this.SAVE_BUTTON = page.locator("//span[text()='Save']");
-        this.LIST_UPDATE_SUCCESS = page.locator("//div[contains(@aria-label,'NPI list updated')] | //div[contains(@aria-label,'Medscape List updated')]");
+        this.LIST_UPDATE_SUCCESS = page.locator(
+                "//div[contains(@aria-label,'NPI list updated')] | //div[contains(@aria-label,'Medscape List updated')]");
         this.DELETE_LIST_ICON = page.locator("//app-icon-lable-link[@icon='icons_20-delete.svg']");
         this.DELETE_LIST_BUTTON = page.locator("//span[text()='Delete']");
         this.DELETE_SUCCESS = page.locator("//div[contains(text(),'Deleted Successfully')]");

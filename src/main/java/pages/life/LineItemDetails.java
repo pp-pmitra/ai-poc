@@ -629,9 +629,8 @@ public class LineItemDetails {
         waitUtility.waitForLocatorVisible(
                 page.locator("//app-life-custom-field-setting//label[contains(@class,'form-label')]")
                         .last());
-        return page.locator(
-                        String.format("//span[contains(@class,'cmp-form-label-text') and contains(text(),'%s')]",
-                                fieldName))
+        return page.locator(String.format(
+                        "//span[contains(@class,'cmp-form-label-text') and contains(text(),'%s')]", fieldName))
                 .isVisible();
     }
 }

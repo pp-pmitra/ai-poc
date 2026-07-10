@@ -9,7 +9,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import utils.WaitUtility;
 
 public class BrandExplorerWorkspace {
@@ -43,8 +42,8 @@ public class BrandExplorerWorkspace {
         this.END_DATE_INPUT = WORKSPACE_FRAME.locator("input[data-testid='date-to-text-input']");
         this.DATE_RANGE_ERROR =
                 WORKSPACE_FRAME.locator("//p[normalize-space()='Start date cannot be later than end date.']");
-        this.DATE_CELLS = WORKSPACE_FRAME.locator(
-                "//div[contains(@class,'Box')]//table//tbody//tr//td[1][@aria-colindex]");
+        this.DATE_CELLS =
+                WORKSPACE_FRAME.locator("//div[contains(@class,'Box')]//table//tbody//tr//td[1][@aria-colindex]");
         this.SPINNER = WORKSPACE_FRAME.locator("//div[@data-testid='loading-spinner']");
     }
 
@@ -138,21 +137,16 @@ public class BrandExplorerWorkspace {
             page.waitForTimeout(1000);
             String newLastDate = DATE_CELLS.last().innerText().trim();
             // No new data loaded
-            if (currentLastDate.equals(newLastDate)
-                    || currentLastDate.equals(previousLastDate)) {
+            if (currentLastDate.equals(newLastDate) || currentLastDate.equals(previousLastDate)) {
                 break;
             }
             previousLastDate = currentLastDate;
         }
-        return seenDates.stream()
-                .limit(days)
-                .collect(Collectors.toList());
+        return seenDates.stream().limit(days).collect(Collectors.toList());
     }
 
     public boolean isDateRangePickerDisplayed() {
-        return DATE_RANGE_PICKER.isVisible()
-                && START_DATE_INPUT.isVisible()
-                && END_DATE_INPUT.isVisible();
+        return DATE_RANGE_PICKER.isVisible() && START_DATE_INPUT.isVisible() && END_DATE_INPUT.isVisible();
     }
 
     public boolean areDateFieldsConfigurable() {
@@ -172,14 +166,15 @@ public class BrandExplorerWorkspace {
 
     public void waitForStartDateInTable(String startDate) {
         // Wait until the table actually reflects the new start date, not just that containers are visible
-        Locator startDateCell = WORKSPACE_FRAME.locator(
-                String.format("//div[contains(@class,'Box')]//table//tbody//tr//td[1]//p[normalize-space()='%s']", startDate));
+        Locator startDateCell = WORKSPACE_FRAME.locator(String.format(
+                "//div[contains(@class,'Box')]//table//tbody//tr//td[1]//p[normalize-space()='%s']", startDate));
         waitUtility.waitForLocatorVisible(startDateCell);
     }
 
     public boolean isDateRangeErrorDisplayed() {
-        // in case the error message is not displayed, waitForLocatorVisible will throw a TimeoutError, which we catch and return false
-        // instead of timing out the test as that would be a regression failure. 
+        // in case the error message is not displayed, waitForLocatorVisible will throw a TimeoutError, which we catch
+        // and return false
+        // instead of timing out the test as that would be a regression failure.
         try {
             waitUtility.waitForLocatorVisible(DATE_RANGE_ERROR);
             return true;

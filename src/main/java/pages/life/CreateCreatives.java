@@ -256,7 +256,8 @@ public class CreateCreatives {
         this.SOURCE_FROM_CREATIVE_TILE = page.locator("//span[contains(text(),'Source:')]/following-sibling::span");
         this.LAST_UPDATED_FROM_CREATIVE_TILE =
                 page.locator("//span[contains(text(),'Last updated:')]/following-sibling::span");
-        this.ASSOCIATIONS_TAB = page.locator("//div[contains(@class,'creativeContainer')]//a[contains(text(),'Associations')]");
+        this.ASSOCIATIONS_TAB =
+                page.locator("//div[contains(@class,'creativeContainer')]//a[contains(text(),'Associations')]");
         this.COLUMN_SELECTION_ICON = page.locator("//span[@class='icon-bars']");
         this.COLUMN_NAME_FROM_SELECTION_ICON =
                 page.locator("//span[@class='icon-bars']/following-sibling::div//div[contains(@class,'item')]");
@@ -1005,13 +1006,14 @@ public class CreateCreatives {
         List<String> creativeDetails = new ArrayList<>();
         creativeDetails.add(CREATIVE_NAME_LIST.textContent().trim());
         creativeDetails.add(DOMAIN_LANDING_FROM_CREATIVE_TILE.textContent().trim());
-        if (ADSIZE_FROM_CREATIVE_TILE.isVisible()){
-            String size = ADSIZE_FROM_CREATIVE_TILE.textContent().replace("px", "").trim();
+        if (ADSIZE_FROM_CREATIVE_TILE.isVisible()) {
+            String size =
+                    ADSIZE_FROM_CREATIVE_TILE.textContent().replace("px", "").trim();
             creativeDetails.add(size);
         }
-        if (DURATION_FROM_CREATIVE_TILE.isVisible()){
-                String duration = DURATION_FROM_CREATIVE_TILE.inputValue();
-                creativeDetails.add((duration == null || duration.trim().isEmpty()) ? "0" : duration.trim());
+        if (DURATION_FROM_CREATIVE_TILE.isVisible()) {
+            String duration = DURATION_FROM_CREATIVE_TILE.inputValue();
+            creativeDetails.add((duration == null || duration.trim().isEmpty()) ? "0" : duration.trim());
         }
         creativeDetails.add(CREATIVE_STATUS_FROM_CREATIVE_TILE.textContent().trim());
         return creativeDetails;

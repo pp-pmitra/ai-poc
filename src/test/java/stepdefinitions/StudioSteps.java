@@ -5,7 +5,6 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -345,7 +343,7 @@ public class StudioSteps {
         boolean isValid = actualMessage.equals("Workspace created successfully")
                 || actualMessage.equals("Workspace saved successfully")
                 || actualMessage.equals(
-                "Sent for asynchronous processing, forced by upstream dependencies - need to refresh upstream workspaces first");
+                        "Sent for asynchronous processing, forced by upstream dependencies - need to refresh upstream workspaces first");
         Assert.assertTrue("Unexpected message for " + workspaceType + " workspace: " + actualMessage, isValid);
         workspace.waitTillWorkspaceAlertHide();
         workspace.waitTillWorkspaceSaveButtonIsDisabled();
@@ -1023,8 +1021,8 @@ public class StudioSteps {
     @And(
             "User applies {string} filter, selects filter options as below and verifies the clinical recency filter is updated correctly")
     public void
-    userAppliesClinicalFilterSelectsFilterOptionsAsBelowAndVerifiesTheClinicalRecencyFilterIsUpdatedCorrectly(
-            String filterType, DataTable dataTable) {
+            userAppliesClinicalFilterSelectsFilterOptionsAsBelowAndVerifiesTheClinicalRecencyFilterIsUpdatedCorrectly(
+                    String filterType, DataTable dataTable) {
         logger.info("Applying '{}' filter and verifying clinical recency values", filterType);
         List<Map<String, String>> filters = dataTable.asMaps(String.class, String.class);
 
@@ -1102,8 +1100,8 @@ public class StudioSteps {
     @Then(
             "User verifies that the selected filters, dropdown values, and search input remain persistent unless they are manually deselected or cleared - {string}, {string}, {string}")
     public void
-    userVerifiesThatTheSelectedFiltersDropdownValuesAndSearchInputRemainPersistentUnlessTheyAreManuallyDeselectedOrCleared(
-            String expectedWorkspaceType, String expectedAdvertiser, String expectedCreatedBy) {
+            userVerifiesThatTheSelectedFiltersDropdownValuesAndSearchInputRemainPersistentUnlessTheyAreManuallyDeselectedOrCleared(
+                    String expectedWorkspaceType, String expectedAdvertiser, String expectedCreatedBy) {
         String actualWorkspaceType = workspaceCreation.getSelectedWorkspaceType();
         logger.info("Workspace type: {}", actualWorkspaceType);
         Assert.assertEquals("Selected workspace type is not persistent", expectedWorkspaceType, actualWorkspaceType);
@@ -1173,8 +1171,8 @@ public class StudioSteps {
         logger.info("External user verifying workspace visibility with draft option: {}", draftOption);
         boolean isWorkspaceVisible = workspaceCreation.isWorkspaceVisible(workspaceName, draftOption);
         logger.info("Is workspace visible for external user: {}", isWorkspaceVisible);
-        Assert.assertTrue("Workspace is not visible for external user with draft option: " + draftOption, isWorkspaceVisible);
-
+        Assert.assertTrue(
+                "Workspace is not visible for external user with draft option: " + draftOption, isWorkspaceVisible);
     }
 
     @And("User edits the workspace name as {string}")
@@ -1241,14 +1239,14 @@ public class StudioSteps {
         List<String> actual = brandExplorerWorkspace.getTimeFrameOptions();
         logger.info("Actual timeframe options: {}", actual);
         Assert.assertEquals("Timeframe option count mismatch", expected.size(), actual.size());
-        Assert.assertTrue("Actual timeframe options do not match expected timeframe options", actual.containsAll(expected));
+        Assert.assertTrue(
+                "Actual timeframe options do not match expected timeframe options", actual.containsAll(expected));
     }
 
     @When("User selects the timeframe preset {string}")
     public void userSelectsTimeframePreset(String timeFrame) {
         logger.info("Selecting timeframe preset: {}", timeFrame);
         brandExplorerWorkspace.selectTimeFramePreset(timeFrame);
-
     }
 
     @Then("Verify the chart and table update immediately to reflect {string} data")
@@ -1343,8 +1341,7 @@ public class StudioSteps {
         logger.info("Verifying {} count ({}) is >= {}", countType, uniqueConsumersCount, expectedValue);
         Assert.assertTrue(
                 countType + " count (" + uniqueConsumersCount + ") is less than " + expectedValue,
-                uniqueConsumersCount >= expectedValue
-        );
+                uniqueConsumersCount >= expectedValue);
     }
 
     @And("User clicks on Submit button")
@@ -1365,5 +1362,4 @@ public class StudioSteps {
         logger.info("Actual dialog message: {}", actualMessage);
         Assert.assertEquals("Dialog message does not match", expectedMessage, actualMessage);
     }
-
 }

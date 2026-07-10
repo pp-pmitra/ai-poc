@@ -6,12 +6,11 @@ import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import factory.DriverFactory;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import pages.Navigation;
 import utils.CommonUtils;
 import utils.WaitUtility;
-
-import java.util.function.Consumer;
 
 public class TacticDetails {
     private final Page page;
@@ -184,8 +183,9 @@ public class TacticDetails {
     }
 
     public Locator customFieldValue(String customFieldName) {
-        return page.locator(
-                String.format("//span[@class='cmp-form-label-text' and text()='%s']/parent::label/following-sibling::input", customFieldName));
+        return page.locator(String.format(
+                "//span[@class='cmp-form-label-text' and text()='%s']/parent::label/following-sibling::input",
+                customFieldName));
     }
 
     public List<String> getAllTactics() {
@@ -205,8 +205,9 @@ public class TacticDetails {
     }
 
     public void clearCustomFieldText(String customFieldName) {
-        Locator FIELD_OPTIONS = page.locator(
-                String.format("//span[@class='cmp-form-label-text' and text()='%s']/parent::label/following-sibling::input", customFieldName));
+        Locator FIELD_OPTIONS = page.locator(String.format(
+                "//span[@class='cmp-form-label-text' and text()='%s']/parent::label/following-sibling::input",
+                customFieldName));
         FIELD_OPTIONS.clear();
         SAVE_TACTIC_DETAILS.click();
     }
@@ -302,7 +303,8 @@ public class TacticDetails {
 
     public void removeTargetingRule(String ruleType) {
         waitUtility.waitUntilSpinnerHidden();
-        String ruleLocator = String.format("//span[text()='%s']/parent::label//following-sibling::div//div[contains(@title,'delete')]", ruleType);
+        String ruleLocator = String.format(
+                "//span[text()='%s']/parent::label//following-sibling::div//div[contains(@title,'delete')]", ruleType);
         page.locator(ruleLocator).click();
         waitUtility.waitUntilSpinnerHidden();
     }
@@ -369,8 +371,9 @@ public class TacticDetails {
         waitUtility.waitForLocatorVisible(
                 page.locator("//app-life-custom-field-setting//label[contains(@class,'form-label')]")
                         .last());
-        Locator FIELD_OPTIONS = page.locator(
-                String.format("//span[@class='cmp-form-label-text' and text()='%s']/following-sibling::div//img[@class='three-dots']", customFieldName));
+        Locator FIELD_OPTIONS = page.locator(String.format(
+                "//span[@class='cmp-form-label-text' and text()='%s']/following-sibling::div//img[@class='three-dots']",
+                customFieldName));
         FIELD_OPTIONS.click();
         DELETE_BUTTON.last().click();
         CONFIRM_DELETE.click();
@@ -720,7 +723,10 @@ public class TacticDetails {
                 .isVisible();
     }
 
-    public void createLineItemsWithTacticsAndTargetingRules(List<Map<String, String>> rows, String creative, Consumer<Map<String, List<String>>> perTacticVerification) {
+    public void createLineItemsWithTacticsAndTargetingRules(
+            List<Map<String, String>> rows,
+            String creative,
+            Consumer<Map<String, List<String>>> perTacticVerification) {
         String currentLiName = null;
 
         for (int i = 0; i < rows.size(); i++) {

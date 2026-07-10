@@ -4,11 +4,9 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.LoadState;
 import factory.DriverFactory;
-
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import utils.WaitUtility;
 
 public class TacticSettings {
@@ -204,18 +202,21 @@ public class TacticSettings {
         this.MANAGEMENT_FEE_OVERRIDE = page.locator("//label[contains(text(),'Override')]");
         this.MANAGEMENT_FEE_OPTIONS = page.locator("//div[contains(@class,'management-fee-contanier')]//div//button");
         this.NEW_TARGETING_RULE_BUTTON = page.locator("//span[text()='New Targeting Rule']");
-        this.ADD_BID_MULTIPLIER = page.locator(
-                "//div[contains(@class,'no_content_center')]//span[text()='Add Bid Multiplier']");
-        this.BEHAVIOUR_SEGMENT = page.locator("//div[contains(@class,'behavior') and contains(@class,'bidMultiplierImages')]");
+        this.ADD_BID_MULTIPLIER =
+                page.locator("//div[contains(@class,'no_content_center')]//span[text()='Add Bid Multiplier']");
+        this.BEHAVIOUR_SEGMENT =
+                page.locator("//div[contains(@class,'behavior') and contains(@class,'bidMultiplierImages')]");
         this.BEHAVIOUR_SEGMENT_ERROR = page.locator("//div[contains(@class,'noDataMessageHeader')]");
         this.BID_PANEL_CANCEL_BUTTON = page.locator("//button[contains(@class,'cancelbtn')]");
         this.NPI_BID = page.locator("//div[contains(@class,'npi') and contains(@class,'bidMultiplierImages')]");
         this.NPI_ERROR = page.locator("//div[contains(@class,'noDataMessageHeader')]");
-        this.INACTIVE_PANEL = page.locator("//div[contains(@class, 'right iconSprite icons_20-close pointer close_icon')]");
+        this.INACTIVE_PANEL =
+                page.locator("//div[contains(@class, 'right iconSprite icons_20-close pointer close_icon')]");
         this.ADD_TARGETING = page.locator("//span[text()='Add Targeting Rule']");
-        this.BID_MULTIPLIER_CATEGORY_NAME = page.locator("//app-rightpanel//div[contains(@class,'bidMultiplierCategoryName')]");
-        this.FETCH_BID_MULTIPLIER_RULE_TYPES = page.locator(
-                "//div[contains(@class,'bidMultiplierData')]//div[contains(@class,'bold')]");
+        this.BID_MULTIPLIER_CATEGORY_NAME =
+                page.locator("//app-rightpanel//div[contains(@class,'bidMultiplierCategoryName')]");
+        this.FETCH_BID_MULTIPLIER_RULE_TYPES =
+                page.locator("//div[contains(@class,'bidMultiplierData')]//div[contains(@class,'bold')]");
         this.FETCH_BID_MULTIPLIER_RULE_OPTIONS = page.locator("//div[contains(@class,'bmtName')]");
         this.CREATIVE_TAB = page.locator("(//div[contains(@class,'navbar')]//a[contains(@class,'gaTabCreatives')])[1]");
         this.PERCENT_TYPE_FEE_INPUT = page.locator(
@@ -1037,9 +1038,11 @@ public class TacticSettings {
             String text = BID_MULTIPLIER_CATEGORY_NAME.nth(i).innerText();
             if (text != null) actualCategories.add(text.trim());
         }
-        return new HashSet<>(actualCategories).containsAll(
-                bidCategoryList.stream().filter(Objects::nonNull).map(String::trim).collect(Collectors.toSet())
-        );
+        return new HashSet<>(actualCategories)
+                .containsAll(bidCategoryList.stream()
+                        .filter(Objects::nonNull)
+                        .map(String::trim)
+                        .collect(Collectors.toSet()));
     }
 
     public void clickBidMultipliers() {
@@ -1050,9 +1053,12 @@ public class TacticSettings {
         BID_MULTIPLIER_CATEGORY_NAME.first().waitFor();
         int categoryCount = BID_MULTIPLIER_CATEGORY_NAME.count();
         for (int i = 0; i < categoryCount; i++) {
-            String categoryText = BID_MULTIPLIER_CATEGORY_NAME.nth(i).innerText().trim();
+            String categoryText =
+                    BID_MULTIPLIER_CATEGORY_NAME.nth(i).innerText().trim();
             if (categoryText.contains(key)) {
-                String xpathString = String.format("//div[contains(@class,'bidMultiplierCategoryName') and contains(text(),'%s')]/following-sibling::div//div[contains(@class,'content')]", key);
+                String xpathString = String.format(
+                        "//div[contains(@class,'bidMultiplierCategoryName') and contains(text(),'%s')]/following-sibling::div//div[contains(@class,'content')]",
+                        key);
                 Locator categoryItems = page.locator(xpathString);
                 List<String> actualValues = new ArrayList<>();
                 for (int j = 0; j < categoryItems.count(); j++) {
@@ -1069,12 +1075,14 @@ public class TacticSettings {
 
         switch (ruleType) {
             case "Behavioral Segment":
-                String xpath = String.format("//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
+                String xpath = String.format(
+                        "//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
                 Locator bidRuleType = page.locator(xpath);
                 bidRuleType.click();
                 for (String value : ruleValues) {
                     String cleanedValue = value.replace("[", "").replace("]", "");
-                    String xpath2 = String.format("//div[contains(text(),'%s')]/ancestor::td/preceding-sibling::td//input", cleanedValue);
+                    String xpath2 = String.format(
+                            "//div[contains(text(),'%s')]/ancestor::td/preceding-sibling::td//input", cleanedValue);
                     Locator categoryItems = page.locator(xpath2);
                     categoryItems.fill(fillValue);
                 }
@@ -1082,18 +1090,19 @@ public class TacticSettings {
                 break;
 
             case "NPI":
-                String npiXpath = String.format("//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
+                String npiXpath = String.format(
+                        "//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
                 Locator npiRuleType = page.locator(npiXpath);
                 npiRuleType.click();
                 for (String value : ruleValues) {
                     String cleanedValue = value.replace("[", "").replace("]", "");
-                    String npiXpath2 = String.format("//div[contains(text(),'%s')]/ancestor::td/preceding-sibling::td//input", cleanedValue);
+                    String npiXpath2 = String.format(
+                            "//div[contains(text(),'%s')]/ancestor::td/preceding-sibling::td//input", cleanedValue);
                     Locator npiItems = page.locator(npiXpath2);
                     npiItems.fill(fillValue);
                 }
                 clickRuleTypeOkButton();
                 break;
-
         }
     }
 
@@ -1106,7 +1115,11 @@ public class TacticSettings {
         ruleTypes = new ArrayList<>();
         FETCH_BID_MULTIPLIER_RULE_TYPES.first().waitFor();
         for (int i = 0; i < FETCH_BID_MULTIPLIER_RULE_TYPES.count(); i++) {
-            String text = FETCH_BID_MULTIPLIER_RULE_TYPES.nth(i).innerText().replaceAll("\\s*\\(\\d+\\)", "").trim();
+            String text = FETCH_BID_MULTIPLIER_RULE_TYPES
+                    .nth(i)
+                    .innerText()
+                    .replaceAll("\\s*\\(\\d+\\)", "")
+                    .trim();
             ruleTypes.add(text);
         }
         return ruleTypes;
