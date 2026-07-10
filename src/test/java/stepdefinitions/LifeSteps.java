@@ -7566,4 +7566,14 @@ public class LifeSteps {
         logger.info("Navigating back to NPI Lists landing page");
         npiLists.navigateBackToNPIListsLandingPage();
     }
+
+    @And("Verify the Creatives Advertiser dropdown is displaying all Advertisers mapped to the logged in account {string}")
+    public void verifyTheCreativesAdvertiserDropdownIsDisplayingAllAdvertisersMappedToTheLoggedInAccount(String accountName) {
+        logger.info("Creatives Advertiser drop-down should list advertisers mapped to {}", accountName);
+        Assert.assertTrue("Advertiser dropdown is not present", bulkCreativeUpload.isAdvertiserDropdownAvailable());
+        List<String> advertiser = bulkCreativeUpload.fetchAdvertisers();
+        System.out.println("Advertisers fetched from the dropdown: " + advertiser);
+        System.out.println("Expected Advertisers from the data table: " + itemList);
+        Assert.assertTrue("Advertiser List does not match", advertiser.containsAll(itemList));
+    }
 }
