@@ -916,7 +916,6 @@ public class CreateCreatives {
                     .locator("xpath=//div//a[normalize-space(.)='" + bulkAssign + "']")
                     .click();
         waitUtility.waitUntilSpinnerHidden();
-        waitUtility.waitForLocatorVisible(BULK_ASSIGN_CREATIVE_HEADER);
     }
 
     public String assignCampaignToCreative() {
