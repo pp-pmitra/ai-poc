@@ -630,7 +630,8 @@ public class LineItemDetails {
                 page.locator("//app-life-custom-field-setting//label[contains(@class,'form-label')]")
                         .last());
         return page.locator(
-                        String.format("//label[contains(@class,'form-label') and contains(text(),'%s')]", fieldName))
+                        String.format("//span[contains(@class,'cmp-form-label-text') and contains(text(),'%s')]",
+                                fieldName))
                 .isVisible();
     }
 }
