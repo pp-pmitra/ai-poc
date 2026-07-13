@@ -348,7 +348,7 @@ public class StudioSteps {
                 "Sent for asynchronous processing, forced by upstream dependencies - need to refresh upstream workspaces first");
         Assert.assertTrue("Unexpected message for " + workspaceType + " workspace: " + actualMessage, isValid);
         workspace.waitTillWorkspaceAlertHide();
-        workspace.waitTillWorkspaceSaveButtonIsDisabled();
+        workspace.waitTillWorkspaceSaveButtonIsDisabled(workspaceType);
     }
 
     @And("User clicks Edit button and updates workspace name to {string}")
