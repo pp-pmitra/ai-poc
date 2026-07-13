@@ -43,8 +43,8 @@ Feature: Brand Explorer Workspace creation in Studio
       | Last 365 Days |
       | Custom        |
     Examples:
-      | ADVERTISER          |
-      | TAMTESTING ACCOUNT  |
+      | ADVERTISER         |
+      | TAMTESTING ACCOUNT |
 
   @regression
   Scenario Outline: Verify chart and table update immediately when a preset timeframe is selected
@@ -113,8 +113,8 @@ Feature: Brand Explorer Workspace creation in Studio
       | ADVERTISER         | WORKSPACE_NAME     | TIMEFRAME    | DAYS |
       | TAMTESTING ACCOUNT | Automation_Persist | Last 30 Days | 30   |
 
-    @regression
-    Scenario Outline: Verify a Brand Explorer dimension can be selected and removed
+  @regression
+  Scenario Outline: Verify a Brand Explorer dimension can be selected and removed
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "Brand Explorer" workspace
@@ -131,16 +131,16 @@ Feature: Brand Explorer Workspace creation in Studio
       | Visitation               |
     And User removes the default dimensions and metric
     Then Verify each "dimension" under below categories can be selected and removed
-      | Campaign Details         | Ad Type, Campaign ID, Campaign Name, Click Text, Creative, Creative Type, Form Text, Keyword, Line Item ID, Line Item Name, Search Engine, Tactic ID, Tactic Name |
-      | Collection Details       | Account ID, Account Name, Advertiser ID, Advertiser Name, Channel, Channel ID, Collection ID, Collection Name |
-      | Custom Parameters        | Param 1, Param 2, Param 3, Param 4, Param 5 |
-      | DS Values                | DS Account Type, DS Ad Group, DS Ad Group ID, DS Campaign, DS Campaign ID, DS Keyword ID, DS Search Term |
+      | Campaign Details         | Ad Type, Campaign ID, Campaign Name, Click Text, Creative, Creative Type, Form Text, Keyword, Line Item ID, Line Item Name, Search Engine, Tactic ID, Tactic Name                                 |
+      | Collection Details       | Account ID, Account Name, Advertiser ID, Advertiser Name, Channel, Channel ID, Collection ID, Collection Name                                                                                     |
+      | Custom Parameters        | Param 1, Param 2, Param 3, Param 4, Param 5                                                                                                                                                       |
+      | DS Values                | DS Account Type, DS Ad Group, DS Ad Group ID, DS Campaign, DS Campaign ID, DS Keyword ID, DS Search Term                                                                                          |
       | Healthcare Professionals | First Name, HCP Flag, Hospital Affiliation, Last Name, NPI, NPI Flag, Practice Affiliation, Primary Specialty, Profession, Secondary Specialty, Specialties, Specialty (separate rows), User Type |
-      | Technographic            | Device Type, Operating System |
-      | Time Frame               | Day, Day of Week, Hour, Month, Time Range, Timestamp, Week, Weekday or Weekend, Year |
-      | UTM Values               | Third Party CID, UTM Campaign, UTM Content, UTM Medium, UTM Source, UTM Term |
-      | Visitation               | Attributed Source, File Name, From Domain (domain referrer), From URL (URL Referrer), Page Domain, Page URL, Page URL (Denormalized), Social Provider, Source, Source Type, Video Title |
+      | Technographic            | Device Type, Operating System                                                                                                                                                                     |
+      | Time Frame               | Day, Day of Week, Hour, Month, Time Range, Timestamp, Week, Weekday or Weekend, Year                                                                                                              |
+      | UTM Values               | Third Party CID, UTM Campaign, UTM Content, UTM Medium, UTM Source, UTM Term                                                                                                                      |
+      | Visitation               | Attributed Source, File Name, From Domain (domain referrer), From URL (URL Referrer), Page Domain, Page URL, Page URL (Denormalized), Social Provider, Source, Source Type, Video Title           |
     Examples:
-      | ADVERTISER          |
-      | TAMTESTING ACCOUNT  |
+      | ADVERTISER         |
+      | TAMTESTING ACCOUNT |
 
