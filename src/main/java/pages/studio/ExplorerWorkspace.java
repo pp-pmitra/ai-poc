@@ -238,7 +238,13 @@ public class ExplorerWorkspace {
                     else locator.first().click();
                 }
                 break;
-            case "NPI Gender", "NPI Age", "Years Practiced", "Number of Patients", "Patient Age", "Patient Gender", "Gender":
+            case "NPI Gender",
+                    "NPI Age",
+                    "Years Practiced",
+                    "Number of Patients",
+                    "Patient Age",
+                    "Patient Gender",
+                    "Gender":
                 for (String option : options) {
                     WORKSPACE_FRAME
                             .locator(String.format("//label[contains(text(),'%s')]", option.trim()))

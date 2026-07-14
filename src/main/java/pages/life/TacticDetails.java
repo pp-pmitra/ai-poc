@@ -6,16 +6,15 @@ import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import factory.DriverFactory;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import pages.Navigation;
 import utils.CommonUtils;
 import utils.WaitUtility;
 
-import java.util.function.Consumer;
-
 public class TacticDetails {
-    public final Locator TARGETING_RULES_ICON;
     private final Page page;
+    public final Locator TARGETING_RULES_ICON;
     private final Locator VERIFY_TACTIC_DETAILS_PAGE;
     private final Locator TACTIC_NAME;
     private final Locator SAVE_TACTIC_DETAILS;
@@ -75,7 +74,6 @@ public class TacticDetails {
     private final Locator DATA_COST_CPM;
     private final Locator HUMAN_COST_CPM;
     private final Locator COPY_SUCCESS_ALERT;
-
     private final Locator TARGETING_RULE_CONFIRMATION_DIALOG;
     private final Locator CONTINUE_BUTTON;
     private final Locator CLICK_REFRESH_BUTTON;
@@ -84,6 +82,8 @@ public class TacticDetails {
     private final Locator SHOW_EXPRESSION_BUTTON;
     private final Locator CONNECTION_LOCATOR;
     private final Locator VALUE_LOCATOR;
+    private final Locator PERCENT_TYPE_FEE_INPUT;
+    private final Locator DOLLAR_TYPE_FEE_INPUT;
     private List<String> showExpressionRawValues;
     private List<String> showExpressionValues;
     Campaigns campaigns = new Campaigns(DriverFactory.getPage());
@@ -172,6 +172,10 @@ public class TacticDetails {
         this.SHOW_EXPRESSION_BUTTON = page.locator("//span[contains(text(),'Show Expression')]");
         this.VALUE_LOCATOR = page.locator("//span[@class='targetGreen keyword text-target']");
         this.CONNECTION_LOCATOR = page.locator("//span[@class='inlineDiv connector']");
+        this.PERCENT_TYPE_FEE_INPUT = page.locator(
+                "//div[contains(@class,'management-fee-container')]//input[contains(@class,'percent-img')]");
+        this.DOLLAR_TYPE_FEE_INPUT = page.locator(
+                "//div[contains(@class,'management-fee-container')]//input[contains(@class,'doller-img')]");
     }
 
     public void clickNewTactic() {
@@ -179,8 +183,9 @@ public class TacticDetails {
     }
 
     public Locator customFieldValue(String customFieldName) {
-        return page.locator(
-                String.format("//span[@class='cmp-form-label-text' and text()='%s']/parent::label/following-sibling::input", customFieldName));
+        return page.locator(String.format(
+                "//span[@class='cmp-form-label-text' and text()='%s']/parent::label/following-sibling::input",
+                customFieldName));
     }
 
     public List<String> getAllTactics() {
@@ -200,8 +205,9 @@ public class TacticDetails {
     }
 
     public void clearCustomFieldText(String customFieldName) {
-        Locator FIELD_OPTIONS = page.locator(
-                String.format("//span[@class='cmp-form-label-text' and text()='%s']/parent::label/following-sibling::input", customFieldName));
+        Locator FIELD_OPTIONS = page.locator(String.format(
+                "//span[@class='cmp-form-label-text' and text()='%s']/parent::label/following-sibling::input",
+                customFieldName));
         FIELD_OPTIONS.clear();
         SAVE_TACTIC_DETAILS.click();
     }
@@ -297,7 +303,8 @@ public class TacticDetails {
 
     public void removeTargetingRule(String ruleType) {
         waitUtility.waitUntilSpinnerHidden();
-        String ruleLocator = String.format("//span[text()='%s']/parent::label//following-sibling::div//div[contains(@title,'delete')]", ruleType);
+        String ruleLocator = String.format(
+                "//span[text()='%s']/parent::label//following-sibling::div//div[contains(@title,'delete')]", ruleType);
         page.locator(ruleLocator).click();
         waitUtility.waitUntilSpinnerHidden();
     }
@@ -364,8 +371,9 @@ public class TacticDetails {
         waitUtility.waitForLocatorVisible(
                 page.locator("//app-life-custom-field-setting//label[contains(@class,'form-label')]")
                         .last());
-        Locator FIELD_OPTIONS = page.locator(
-                String.format("//span[@class='cmp-form-label-text' and text()='%s']/following-sibling::div//img[@class='three-dots']", customFieldName));
+        Locator FIELD_OPTIONS = page.locator(String.format(
+                "//span[@class='cmp-form-label-text' and text()='%s']/following-sibling::div//img[@class='three-dots']",
+                customFieldName));
         FIELD_OPTIONS.click();
         DELETE_BUTTON.last().click();
         CONFIRM_DELETE.click();
@@ -466,11 +474,11 @@ public class TacticDetails {
                 managementFeeOption);
         page.locator(optionXPath).click();
         switch (managementFeeOption) {
-            case "Percentage" -> tacticSettings.PERCENT_TYPE_FEE_INPUT.fill(percent);
-            case "CPM", "Fixed CPM" -> tacticSettings.DOLLAR_TYPE_FEE_INPUT.fill(amount);
+            case "Percentage" -> PERCENT_TYPE_FEE_INPUT.fill(percent);
+            case "CPM", "Fixed CPM" -> DOLLAR_TYPE_FEE_INPUT.fill(amount);
             case "% + CPM" -> {
-                tacticSettings.PERCENT_TYPE_FEE_INPUT.fill(percent);
-                tacticSettings.DOLLAR_TYPE_FEE_INPUT.fill(amount);
+                PERCENT_TYPE_FEE_INPUT.fill(percent);
+                DOLLAR_TYPE_FEE_INPUT.fill(amount);
             }
             default -> throw new IllegalArgumentException("Unexpected fee type: " + managementFeeOption);
         }
@@ -715,7 +723,10 @@ public class TacticDetails {
                 .isVisible();
     }
 
-    public void createLineItemsWithTacticsAndTargetingRules(List<Map<String, String>> rows, String creative, Consumer<Map<String, List<String>>> perTacticVerification) {
+    public void createLineItemsWithTacticsAndTargetingRules(
+            List<Map<String, String>> rows,
+            String creative,
+            Consumer<Map<String, List<String>>> perTacticVerification) {
         String currentLiName = null;
 
         for (int i = 0; i < rows.size(); i++) {
