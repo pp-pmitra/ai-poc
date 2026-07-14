@@ -5,10 +5,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import utils.WaitUtility;
 
 public class Accounts {
@@ -509,7 +507,8 @@ public class Accounts {
 
     public void externalUserSwitchAccount(String accountName) {
         USER_PROFILE_ICON.click();
-        Locator SelectAccount = page.locator(String.format("//*[@id='accSwitchContainer']/ul/li/span[text()='%s]", accountName));
+        Locator SelectAccount =
+                page.locator(String.format("//*[@id='accSwitchContainer']/ul/li/span[text()='%s]", accountName));
         waitUtility.waitForLocatorVisible(SelectAccount);
         SelectAccount.click();
     }
