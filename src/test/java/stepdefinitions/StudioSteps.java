@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1328,6 +1330,38 @@ public class StudioSteps {
         logger.info("Expected date range: {} to {}", expectedStart, expectedEnd);
         Assert.assertEquals("Last date in table does not match yesterday", expectedEnd, dates.get(dates.size() - 1));
         Assert.assertEquals("First date in table does not match expected start", expectedStart, dates.get(0));
+    }
+
+    @Then("Verify {string} tab with all types under below categories")
+    public void verifyComponentTabWithAllTypesUnderCategories(String componentType, DataTable dataTable) {
+        List<String> expectedCategories = dataTable.asList(String.class);
+        logger.info("Verifying {} categories are present: {}", componentType, expectedCategories);
+        List<String> missingCategories = brandExplorerWorkspace.getMissingComponentCategories(expectedCategories);
+        logger.info("Missing {} categories: {}", componentType, missingCategories);
+        Assert.assertTrue(
+                "Missing " + componentType + " categories in the " + componentType + " tab: " + missingCategories,
+                missingCategories.isEmpty());
+    }
+
+    @And("User removes the default dimensions and metric")
+    public void userRemovesTheDefaultDimensionsAndMetric() {
+        logger.info("Removing default dimension 'Day' and default metric 'Identified NPIs'");
+        brandExplorerWorkspace.removeDefaultDimensionAndMetric();
+    }
+
+    @Then("Verify each {string} under below categories can be selected and removed")
+    public void verifyEachComponentUnderCategoriesCanBeSelectedAndRemoved(String componentType, DataTable dataTable) {
+        for (List<String> row : dataTable.asLists(String.class)) {
+            String category = row.get(0).trim();
+            List<String> components =
+                    Arrays.stream(row.get(1).split(",")).map(String::trim).collect(Collectors.toList());
+            logger.info("Verifying select/remove of {}s for category '{}': {}", componentType, category, components);
+            List<String> failures = brandExplorerWorkspace.verifyComponentsSelectAndRemove(category, components);
+            logger.info("Select/remove failures for category '{}': {}", category, failures);
+            Assert.assertTrue(
+                    "Select/remove verification failed for category '" + category + "': " + failures,
+                    failures.isEmpty());
+        }
     }
 
     @Then("User captures the {string} count")
