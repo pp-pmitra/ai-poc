@@ -88,7 +88,7 @@ public class ApiActions {
                         .setData(requestBody));
     }
 
-    public String getCleanJson(APIResponse response){
+    public String getCleanJson(APIResponse response) {
         String rawResponse = response.text();
         String cleanJson = "";
         String[] lines = rawResponse.split("\\r?\\n");
