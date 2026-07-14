@@ -119,7 +119,7 @@ Feature: Brand Explorer Workspace creation in Studio
     Then User sees the types of workspaces they have permissions for
     And User clicks on "Brand Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    Then Verify "dimension" tab with all "dimension" types under below categories
+    Then Verify "dimension" tab with all types under below categories
       | Campaign Details         |
       | Collection Details       |
       | Custom Parameters        |

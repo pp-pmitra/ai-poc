@@ -1333,9 +1333,8 @@ public class StudioSteps {
         Assert.assertEquals("First date in table does not match expected start", expectedStart, dates.get(0));
     }
 
-    @Then("Verify {string} tab with all {string} types under below categories")
-    public void verifyComponentTabWithAllTypesUnderCategories(
-            String componentType, String componentTypeRepeated, DataTable dataTable) {
+    @Then("Verify {string} tab with all types under below categories")
+    public void verifyComponentTabWithAllTypesUnderCategories(String componentType, DataTable dataTable) {
         List<String> expectedCategories = dataTable.asList(String.class);
         logger.info("Verifying {} categories are present: {}", componentType, expectedCategories);
         List<String> missingCategories = brandExplorerWorkspace.getMissingComponentCategories(expectedCategories);
