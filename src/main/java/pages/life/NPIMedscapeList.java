@@ -22,7 +22,8 @@ public class NPIMedscapeList {
     public NPIMedscapeList(Page page) {
         this.page = page;
         this.LIST_NAME = page.locator("//input[contains(@placeholder,'List Name')]");
-        this.FETCH_ADVERTISER = page.locator("//div[contains(text(),'Select Advertiser')]/following-sibling::div//span");
+        this.FETCH_ADVERTISER =
+                page.locator("//div[contains(text(),'Select Advertiser')]/following-sibling::div//span");
         this.NEXT_BUTTON = page.locator("//button[contains(@class,'mat-flat-button')]//span[text()='Next']");
         this.BROWSE_BUTTON = page.locator("//a[@id='upload_link' and contains(text(),'browse computer')]");
         this.COLUMN_LIST_SECTION = page.locator("//div[contains(@class,'med-col-list-section')]");
@@ -50,9 +51,14 @@ public class NPIMedscapeList {
     }
 
     public void mapRowHeadersToLabels(String labelName, String columnValue) {
-        Locator listColumnDropdown = page.locator(String.format("//span[text()='%s']/parent::div/following-sibling::div//select", labelName));
+        Locator listColumnDropdown = page.locator(
+                String.format("//span[text()='%s']/parent::div/following-sibling::div//select", labelName));
         waitUtility.waitForLocatorVisible(COLUMN_LIST_SECTION);
-        COLUMN_LIST_SECTION.locator(String.format("//span[text()='%s']/preceding-sibling::span//div[contains(@class,'mat-checkbox-inner-container')]", labelName)).click();
+        COLUMN_LIST_SECTION
+                .locator(String.format(
+                        "//span[text()='%s']/preceding-sibling::span//div[contains(@class,'mat-checkbox-inner-container')]",
+                        labelName))
+                .click();
         waitUtility.waitForLocatorVisible(listColumnDropdown);
         listColumnDropdown.click();
         listColumnDropdown.selectOption(new SelectOption().setLabel(columnValue));

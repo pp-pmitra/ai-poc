@@ -4,12 +4,12 @@ import com.microsoft.playwright.FrameLocator;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.TimeoutError;
+import com.microsoft.playwright.options.AriaRole;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import utils.WaitUtility;
 
 public class BrandExplorerWorkspace {
@@ -43,8 +43,8 @@ public class BrandExplorerWorkspace {
         this.END_DATE_INPUT = WORKSPACE_FRAME.locator("input[data-testid='date-to-text-input']");
         this.DATE_RANGE_ERROR =
                 WORKSPACE_FRAME.locator("//p[normalize-space()='Start date cannot be later than end date.']");
-        this.DATE_CELLS = WORKSPACE_FRAME.locator(
-                "//div[contains(@class,'Box')]//table//tbody//tr//td[1][@aria-colindex]");
+        this.DATE_CELLS =
+                WORKSPACE_FRAME.locator("//div[contains(@class,'Box')]//table//tbody//tr//td[1][@aria-colindex]");
         this.SPINNER = WORKSPACE_FRAME.locator("//div[@data-testid='loading-spinner']");
     }
 
@@ -113,6 +113,10 @@ public class BrandExplorerWorkspace {
         waitUtility.waitForLocatorHidden(SPINNER);
     }
 
+    public void waitForSpinnerToAppear() {
+        waitUtility.waitForLocatorVisible(SPINNER);
+    }
+
     public List<String> getTableDates(int days) {
         waitUtility.waitForLocatorVisible(DATE_CELLS.first());
         Set<String> seenDates = new LinkedHashSet<>();
@@ -138,21 +142,16 @@ public class BrandExplorerWorkspace {
             page.waitForTimeout(1000);
             String newLastDate = DATE_CELLS.last().innerText().trim();
             // No new data loaded
-            if (currentLastDate.equals(newLastDate)
-                    || currentLastDate.equals(previousLastDate)) {
+            if (currentLastDate.equals(newLastDate) || currentLastDate.equals(previousLastDate)) {
                 break;
             }
             previousLastDate = currentLastDate;
         }
-        return seenDates.stream()
-                .limit(days)
-                .collect(Collectors.toList());
+        return seenDates.stream().limit(days).collect(Collectors.toList());
     }
 
     public boolean isDateRangePickerDisplayed() {
-        return DATE_RANGE_PICKER.isVisible()
-                && START_DATE_INPUT.isVisible()
-                && END_DATE_INPUT.isVisible();
+        return DATE_RANGE_PICKER.isVisible() && START_DATE_INPUT.isVisible() && END_DATE_INPUT.isVisible();
     }
 
     public boolean areDateFieldsConfigurable() {
@@ -172,14 +171,15 @@ public class BrandExplorerWorkspace {
 
     public void waitForStartDateInTable(String startDate) {
         // Wait until the table actually reflects the new start date, not just that containers are visible
-        Locator startDateCell = WORKSPACE_FRAME.locator(
-                String.format("//div[contains(@class,'Box')]//table//tbody//tr//td[1]//p[normalize-space()='%s']", startDate));
+        Locator startDateCell = WORKSPACE_FRAME.locator(String.format(
+                "//div[contains(@class,'Box')]//table//tbody//tr//td[1]//p[normalize-space()='%s']", startDate));
         waitUtility.waitForLocatorVisible(startDateCell);
     }
 
     public boolean isDateRangeErrorDisplayed() {
-        // in case the error message is not displayed, waitForLocatorVisible will throw a TimeoutError, which we catch and return false
-        // instead of timing out the test as that would be a regression failure. 
+        // in case the error message is not displayed, waitForLocatorVisible will throw a TimeoutError, which we catch
+        // and return false
+        // instead of timing out the test as that would be a regression failure.
         try {
             waitUtility.waitForLocatorVisible(DATE_RANGE_ERROR);
             return true;
@@ -213,5 +213,83 @@ public class BrandExplorerWorkspace {
     private String toDisplayFormat(String isoDate) {
         String[] parts = isoDate.split("-");
         return parts[1] + "/" + parts[2] + "/" + parts[0];
+    }
+
+    // Both Dimensions and Metrics are organized as accordion categories containing checkboxes,
+    // so these locators and the methods below serve either component type.
+    private Locator componentCategoryTab(String category) {
+        return WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName(category));
+    }
+
+    private Locator componentCheckbox(String component) {
+        return WORKSPACE_FRAME.getByRole(
+                AriaRole.CHECKBOX, new FrameLocator.GetByRoleOptions().setName(component).setExact(true));
+    }
+
+    private Locator tableColumnHeader(String columnName) {
+        return WORKSPACE_FRAME.locator(String.format("//th//p[text()='%s']", columnName));
+    }
+
+    public List<String> getMissingComponentCategories(List<String> categories) {
+        List<String> missing = new ArrayList<>();
+        for (String category : categories) {
+            try {
+                waitUtility.waitForLocatorVisible(componentCategoryTab(category));
+            } catch (TimeoutError e) {
+                missing.add(category);
+            }
+        }
+        return missing;
+    }
+
+    // Component checkboxes only render once their category accordion is expanded.
+    private void expandComponentCategory(String category) {
+        Locator categoryTab = componentCategoryTab(category);
+        waitUtility.waitForLocatorVisible(categoryTab);
+        if (!"true".equals(categoryTab.getAttribute("aria-expanded"))) {
+            categoryTab.click();
+        }
+    }
+
+    public void deselectComponent(String category, String component) {
+        expandComponentCategory(category);
+        Locator checkbox = componentCheckbox(component);
+        waitUtility.waitForLocatorVisible(checkbox);
+        checkbox.uncheck();
+    }
+
+    // Removes the workspace's default dimension (Day, under Time Frame) and default metric
+    // (Identified NPIs, under NPI Events) so later selections can be verified against an empty table.
+    public void removeDefaultDimensionAndMetric() {
+        deselectComponent("Time Frame", "Day");
+        deselectComponent("NPI Events", "Identified NPIs");
+    }
+
+    // Selects every item in the category (dimension or metric), verifies each renders as a table
+    // column, then deselects all of them and verifies the columns disappear - proves both the
+    // component list and the select/remove behavior for the whole category in one pass. Returns a
+    // human-readable failure per component that didn't behave as expected, empty if all passed.
+    public List<String> verifyComponentsSelectAndRemove(String category, List<String> components) {
+        expandComponentCategory(category);
+        List<String> failures = new ArrayList<>();
+        components.forEach(component -> componentCheckbox(component).check());
+        waitForSpinnerToAppear();
+        waitForSpinnerToDisappear();
+        for (String component : components) {
+            try {
+                waitUtility.waitForLocatorVisible(tableColumnHeader(component));
+            } catch (TimeoutError e) {
+                failures.add(component + ": did not appear as a table column after being selected");
+            }
+        }
+        components.forEach(component -> componentCheckbox(component).uncheck());
+        for (String component : components) {
+            try {
+                waitUtility.waitForLocatorHidden(tableColumnHeader(component));
+            } catch (TimeoutError e) {
+                failures.add(component + ": was not removed from the table after being deselected");
+            }
+        }
+        return failures;
     }
 }

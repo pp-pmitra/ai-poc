@@ -67,7 +67,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME |
       | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      |
 
-
   @regression
   Scenario Outline: Verify user is not able to set Base bid price and Max Bid higher than the allowed limit for a tactic
     When User clicks on Campaign Settings
@@ -87,7 +86,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME |
       | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      |
-
 
   @regression
   Scenario Outline: Verify deletion of Tactic from a Line Item
@@ -114,7 +112,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | CHANNEL | TACTIC_NAME | COUNT |
       | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Email   | Tactic      | 3     |
-
 
   @regression
   Scenario Outline: To verify user is able to add frequency cap in campaign, line item and tactic levels
@@ -180,7 +177,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | CHANNEL | TACTIC_NAME | COUNT |
       | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Email   | Tactic      | 3     |
-
 
   @regression
   Scenario Outline: Verify user is able to create duplicate of a Tactic
@@ -300,8 +296,8 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     And User saves the settings
     And User navigates to tactic setting tab
     Then The user clicks on show expression tab and fetch the values displayed
-    Then Verify that all the rule types added in targeting rules are displayed in show expression with correct values along with "<Default_Expression>"
+    Then Verify that all the rule types added in targeting rules are displayed in show expression with correct values along with "<DEFAULT_EXPRESSION>"
     And Verify show expression connector AND OR logic is correct
     Examples:
-      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | Default_Expression |
-      | 01- Advertiser | Test    | Regular | 10000     | Line      | 120         | Dynamic_Tac |  COUNTRY           |
+      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | DEFAULT_EXPRESSION |
+      | 01- Advertiser | Test    | Regular | 10000     | Line      | 120         | Dynamic_Tac | COUNTRY            |

@@ -173,7 +173,7 @@ public class Workspace {
         waitUtility.waitForLocatorHidden(WORKSPACE_CREATED_ALERT);
     }
 
-    public void waitTillWorkspaceSaveButtonIsDisabled(){
+    public void waitTillWorkspaceSaveButtonIsDisabled() {
         page.waitForCondition(SAVE_WORKSPACE::isDisabled);
     }
 

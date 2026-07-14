@@ -4,11 +4,9 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.LoadState;
 import factory.DriverFactory;
-import utils.WaitUtility;
-
 import java.util.ArrayList;
 import java.util.List;
-
+import utils.WaitUtility;
 
 public class Campaigns {
     private final Page page;
