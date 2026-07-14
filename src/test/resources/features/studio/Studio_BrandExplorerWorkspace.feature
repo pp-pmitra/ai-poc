@@ -144,3 +144,24 @@ Feature: Brand Explorer Workspace creation in Studio
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
 
+@regression
+  Scenario Outline: Verify a Brand Explorer metric can be selected and removed
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    Then Verify "metric" tab with all types under below categories
+      | HCP Events   |
+      | NPI Events   |
+      | Time Spent   |
+      | Total Events |
+    And User removes the default dimensions and metric
+    Then Verify each "metric" under below categories can be selected and removed
+      | HCP Events   | Avg. Video Progress, HCP Active Users, HCP Avg. Engagement Time (sec), HCP Avg. Engagement Time per Session (sec), HCP Email Clicks, HCP Email Opens, HCP Engaged Sessions per User, HCP Events, HCP File Downloads, HCP First Visits, HCP Form Starts, HCP Form Submissions, HCP Media Clicks, HCP Media CTR, HCP Media Impressions, HCP Pageviews, HCP Returning Visits, HCP Search Clicks, HCP Social Clicks, HCP Social Impressions, HCP Unique Sessions, HCP Video Completes, HCP Video Starts, HCP Visits |
+      | NPI Events   | Avg. Video Progress, Identified NPIs, NPI Active Users, NPI Avg. Engagement Time (sec), NPI Avg. Engagement Time per Session (sec), NPI Email Clicks, NPI Email Opens, NPI Engaged Sessions per User, NPI Events, NPI File Downloads, NPI First Visits, NPI Form Starts, NPI Form Submissions, NPI Media Clicks, NPI Media CTR, NPI Media Frequency, NPI Media Impressions, NPI Pageviews, NPI Returning Visits, NPI Search Clicks, NPI Social Clicks, NPI Social Impressions, NPI Unique Sessions, NPI Video Completes, NPI Video Starts, NPI Visits             |
+      | Time Spent   | Time Spent (days), Time Spent (hours), Time Spent (minutes), Time Spent (seconds)                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+      | Total Events | Avg. Video Progress, Total Active Users, Total Avg. Engagement Time (sec), Total Avg. Engagement Time per Session (sec), Total Email Clicks, Total Email Opens, Total Engaged Sessions per User, Total Events, Total File Downloads, Total First Visits, Total Form Starts, Total Form Submissions, Total Media Clicks, Total Media CTR, Total Media Impressions, Total Pageviews, Total Returning Visits, Total Search Clicks, Total Social Clicks, Total Social Impressions, Total Video Completes, Total Video Starts, Total Visits           |
+    Examples:
+      | ADVERTISER         |
+      | TAMTESTING ACCOUNT |
+
