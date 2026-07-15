@@ -560,8 +560,11 @@ public class NPISmartList {
     }
 
     public String hoverAndFetchTooltip(String contextualCategory) {
-        page.locator(String.format("//div[contains(text(),'%s')]//span[@class='question-icon']", contextualCategory))
-                .hover();
+        Locator TOOLTIP_ICON = page.locator(String.format("//div[contains(text(),'%s')" +
+                "]//span[@class='question-icon']", contextualCategory));
+        waitUtility.waitForLocatorVisible(TOOLTIP_ICON);
+        TOOLTIP_ICON.dispatchEvent("mouseover");
+        TOOLTIP_ICON.dispatchEvent("mouseenter");
         waitUtility.waitForLocatorVisible(TOOL_TIP);
         return TOOL_TIP.innerText().trim();
     }
