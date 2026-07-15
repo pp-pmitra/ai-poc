@@ -106,7 +106,7 @@ public class ScheduleReport {
         this.THREE_DOT_MENU_CLOSE_BUTTON = page.locator("//div[contains(@class,'icons_20-close')]");
         this.THREE_DOT_MENU = page.locator("//div[@class='variableTooltip']");
         this.DATE_TIME_FORMAT_OPTIONS = page.locator("//span[@class='variable-text']");
-        this.REPORT_SECOND_ROW = page.locator("//tr[contains(@class,'fixedrow ng-star-inserted')][3]");
+        this.REPORT_SECOND_ROW = page.locator("//tr[contains(@class,'fixedrow ng-star-inserted')][2]");
 
     }
 
