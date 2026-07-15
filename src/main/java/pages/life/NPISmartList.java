@@ -289,6 +289,7 @@ public class NPISmartList {
     }
 
     public void selectSmartNPIListType(String smartListType) {
+        waitUtility.waitForElementVisible("//div[@class='loader']");
         SMART_LIST_POPULATION_OPTIONS.locator("text = " + smartListType).scrollIntoViewIfNeeded();
         SMART_LIST_POPULATION_OPTIONS.locator("text = " + smartListType).click();
         waitUtility.waitUntilSpinnerHidden();
