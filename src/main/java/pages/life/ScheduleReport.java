@@ -107,7 +107,6 @@ public class ScheduleReport {
         this.THREE_DOT_MENU = page.locator("//div[@class='variableTooltip']");
         this.DATE_TIME_FORMAT_OPTIONS = page.locator("//span[@class='variable-text']");
         this.REPORT_SECOND_ROW = page.locator("//tr[contains(@class,'fixedrow ng-star-inserted')][2]");
-
     }
 
     public void clickScheduleReportButton() {
