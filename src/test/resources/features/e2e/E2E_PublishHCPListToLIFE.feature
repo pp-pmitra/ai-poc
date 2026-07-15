@@ -39,7 +39,7 @@ Feature: Create and Publish HCP Explorer Workspace in Studio and Verify in LIFE
     And User select the platform to publish the list
     Then Verify list is published
     #5
-    And User navigates to NPI Lists page in LIFE
+    And User navigates to NPI Lists page
     And User searches the workspace in LIFE and selects it
     And User clicks on the published workspace
     Then User Verify the list is displayed in the Life

@@ -6,15 +6,15 @@ import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import factory.DriverFactory;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import pages.Navigation;
 import utils.CommonUtils;
 import utils.WaitUtility;
 
-import java.util.function.Consumer;
-
 public class TacticDetails {
-    public final Locator TARGETING_RULES_ICON;
     private final Page page;
+    public final Locator TARGETING_RULES_ICON;
     private final Locator VERIFY_TACTIC_DETAILS_PAGE;
     private final Locator TACTIC_NAME;
     private final Locator SAVE_TACTIC_DETAILS;
@@ -74,13 +74,18 @@ public class TacticDetails {
     private final Locator DATA_COST_CPM;
     private final Locator HUMAN_COST_CPM;
     private final Locator COPY_SUCCESS_ALERT;
-
     private final Locator TARGETING_RULE_CONFIRMATION_DIALOG;
     private final Locator CONTINUE_BUTTON;
     private final Locator CLICK_REFRESH_BUTTON;
     private final Locator NO_TARGETING_RULES;
     private final Locator FORECAST_AVAILS_NUMBER;
-
+    private final Locator SHOW_EXPRESSION_BUTTON;
+    private final Locator CONNECTION_LOCATOR;
+    private final Locator VALUE_LOCATOR;
+    private final Locator PERCENT_TYPE_FEE_INPUT;
+    private final Locator DOLLAR_TYPE_FEE_INPUT;
+    private List<String> showExpressionRawValues;
+    private List<String> showExpressionValues;
     Campaigns campaigns = new Campaigns(DriverFactory.getPage());
     LineItemDetails lineItemDetails = new LineItemDetails(DriverFactory.getPage());
     NPISmartList npiSmartList = new NPISmartList(DriverFactory.getPage());
@@ -164,6 +169,13 @@ public class TacticDetails {
         this.CLICK_REFRESH_BUTTON = page.locator("//button[contains(@class,'refresh')]");
         this.NO_TARGETING_RULES = page.locator("//div[contains(text(),'No Targeting Rules set yet')]");
         this.FORECAST_AVAILS_NUMBER = page.locator("//div[@class='forecast-metrics']//div[@class='availsNumber']");
+        this.SHOW_EXPRESSION_BUTTON = page.locator("//span[contains(text(),'Show Expression')]");
+        this.VALUE_LOCATOR = page.locator("//span[@class='targetGreen keyword text-target']");
+        this.CONNECTION_LOCATOR = page.locator("//span[@class='inlineDiv connector']");
+        this.PERCENT_TYPE_FEE_INPUT = page.locator(
+                "//div[contains(@class,'management-fee-container')]//input[contains(@class,'percent-img')]");
+        this.DOLLAR_TYPE_FEE_INPUT = page.locator(
+                "//div[contains(@class,'management-fee-container')]//input[contains(@class,'doller-img')]");
     }
 
     public void clickNewTactic() {
@@ -171,8 +183,9 @@ public class TacticDetails {
     }
 
     public Locator customFieldValue(String customFieldName) {
-        return page.locator(
-                String.format("//label[contains(text(),'%s')]/div/span//following::input[1]", customFieldName));
+        return page.locator(String.format(
+                "//span[@class='cmp-form-label-text' and text()='%s']/parent::label/following-sibling::input",
+                customFieldName));
     }
 
     public List<String> getAllTactics() {
@@ -192,8 +205,9 @@ public class TacticDetails {
     }
 
     public void clearCustomFieldText(String customFieldName) {
-        Locator FIELD_OPTIONS = page.locator(
-                String.format("//label[contains(text(),'%s')]/div/span//following::input[1]", customFieldName));
+        Locator FIELD_OPTIONS = page.locator(String.format(
+                "//span[@class='cmp-form-label-text' and text()='%s']/parent::label/following-sibling::input",
+                customFieldName));
         FIELD_OPTIONS.clear();
         SAVE_TACTIC_DETAILS.click();
     }
@@ -212,8 +226,87 @@ public class TacticDetails {
         return actualComment;
     }
 
+    public List<String> getShowExpressionRawValues() {
+        return showExpressionRawValues;
+    }
+
     public void clickSettingsTab() {
         TACTIC_SETTINGS_TAB.click();
+        waitUtility.waitUntilSpinnerHidden();
+    }
+
+    public void clickShowExpressionButton() {
+        SHOW_EXPRESSION_BUTTON.click();
+        waitUtility.waitUntilPreLoaderHidden();
+    }
+
+    public void fetchShowExpressionValues() {
+        waitUtility.waitForLocatorVisible(VALUE_LOCATOR.first());
+        int valueCount = VALUE_LOCATOR.count();
+        int connectorCount = CONNECTION_LOCATOR.count();
+        List<String> values = new ArrayList<>(valueCount * 2);
+
+        for (int i = 0; i < valueCount; i++) {
+            if (i < connectorCount) {
+                values.add(CONNECTION_LOCATOR.nth(i).innerText().trim());
+            } else {
+                values.add("");
+            }
+            values.add(VALUE_LOCATOR.nth(i).innerText().trim());
+        }
+        showExpressionRawValues = new ArrayList<>(values); // preserve raw for connector assertion
+        // Keep first occurrence order, remove duplicates, blanks, and logical connectors.
+        showExpressionValues = values.stream()
+                .filter(v -> !v.isBlank() && !v.equalsIgnoreCase("AND") && !v.equalsIgnoreCase("OR"))
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    public boolean assertShowExpressionConnectorLogic(List<String> rawValues) {
+        // Keywords are at odd indices (1, 3, 5, ...), connectors at even indices (2, 4, 6, ...)
+        boolean allValid = true;
+        for (int i = 1; i + 2 < rawValues.size(); i += 2) {
+            String leftKeyword = rawValues.get(i);
+            String connector = rawValues.get(i + 1);
+            String rightKeyword = rawValues.get(i + 2);
+            String expectedConnector = leftKeyword.equals(rightKeyword) ? "OR" : "AND";
+            if (!connector.equals(expectedConnector)) {
+                allValid = false;
+                break;
+            }
+        }
+        return allValid;
+    }
+
+    public boolean ruleMappingWithShowExpressionValues(Map<String, List<String>> ruleMap, String defaultExpression) {
+        List<String> ruleTypes = new ArrayList<>(ruleMap.keySet());
+        List<String> ruleTypeExpressions = new ArrayList<>(ruleTypes.size());
+        ruleTypeExpressions.add(defaultExpression);
+        for (String ruleType : ruleTypes) {
+            switch (ruleType) {
+                case "Behavioral Segment":
+                    ruleTypeExpressions.add("Behavioral");
+                    break;
+                case "Health Populations":
+                    ruleTypeExpressions.add("CONDITION");
+                    break;
+                case "Age":
+                    ruleTypeExpressions.add("AGE");
+                    break;
+                default:
+                    ruleTypeExpressions.add(ruleType);
+                    break;
+            }
+        }
+        return showExpressionValues.equals(ruleTypeExpressions);
+    }
+
+    public void removeTargetingRule(String ruleType) {
+        waitUtility.waitUntilSpinnerHidden();
+        String ruleLocator = String.format(
+                "//span[text()='%s']/parent::label//following-sibling::div//div[contains(@title,'delete')]", ruleType);
+        page.locator(ruleLocator).click();
+        waitUtility.waitUntilSpinnerHidden();
     }
 
     public boolean isForecastDataAvailable() {
@@ -262,7 +355,7 @@ public class TacticDetails {
     }
 
     public String verifyCustomField(String fieldName) {
-        Locator customField = page.locator(String.format("//label[contains(text(),'%s')]", fieldName));
+        Locator customField = page.locator(String.format("//span[contains(text(),'%s')]", fieldName));
         return customField.innerText().trim();
     }
 
@@ -278,9 +371,11 @@ public class TacticDetails {
         waitUtility.waitForLocatorVisible(
                 page.locator("//app-life-custom-field-setting//label[contains(@class,'form-label')]")
                         .last());
-        Locator FIELD_OPTIONS = page.locator(String.format("//label[contains(text(),'%s')]/div/span", customFieldName));
+        Locator FIELD_OPTIONS = page.locator(String.format(
+                "//span[@class='cmp-form-label-text' and text()='%s']/following-sibling::div//img[@class='three-dots']",
+                customFieldName));
         FIELD_OPTIONS.click();
-        DELETE_BUTTON.click();
+        DELETE_BUTTON.last().click();
         CONFIRM_DELETE.click();
         String text = DELETE_SUCCESS.innerText();
         waitUtility.waitForLocatorVisible(DELETE_SUCCESS);
@@ -379,11 +474,11 @@ public class TacticDetails {
                 managementFeeOption);
         page.locator(optionXPath).click();
         switch (managementFeeOption) {
-            case "Percentage" -> tacticSettings.PERCENT_TYPE_FEE_INPUT.fill(percent);
-            case "CPM", "Fixed CPM" -> tacticSettings.DOLLAR_TYPE_FEE_INPUT.fill(amount);
+            case "Percentage" -> PERCENT_TYPE_FEE_INPUT.fill(percent);
+            case "CPM", "Fixed CPM" -> DOLLAR_TYPE_FEE_INPUT.fill(amount);
             case "% + CPM" -> {
-                tacticSettings.PERCENT_TYPE_FEE_INPUT.fill(percent);
-                tacticSettings.DOLLAR_TYPE_FEE_INPUT.fill(amount);
+                PERCENT_TYPE_FEE_INPUT.fill(percent);
+                DOLLAR_TYPE_FEE_INPUT.fill(amount);
             }
             default -> throw new IllegalArgumentException("Unexpected fee type: " + managementFeeOption);
         }
@@ -628,16 +723,19 @@ public class TacticDetails {
                 .isVisible();
     }
 
-    public void createLineItemsWithTacticsAndTargetingRules(List<Map<String, String>> rows, String creative, Consumer<Map<String, List<String>>> perTacticVerification) {
+    public void createLineItemsWithTacticsAndTargetingRules(
+            List<Map<String, String>> rows,
+            String creative,
+            Consumer<Map<String, List<String>>> perTacticVerification) {
         String currentLiName = null;
 
         for (int i = 0; i < rows.size(); i++) {
             Map<String, String> row = rows.get(i);
-            String liType    = row.get("LI_TYPE");
-            String liName    = row.get("LI_NAME");
-            String liBudget  = row.get("LI_BUDGET");
+            String liType = row.get("LI_TYPE");
+            String liName = row.get("LI_NAME");
+            String liBudget = row.get("LI_BUDGET");
             String tacticName = row.get("TACTIC_NAME");
-            String channel   = row.get("CHANNEL");
+            String channel = row.get("CHANNEL");
 
             if (!liName.equals(currentLiName)) {
                 if (currentLiName != null) {
@@ -660,7 +758,7 @@ public class TacticDetails {
 
             Map<String, List<String>> perTacticRules = new LinkedHashMap<>();
             for (int j = 1; row.containsKey("RULE_" + j); j++) {
-                String rule   = row.get("RULE_"   + j);
+                String rule = row.get("RULE_" + j);
                 String values = row.get("VALUES_" + j);
                 if (rule != null && !rule.isEmpty()) {
                     List<String> parsedValues = CommonUtils.parseCommaSeparatedString(values);

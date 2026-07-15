@@ -22,6 +22,7 @@ public class NPILists {
     private final Locator SMART_LIST;
     private final Locator AUTO_IMPORTED_LIST;
     private final Locator EDIT_ICON;
+    private final Locator MEDSCAPE_LIST;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
 
     public NPILists(Page page) {
@@ -41,6 +42,7 @@ public class NPILists {
         this.SMART_LIST = page.getByText("Dynamic list of NPI");
         this.AUTO_IMPORTED_LIST = page.locator("//app-npilisttype[@listtypename='Auto-Imported List']");
         this.EDIT_ICON = page.locator("//img[@alt='edit' and contains(@src,'edit-inline.svg')]");
+        this.MEDSCAPE_LIST = page.locator("//app-npilisttype[@listtypename='Medscape List']");
     }
 
     public void clickNPILists() {
@@ -119,5 +121,10 @@ public class NPILists {
 
     public void clickAutoImportedList() {
         AUTO_IMPORTED_LIST.click();
+    }
+
+    public void clickMedscapeList() {
+        MEDSCAPE_LIST.click();
+        waitUtility.waitUntilSpinnerHidden();
     }
 }

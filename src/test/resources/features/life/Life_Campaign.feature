@@ -86,7 +86,7 @@ Feature: LIFE Regression - Create a Campaign
       | DEMOGRAPHICS       | Age,Ethnicity,Gender                                                                                                                                                                                                              |
       | CONTEXTUAL         | Health Pages,IAB Categories,Keywords,Language,Endemics                                                                                                                                                                            |
       | GEOGRAPHY          | Geo Targets,Geo Radius,Postal Codes,Area Codes,Weather Signals                                                                                                                                                                    |
-      | MEDIA SUPPLY       | Brand Safety Profile,Brand Suitability,Browser,Curated Markets,Custom Targeting Bundle,Deal Group,Device,Domains/Apps,IAS Context Control,Invalid Traffic,Inventory Source,Inventory Type,Operating System,Deals,Viewability      |
+      | MEDIA SUPPLY       | Brand Safety Profile,Brand Suitability,Browser,Curated Markets,Custom Targeting Bundle,Deal Groups,Device,Domains/Apps,IAS Context Control,Invalid Traffic,Inventory Source,Inventory Type,Operating System,Deals,Viewability     |
       | LEGAL TARGETINGS   | Legal Pages,Legal Populations                                                                                                                                                                                                     |
     Examples:
       | ADVERTISER             | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          |
@@ -207,16 +207,16 @@ Feature: LIFE Regression - Create a Campaign
     Then Verify tactic details are saved and user is navigated to the settings tab
     When User selects the "<CHANNEL>" as channel
     And User configures targeting rules as below
-      | Keywords          | Custom_Keyword, TestingKeyword, Qwerty123, MedKeyword1, MedKeyword2, HealthKeyword1, PharmaKeyword1                                                                                                    |
-      | Geo Targets       | New York, California, Texas, Florida, Illinois, Ohio, Georgia                                                                                                                                          |
-      | Age               | 18-24, 25-29, 30-34, 35-39, 40-44, 50-54, 60-64                                                                                                                                                        |
-      | Device            | Mobile, Tablet, Connected Device, Desktop, OOH Device                                                                                                                                                  |
-      | IP                | AutoIP148406156, AutoIP193700567199550498, TestIP, NPIAuto777559789, IPAddress_FileUpload_20260109_155851, IP_Address_20250911_024138                                                                  |
-      | Legal Populations | Adoption, Emancipation, Divorce, Separation, Child Custody, Child Support, Considering Divorce                                                                                                         |
-      | Gender            | Male, Female                                                                                                                                                                                           |
-      | Operating System  | Windows, macOS, Linux, Blackberry, iOS, Android, Mobile                                                                                                                                                |
-      | Brand Suitability | Unknown Brand Safety, Highly Illicit Do Not Monetize                                                                                                                                                   |
-      | Ethnicity         | African American, American Indian                                                                                                                                                                      |
+      | Keywords          | Custom_Keyword, TestingKeyword, Qwerty123, MedKeyword1, MedKeyword2, HealthKeyword1, PharmaKeyword1                                   |
+      | Geo Targets       | New York, California, Texas, Florida, Illinois, Ohio, Georgia                                                                         |
+      | Age               | 18-24, 25-29, 30-34, 35-39, 40-44, 50-54, 60-64                                                                                       |
+      | Device            | Mobile, Tablet, Connected Device, Desktop, OOH Device                                                                                 |
+      | IP                | AutoIP148406156, AutoIP193700567199550498, TestIP, NPIAuto777559789, IPAddress_FileUpload_20260109_155851, IP_Address_20250911_024138 |
+      | Legal Populations | Adoption, Emancipation, Divorce, Separation, Child Custody, Child Support, Considering Divorce                                        |
+      | Gender            | Male, Female                                                                                                                          |
+      | Operating System  | Windows, macOS, Linux, Blackberry, iOS, Android, Mobile                                                                               |
+      | Brand Suitability | Unknown Brand Safety, Highly Illicit Do Not Monetize                                                                                  |
+      | Ethnicity         | African American, American Indian                                                                                                     |
     Then Verify the configured targeting rules
     And Verify the count of rules added for the selected targeting rule type on the Tactic Settings page
     When User saves the settings
@@ -228,8 +228,8 @@ Feature: LIFE Regression - Create a Campaign
     Then Verify the newly created campaign is in running state
     Then Verify the newly created campaign details in the campaign list: Campaign name, Line item name and Tactic name
     Examples:
-      | ADVERTISER     | CP_NAME    | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | CREATIVE           |
-      | 01- Advertiser | Persisted  | Regular | 10000     | Line      | 120         | Tactic      | Display Advanced | Please_Dont_Delete |
+      | ADVERTISER     | CP_NAME   | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | CREATIVE           |
+      | 01- Advertiser | Persisted | Regular | 10000     | Line      | 120         | Tactic      | Display Advanced | Please_Dont_Delete |
 
 #  @regression
 #  Scenario Outline: API Sample Test

@@ -29,7 +29,9 @@ public class DTCExplorerWorkspace {
         this.UNIQUE_CONSUMER_TEXT = DASHBOARD_FRAME.locator("//h3[contains(text(), 'Unique Consumers')]");
         this.UNIQUE_CONSUMER_COUNT = DASHBOARD_FRAME.locator(
                 "//h3[normalize-space()='Unique Consumers']/ancestor::div[contains(@class,'single-value-visualization')]//span");
-        this.SUBMIT_ICON = WORKSPACE_FRAME.locator("//div[contains(@class, 'sc-cXPBUD')]//div[contains(@class, 'Icon-sc')]").first();
+        this.SUBMIT_ICON = WORKSPACE_FRAME
+                .locator("//div[contains(@class, 'sc-cXPBUD')]//div[contains(@class, 'Icon-sc')]")
+                .first();
         this.SUBMIT_BUTTON = WORKSPACE_FRAME.locator("//button[.//div[text()='Submit request']]");
         this.AUDIENCE_SUBMIT_VERIFICATION = WORKSPACE_FRAME.locator("//p[text()='Your Audience is being processed']");
         this.WORKSPACE_SUBMIT_TOAST = WORKSPACE_FRAME.locator("//p[normalize-space(.)='Workspace saved successfully']");

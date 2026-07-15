@@ -18,15 +18,20 @@ Feature: LIFE Regression - Validate the ability to create and delete Domain and 
     Then Verify that the Create New List screen is displayed
     And Verify that an error message is displayed when no listname "<LIST_NAME>" or "Domains" names are specified
     And Verify that if multiple "<DOMAIN_NAMES>" are specified on a single line, a validation error is shown
+    And Verify that if multiple "<DOMAIN_NAMES_ACROSS_LINES>" are specified across multiple lines, an error is shown
     And Verify that when "<DOMAIN_NAMES>" names are specified manually, the option to upload a file disappears
+    And User retrieves all the entered data before saving the list details "<LIST_NAME>"
     And Verify that the user is able to create a "Domains" list by specifying names manually
     And Verify that the counter on the left displays the correct value for each list in the navigation panel
+    And User retrieves all the entered data after saving the list details "<LIST_NAME>"
     And Verify that the user is able to edit an existing "Domains" name list "<EDITED_DOMAIN_NAMES>"
+    And User retrieves all the entered data after saving the list details "<LIST_NAME>"
     And Verify that the user is able to delete an existing "Domains" name list
+    And Verify the deleted list is no longer displayed in the left panel
     And Verify that PulsePoint provided domain list "Automation_DomainList" is denoted with a purple P icon
     Examples:
-      | SUB_TABS                   | LIST_NAME | DOMAIN_NAMES                      | EDITED_DOMAIN_NAMES           |
-      | Both, Domains, App Bundles | Domain    | brooklyn.com, docs.pulsepoint.com | manhattan.com, pulsepoint.com |
+      | SUB_TABS                   | LIST_NAME | DOMAIN_NAMES                      | EDITED_DOMAIN_NAMES           | DOMAIN_NAMES_ACROSS_LINES                                          |
+      | Both, Domains, App Bundles | Domain    | brooklyn.com, docs.pulsepoint.com | manhattan.com, pulsepoint.com | brooklyn.com, docs.pulsepoint.com :: manhattan.com, pulsepoint.com |
 
   @regression
   Scenario Outline: Manage a Domain List by uploading domain names from a file (Create, Edit, and Delete)
@@ -43,9 +48,11 @@ Feature: LIFE Regression - Validate the ability to create and delete Domain and 
     And Verify that the user is able to edit an existing list by uploading same file "<UPLOAD_FILENAME1>" again and verify the changes
     And Verify that the user is able to edit and save an existing "Domains" list by uploading another file "<UPLOAD_FILENAME2>" and verify the changes
     And Verify that the counter on the left displays the updated value after new file upload "<UPLOAD_FILENAME2>"
-    And Verify that user is able to download the uploaded file "<UPLOAD_FILENAME1>", "<UPLOAD_FILENAME2>"
+    And Verify that user is able to download the uploaded file "<UPLOAD_FILENAME1>", "<UPLOAD_FILENAME2>" and fetches the count of the downloaded files
+    And Verify that the count of the downloaded files "<UPLOAD_FILENAME1>", "<UPLOAD_FILENAME2>" matches with the count displayed in the Uploaded Files section and left side panel
     And Verify that the user is able to delete the uploaded file "<UPLOAD_FILENAME1>"
     And Verify that the user is able to delete an existing "Domains" name list
+    And Verify the deleted list is no longer displayed in the left panel
     Examples:
       | SUB_TABS                   | LIST_NAME         | UPLOAD_FILENAME1    | UPLOAD_FILENAME2    |
       | Both, Domains, App Bundles | Domain_FileUpload | DomainNameFile1.csv | DomainNameFile2.csv |
@@ -59,10 +66,14 @@ Feature: LIFE Regression - Validate the ability to create and delete Domain and 
     Then Verify that the Create New List screen is displayed
     And Verify that an error message is displayed when no listname "<LIST_NAME>" or "AppBundle" names are specified
     And Verify that when "<APP_BUNDLES>" names are specified manually, the option to upload a file disappears
+    And User retrieves all the entered data before saving the list details "<LIST_NAME>"
     And Verify that the user is able to create a "AppBundle" list by specifying names manually
     And Verify that the counter on the left displays the correct value for each list in the navigation panel
+    And User retrieves all the entered data after saving the list details "<LIST_NAME>"
     And Verify that the user is able to edit an existing "AppBundle" name list "<EDITED_APP_BUNDLES>"
+    And User retrieves all the entered data after saving the list details "<LIST_NAME>"
     And Verify that the user is able to delete an existing "AppBundle" name list
+    And Verify the deleted list is no longer displayed in the left panel
     And Verify that PulsePoint provided domain list "Automation_AppBundleList" is denoted with a purple P icon
     Examples:
       | SUB_TABS                   | LIST_NAME  | APP_BUNDLES                 | EDITED_APP_BUNDLES       |
@@ -83,9 +94,11 @@ Feature: LIFE Regression - Validate the ability to create and delete Domain and 
     And Verify that the user is able to edit an existing list by uploading same file "<UPLOAD_FILENAME1>" again and verify the changes
     And Verify that the user is able to edit and save an existing "AppBundle" list by uploading another file "<UPLOAD_FILENAME2>" and verify the changes
     And Verify that the counter on the left displays the updated value after new file upload "<UPLOAD_FILENAME2>"
-    And Verify that user is able to download the uploaded file "<UPLOAD_FILENAME1>", "<UPLOAD_FILENAME2>"
+    And Verify that user is able to download the uploaded file "<UPLOAD_FILENAME1>", "<UPLOAD_FILENAME2>" and fetches the count of the downloaded files
+    And Verify that the count of the downloaded files "<UPLOAD_FILENAME1>", "<UPLOAD_FILENAME2>" matches with the count displayed in the Uploaded Files section and left side panel
     And Verify that the user is able to delete the uploaded file "<UPLOAD_FILENAME1>"
     And Verify that the user is able to delete an existing "AppBundle" name list
+    And Verify the deleted list is no longer displayed in the left panel
     Examples:
       | SUB_TABS                   | LIST_NAME            | UPLOAD_FILENAME1   | UPLOAD_FILENAME2   |
       | Both, Domains, App Bundles | AppBundle_FileUpload | AppBundleFile1.csv | AppBundleFile2.csv |

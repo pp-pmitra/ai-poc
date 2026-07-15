@@ -43,8 +43,8 @@ Feature: Brand Explorer Workspace creation in Studio
       | Last 365 Days |
       | Custom        |
     Examples:
-      | ADVERTISER          |
-      | TAMTESTING ACCOUNT  |
+      | ADVERTISER         |
+      | TAMTESTING ACCOUNT |
 
   @regression
   Scenario Outline: Verify chart and table update immediately when a preset timeframe is selected
@@ -94,3 +94,53 @@ Feature: Brand Explorer Workspace creation in Studio
     Examples:
       | ADVERTISER         | START_DATE | END_DATE   |
       | TAMTESTING ACCOUNT | 2026-05-07 | 2026-05-01 |
+
+  @regression
+  Scenario Outline: Verify a saved non-default timeframe persists when the workspace is closed and reopened
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User edits the workspace name as "<WORKSPACE_NAME>"
+    When User clicks the TimeFrame selector
+    And User selects the timeframe preset "<TIMEFRAME>"
+    And User saves the "Brand Explorer" workspace
+    Then Verify the "Brand Explorer" Workspace is saved
+    When User navigates back to the workspace list and reopens the saved Brand Explorer workspace
+    Then Verify the Time Frame still shows "<TIMEFRAME>" after reopening the workspace
+    And Verify the Day column shows <DAYS> dates in ascending order
+    Examples:
+      | ADVERTISER         | WORKSPACE_NAME     | TIMEFRAME    | DAYS |
+      | TAMTESTING ACCOUNT | Automation_Persist | Last 30 Days | 30   |
+
+  @regression
+  Scenario Outline: Verify a Brand Explorer dimension can be selected and removed
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    Then Verify "dimension" tab with all types under below categories
+      | Campaign Details         |
+      | Collection Details       |
+      | Custom Parameters        |
+      | DS Values                |
+      | Healthcare Professionals |
+      | Technographic            |
+      | Time Frame               |
+      | UTM Values               |
+      | Visitation               |
+    And User removes the default dimensions and metric
+    Then Verify each "dimension" under below categories can be selected and removed
+      | Campaign Details         | Ad Type, Campaign ID, Campaign Name, Click Text, Creative, Creative Type, Form Text, Keyword, Line Item ID, Line Item Name, Search Engine, Tactic ID, Tactic Name                                 |
+      | Collection Details       | Account ID, Account Name, Advertiser ID, Advertiser Name, Channel, Channel ID, Collection ID, Collection Name                                                                                     |
+      | Custom Parameters        | Param 1, Param 2, Param 3, Param 4, Param 5                                                                                                                                                       |
+      | DS Values                | DS Account Type, DS Ad Group, DS Ad Group ID, DS Campaign, DS Campaign ID, DS Keyword ID, DS Search Term                                                                                          |
+      | Healthcare Professionals | First Name, HCP Flag, Hospital Affiliation, Last Name, NPI, NPI Flag, Practice Affiliation, Primary Specialty, Profession, Secondary Specialty, Specialties, Specialty (separate rows), User Type |
+      | Technographic            | Device Type, Operating System                                                                                                                                                                     |
+      | Time Frame               | Day, Day of Week, Hour, Month, Time Range, Timestamp, Week, Weekday or Weekend, Year                                                                                                              |
+      | UTM Values               | Third Party CID, UTM Campaign, UTM Content, UTM Medium, UTM Source, UTM Term                                                                                                                      |
+      | Visitation               | Attributed Source, File Name, From Domain (domain referrer), From URL (URL Referrer), Page Domain, Page URL, Page URL (Denormalized), Social Provider, Source, Source Type, Video Title           |
+    Examples:
+      | ADVERTISER         |
+      | TAMTESTING ACCOUNT |
+

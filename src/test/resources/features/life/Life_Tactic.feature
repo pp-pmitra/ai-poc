@@ -67,7 +67,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME |
       | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      |
 
-
   @regression
   Scenario Outline: Verify user is not able to set Base bid price and Max Bid higher than the allowed limit for a tactic
     When User clicks on Campaign Settings
@@ -87,7 +86,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME |
       | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      |
-
 
   @regression
   Scenario Outline: Verify deletion of Tactic from a Line Item
@@ -114,7 +112,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | CHANNEL | TACTIC_NAME | COUNT |
       | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Email   | Tactic      | 3     |
-
 
   @regression
   Scenario Outline: To verify user is able to add frequency cap in campaign, line item and tactic levels
@@ -181,7 +178,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | CHANNEL | TACTIC_NAME | COUNT |
       | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Email   | Tactic      | 3     |
 
-
   @regression
   Scenario Outline: Verify user is able to create duplicate of a Tactic
     When User clicks on Create Campaign
@@ -196,10 +192,10 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Then Verify settings details are saved and user is navigated to the creatives tab
     And User assigns the existing creative named "<CREATIVE>", enables the tactic and saves the changes
     When User duplicates tactic, verify data on the duplicated tactic using "Duplicate" option
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          | CREATIVE      |
       | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Behavioral Segment | Auto_Creative |
+
   @regression
   Scenario Outline: Verify all Bid Multipliers Rules under categories and Create a tactic by adding all Bid multipliers Rules
     And User clicks on create new Campaign
@@ -234,8 +230,8 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Then Verify the newly created campaign is in running state
     Then Verify the newly created campaign details in the campaign list: Campaign name, Line item name and Tactic name
     Examples:
-      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL | CREATIVE      | COUNT |BID_VALUE|
-      | 01- Advertiser | Test    | Regular | 10000     | Line      | 120         | Tactic      | Email   | Auto_Creative | 1     |2        |
+      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL | CREATIVE      | COUNT | BID_VALUE |
+      | 01- Advertiser | Test    | Regular | 10000     | Line      | 120         | Tactic      | Email   | Auto_Creative | 1     | 2         |
 
   @regression
   Scenario Outline: Verify campaign management fee is reflected in line item and line item override is reflected in tactic
@@ -278,7 +274,30 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     And User saves the settings
     And User navigates to tactic setting tab
     Then User verifies the forecast data refreshes and displays values after adding targeting rule
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME |
       | 01- Advertiser | Test    | Regular | 10000     | Line      | 120         | Tactic      |
+
+  @regression
+  Scenario Outline: Verify show expression query is correct for the chosen targeting rules
+    And User clicks on create new Campaign
+    When User enters the campaign details as "<ADVERTISER>" "<CP_NAME>" "<CP_TYPE>" "<CP_BUDGET>" and saves the campaign
+    Then Verify campaign details are saved and user is navigated to the line item page
+    When User enters the line item details as "<LINE_NAME>" "<LINE_BUDGET>", enables the line item and saves the changes
+    Then Verify line item details are saved and user is navigated to the tactic page
+    When User enters the tactic details as "<TACTIC_NAME>" and saves the tactic
+    Then User navigates to tactic setting tab
+    Then User verifies that forecast data is unavailable when no targeting rules are applied
+    When User clicks on Add Targeting Rule
+    And User configures targeting rules as below
+      | Behavioral Segment | AutoSegment18577650, 10136 Testing |
+      | Health Populations | Anesthesia and Analgesia           |
+      | Age                | 25-29, 35-39                       |
+    And User saves the settings
+    And User navigates to tactic setting tab
+    Then The user clicks on show expression tab and fetch the values displayed
+    Then Verify that all the rule types added in targeting rules are displayed in show expression with correct values along with "<DEFAULT_EXPRESSION>"
+    And Verify show expression connector AND OR logic is correct
+    Examples:
+      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | DEFAULT_EXPRESSION |
+      | 01- Advertiser | Test    | Regular | 10000     | Line      | 120         | Dynamic_Tac | COUNTRY            |

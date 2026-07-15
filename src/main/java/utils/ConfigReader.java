@@ -72,4 +72,8 @@ public class ConfigReader {
     public static String getExternalPreReleasePassword() throws Exception {
         return EncryptionDecryption.decrypt(getProperty("preReleaseExternalPassword"));
     }
+
+    public static String getP2McpAgentApiKey() throws Exception {
+        return EncryptionDecryption.decrypt(getProperty("p2McpAgentApiKey"));
+    }
 }

@@ -52,6 +52,7 @@ public class Workspace {
     private final Locator NPI_LIST_PULLOUT_MENU;
     private final Locator OK_BUTTON;
     private final Locator NPI_PUBLISH_ALERT;
+    private final Locator SAVE_WORKSPACE;
     WaitUtility waitUtility;
 
     public Workspace(Page page) {
@@ -122,6 +123,7 @@ public class Workspace {
         this.NPI_LIST_PULLOUT_MENU = WORKSPACE_FRAME.locator("//ul[@data-tour-id='npi-list-pullout-menu']");
         this.OK_BUTTON = WORKSPACE_FRAME.locator("//div[contains(text(),'OK')]");
         this.NPI_PUBLISH_ALERT = WORKSPACE_FRAME.locator("//p[contains(text(), 'NPI list published successfully')]");
+        this.SAVE_WORKSPACE = WORKSPACE_FRAME.locator("//button[contains(@data-tour-id,'save-workspace-button')]");
     }
 
     public void studio() {
@@ -169,6 +171,10 @@ public class Workspace {
 
     public void waitTillWorkspaceAlertHide() {
         waitUtility.waitForLocatorHidden(WORKSPACE_CREATED_ALERT);
+    }
+
+    public void waitTillWorkspaceSaveButtonIsDisabled() {
+        page.waitForCondition(SAVE_WORKSPACE::isDisabled);
     }
 
     public void clickWebhookIcon() {

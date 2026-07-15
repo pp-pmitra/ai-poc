@@ -15,10 +15,14 @@ Feature: LIFE Regression – Generate Keyword Lists in the following ways:
   Scenario Outline: Manage a Keyword List by manually adding, editing, and deleting keywords
     And Verify that an error message is displayed when no listname "<LIST_NAME>" or "Keywords" names are specified
     And Verify that when "<KEYWORD_NAMES>" names are specified manually, the option to upload a file disappears
+    And User retrieves all the entered data before saving the list details "<LIST_NAME>"
     And Verify that the user is able to create a "Keywords" list by specifying names manually
     And Verify that the counter on the left displays the correct value for each list in the navigation panel
+    And User retrieves all the entered data after saving the list details "<LIST_NAME>"
     And Verify that the user is able to edit an existing "Keywords" name list "<EDITED_KEYWORDS_NAMES>"
+    And User retrieves all the entered data after saving the list details "<LIST_NAME>"
     And Verify that the user is able to delete an existing "Keywords" name list
+    And Verify the deleted list is no longer displayed in the left panel
     And Verify that PulsePoint provided domain list "Automation_KeywordList" is denoted with a purple P icon
     Examples:
       | LIST_NAME | KEYWORD_NAMES                              | EDITED_KEYWORDS_NAMES        |
@@ -34,9 +38,11 @@ Feature: LIFE Regression – Generate Keyword Lists in the following ways:
     And Verify that the user is able to edit an existing list by uploading same file "<UPLOAD_FILENAME1>" again and verify the changes
     And Verify that the user is able to edit and save an existing "Keywords" list by uploading another file "<UPLOAD_FILENAME2>" and verify the changes
     And Verify that the counter on the left displays the updated value after new file upload "<UPLOAD_FILENAME2>"
-    And Verify that user is able to download the uploaded file "<UPLOAD_FILENAME1>", "<UPLOAD_FILENAME2>"
+    And Verify that user is able to download the uploaded file "<UPLOAD_FILENAME1>", "<UPLOAD_FILENAME2>" and fetches the count of the downloaded files
+    And Verify that the count of the downloaded files "<UPLOAD_FILENAME1>", "<UPLOAD_FILENAME2>" matches with the count displayed in the Uploaded Files section and left side panel
     And Verify that the user is able to delete the uploaded file "<UPLOAD_FILENAME1>"
     And Verify that the user is able to delete an existing "Keywords" name list
+    And Verify the deleted list is no longer displayed in the left panel
     Examples:
       | LIST_NAME          | UPLOAD_FILENAME1  | UPLOAD_FILENAME2  |
       | Keyword_FileUpload | KeywordsFile1.csv | KeywordsFile2.csv |

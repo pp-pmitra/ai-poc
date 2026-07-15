@@ -5,7 +5,6 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -13,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -349,9 +349,10 @@ public class StudioSteps {
         boolean isValid = actualMessage.equals("Workspace created successfully")
                 || actualMessage.equals("Workspace saved successfully")
                 || actualMessage.equals(
-                "Sent for asynchronous processing, forced by upstream dependencies - need to refresh upstream workspaces first");
+                        "Sent for asynchronous processing, forced by upstream dependencies - need to refresh upstream workspaces first");
         Assert.assertTrue("Unexpected message for " + workspaceType + " workspace: " + actualMessage, isValid);
         workspace.waitTillWorkspaceAlertHide();
+        workspace.waitTillWorkspaceSaveButtonIsDisabled();
     }
 
     @And("User clicks Edit button and updates workspace name to {string}")
@@ -1026,8 +1027,8 @@ public class StudioSteps {
     @And(
             "User applies {string} filter, selects filter options as below and verifies the clinical recency filter is updated correctly")
     public void
-    userAppliesClinicalFilterSelectsFilterOptionsAsBelowAndVerifiesTheClinicalRecencyFilterIsUpdatedCorrectly(
-            String filterType, DataTable dataTable) {
+            userAppliesClinicalFilterSelectsFilterOptionsAsBelowAndVerifiesTheClinicalRecencyFilterIsUpdatedCorrectly(
+                    String filterType, DataTable dataTable) {
         logger.info("Applying '{}' filter and verifying clinical recency values", filterType);
         List<Map<String, String>> filters = dataTable.asMaps(String.class, String.class);
 
@@ -1105,8 +1106,8 @@ public class StudioSteps {
     @Then(
             "User verifies that the selected filters, dropdown values, and search input remain persistent unless they are manually deselected or cleared - {string}, {string}, {string}")
     public void
-    userVerifiesThatTheSelectedFiltersDropdownValuesAndSearchInputRemainPersistentUnlessTheyAreManuallyDeselectedOrCleared(
-            String expectedWorkspaceType, String expectedAdvertiser, String expectedCreatedBy) {
+            userVerifiesThatTheSelectedFiltersDropdownValuesAndSearchInputRemainPersistentUnlessTheyAreManuallyDeselectedOrCleared(
+                    String expectedWorkspaceType, String expectedAdvertiser, String expectedCreatedBy) {
         String actualWorkspaceType = workspaceCreation.getSelectedWorkspaceType();
         logger.info("Workspace type: {}", actualWorkspaceType);
         Assert.assertEquals("Selected workspace type is not persistent", expectedWorkspaceType, actualWorkspaceType);
@@ -1176,8 +1177,8 @@ public class StudioSteps {
         logger.info("External user verifying workspace visibility with draft option: {}", draftOption);
         boolean isWorkspaceVisible = workspaceCreation.isWorkspaceVisible(workspaceName, draftOption);
         logger.info("Is workspace visible for external user: {}", isWorkspaceVisible);
-        Assert.assertTrue("Workspace is not visible for external user with draft option: " + draftOption, isWorkspaceVisible);
-
+        Assert.assertTrue(
+                "Workspace is not visible for external user with draft option: " + draftOption, isWorkspaceVisible);
     }
 
     @And("User edits the workspace name as {string}")
@@ -1217,6 +1218,26 @@ public class StudioSteps {
         brandExplorerWorkspace.clickTimeFrameSelector();
     }
 
+    @When("User navigates back to the workspace list and reopens the saved Brand Explorer workspace")
+    public void userReopensTheSavedBrandExplorerWorkspace() {
+        logger.info("Reopening saved Brand Explorer workspace: {}", workspaceName);
+        workspace.goToWorkspaceList();
+        workspaceCreation.verifyStudioWorkspaceFrame();
+        // A freshly saved Brand Explorer workspace is not yet returned by the name search, so filter by
+        // the Brand Explorer type and open it by name. Uses filterByWorkspaceTypeAndOpen() to avoid
+        // waiting on PAGINATION which may not render when results fit on a single page.
+        workspaceCreation.filterByWorkspaceTypeAndOpen("Brand Explorer", workspaceName);
+        brandExplorerWorkspace.waitForDashboardLoad();
+    }
+
+    @Then("Verify the Time Frame still shows {string} after reopening the workspace")
+    public void verifyTimeFramePersistsAfterReopen(String timeFrame) {
+        logger.info("Verifying Time Frame persists as {} after reopening the workspace", timeFrame);
+        String actualTimeFrame = brandExplorerWorkspace.getDefaultTimeFrame();
+        logger.info("Time Frame after reopen: {}", actualTimeFrame);
+        Assert.assertEquals("Time Frame did not persist after reopening the workspace", timeFrame, actualTimeFrame);
+    }
+
     @Then("All 9 preset timeframe options are visible in the dropdown with correct labels")
     public void allPresetOptionsAreVisibleInDropdownWithCorrectLabels(DataTable dataTable) {
         List<String> expected = dataTable.asList(String.class);
@@ -1224,7 +1245,8 @@ public class StudioSteps {
         List<String> actual = brandExplorerWorkspace.getTimeFrameOptions();
         logger.info("Actual timeframe options: {}", actual);
         Assert.assertEquals("Timeframe option count mismatch", expected.size(), actual.size());
-        Assert.assertTrue("Actual timeframe options do not match expected timeframe options", actual.containsAll(expected));
+        Assert.assertTrue(
+                "Actual timeframe options do not match expected timeframe options", actual.containsAll(expected));
     }
 
     @When("User selects the timeframe preset {string}")
@@ -1314,6 +1336,38 @@ public class StudioSteps {
         Assert.assertEquals("First date in table does not match expected start", expectedStart, dates.get(0));
     }
 
+    @Then("Verify {string} tab with all types under below categories")
+    public void verifyComponentTabWithAllTypesUnderCategories(String componentType, DataTable dataTable) {
+        List<String> expectedCategories = dataTable.asList(String.class);
+        logger.info("Verifying {} categories are present: {}", componentType, expectedCategories);
+        List<String> missingCategories = brandExplorerWorkspace.getMissingComponentCategories(expectedCategories);
+        logger.info("Missing {} categories: {}", componentType, missingCategories);
+        Assert.assertTrue(
+                "Missing " + componentType + " categories in the " + componentType + " tab: " + missingCategories,
+                missingCategories.isEmpty());
+    }
+
+    @And("User removes the default dimensions and metric")
+    public void userRemovesTheDefaultDimensionsAndMetric() {
+        logger.info("Removing default dimension 'Day' and default metric 'Identified NPIs'");
+        brandExplorerWorkspace.removeDefaultDimensionAndMetric();
+    }
+
+    @Then("Verify each {string} under below categories can be selected and removed")
+    public void verifyEachComponentUnderCategoriesCanBeSelectedAndRemoved(String componentType, DataTable dataTable) {
+        for (List<String> row : dataTable.asLists(String.class)) {
+            String category = row.get(0).trim();
+            List<String> components =
+                    Arrays.stream(row.get(1).split(",")).map(String::trim).collect(Collectors.toList());
+            logger.info("Verifying select/remove of {}s for category '{}': {}", componentType, category, components);
+            List<String> failures = brandExplorerWorkspace.verifyComponentsSelectAndRemove(category, components);
+            logger.info("Select/remove failures for category '{}': {}", category, failures);
+            Assert.assertTrue(
+                    "Select/remove verification failed for category '" + category + "': " + failures,
+                    failures.isEmpty());
+        }
+    }
+
     @And("User selects Source Audience details as {string},{string}")
     public void userSelectsSourceAudienceDetailsAs(String sourceAudience, String options) {
         logger.info("Selecting source audience: {} with options: {}", sourceAudience, options);
@@ -1331,8 +1385,7 @@ public class StudioSteps {
         logger.info("Verifying {} count ({}) is >= {}", countType, uniqueConsumersCount, expectedValue);
         Assert.assertTrue(
                 countType + " count (" + uniqueConsumersCount + ") is less than " + expectedValue,
-                uniqueConsumersCount >= expectedValue
-        );
+                uniqueConsumersCount >= expectedValue);
     }
 
     @And("User clicks on Submit button")

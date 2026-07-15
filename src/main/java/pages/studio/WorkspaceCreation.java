@@ -6,10 +6,8 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.WaitForSelectorState;
-
 import java.util.Collections;
 import java.util.List;
-
 import utils.CommonUtils;
 import utils.ConfigReader;
 import utils.WaitUtility;
@@ -118,10 +116,12 @@ public class WorkspaceCreation {
         this.WORKSPACE_CREATED_BY_DROPDOWN =
                 WORKSPACE_FRAME.locator("//div[@data-tour-id='workspaces-created-by-filter']//input");
         this.DROPDOWN_LIST_ITEMS = WORKSPACE_FRAME.locator("//div[@role='dialog']//li//span");
-        this.GET_WORKSPACE_NAME_FROM_DASHBOARD = WORKSPACE_FRAME.locator("//td[@role='gridcell' and contains(@id,'workspace_name')]//span");
+        this.GET_WORKSPACE_NAME_FROM_DASHBOARD =
+                WORKSPACE_FRAME.locator("//td[@role='gridcell' and contains(@id,'workspace_name')]//span");
         this.BACK_ARROW = WORKSPACE_FRAME.locator("//button[@color='textPrimary']");
         this.AI_PANEL = page.locator("//div[@class='ai-assistant-panel open']");
-        this.AI_PANEL_CLOSE_BUTTON = page.locator("//button[@aria-label='Close AI Assistant' and @class='ai-icon-btn']");
+        this.AI_PANEL_CLOSE_BUTTON =
+                page.locator("//button[@aria-label='Close AI Assistant' and @class='ai-icon-btn']");
         this.ABSENT_WORKSPACE = WORKSPACE_FRAME.locator("//p[text()='Nothing Found...']");
     }
 
@@ -356,6 +356,15 @@ public class WorkspaceCreation {
         waitUtility.waitForLocatorVisible(PAGINATION.first());
     }
 
+    public void filterByWorkspaceTypeAndOpen(String workspaceType, String workspaceName) {
+        waitForStudioWorkspacePage(WORKSPACE_TYPE);
+        waitUtility.waitForLocatorVisible(WORKSPACE_TYPE.last());
+        CommonUtils.selectAndClickElement(WORKSPACE_TYPE, Collections.singletonList(workspaceType));
+        Locator workspaceRow = WORKSPACE_FRAME.locator(String.format("//span[contains(text(),'%s')]", workspaceName));
+        waitUtility.waitForLocatorVisible(workspaceRow);
+        workspaceRow.click();
+    }
+
     public void selectWorkspaceAdvertiser(String advertiser) {
         WORKSPACE_ADVERTISER_DROPDOWN.click();
         waitUtility.waitForLocatorVisible(DROPDOWN_LIST_ITEMS.locator("text = " + advertiser));
@@ -383,7 +392,8 @@ public class WorkspaceCreation {
 
     public void isWorkspacePresent(String workspaceName) {
         waitUtility.waitForLocatorVisible(PAGINATION.first());
-        waitUtility.waitForLocatorVisible(WORKSPACE_FRAME.locator(String.format("//span[contains(text(),'%s')]", workspaceName)));
+        waitUtility.waitForLocatorVisible(
+                WORKSPACE_FRAME.locator(String.format("//span[contains(text(),'%s')]", workspaceName)));
     }
 
     public void isWorkspaceAbsent() {
@@ -434,7 +444,9 @@ public class WorkspaceCreation {
 
     public boolean isWorkspaceVisible(String workspaceName, String draftOption) {
         if (draftOption.equalsIgnoreCase("Public")) {
-            return WORKSPACE_FRAME.locator(String.format("//span[contains(text(),'%s')]", workspaceName)).isVisible();
+            return WORKSPACE_FRAME
+                    .locator(String.format("//span[contains(text(),'%s')]", workspaceName))
+                    .isVisible();
         } else {
             return ABSENT_WORKSPACE.isVisible();
         }

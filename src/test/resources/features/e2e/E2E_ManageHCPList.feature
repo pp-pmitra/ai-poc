@@ -32,7 +32,7 @@ Feature: E2E Workflow for Targeting a Studio HCP Explorer List in LIFE at the Ta
     And User selects publish "<LIST_TYPE>"
     And User select the platform to publish the list
     Then Verify list is published
-    And User navigates to NPI Lists page in LIFE
+    And User navigates to NPI Lists page
     And User searches the workspace in LIFE and selects it
     And User clicks on the published workspace
     Then User Verify the list is displayed in the Life
