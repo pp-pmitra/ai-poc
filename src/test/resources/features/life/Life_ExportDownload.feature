@@ -202,3 +202,10 @@ Feature: LIFE Regression - This feature verifies the export/download functionali
     Examples:
       | CAMPAIGN_NAME         | RULE_TYPE          | CREATIVE           |
       | Different_LI_Campaign | Behavioral Segment | Please_Dont_Delete |
+
+  @regression
+  Scenario: Verify two download options are available for PulsePoint Provided NPI list and single for user created NPI list
+    And User navigates to NPI Lists page
+    And Verify 2 download options are available on the NPI list details page for "PulsePoint Provided NPI" list "AutoAdminNPIFileUpload748157162"
+    And User navigates back to NPI Lists landing page
+    And Verify 1 download options are available on the NPI list details page for "User Created NPI" list "AutoNPIAdmin257977008"
