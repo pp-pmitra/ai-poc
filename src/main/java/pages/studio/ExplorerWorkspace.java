@@ -127,7 +127,7 @@ public class ExplorerWorkspace {
         this.ZOOM_OUT = WORKSPACE_FRAME
                 .locator("#extension-root iframe")
                 .contentFrame()
-                .locator("//div[@class='gmnoprint']//button[@title='Zoom out' and @class='gm-control-active']");
+                .locator("//div[@class='gmnoprint']//button[@title='Zoom out' and contains(@class, 'gm-control-active')]");
         this.MAP_CONTENT = WORKSPACE_FRAME
                 .locator("#extension-root iframe")
                 .contentFrame()
@@ -341,7 +341,9 @@ public class ExplorerWorkspace {
                             .locator(String.format(
                                     "//h2[@data-title='%s']/parent::div/following-sibling::div//div[contains(@style,'z-index: 3;')]",
                                     visual));
-                    isInView = CommonUtils.scrollElementIntoView(MAP_CONTENT, CAMERA_CONTROL_ICON, 1000, 100, page);
+                    // Scroll each map visual by its own dashboard tile before scanning/clicking, instead of relying on the shared map camera control.
+                    // This fixes the second map scan for NPI Facilities Geography when the tile is not in view.
+                    isInView = CommonUtils.scrollElementIntoView(MAP_CONTENT, MAP_TILE, 1000, 100, page);
                     if (!isInView) {
                         continue;
                     }
@@ -395,7 +397,9 @@ public class ExplorerWorkspace {
                         continue;
                     }
                     if (NPI_PATIENT_ENTITIES.count() > 0) {
-                        NPI_PATIENT_ENTITIES.first().click();
+                        // Force-click Highcharts SVG points after verifying they exist and are in view, because
+                        // chart data labels can overlay the point and intercept Playwright's normal click.
+                        NPI_PATIENT_ENTITIES.first().click(new Locator.ClickOptions().setForce(true));
                     }
                     break;
             }
