@@ -1234,6 +1234,24 @@ public class StudioSteps {
         Assert.assertEquals("Time Frame did not persist after reopening the workspace", timeFrame, actualTimeFrame);
     }
 
+    @And("User selects {string} from {string} component panel")
+    public void userSelectsComponentFromPanel(String component, String category) {
+        logger.info("Selecting component '{}' from category '{}'", component, category);
+        brandExplorerWorkspace.selectComponent(category, component);
+    }
+
+    @Then("Verify {string} and {string} persist as table columns after reopening")
+    public void verifyDimensionAndMetricPersistAfterReopen(String dimension, String metric) {
+        logger.info("Verifying dimension '{}' and metric '{}' persist as table columns after reopening", dimension, metric);
+        Assert.assertTrue(
+                "Dimension '" + dimension + "' did not persist as a table column after reopening",
+                brandExplorerWorkspace.isComponentVisibleAsTableColumn(dimension));
+        Assert.assertTrue(
+                "Metric '" + metric + "' did not persist as a table column after reopening",
+                brandExplorerWorkspace.isComponentVisibleAsTableColumn(metric));
+        Assert.assertTrue("Chart is not visible after reopening the workspace", brandExplorerWorkspace.isChartVisible());
+    }
+
     @Then("All 9 preset timeframe options are visible in the dropdown with correct labels")
     public void allPresetOptionsAreVisibleInDropdownWithCorrectLabels(DataTable dataTable) {
         List<String> expected = dataTable.asList(String.class);
