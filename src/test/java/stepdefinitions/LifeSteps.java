@@ -1,5 +1,8 @@
 package stepdefinitions;
 
+import static utils.CommonUtils.normalize;
+import static utils.CommonUtils.normalizeObjectList;
+
 import com.microsoft.playwright.APIResponse;
 import com.microsoft.playwright.PlaywrightException;
 import com.opencsv.exceptions.CsvValidationException;
@@ -9,16 +12,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.junit.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import pages.Navigation;
-import pages.admin.Accounts;
-import pages.admin.Setup;
-import pages.life.*;
-import pages.studio.WorkspaceCreation;
-import utils.*;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -30,8 +23,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
-import static utils.CommonUtils.normalize;
-import static utils.CommonUtils.normalizeObjectList;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1193,8 +1184,8 @@ public class LifeSteps {
     @Then(
             "Verify comments, icon should display in bluish-green color {string} and comments should available on individual panel")
     public void
-    verifyCommentsAreSavedSuccessfullyIconShouldDisplayInBLUISHGREENAndCommentsShouldAvailableOnIndividualPanel(
-            String colour) {
+            verifyCommentsAreSavedSuccessfullyIconShouldDisplayInBLUISHGREENAndCommentsShouldAvailableOnIndividualPanel(
+                    String colour) {
         logger.info("Verifying comment icon color: {} and comment text", colour);
         List<String> backgroundImage = campaignDashboard.verifyCommentIconColor();
         Assert.assertTrue("Image is matched", backgroundImage.contains(colour));
@@ -1247,8 +1238,8 @@ public class LifeSteps {
     @And(
             "User fetches the Line Items and Tactics enabled-disabled status from Campaign Dashboard using {string} and verifies the same status in the respective Line Item and Tactic pages")
     public void
-    userFetchesTheLineItemsAndTacticsEnabledDisabledStatusFromCampaignDashboardAndVerifiesTheSameStatusInTheRespectiveLineItemAndTacticPages(
-            String campaignID) {
+            userFetchesTheLineItemsAndTacticsEnabledDisabledStatusFromCampaignDashboardAndVerifiesTheSameStatusInTheRespectiveLineItemAndTacticPages(
+                    String campaignID) {
         List<String> expectedStatus = campaignDashboard.fetchLineAndTacticToggleStatus();
         List<String> actualStatus = new ArrayList<>();
         logger.info("Navigating to pages to verify status. Campaign ID: {}", campaignID);
@@ -1358,8 +1349,8 @@ public class LifeSteps {
     @And(
             "Filter icon should display in the column header to which filter is applied and a red bullet {string} on the filter icon present next to global search")
     public void
-    filterIconShouldDisplayInTheColumnHeaderToWhichFilterIsAppliedAndARedBulletOnTheFilterIconPresentNextToGlobalSearch(
-            String iconColor) {
+            filterIconShouldDisplayInTheColumnHeaderToWhichFilterIsAppliedAndARedBulletOnTheFilterIconPresentNextToGlobalSearch(
+                    String iconColor) {
         logger.info("Verifying filter icon color: {}", iconColor);
         String filterIconColor = campaignDashboard.verifyFilterIcon();
         Assert.assertEquals(iconColor, filterIconColor);
@@ -2046,7 +2037,9 @@ public class LifeSteps {
     public void userSavesTheListAfterMakingUpdates() {
         npiAttributesList.saveList();
         String updateMessage = npiAttributesList.updateListSuccess();
-        Assert.assertTrue("Failed to update list name", updateMessage.contains("NPI list updated") || updateMessage.contains("Medscape List updated"));
+        Assert.assertTrue(
+                "Failed to update list name",
+                updateMessage.contains("NPI list updated") || updateMessage.contains("Medscape List updated"));
     }
 
     @Then("Verify the updates are applied successfully")
@@ -2380,8 +2373,8 @@ public class LifeSteps {
     @And(
             "User performs Bulk approve action using {string} option on multiple creatives - {string} with status other than Approved and verifies the selected creatives are marked as {string}")
     public void
-    userPerformsBulkApproveActionOnMultipleCreativesAndVerifiesTheSelectedCreativesAreRemovedFromTheCreativeLibraryPage(
-            String bulkActionOption, String noOfCreatives, String statusLabel, DataTable dataTable) {
+            userPerformsBulkApproveActionOnMultipleCreativesAndVerifiesTheSelectedCreativesAreRemovedFromTheCreativeLibraryPage(
+                    String bulkActionOption, String noOfCreatives, String statusLabel, DataTable dataTable) {
         logger.info(
                 "Performing bulk approval ({}) on {} creatives to set status: {}",
                 bulkActionOption,
@@ -2800,8 +2793,11 @@ public class LifeSteps {
 
     @And("Verify that if multiple {string} are specified across multiple lines, an error is shown")
     public void verifyThatIfMultipleAreSpecifiedAcrossMultipleLinesAValidationErrorIsShown(String domainName) {
-        logger.info("Verify that if multiple {} are specified across multiple lines, a validation error is shown", domainName);
-        List<String> domainNameList = Arrays.stream(domainName.split("::")).map(String::trim).toList();
+        logger.info(
+                "Verify that if multiple {} are specified across multiple lines, a validation error is shown",
+                domainName);
+        List<String> domainNameList =
+                Arrays.stream(domainName.split("::")).map(String::trim).toList();
         String gotToNextErrorMessage = sharedList.getGoToNextValidationError(domainNameList);
         Assert.assertTrue("No Go To Next Error is displayed", gotToNextErrorMessage.contains("Go To Next Error"));
     }
@@ -3098,24 +3094,24 @@ public class LifeSteps {
         Assert.assertEquals(itemCount + newUploadCount, domainCount);
     }
 
-    @And("Verify that user is able to download the uploaded file {string}, {string} and fetches the count of the downloaded files")
+    @And(
+            "Verify that user is able to download the uploaded file {string}, {string} and fetches the count of the downloaded files")
     public void verifyThatUserIsAbleToDownloadTheUploadedFile(String fileName1, String fileName2) throws IOException {
         logger.info("Verify that user is able to download the uploaded file {}, {}", fileName1, fileName2);
         Path filePath1 = sharedList.downloadFile(fileName1);
-        Assert.assertTrue(
-                "Downloaded file is not available",
-                CommonUtils.isDownloadedFileAvailable(filePath1, "csv"));
+        Assert.assertTrue("Downloaded file is not available", CommonUtils.isDownloadedFileAvailable(filePath1, "csv"));
         file1RecordCount = FileActions.fetchRowCountFromCSV(filePath1);
 
         Path filePath2 = sharedList.downloadFile(fileName2);
-        Assert.assertTrue(
-                "Downloaded file is not available",
-                CommonUtils.isDownloadedFileAvailable(filePath2, "csv"));
+        Assert.assertTrue("Downloaded file is not available", CommonUtils.isDownloadedFileAvailable(filePath2, "csv"));
         file2RecordCount = FileActions.fetchRowCountFromCSV(filePath2);
     }
 
-    @And("Verify that the count of the downloaded files {string}, {string} matches with the count displayed in the Uploaded Files section and left side panel")
-    public void verifyThatTheCountOfTheDownloadedFilesMatchesWithTheCountDisplayedInTheUploadedFilesSectionAndLeftSidePanel(String fileName1, String fileName2) {
+    @And(
+            "Verify that the count of the downloaded files {string}, {string} matches with the count displayed in the Uploaded Files section and left side panel")
+    public void
+            verifyThatTheCountOfTheDownloadedFilesMatchesWithTheCountDisplayedInTheUploadedFilesSectionAndLeftSidePanel(
+                    String fileName1, String fileName2) {
         logger.info(
                 "Verifying that the count of the downloaded files matches with the count displayed in the Uploaded Files section and left side panel");
         int uploadedFileCount1 = sharedList.fetchDomainCountFromUploadedFilesSection(fileName1);
@@ -3499,7 +3495,7 @@ public class LifeSteps {
     @And(
             "Verify the newly created creative is displayed in the Creative Library page and contains all the details entered during creation")
     public void
-    verifyTheNewlyCreatedCreativeIsDisplayedInTheCreativeLibraryPageAndContainsAllTheDetailsEnteredDuringCreation() {
+            verifyTheNewlyCreatedCreativeIsDisplayedInTheCreativeLibraryPageAndContainsAllTheDetailsEnteredDuringCreation() {
         logger.info("User saves the creative");
 
         for (String name : nameList) {
@@ -3764,7 +3760,7 @@ public class LifeSteps {
     @And(
             "Verify that the Clickthrough URL and Landing Domain fields are validated as mandatory when all other required fields are filled")
     public void
-    verifyThatTheClickthroughURLAndLandingDomainFieldsAreValidatedAsMandatoryWhenAllOtherRequiredFieldsIncludingAreFilled() {
+            verifyThatTheClickthroughURLAndLandingDomainFieldsAreValidatedAsMandatoryWhenAllOtherRequiredFieldsIncludingAreFilled() {
         logger.info("Verifying mandatory validation for Clickthrough URL and Landing Domain");
         bulkCreativeUpload.clickPreviewButton();
         bulkCreativeUpload.clickOKButton();
@@ -4435,7 +4431,7 @@ public class LifeSteps {
     @And(
             "User verifies the custom destination fields - Destination Name, Destination Type, Host, Username, Password, Port textfields, Test Access, Create and Cancel buttons")
     public void
-    userVerifiesTheCustomDestinationFieldsDestinationNameDestinationTypeHostUsernamePasswordPortTextfieldsTestAccessCreateAndCancelButtons() {
+            userVerifiesTheCustomDestinationFieldsDestinationNameDestinationTypeHostUsernamePasswordPortTextfieldsTestAccessCreateAndCancelButtons() {
         logger.info("User clicks Edit button from Destination dropdown field");
         Assert.assertTrue("Destination Name field is not available", runReportPanel.isDestinationNameAvailable());
         Assert.assertTrue("Destination Type field is not available", runReportPanel.isDestinationTypeAvailable());
@@ -5967,8 +5963,8 @@ public class LifeSteps {
     @And(
             "Verify that if the account has a Client value set, the Client field is disabled and auto-populated; otherwise, it remains enabled for user selection {string}")
     public void
-    verifyThatIfTheAccountHasAClientValueSetTheClientFieldIsDisabledAndAutoPopulatedOtherwiseItRemainsEnabledForUserSelection(
-            String clientName) {
+            verifyThatIfTheAccountHasAClientValueSetTheClientFieldIsDisabledAndAutoPopulatedOtherwiseItRemainsEnabledForUserSelection(
+                    String clientName) {
         boolean isEnabled = metricName.equalsIgnoreCase("None");
         String actualState = campaigns.verifyClientFieldEnabledOrDisabledBasedOnAccount(clientName);
         if (isEnabled) {
@@ -6354,7 +6350,8 @@ public class LifeSteps {
 
     @And("Verify column selection icon is available and upon clicking it below columns should display")
     public void
-    verifyColumnSelectionIconIsAvailableAndUponClickingItLineItemNameIDStatusCampaignNameStartDateAndEndDateShouldBeDisplayed(DataTable dataTable) {
+            verifyColumnSelectionIconIsAvailableAndUponClickingItLineItemNameIDStatusCampaignNameStartDateAndEndDateShouldBeDisplayed(
+                    DataTable dataTable) {
         List<String> expectedColumnNames = dataTable.asList(String.class);
         logger.info("Verifying column selection icon and expected available columns: {}", expectedColumnNames);
         createCreatives.clickColumnSelectionIcon();
@@ -6474,17 +6471,22 @@ public class LifeSteps {
         tacticDetails.fetchShowExpressionValues();
     }
 
-    @Then("Verify that all the rule types added in targeting rules are displayed in show expression with correct values along with {string}")
-    public void verify_all_rule_types_added_in_targeting_rules_are_displayed_in_show_expression_with_correct_values_along_with_default_expression(String defaultExpression) {
-        boolean result = tacticDetails.ruleMappingWithShowExpressionValues(rulesMap,defaultExpression);
+    @Then(
+            "Verify that all the rule types added in targeting rules are displayed in show expression with correct values along with {string}")
+    public void
+            verify_all_rule_types_added_in_targeting_rules_are_displayed_in_show_expression_with_correct_values_along_with_default_expression(
+                    String defaultExpression) {
+        boolean result = tacticDetails.ruleMappingWithShowExpressionValues(rulesMap, defaultExpression);
         Assert.assertTrue("Targeting rules added is not matching with the ones in show expression", result);
     }
 
     @Then("Verify show expression connector AND OR logic is correct")
     public void verifyShowExpressionConnectorLogicIsCorrect() {
         tacticDetails.fetchShowExpressionValues();
-        Assert.assertTrue("Show expression connector logic is incorrect. Raw values: " + tacticDetails.getShowExpressionRawValues(), tacticDetails.assertShowExpressionConnectorLogic(tacticDetails.getShowExpressionRawValues())
-        );
+        Assert.assertTrue(
+                "Show expression connector logic is incorrect. Raw values: "
+                        + tacticDetails.getShowExpressionRawValues(),
+                tacticDetails.assertShowExpressionConnectorLogic(tacticDetails.getShowExpressionRawValues()));
     }
 
     @Then("User removes the targeting {string} and saves the settings")
@@ -7097,7 +7099,7 @@ public class LifeSteps {
     @Then(
             "Verify the imported deal is displayed in the Deals Tab on Admin's Curated Market page with details matching the uploaded template")
     public void
-    verifyTheImportedDealIsDisplayedInTheDealsTabOnAdminSCuratedMarketPageWithDetailsMatchingTheUploadedTemplate() {
+            verifyTheImportedDealIsDisplayedInTheDealsTabOnAdminSCuratedMarketPageWithDetailsMatchingTheUploadedTemplate() {
         logger.info(
                 "Verify the imported deal is displayed in the Deals Tab on Admin's Curated Market page with details matching the uploaded template");
         Assert.assertTrue(
@@ -7275,7 +7277,7 @@ public class LifeSteps {
     @And(
             "Verify error message if user fails to add impression cap value when the checkboxes are selected and tries to save the line item page")
     public void
-    verifyErrorMessageIfUserFailsToAddImpressionCapValueWhenTheCheckboxesAreSelectedAndTriesToSaveTheLineItemPage() {
+            verifyErrorMessageIfUserFailsToAddImpressionCapValueWhenTheCheckboxesAreSelectedAndTriesToSaveTheLineItemPage() {
         logger.info(
                 "Verify error message if user fails to add impression cap value when the checkboxes are selected and tries to save the line item page");
         lineItemDetails.saveLineItem();
@@ -7384,7 +7386,10 @@ public class LifeSteps {
             List<String> bidexpectedValues = entry.getValue();
             List<String> actualValues = tacticSettings.getBidTypesForCategory(key);
             for (String bidexpected : bidexpectedValues) {
-                Assert.assertTrue("Expected value '" + bidexpected + "' not found for category '" + key + "'. Found: " + actualValues, actualValues.contains(bidexpected));
+                Assert.assertTrue(
+                        "Expected value '" + bidexpected + "' not found for category '" + key + "'. Found: "
+                                + actualValues,
+                        actualValues.contains(bidexpected));
             }
         }
 
@@ -7429,7 +7434,8 @@ public class LifeSteps {
         Assert.assertEquals("Rule types mismatch", expectedUniqueAndSortedBid, actualUniqueAndSortedBid);
 
         for (String expectedOption : expectedNormalizedBidRuleOptions) {
-            boolean matchFound = actualNormalizedBidRuleOptions.stream().anyMatch(actual -> actual.equalsIgnoreCase(expectedOption));
+            boolean matchFound =
+                    actualNormalizedBidRuleOptions.stream().anyMatch(actual -> actual.equalsIgnoreCase(expectedOption));
             Assert.assertTrue("Expected rule option not found: " + expectedOption, matchFound);
         }
 
@@ -7443,13 +7449,21 @@ public class LifeSteps {
         tacticSettings.clickCreativeTab();
     }
 
-    @And("User verify Behaviour segment and NPI are not allowed in bid multiplier rules when same are not selected in targeting rules")
+    @And(
+            "User verify Behaviour segment and NPI are not allowed in bid multiplier rules when same are not selected in targeting rules")
     public void userVerifyBehavioursegmentandNPIareNotAllowedinbidMultiplier() {
-        logger.info("Verifying Behaviour segment and NPI are not allowed in Bid multiplier if the same are not targeted in tactic");
+        logger.info(
+                "Verifying Behaviour segment and NPI are not allowed in Bid multiplier if the same are not targeted in tactic");
         String displaySegmentError = tacticSettings.checkErrorOfBidMultiplierSegmentRule();
-        Assert.assertEquals("Application allows Behaviour segment in bid multiplier even if its not targeted in tactic", ("No Behavioral Targeting is Selected"), displaySegmentError);
+        Assert.assertEquals(
+                "Application allows Behaviour segment in bid multiplier even if its not targeted in tactic",
+                ("No Behavioral Targeting is Selected"),
+                displaySegmentError);
         String displayNPIError = tacticSettings.checkErrorOfBidMultiplierNPIRule();
-        Assert.assertEquals("Application allows NPI in bid multiplier even if its not targeted in tactic", ("No NPI Targeting is Selected"), displayNPIError);
+        Assert.assertEquals(
+                "Application allows NPI in bid multiplier even if its not targeted in tactic",
+                ("No NPI Targeting is Selected"),
+                displayNPIError);
     }
 
     @Then("User close the bid panel to add targeting rules")
@@ -7474,20 +7488,22 @@ public class LifeSteps {
         Assert.assertEquals("Creative(s)", creativesText);
     }
 
-    @When("User creates line items with tactics and targeting rules as below and assigns existing creative named {string}")
+    @When(
+            "User creates line items with tactics and targeting rules as below and assigns existing creative named {string}")
     public void userCreatesLineItemsWithTacticsAndTargetingRules(String creative, DataTable dataTable) {
         logger.info("Creating line items with tactics and targeting rules");
-        tacticDetails.createLineItemsWithTacticsAndTargetingRules(dataTable.asMaps(String.class, String.class), creative, perTacticRules -> {
-            logger.info("Running per-tactic targeting rule verifications for: {}", perTacticRules.keySet());
-            rulesMap = new LinkedHashMap<>(perTacticRules);
-            keyType = new ArrayList<>(perTacticRules.keySet());
-            keyValues = new ArrayList<>();
-            for (List<String> v : perTacticRules.values()) {
-                keyValues.addAll(v);
-            }
-            verify_the_configured_targeting_rules();
-            verifyTheCountOfRulesAddedForTheSelectedTargetingRuleTypeOnTheTacticSettingsPage();
-        });
+        tacticDetails.createLineItemsWithTacticsAndTargetingRules(
+                dataTable.asMaps(String.class, String.class), creative, perTacticRules -> {
+                    logger.info("Running per-tactic targeting rule verifications for: {}", perTacticRules.keySet());
+                    rulesMap = new LinkedHashMap<>(perTacticRules);
+                    keyType = new ArrayList<>(perTacticRules.keySet());
+                    keyValues = new ArrayList<>();
+                    for (List<String> v : perTacticRules.values()) {
+                        keyValues.addAll(v);
+                    }
+                    verify_the_configured_targeting_rules();
+                    verifyTheCountOfRulesAddedForTheSelectedTargetingRuleTypeOnTheTacticSettingsPage();
+                });
     }
 
     @Then("Verify the newly created campaign details in the campaign list")
@@ -7536,7 +7552,8 @@ public class LifeSteps {
         }
     }
 
-    @And("User saves the Medscape List and verify that the list is uploaded successfully with message {string} and {string}")
+    @And(
+            "User saves the Medscape List and verify that the list is uploaded successfully with message {string} and {string}")
     public void userSavesTheMedscapeListNavigatesToLoadingPageWithContent(String messageContent, String waitText) {
         logger.info("Saving the Medscape List and navigating to loading page with content: {}", messageContent);
         npiMedscapeList.clickSaveButton();

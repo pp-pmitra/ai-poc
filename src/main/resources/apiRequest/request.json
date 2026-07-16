@@ -146,5 +146,70 @@
   "addNPIToList": {
     "operation": "add",
     "npis": []
+  },
+  "mcpInitialize": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "initialize",
+    "params": {
+      "protocolVersion": "2024-11-05",
+      "capabilities": {},
+      "clientInfo": {
+        "name": "curl",
+        "version": "1.0"
+      }
+    }
+  },
+  "fetchPromptsList": {
+    "jsonrpc": "2.0",
+    "method": "prompts/list",
+    "id": 10
+  },
+  "getPrompt": {
+    "jsonrpc": "2.0",
+    "method": "prompts/get",
+    "id": 11,
+    "params": {
+      "name": ""
+    }
+  },
+  "getExploreMetadata": {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 3,
+    "params": {
+      "name": "looker_get_explore_metadata",
+      "arguments": {
+      }
+    }
+  },
+  "createQuery": {
+    "jsonrpc": "2.0",
+    "id": 8,
+    "method": "tools/call",
+    "params": {
+      "name": "create_query",
+      "arguments": {
+        "fields": [
+        ],
+        "filters": {
+        },
+        "sorts": [
+        ],
+        "limit": "",
+        "looker_pseudo_filters": {}
+      }
+    }
+  },
+  "executeQuery": {
+    "jsonrpc": "2.0",
+    "id": 13,
+    "method": "tools/call",
+    "params": {
+      "name": "execute_query",
+      "arguments": {
+        "query_slug": ""
+      }
+    }
   }
 }

@@ -43,13 +43,14 @@ Feature: LIFE Regression - Schedule Report fields verification and report genera
     And Verify user is able to select Time "10:00" and Timezone "<TIME_ZONE>" for Send At fields
     And Verify Report Period field is available with default value "Month to Date"
     And Verify that Report Period field has below options
-      | Month to Date   |
-      | Week to Date    |
-      | Quarter to Date |
-      | Flight to Date  |
-      | Yesterday       |
-      | Last…           |
-      | Lifetime        |
+      | Month to Date    |
+      | Week to Date     |
+      | Quarter to Date  |
+      | Flight to Date   |
+      | Yesterday        |
+      | Last…            |
+      | Lifetime         |
+      | Completed Period |
     And Verify Report Timing checkbox is available and by default it is unchecked
     And Verify Delivery field has two methods - "Email" and "Custom Destination"
     Examples:

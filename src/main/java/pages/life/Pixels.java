@@ -46,7 +46,7 @@ public class Pixels {
         this.RETARGETING_TAB = page.locator("//button[text()='Retargeting']");
         this.SMART_TAB = page.locator("//button[text()='Smart']");
         this.CONVERSION_TAB = page.locator("//button[text()='Conversion']");
-        this.ADVERTISER_DROPDOWN = page.locator("//app-multi-select[@placeholder='Any Advertiser']");
+        this.ADVERTISER_DROPDOWN = page.locator("//app-multi-select[@placeholder='All Advertisers']");
         this.UPDATE_SUCCESS = page.locator(
                 "//div[@role='alert' and (text()='Pixel updated successfully' or text()='Saved successfully')]");
         this.REMOVE_PIXEL_ICON = page.locator("//app-icon-lable-link[@icon='20-delete.svg']");
