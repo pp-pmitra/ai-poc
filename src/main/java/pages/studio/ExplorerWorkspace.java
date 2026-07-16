@@ -183,6 +183,8 @@ public class ExplorerWorkspace {
 
     public void saveWorkspaceName() {
         SAVE_WORKSPACE_NAME.click();
+        waitUtility.waitForLocatorVisible(ALERT);
+        waitUtility.waitForLocatorHidden(ALERT);
     }
 
     public void waitUntilAlertDisappears() {
@@ -482,6 +484,7 @@ public class ExplorerWorkspace {
     }
 
     public String fetchRecencyValue(String filterType) {
+        waitForDashboardLoad();
         Locator recencyLocator = WORKSPACE_FRAME.locator(String.format(
                 "//p[normalize-space()='%s Recency']/parent::div//following-sibling::div//p", filterType));
         return recencyLocator.textContent().trim();
