@@ -1,0 +1,4 @@
+AppBundleName
+mozilla.org
+unicef.org
+change.org

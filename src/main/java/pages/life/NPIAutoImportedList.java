@@ -6,13 +6,12 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.options.WaitForSelectorState;
-import com.opencsv.exceptions.CsvValidationException;
 import factory.DriverFactory;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import utils.CommonUtils;
-import utils.ExcelActions;
+import utils.FileActions;
 import utils.WaitUtility;
 
 public class NPIAutoImportedList {
@@ -127,9 +126,8 @@ public class NPIAutoImportedList {
         return TOTAL_NPI_COUNT.innerText();
     }
 
-    public String fetchNPIRecordFromTestFile(String fileName) throws CsvValidationException, IOException {
-        String filePath = "src/main/resources/uploadfiles/" + fileName;
-        int count = ExcelActions.countCsvRecords(filePath);
+    public String fetchNPIRecordFromTestFile(String fileName) throws IOException {
+        int count = FileActions.fetchRowCountExcludeHeaderFromCSVAndTxt(fileName);
         return String.valueOf(count);
     }
 

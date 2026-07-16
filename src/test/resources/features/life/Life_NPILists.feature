@@ -125,6 +125,7 @@ Feature: LIFE regression - Create NPI List of following types:
     And Verify Reload Now button is available and enabled
     When User clicks on Reload Now button
     Then Verify the file is reloaded successfully
+    And Verify that user is able to download the uploaded "NPI" list
     And Verify the Total NPI count displayed in Matched NPI section is similar to NPI records present in "<FILE_NAME>"
     Examples:
       | LIST_NAME     | ADVERTISER     | FILE_LOCATION | FILE_PATH                      | FILE_NAME                  | LIST_TYPE            | NPI_COLUMN_NAME | IMPORT_TYPE    |
