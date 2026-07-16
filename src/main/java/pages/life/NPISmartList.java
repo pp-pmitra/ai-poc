@@ -289,6 +289,7 @@ public class NPISmartList {
     }
 
     public void selectSmartNPIListType(String smartListType) {
+        waitUtility.waitForElementVisible("//div[@class='loader']");
         SMART_LIST_POPULATION_OPTIONS.locator("text = " + smartListType).scrollIntoViewIfNeeded();
         SMART_LIST_POPULATION_OPTIONS.locator("text = " + smartListType).click();
         waitUtility.waitUntilSpinnerHidden();
@@ -560,8 +561,11 @@ public class NPISmartList {
     }
 
     public String hoverAndFetchTooltip(String contextualCategory) {
-        page.locator(String.format("//div[contains(text(),'%s')]//span[@class='question-icon']", contextualCategory))
-                .hover();
+        Locator TOOLTIP_ICON = page.locator(String.format("//div[contains(text(),'%s')" +
+                "]//span[@class='question-icon']", contextualCategory));
+        waitUtility.waitForLocatorVisible(TOOLTIP_ICON);
+        TOOLTIP_ICON.dispatchEvent("mouseover");
+        TOOLTIP_ICON.dispatchEvent("mouseenter");
         waitUtility.waitForLocatorVisible(TOOL_TIP);
         return TOOL_TIP.innerText().trim();
     }

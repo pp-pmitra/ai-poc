@@ -2669,7 +2669,7 @@ public class LifeSteps {
 
     @And("Verify the Total NPI count displayed in Matched NPI section is similar to NPI records present in {string}")
     public void verifyMatchedNPISectionIsDisplayedWithTheTotalNPICount(String fileName)
-            throws CsvValidationException, IOException {
+            throws IOException, CsvValidationException {
         logger.info(
                 "Verify the Total NPI count displayed in Matched NPI section is similar to NPI records present in {}",
                 fileName);
@@ -7593,6 +7593,29 @@ public class LifeSteps {
     public void verifyFileDetailsAreDisplayedInListDetailsPage() {
         logger.info("Verifying file details are displayed correctly in the list details page");
         Assert.assertTrue("File details are not displayed", npiMedscapeList.isMedscapeListContainerDisplayed());
+    }
+
+    @And("Verify {int} download options are available on the NPI list details page for {string} list {string}")
+    public void verifyTwoDownloadOptionsAreAvailableOnTheNPIListDetailsPage(int expectedDownloadOptions, String listType, String npiListName) {
+        logger.info("Searching and selecting NPI list '{}'", npiListName);
+        npiLists.searchList(npiListName);
+        npiLists.openSearchedList(npiListName);
+        logger.info("Verifying {} download option(s) are available on the NPI list details page for {} list", expectedDownloadOptions, listType);
+        Assert.assertTrue("Download options are not available", npiLists.areDownloadOptionsAvailable(expectedDownloadOptions));
+    }
+
+    @And("User navigates back to NPI Lists landing page")
+    public void userNavigatesBackToNPIListsLandingPage() {
+        logger.info("Navigating back to NPI Lists landing page");
+        npiLists.navigateBackToNPIListsLandingPage();
+    }
+
+    @And("Verify the Creatives Advertiser dropdown is displaying all Advertisers mapped to the logged in account {string}")
+    public void verifyTheCreativesAdvertiserDropdownIsDisplayingAllAdvertisersMappedToTheLoggedInAccount(String accountName) {
+        logger.info("Creatives Advertiser drop-down should list advertisers mapped to {}", accountName);
+        Assert.assertTrue("Advertiser dropdown is not present", bulkCreativeUpload.isAdvertiserDropdownAvailable());
+        List<String> advertiser = bulkCreativeUpload.fetchAdvertisers();
+        Assert.assertTrue("Advertiser List does not match", advertiser.containsAll(itemList));
     }
 
     @When("User clicks on Frequency Capping checkbox")

@@ -73,7 +73,7 @@ public class BulkCreativeUpload {
                 page.locator("//label[contains(text(),'Creative Type')]/following-sibling::div//button");
         this.ADVERTISER_DROPDOWN = page.locator("//sui-select[contains(@placeholder,'Select Advertiser')]");
         this.ADVERTISER_DROPDOWN_VALUE =
-                page.locator("//div[contains(@class,'menu transition visible')]/sui-select-option//span");
+                page.locator("//div[@suidropdownmenu]//sui-select-option/span[2]"); //no unique attribute in span tag hence index has been used
         this.APPROVAL_STATUS_BUTTON =
                 page.locator("//label[contains(text(),'Approval Status')]/following-sibling::div//button");
         this.PREVIEW_BUTTON = page.locator("//button[contains(text(),'Preview')]");
@@ -596,5 +596,17 @@ public class BulkCreativeUpload {
             }
         }
         return "";
+    }
+
+    public boolean isAdvertiserDropdownAvailable() {
+        return ADVERTISER_DROPDOWN.isVisible();
+    }
+
+    public List<String> fetchAdvertisers() {
+        ADVERTISER_DROPDOWN.click();
+        ADVERTISER_DROPDOWN_VALUE.first().waitFor();
+        List<String> options = ADVERTISER_DROPDOWN_VALUE.allTextContents();
+        options.removeIf(String::isBlank);
+        return options;
     }
 }
