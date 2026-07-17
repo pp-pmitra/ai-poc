@@ -79,6 +79,10 @@ public class TargetingTemplate {
                 && ADD_TARGETING_RULE_BUTTON.isVisible();
     }
 
+    public Locator getTargetingContainer() {
+        return TARGETING_CONTAINER;
+    }
+
     public Map<String, Map<String, String>> createAndSaveTargetingTemplate(
             String templateName,
             List<String> lineItemsList,

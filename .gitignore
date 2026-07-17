@@ -1,0 +1,6 @@
+asterix_story_log.json
+.idea/
+.vscode/
+.playwright-mcp/
+.target/
+target/

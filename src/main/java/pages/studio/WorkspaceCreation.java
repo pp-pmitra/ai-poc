@@ -19,6 +19,7 @@ public class WorkspaceCreation {
     private final Locator HCP_EXPLORER;
     private final Locator HCP_EXPANSION;
     private final Locator BRAND_EXPLORER;
+    private final Locator DTC_EXPLORER;
     private final Locator BACK_TO_WORKSPACE_DASHBOARD;
     private final Locator WORKSPACE_CREATED_ALERT;
     private final Locator MENU_ICON;
@@ -68,6 +69,7 @@ public class WorkspaceCreation {
         this.HCP_EXPLORER = WORKSPACE_FRAME.locator("//p[contains(text(),'HCP Explorer')]");
         this.HCP_EXPANSION = WORKSPACE_FRAME.locator("//p[contains(text(),'HCP Audience Expansion')]");
         this.BRAND_EXPLORER = WORKSPACE_FRAME.locator("//p[contains(text(),'Brand Explorer')]");
+        this.DTC_EXPLORER = WORKSPACE_FRAME.locator("//p[contains(text(),'DTC Explorer')]");
         this.BACK_TO_WORKSPACE_DASHBOARD = WORKSPACE_FRAME.getByRole(AriaRole.BUTTON);
         this.WORKSPACE_CREATED_ALERT = WORKSPACE_FRAME.locator(
                 "//p[contains(text(),'Workspace created successfully') or contains(text(),'Workspace saved successfully')]");
@@ -142,6 +144,11 @@ public class WorkspaceCreation {
         return BRAND_EXPLORER.innerText();
     }
 
+    public String verifyDTCExplorer() {
+        page.waitForLoadState(LoadState.DOMCONTENTLOADED);
+        return DTC_EXPLORER.innerText();
+    }
+
     public String verifyHCPAudienceExpansion() {
         return HCP_EXPANSION.innerText();
     }
@@ -152,6 +159,10 @@ public class WorkspaceCreation {
 
     public void clickBrandExplorerWorkspace() {
         BRAND_EXPLORER.click();
+    }
+
+    public void clickDTCExplorerWorkspace() {
+        DTC_EXPLORER.click();
     }
 
     public String isWorkspaceCreationAlertDisplayed() {
@@ -340,6 +351,15 @@ public class WorkspaceCreation {
         waitUtility.waitForLocatorVisible(WORKSPACE_TYPE.last());
         CommonUtils.selectAndClickElement(WORKSPACE_TYPE, Collections.singletonList(workspaceType));
         waitUtility.waitForLocatorVisible(PAGINATION.first());
+    }
+
+    public void filterByWorkspaceTypeAndOpen(String workspaceType, String workspaceName) {
+        waitForStudioWorkspacePage(WORKSPACE_TYPE);
+        waitUtility.waitForLocatorVisible(WORKSPACE_TYPE.last());
+        CommonUtils.selectAndClickElement(WORKSPACE_TYPE, Collections.singletonList(workspaceType));
+        Locator workspaceRow = WORKSPACE_FRAME.locator(String.format("//span[contains(text(),'%s')]", workspaceName));
+        waitUtility.waitForLocatorVisible(workspaceRow);
+        workspaceRow.click();
     }
 
     public void selectWorkspaceAdvertiser(String advertiser) {

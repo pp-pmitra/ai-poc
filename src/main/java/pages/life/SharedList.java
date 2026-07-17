@@ -6,6 +6,7 @@ import com.microsoft.playwright.Page;
 import factory.DriverFactory;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import utils.CommonUtils;
@@ -35,6 +36,9 @@ public class SharedList {
     private final Locator ITEM_COUNT_UI;
     private final Locator EMAIL_LIST_COUNT;
     private final Locator EMAIL_REQUIRED_ERROR;
+    private final Locator LIST_HEADER;
+    private final Locator NOTHING_FOUND_TEXT;
+    private final Locator GO_TO_NEXT_ERROR_TEXT;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
 
     public SharedList(Page page) {
@@ -77,6 +81,9 @@ public class SharedList {
         this.ITEM_COUNT_UI = page.locator("//div[contains(@class,'fileDetails')]/div");
         this.EMAIL_LIST_COUNT = page.locator("//span[contains(@class,'total-emails')]");
         this.EMAIL_REQUIRED_ERROR = page.locator("//div[@aria-label='Email is required']");
+        this.LIST_HEADER = page.locator("//div[@class='lists-header']//span[contains(@class, 'header')]");
+        this.NOTHING_FOUND_TEXT = page.locator("//div[contains(text(),'Nothing Found')]");
+        this.GO_TO_NEXT_ERROR_TEXT = page.locator("//span[contains(text(),'Go To Next Error')]");
     }
 
     public void clickDomainListFromMenu(String pageName) {
@@ -163,8 +170,24 @@ public class SharedList {
         return text;
     }
 
+    public String getGoToNextValidationError(List<String> domainNameList) {
+        String text = "";
+        for (String domainName : domainNameList) {
+            LIST_TEXTAREA.type(domainName);
+            page.keyboard().press("Enter");
+        }
+        SAVE_BUTTON.click();
+        if (GO_TO_NEXT_ERROR_TEXT.isVisible()) text = fetchLocatorText(GO_TO_NEXT_ERROR_TEXT);
+        LIST_TEXTAREA.clear();
+        return text;
+    }
+
     public boolean verifyUploadSectionIsVisibleBeforeListInput() {
         return UPLOAD_SECTION.first().isVisible();
+    }
+
+    public void clearListTextArea() {
+        LIST_TEXTAREA.clear();
     }
 
     public void enterDomainNames(List<Object> domainNameList) {
@@ -200,8 +223,11 @@ public class SharedList {
         return locator.innerText();
     }
 
-    public void searchAndOpenCreatedList(String listName) {
+    public void searchCreatedList(String listName) {
         SEARCH_KEYWORD.fill(listName);
+    }
+
+    public void openSearchedList(String listName) {
         Locator SEARCHED_DOMAIN_ENTRY = page.locator(String.format("//div[contains(text(),'%s')]", listName));
         SEARCHED_DOMAIN_ENTRY.isVisible();
         SEARCHED_DOMAIN_ENTRY.click();
@@ -343,5 +369,23 @@ public class SharedList {
             waitUtility.waitForLocatorDetached(EMAIL_REQUIRED_ERROR);
             SAVE_BUTTON.click();
         }
+    }
+
+    public List<String> fetchListDetailsFromNewPanel() {
+        List<String> listDetails = new ArrayList<>();
+        listDetails.add(LIST_NAME.inputValue().trim());
+        listDetails.add(LIST_TEXTAREA.inputValue().trim());
+        return listDetails;
+    }
+
+    public List<String> fetchListDetailsFromEditPanel() {
+        List<String> listDetails = new ArrayList<>();
+        listDetails.add(LIST_HEADER.innerText().trim());
+        listDetails.add(LIST_TEXTAREA.inputValue().trim());
+        return listDetails;
+    }
+
+    public boolean isNothingFoundDisplayed() {
+        return NOTHING_FOUND_TEXT.isVisible();
     }
 }

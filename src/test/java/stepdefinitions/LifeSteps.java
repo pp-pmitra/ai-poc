@@ -91,10 +91,13 @@ public class LifeSteps {
     Setup setup = new Setup(DriverFactory.getPage());
     CuratedMarket curatedMarket = new CuratedMarket(DriverFactory.getPage());
     Constants constants = new Constants();
+    NPIMedscapeList npiMedscapeList = new NPIMedscapeList(DriverFactory.getPage());
     int itemCount = 0;
     int totalListCount = 0;
     int flightStartDate = 0;
     int flightEndDate = 0;
+    int file1RecordCount = 0;
+    int file2RecordCount = 0;
     APIResponse response;
     boolean flag = false;
     String customFieldName;
@@ -624,13 +627,6 @@ public class LifeSteps {
     @Given("User navigates to NPI Lists page")
     public void user_navigates_to_npi_lists_page() {
         logger.info("Navigating to NPI Lists page");
-        navigation.clickSubMenu();
-        npiLists.clickNPILists();
-    }
-
-    @And("User navigates to NPI Lists page in LIFE")
-    public void userNavigatesToNPIListsPageInLIFE() {
-        logger.info("Navigating to NPI Lists page in LIFE");
         navigation.clickSubMenu();
         npiLists.clickNPILists();
     }
@@ -2035,9 +2031,15 @@ public class LifeSteps {
         npiNameEdited = "Edited" + '_' + npiName;
         logger.info("Updating list name to: {}", npiNameEdited);
         npiAttributesList.editListName(npiNameEdited);
+    }
+
+    @And("User saves the list after making updates")
+    public void userSavesTheListAfterMakingUpdates() {
         npiAttributesList.saveList();
         String updateMessage = npiAttributesList.updateListSuccess();
-        Assert.assertTrue("NPI List failed to update", updateMessage.contains("NPI list updated"));
+        Assert.assertTrue(
+                "Failed to update list name",
+                updateMessage.contains("NPI list updated") || updateMessage.contains("Medscape List updated"));
     }
 
     @Then("Verify the updates are applied successfully")
@@ -2048,9 +2050,9 @@ public class LifeSteps {
         npiLists.openSearchedList(npiNameEdited);
     }
 
-    @When("User deletes the Attribute list")
-    public void userDeletesTheAttributeList() {
-        logger.info("Deleting the Attribute list: {}", npiNameEdited);
+    @When("User deletes the {string} list")
+    public void userDeletesTheAttributeList(String listType) {
+        logger.info("Deleting the {} type list: {}", listType, npiNameEdited);
         npiAttributesList.deleteList();
     }
 
@@ -2058,13 +2060,9 @@ public class LifeSteps {
     public void verifyTheListIsDeletedSuccessfully() {
         String deleteMessage = npiAttributesList.deleteSuccess();
         logger.info("Delete message: '{}'", deleteMessage);
-        assert deleteMessage.contains("NPI List Deleted");
+        Assert.assertTrue("No Deletion message is shown", deleteMessage.contains("NPI List Deleted"));
     }
 
-    /* Roshani Sherkar
-     * 18-07-2025
-     * Targeting Template Creation from Tactic
-     * */
     @And(
             "Create a tactic with below targeting rules and {string} line items and other details {string} {string} {string} {string} {string} {string} {string}")
     public void createATacticWithBelowTargetingRulesAndLineItemsAndOtherDetails(
@@ -2657,7 +2655,7 @@ public class LifeSteps {
 
     @And("Verify the Total NPI count displayed in Matched NPI section is similar to NPI records present in {string}")
     public void verifyMatchedNPISectionIsDisplayedWithTheTotalNPICount(String fileName)
-            throws CsvValidationException, IOException {
+            throws IOException, CsvValidationException {
         logger.info(
                 "Verify the Total NPI count displayed in Matched NPI section is similar to NPI records present in {}",
                 fileName);
@@ -2789,8 +2787,19 @@ public class LifeSteps {
         logger.info(
                 "Verify that if multiple {} are specified on a single line, a validation error is shown", domainName);
         List<String> domainNameList = CommonUtils.convertStringToList(domainName);
-        String errorMessage = sharedList.checkErrorOnSingleLineMultipleDomainsInput(domainNameList);
-        Assert.assertTrue("No Validation error is displayed", errorMessage.contains("validation error(s)"));
+        String validationErrorMessage = sharedList.checkErrorOnSingleLineMultipleDomainsInput(domainNameList);
+        Assert.assertTrue("No Validation error is displayed", validationErrorMessage.contains("validation error(s)"));
+    }
+
+    @And("Verify that if multiple {string} are specified across multiple lines, an error is shown")
+    public void verifyThatIfMultipleAreSpecifiedAcrossMultipleLinesAValidationErrorIsShown(String domainName) {
+        logger.info(
+                "Verify that if multiple {} are specified across multiple lines, a validation error is shown",
+                domainName);
+        List<String> domainNameList =
+                Arrays.stream(domainName.split("::")).map(String::trim).toList();
+        String gotToNextErrorMessage = sharedList.getGoToNextValidationError(domainNameList);
+        Assert.assertTrue("No Go To Next Error is displayed", gotToNextErrorMessage.contains("Go To Next Error"));
     }
 
     @And("Verify that when {string} names are specified manually, the option to upload a file disappears")
@@ -2799,12 +2808,19 @@ public class LifeSteps {
                 "Verify that when {} names are specified manually, the option to upload a file disappears", listType);
         keyValues.clear();
         keyValues = new ArrayList<>(CommonUtils.convertStringToList(listType));
+        sharedList.clearListTextArea();
         boolean isUploadVisibleBefore = sharedList.verifyUploadSectionIsVisibleBeforeListInput();
         Assert.assertTrue("Upload section is not available before list input", isUploadVisibleBefore);
         logger.info("Entering domain names manually");
         sharedList.enterDomainNames(keyValues);
         boolean isUploadVisibleAfter = sharedList.verifyUploadSectionIsVisibleAfterListInput();
         Assert.assertTrue("Upload section is available after list input", isUploadVisibleAfter);
+    }
+
+    @And("User retrieves all the entered data before saving the list details {string}")
+    public void userRetrievesAllTheEnteredDataBeforeSavingTheListDetails(String listName) {
+        logger.info("Retrieving all the entered data before saving the list details: {}", listName);
+        itemList = sharedList.fetchListDetailsFromNewPanel();
     }
 
     @And("Verify that the user is able to create a {string} list by specifying names manually")
@@ -2836,7 +2852,8 @@ public class LifeSteps {
             String pulsepointProvidedDomainList) {
         logger.info(
                 "Searching for PulsePoint provided list '{}' to verify purple P icon", pulsepointProvidedDomainList);
-        sharedList.searchAndOpenCreatedList(pulsepointProvidedDomainList);
+        sharedList.searchCreatedList(pulsepointProvidedDomainList);
+        sharedList.openSearchedList(pulsepointProvidedDomainList);
         boolean isIconPresent = sharedList.fetchPulsepointIcon(pulsepointProvidedDomainList);
         Assert.assertTrue("P icon is not present on the PulsePoint provided list", isIconPresent);
     }
@@ -2845,9 +2862,30 @@ public class LifeSteps {
     public void verifyThatTheCounterOnTheLeftDisplaysTheCorrectValueForEachListInTheNavigationPanel() {
         logger.info(
                 "Verify that the counter on the left displays the correct value for each list in the navigation panel");
-        sharedList.searchAndOpenCreatedList(metricName);
+        sharedList.searchCreatedList(metricName);
+        sharedList.openSearchedList(metricName);
         totalListCount = Integer.parseInt(sharedList.fetchCountFromLeftPanel(metricName));
         Assert.assertEquals(totalListCount, keyValues.size());
+    }
+
+    @And("User retrieves all the entered data after saving the list details {string}")
+    public void userRetrievesAllTheEnteredDataAfterSavingTheListDetails(String listName) {
+        logger.info("Retrieving all the entered data after saving the list details: {}", listName);
+        capturedDetails.clear();
+        capturedDetails = sharedList.fetchListDetailsFromEditPanel();
+        List<String> normalizedExpected = itemList.stream()
+                .flatMap(item -> Arrays.stream(item.split("\\R")))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .sorted()
+                .toList();
+        List<String> normalizedActual = capturedDetails.stream()
+                .flatMap(item -> Arrays.stream(item.split("\\R")))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .sorted()
+                .toList();
+        Assert.assertEquals("List Details are not matching", normalizedExpected, normalizedActual);
     }
 
     @And("Verify that the user is able to edit an existing {string} name list {string}")
@@ -2855,6 +2893,8 @@ public class LifeSteps {
         logger.info("Editing existing '{}' list with modified names: {}", listType, modifiedName);
         keyValues = new ArrayList<>(CommonUtils.convertStringToList(modifiedName));
         sharedList.editAnExistingList(keyValues);
+        itemList.clear();
+        itemList = sharedList.fetchListDetailsFromEditPanel();
         logger.info("Saving updated list");
         sharedList.saveList();
         String updateMessage = sharedList.isListCreatedOrDeleted();
@@ -2905,9 +2945,15 @@ public class LifeSteps {
         }
     }
 
-    /*Roshani Sherkar
-     * 11/08/2025
-     * Domain List Creation by File Upload*/
+    @And("Verify the deleted list is no longer displayed in the left panel")
+    public void verifyTheDeletedListIsNoLongerDisplayedInTheLeftPanel() {
+        logger.info("Verifying that the deleted list '{}' is no longer displayed in the left panel", metricName);
+        sharedList.searchCreatedList(metricName);
+        Assert.assertTrue(
+                "Deleted list is still displayed in the left panel (expected 'Nothing Found' after search)",
+                sharedList.isNothingFoundDisplayed());
+    }
+
     @And(
             "Verify that an error message is displayed when no list names is specified and user tries to upload a file {string}")
     public void verifyThatAnErrorMessageIsDisplayedWhenNoListNamesIsSpecifiedAndUserTriesToUploadAFile(
@@ -2940,14 +2986,14 @@ public class LifeSteps {
     @And(
             "Verify the Uploaded Files section displays the entries count, includes download and delete icons after the file {string} is uploaded")
     public void
-            verifyUploadedFilesSectionDisplaysEntriesIncludedInTheFileTimestampDownloadAndDeleteIconsOnceTheFileIsUploaded(
-                    String fileName) throws CsvValidationException, IOException {
+    verifyUploadedFilesSectionDisplaysEntriesIncludedInTheFileTimestampDownloadAndDeleteIconsOnceTheFileIsUploaded(
+            String fileName) throws IOException {
         logger.info(
                 "Verify the Uploaded Files section displays the entries count, includes download and delete icons after the file {} is uploaded",
                 fileName);
         String fetchedFileName = sharedList.fetchFileNameFromUploadedFilesSection(fileName);
         Assert.assertEquals(fileName, fetchedFileName);
-        int expectedCount = ExcelActions.countCsvRecords("src/main/resources/uploadfiles/" + fileName);
+        int expectedCount = FileActions.fetchRowCountExcludeHeaderFromCSVAndTxt(fileName);
         int actualCount = sharedList.fetchDomainCountFromUploadedFilesSection(fileName);
         Assert.assertEquals(expectedCount, actualCount);
         boolean isDownloadVisible = sharedList.isDownloadIconVisible(fileName);
@@ -2983,7 +3029,8 @@ public class LifeSteps {
     @And("Verify that the counter on the left displays the correct value after file upload {string}")
     public void verifyThatTheCounterOnTheLeftDisplaysTheCorrectValueAfterFileUpload(String fileName) {
         logger.info("Verify that the counter on the left displays the correct value after file upload {}", fileName);
-        sharedList.searchAndOpenCreatedList(metricName);
+        sharedList.searchCreatedList(metricName);
+        sharedList.openSearchedList(metricName);
         totalListCount = Integer.parseInt(sharedList.fetchCountFromLeftPanel(metricName));
         itemCount = sharedList.fetchDomainCountFromUploadedFilesSection(fileName);
         Assert.assertEquals(totalListCount, itemCount);
@@ -3008,7 +3055,7 @@ public class LifeSteps {
         sharedList.uploadDomainFile(fileName);
         String fetchedFileName = sharedList.fetchFileNameFromUploadedFilesSection(fileName);
         Assert.assertEquals(fileName, fetchedFileName);
-        int expectedCount = ExcelActions.countCsvRecords("src/main/resources/uploadfiles/" + fileName);
+        int expectedCount = FileActions.fetchRowCountExcludeHeaderFromCSVAndTxt(fileName);
         int actualCount = sharedList.fetchDomainCountFromUploadedFilesSection(fileName);
         Assert.assertEquals(expectedCount, actualCount);
         Assert.assertTrue("No Download icon is available", sharedList.isDownloadIconVisible(fileName));
@@ -3040,21 +3087,40 @@ public class LifeSteps {
     public void verifyThatTheCounterOnTheLeftDisplaysTheUpdatedValueAfterNewFileUpload(String fileName) {
         logger.info(
                 "Verify that the counter on the left displays the updated value after new file upload {}", fileName);
-        sharedList.searchAndOpenCreatedList(metricName);
+        sharedList.searchCreatedList(metricName);
+        sharedList.openSearchedList(metricName);
         int domainCount = Integer.parseInt(sharedList.fetchCountFromLeftPanel(metricName));
         int newUploadCount = sharedList.fetchDomainCountFromUploadedFilesSection(fileName);
         Assert.assertEquals(itemCount + newUploadCount, domainCount);
     }
 
-    @And("Verify that user is able to download the uploaded file {string}, {string}")
+    @And(
+            "Verify that user is able to download the uploaded file {string}, {string} and fetches the count of the downloaded files")
     public void verifyThatUserIsAbleToDownloadTheUploadedFile(String fileName1, String fileName2) throws IOException {
         logger.info("Verify that user is able to download the uploaded file {}, {}", fileName1, fileName2);
-        Assert.assertTrue(
-                "Downloaded file is not available",
-                CommonUtils.isDownloadedFileAvailable(sharedList.downloadFile(fileName1), "csv"));
-        Assert.assertTrue(
-                "Downloaded file is not available",
-                CommonUtils.isDownloadedFileAvailable(sharedList.downloadFile(fileName2), "csv"));
+        Path filePath1 = sharedList.downloadFile(fileName1);
+        Assert.assertTrue("Downloaded file is not available", CommonUtils.isDownloadedFileAvailable(filePath1, "csv"));
+        file1RecordCount = FileActions.fetchRowCountFromCSV(filePath1);
+
+        Path filePath2 = sharedList.downloadFile(fileName2);
+        Assert.assertTrue("Downloaded file is not available", CommonUtils.isDownloadedFileAvailable(filePath2, "csv"));
+        file2RecordCount = FileActions.fetchRowCountFromCSV(filePath2);
+    }
+
+    @And(
+            "Verify that the count of the downloaded files {string}, {string} matches with the count displayed in the Uploaded Files section and left side panel")
+    public void
+            verifyThatTheCountOfTheDownloadedFilesMatchesWithTheCountDisplayedInTheUploadedFilesSectionAndLeftSidePanel(
+                    String fileName1, String fileName2) {
+        logger.info(
+                "Verifying that the count of the downloaded files matches with the count displayed in the Uploaded Files section and left side panel");
+        int uploadedFileCount1 = sharedList.fetchDomainCountFromUploadedFilesSection(fileName1);
+        int uploadedFileCount2 = sharedList.fetchDomainCountFromUploadedFilesSection(fileName2);
+        Assert.assertEquals(file1RecordCount, uploadedFileCount1);
+        Assert.assertEquals(file2RecordCount, uploadedFileCount2);
+
+        int leftPanelCount = Integer.parseInt(sharedList.fetchCountFromLeftPanel(metricName));
+        Assert.assertEquals(file1RecordCount + file2RecordCount, leftPanelCount);
     }
 
     @And("Verify that the user is able to delete the uploaded file {string}")
@@ -3330,9 +3396,6 @@ public class LifeSteps {
                 "Expected 'Display' to be the default selected creative type.",
                 bulkCreativeUpload.checkDefaultCreativeType(defaultOption));
     }
-
-    @And("Verify the Advertiser dropdown is displaying all Advertisers mapped to the logged in account")
-    public void verifyTheAdvertiserDropdownIsDisplayingAllAdvertisersMappedToTheLoggedInAccount() {}
 
     @When("User selects the {string} creative type")
     public void userSelectsTheCreativeType(String creativeType) {
@@ -6198,7 +6261,8 @@ public class LifeSteps {
     public void verifyThatTheCounterOnTheLeftDisplaysTheCorrectValueAfterFileUploadFor(String listType) {
         logger.info(
                 "Verify that the counter on the left displays the correct value after file upload for {}", listType);
-        sharedList.searchAndOpenCreatedList(metricName);
+        sharedList.searchCreatedList(metricName);
+        sharedList.openSearchedList(metricName);
         totalListCount = Integer.parseInt(sharedList.fetchCountFromLeftPanel(metricName));
         itemCount = sharedList.fetchEmailCount();
         Assert.assertEquals(totalListCount, itemCount);
@@ -6399,6 +6463,37 @@ public class LifeSteps {
     public void userNavigatesToTacticSettingTab() {
         logger.info("User navigates to Line item from Association Tab");
         tacticDetails.clickSettingsTab();
+    }
+
+    @Then("The user clicks on show expression tab and fetch the values displayed")
+    public void the_user_clicks_on_show_expression_tab_and_fetch_the_values_displayed() {
+        tacticDetails.clickShowExpressionButton();
+        tacticDetails.fetchShowExpressionValues();
+    }
+
+    @Then(
+            "Verify that all the rule types added in targeting rules are displayed in show expression with correct values along with {string}")
+    public void
+            verify_all_rule_types_added_in_targeting_rules_are_displayed_in_show_expression_with_correct_values_along_with_default_expression(
+                    String defaultExpression) {
+        boolean result = tacticDetails.ruleMappingWithShowExpressionValues(rulesMap, defaultExpression);
+        Assert.assertTrue("Targeting rules added is not matching with the ones in show expression", result);
+    }
+
+    @Then("Verify show expression connector AND OR logic is correct")
+    public void verifyShowExpressionConnectorLogicIsCorrect() {
+        tacticDetails.fetchShowExpressionValues();
+        Assert.assertTrue(
+                "Show expression connector logic is incorrect. Raw values: "
+                        + tacticDetails.getShowExpressionRawValues(),
+                tacticDetails.assertShowExpressionConnectorLogic(tacticDetails.getShowExpressionRawValues()));
+    }
+
+    @Then("User removes the targeting {string} and saves the settings")
+    public void userRemovesTheTargetingAndSavesTheSettings(String ruleType) {
+        logger.info("Removing targeting rule type: {}", ruleType);
+        tacticDetails.removeTargetingRule(ruleType);
+        tacticSettings.saveTacticSettings();
     }
 
     @Then("User verifies that forecast data is unavailable when no targeting rules are applied")
@@ -7291,7 +7386,10 @@ public class LifeSteps {
             List<String> bidexpectedValues = entry.getValue();
             List<String> actualValues = tacticSettings.getBidTypesForCategory(key);
             for (String bidexpected : bidexpectedValues) {
-                Assert.assertTrue("Expected value '" + bidexpected + "' not found for category '" + key + "'. Found: " + actualValues, actualValues.contains(bidexpected));
+                Assert.assertTrue(
+                        "Expected value '" + bidexpected + "' not found for category '" + key + "'. Found: "
+                                + actualValues,
+                        actualValues.contains(bidexpected));
             }
         }
 
@@ -7299,7 +7397,7 @@ public class LifeSteps {
     }
 
     @Given("User configures Bid multiplier rules as below with {string}")
-    public void user_selects_the_Bid_multiplier_rules(String fillValue,DataTable bidRuleTypeAndOptions) {
+    public void user_selects_the_Bid_multiplier_rules(String fillValue, DataTable bidRuleTypeAndOptions) {
         logger.info("Configuring Bid multiplier rules from DataTable");
         Map<String, String> rawMap = bidRuleTypeAndOptions.asMap(String.class, String.class);
         Map<String, List<String>> rulesMap = CommonUtils.processDataTable(rawMap);
@@ -7308,7 +7406,7 @@ public class LifeSteps {
         for (Map.Entry<String, List<String>> entry : rulesMap.entrySet()) {
             keyType.add(entry.getKey());
             keyValues.addAll(entry.getValue());
-            tacticSettings.selectMultipleBidRuleTypes(entry.getKey(), entry.getValue(),fillValue);
+            tacticSettings.selectMultipleBidRuleTypes(entry.getKey(), entry.getValue(), fillValue);
         }
         logger.info("Closing Bid Rule Type panel");
         tacticSettings.closeRuleTypePanel();
@@ -7336,7 +7434,8 @@ public class LifeSteps {
         Assert.assertEquals("Rule types mismatch", expectedUniqueAndSortedBid, actualUniqueAndSortedBid);
 
         for (String expectedOption : expectedNormalizedBidRuleOptions) {
-            boolean matchFound = actualNormalizedBidRuleOptions.stream().anyMatch(actual -> actual.equalsIgnoreCase(expectedOption));
+            boolean matchFound =
+                    actualNormalizedBidRuleOptions.stream().anyMatch(actual -> actual.equalsIgnoreCase(expectedOption));
             Assert.assertTrue("Expected rule option not found: " + expectedOption, matchFound);
         }
 
@@ -7350,13 +7449,21 @@ public class LifeSteps {
         tacticSettings.clickCreativeTab();
     }
 
-    @And("User verify Behaviour segment and NPI are not allowed in bid multiplier rules when same are not selected in targeting rules")
+    @And(
+            "User verify Behaviour segment and NPI are not allowed in bid multiplier rules when same are not selected in targeting rules")
     public void userVerifyBehavioursegmentandNPIareNotAllowedinbidMultiplier() {
-        logger.info("Verifying Behaviour segment and NPI are not allowed in Bid multiplier if the same are not targeted in tactic");
+        logger.info(
+                "Verifying Behaviour segment and NPI are not allowed in Bid multiplier if the same are not targeted in tactic");
         String displaySegmentError = tacticSettings.checkErrorOfBidMultiplierSegmentRule();
-        Assert.assertEquals("Application allows Behaviour segment in bid multiplier even if its not targeted in tactic", ("No Behavioral Targeting is Selected"), displaySegmentError);
+        Assert.assertEquals(
+                "Application allows Behaviour segment in bid multiplier even if its not targeted in tactic",
+                ("No Behavioral Targeting is Selected"),
+                displaySegmentError);
         String displayNPIError = tacticSettings.checkErrorOfBidMultiplierNPIRule();
-        Assert.assertEquals("Application allows NPI in bid multiplier even if its not targeted in tactic", ("No NPI Targeting is Selected"), displayNPIError);
+        Assert.assertEquals(
+                "Application allows NPI in bid multiplier even if its not targeted in tactic",
+                ("No NPI Targeting is Selected"),
+                displayNPIError);
     }
 
     @Then("User close the bid panel to add targeting rules")
@@ -7381,20 +7488,22 @@ public class LifeSteps {
         Assert.assertEquals("Creative(s)", creativesText);
     }
 
-    @When("User creates line items with tactics and targeting rules as below and assigns existing creative named {string}")
+    @When(
+            "User creates line items with tactics and targeting rules as below and assigns existing creative named {string}")
     public void userCreatesLineItemsWithTacticsAndTargetingRules(String creative, DataTable dataTable) {
         logger.info("Creating line items with tactics and targeting rules");
-        tacticDetails.createLineItemsWithTacticsAndTargetingRules(dataTable.asMaps(String.class, String.class), creative, perTacticRules -> {
-            logger.info("Running per-tactic targeting rule verifications for: {}", perTacticRules.keySet());
-            rulesMap = new LinkedHashMap<>(perTacticRules);
-            keyType = new ArrayList<>(perTacticRules.keySet());
-            keyValues = new ArrayList<>();
-            for (List<String> v : perTacticRules.values()) {
-                keyValues.addAll(v);
-            }
-            verify_the_configured_targeting_rules();
-            verifyTheCountOfRulesAddedForTheSelectedTargetingRuleTypeOnTheTacticSettingsPage();
-        });
+        tacticDetails.createLineItemsWithTacticsAndTargetingRules(
+                dataTable.asMaps(String.class, String.class), creative, perTacticRules -> {
+                    logger.info("Running per-tactic targeting rule verifications for: {}", perTacticRules.keySet());
+                    rulesMap = new LinkedHashMap<>(perTacticRules);
+                    keyType = new ArrayList<>(perTacticRules.keySet());
+                    keyValues = new ArrayList<>();
+                    for (List<String> v : perTacticRules.values()) {
+                        keyValues.addAll(v);
+                    }
+                    verify_the_configured_targeting_rules();
+                    verifyTheCountOfRulesAddedForTheSelectedTargetingRuleTypeOnTheTacticSettingsPage();
+                });
     }
 
     @Then("Verify the newly created campaign details in the campaign list")
@@ -7403,5 +7512,83 @@ public class LifeSteps {
         logger.info("Searching for Campaign: {}", campaignNameRandom);
         campaignDashboard.searchCreatedCampaign(campaignNameRandom);
         Assert.assertEquals(campaignNameRandom, campaignDashboard.verifyCreatedCampaign(campaignNameRandom));
+    }
+
+    @And("User selects Medscape List")
+    public void userSelectsMedscapeList() {
+        logger.info("Selecting Medscape List");
+        npiLists.clickMedscapeList();
+    }
+
+    @And("Verify Advertiser is auto selected as {string}")
+    public void verifyAdvertiserIsAutoSelectedAs(String advertiserName) {
+        logger.info("Verifying Advertiser is auto selected as: {}", advertiserName);
+        String actualAdvertiser = npiMedscapeList.fetchDefaultAdvertiser();
+        Assert.assertEquals("Advertiser is not auto selected correctly", advertiserName, actualAdvertiser);
+    }
+
+    @And("User enters the Medscape NPI list name as {string} and saves the list")
+    public void userEntersTheMedscapeNPIListNameAs(String listName) {
+        npiName = listName + "_" + CommonUtils.timeStampCalculation();
+        logger.info("Entering Medscape NPI list name: {}", npiName);
+        npiMedscapeList.enterListName(npiName);
+        npiMedscapeList.clickNextButton();
+    }
+
+    @And("Verify Upload File section is displayed on the Medscape List details page")
+    public void verifyUploadFileSectionIsDisplayedOnTheMedscapeListDetailsPage() {
+        logger.info("Verifying Upload File section is displayed on the Medscape List details page");
+        Assert.assertTrue("Upload File section is not displayed", npiMedscapeList.isUploadFileSectionDisplayed());
+    }
+
+    @And("User maps row headers from the uploaded spreadsheet to predefined labels as below")
+    public void userMapsRequiredFieldsAs(DataTable dataTable) {
+        logger.info("Mapping row headers from the uploaded spreadsheet to predefined labels");
+        List<Map<String, String>> data = dataTable.asMaps(String.class, String.class);
+        for (Map<String, String> mapping : data) {
+            String labelName = mapping.get("LABEL");
+            String columnValue = mapping.get("COLUMN_VALUE");
+            npiMedscapeList.mapRowHeadersToLabels(labelName, columnValue);
+        }
+    }
+
+    @And(
+            "User saves the Medscape List and verify that the list is uploaded successfully with message {string} and {string}")
+    public void userSavesTheMedscapeListNavigatesToLoadingPageWithContent(String messageContent, String waitText) {
+        logger.info("Saving the Medscape List and navigating to loading page with content: {}", messageContent);
+        npiMedscapeList.clickSaveButton();
+        String softMatchMessage = npiMedscapeList.getSoftMatchProgressText();
+        String waitTextContent = npiMedscapeList.getWaitText();
+        Assert.assertEquals("Soft match progress message is not displayed correctly", messageContent, softMatchMessage);
+        Assert.assertEquals("Soft match progress message is not displayed correctly", waitText, waitTextContent);
+    }
+
+    @And("Verify file details are displayed correctly in the list details page")
+    public void verifyFileDetailsAreDisplayedInListDetailsPage() {
+        logger.info("Verifying file details are displayed correctly in the list details page");
+        Assert.assertTrue("File details are not displayed", npiMedscapeList.isMedscapeListContainerDisplayed());
+    }
+
+    @And("Verify {int} download options are available on the NPI list details page for {string} list {string}")
+    public void verifyTwoDownloadOptionsAreAvailableOnTheNPIListDetailsPage(int expectedDownloadOptions, String listType, String npiListName) {
+        logger.info("Searching and selecting NPI list '{}'", npiListName);
+        npiLists.searchList(npiListName);
+        npiLists.openSearchedList(npiListName);
+        logger.info("Verifying {} download option(s) are available on the NPI list details page for {} list", expectedDownloadOptions, listType);
+        Assert.assertTrue("Download options are not available", npiLists.areDownloadOptionsAvailable(expectedDownloadOptions));
+    }
+
+    @And("User navigates back to NPI Lists landing page")
+    public void userNavigatesBackToNPIListsLandingPage() {
+        logger.info("Navigating back to NPI Lists landing page");
+        npiLists.navigateBackToNPIListsLandingPage();
+    }
+
+    @And("Verify the Creatives Advertiser dropdown is displaying all Advertisers mapped to the logged in account {string}")
+    public void verifyTheCreativesAdvertiserDropdownIsDisplayingAllAdvertisersMappedToTheLoggedInAccount(String accountName) {
+        logger.info("Creatives Advertiser drop-down should list advertisers mapped to {}", accountName);
+        Assert.assertTrue("Advertiser dropdown is not present", bulkCreativeUpload.isAdvertiserDropdownAvailable());
+        List<String> advertiser = bulkCreativeUpload.fetchAdvertisers();
+        Assert.assertTrue("Advertiser List does not match", advertiser.containsAll(itemList));
     }
 }

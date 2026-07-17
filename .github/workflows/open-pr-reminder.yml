@@ -1,0 +1,47 @@
+name: Stale PR Reminder
+
+on:
+  # Lets you trigger a run by hand from the Actions tab.
+  workflow_dispatch:
+
+  pull_request:
+    branches:
+      - main
+
+  # 9:00 AM IST daily (IST = UTC+5:30)
+  schedule:
+    - cron: '30 3 * * *'
+
+# Allow the default GITHUB_TOKEN to comment on PRs.
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: stale-pr-reminder
+  cancel-in-progress: false
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        working-directory: .github/stale-pr-reminder
+        run: pip install -r requirements.txt
+
+      - name: Run reminder
+        working-directory: .github/stale-pr-reminder
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          REQUIRED_APPROVALS: "2"
+          MERGER: "pp-sdeodhar"
+        run: python stale_pr_reminder.py

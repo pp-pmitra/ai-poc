@@ -57,7 +57,7 @@ Feature: Studio Publish NPI List
     And User selects publish "<LIST_TYPE>"
     Then Verify list is published
     And Check the Download icon is highlighted in green color
-    And User navigates to NPI Lists page in LIFE
+    And User navigates to NPI Lists page
     And User searches the workspace in LIFE and selects it
     And User clicks on the published workspace
     And Verify the list should be available for LIFE platform by default
