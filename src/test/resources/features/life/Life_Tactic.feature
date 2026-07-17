@@ -223,6 +223,9 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     And User configures Bid multiplier rules as below with "<BID_VALUE>"
       | Behavioral Segment | 111 > 222 > Patients of HCPs prescribing Ivig and SCIg competitors |
       | NPI                | AutoSmartList954103283                                             |
+      | Day of The Week    | Monday                                                             |
+#      | Speciality         | Allergy & Immunology                                               |
+      | Practitioner Type  | Nurse Practitioner                                                 |
     Then Verify the configured Bid multiplier rules
     When User saves the Bid multiplier settings
     Then Verify settings details are saved and user is navigated to the creatives tab

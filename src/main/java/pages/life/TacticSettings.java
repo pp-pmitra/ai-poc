@@ -1038,11 +1038,9 @@ public class TacticSettings {
             String text = BID_MULTIPLIER_CATEGORY_NAME.nth(i).innerText();
             if (text != null) actualCategories.add(text.trim());
         }
-        return new HashSet<>(actualCategories)
-                .containsAll(bidCategoryList.stream()
-                        .filter(Objects::nonNull)
-                        .map(String::trim)
-                        .collect(Collectors.toSet()));
+        return new HashSet<>(actualCategories).containsAll(
+                bidCategoryList.stream().filter(Objects::nonNull).map(String::trim).collect(Collectors.toSet())
+        );
     }
 
     public void clickBidMultipliers() {
@@ -1103,6 +1101,43 @@ public class TacticSettings {
                 }
                 clickRuleTypeOkButton();
                 break;
+            case "Day of The Week":
+                String dotwXpath = String.format("//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
+                Locator dotwRuleType = page.locator(dotwXpath);
+                dotwRuleType.click();
+                for (String value : ruleValues) {
+                    String cleanedValue = value.replace("[", "").replace("]", "");
+                    String dotwXpath2 = String.format("//div[contains(text(),'%s')]/ancestor::td/preceding-sibling::td//input", cleanedValue);
+                    Locator dotwItems = page.locator(dotwXpath2);
+                    dotwItems.fill(fillValue);
+                }
+                clickRuleTypeOkButton();
+                break;
+            case "Speciality":
+                String splXpath = String.format("//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
+                Locator splRuleType = page.locator(splXpath);
+                splRuleType.click();
+                for (String value : ruleValues) {
+                    String cleanedValue = value.replace("[", "").replace("]", "");
+                    String splXpath2 = String.format("//div[contains(text(),'%s')]/ancestor::td/preceding-sibling::td//input", cleanedValue);
+                    Locator splItems = page.locator(splXpath2);
+                    splItems.fill(fillValue);
+                }
+                clickRuleTypeOkButton();
+                break;
+            case "Practitioner Type":
+                String prtXpath = String.format("//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
+                Locator prtRuleType = page.locator(prtXpath);
+                prtRuleType.click();
+                for (String value : ruleValues) {
+                    String cleanedValue = value.replace("[", "").replace("]", "");
+                    String prtXpath2 = String.format("//div[contains(text(),'%s')]/ancestor::td/preceding-sibling::td//input", cleanedValue);
+                    Locator prtItems = page.locator(prtXpath2);
+                    prtItems.fill(fillValue);
+                }
+                clickRuleTypeOkButton();
+                break;
+
         }
     }
 
