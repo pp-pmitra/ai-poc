@@ -151,7 +151,7 @@ public class ExplorerWorkspace {
         this.ADVERTISER_LIST = WORKSPACE_FRAME.locator("//p[text()='Advertisers']");
         this.SEARCH_ADVERTISER = WORKSPACE_FRAME.locator("//input[@placeholder='Search']");
         this.ADVERTISER_BUTTON = WORKSPACE_FRAME.locator("//button[contains(@data-tour-id,'workspace-advertiser')]");
-        this.SPECIALITY_PANEL = WORKSPACE_FRAME.locator("//div[@id='panel-speciality_all']");
+        this.SPECIALITY_PANEL = WORKSPACE_FRAME.locator("//div[@id='panel-all']");
         this.INCLUDE_EXCLUDE_CHECK = WORKSPACE_FRAME.locator("//button[@data-testid='bi-include-exclude-check']");
         this.ALERT = WORKSPACE_FRAME.locator("//div[contains(@class, 'Toastify')]//div[@role='alert']//p");
     }
@@ -223,17 +223,18 @@ public class ExplorerWorkspace {
                     "IAB",
                     "MeSH":
                 if (filter.equals("Specialty")) {
+                    WORKSPACE_FRAME.locator("//div//p[text()='Specialty']").click();
                     WORKSPACE_FRAME
                             .locator("//span[contains(text(),'All Specialties')]")
                             .click();
-                    waitUtility.waitForLocatorVisible(SPECIALITY_PANEL);
+                    waitUtility.waitForLocatorVisible(SPECIALITY_PANEL.last());
                 }
                 for (String option : options) {
                     waitUtility.waitForLocatorVisible(INCLUDE_EXCLUDE_CHECK.last());
                     Locator locator = WORKSPACE_FRAME.locator(String.format(
                             "//p[contains(text(),'%s')]/preceding-sibling::div/button[@data-testid='bi-include-exclude-check']",
                             option.trim()));
-                    TAB_PANEL_SEARCH.fill(option.trim());
+                    tabPanelSearch(filter).fill(option.trim());
                     waitUtility.waitForLocatorVisible(locator.first());
                     page.waitForTimeout(1000);
                     if (SELECT_DESELECT_ALL.isVisible()) SELECT_DESELECT_ALL.click();
@@ -461,6 +462,13 @@ public class ExplorerWorkspace {
             }
             default -> false;
         };
+    }
+
+    private Locator tabPanelSearch(String filter) {
+        // Profession & Specialty renders two matching search inputs: Profession first, Specialty last.
+        if (filter.equals("Profession")) return TAB_PANEL_SEARCH.first();
+        if (filter.equals("Specialty")) return TAB_PANEL_SEARCH.last();
+        return TAB_PANEL_SEARCH;
     }
 
     public String isAdvertiserDisabled() {
