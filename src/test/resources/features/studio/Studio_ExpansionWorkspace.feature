@@ -30,11 +30,11 @@ Feature: HCP Audience Workspace in Studio Application
     Then Verify the "HCP Audience Expansion" Workspace is saved
     Then Verify the workspace is visible in workspace management page
     Examples:
-      | ADVERTISER | WORKSPACE_NAME | SOURCE_AUDIENCE  | OPTIONS      | EXPANDED_AUDIENCE             |
-      | Abbvie     | HCP_Expansion  | Studio Workspace | PB_Test      | Expand with Care Team         |
-      | Abbvie     | HCP_Expansion  | Studio Workspace | PB_Test      | Expand with Affiliation Graph |
-      | Abbvie     | HCP_Expansion  | NPI List         | PB_Test_List | Expand with Care Team         |
-      | Abbvie     | HCP_Expansion  | NPI List         | PB_Test_List | Expand with Affiliation Graph |
+      | ADVERTISER | WORKSPACE_NAME | SOURCE_AUDIENCE  | OPTIONS                  | EXPANDED_AUDIENCE             |
+      | Abbvie     | HCP_Expansion  | Studio Workspace | Explorer_20260608_201107 | Expand with Care Team         |
+      | Abbvie     | HCP_Expansion  | Studio Workspace | Explorer_20260608_201107 | Expand with Affiliation Graph |
+      | Abbvie     | HCP_Expansion  | NPI List         | Explorer_20260608_200335 | Expand with Care Team         |
+      | Abbvie     | HCP_Expansion  | NPI List         | Explorer_20260608_200335 | Expand with Affiliation Graph |
 
   @regression @ps
   Scenario Outline: Create and save an HCP Audience Expansion workspace and publish the workspace
