@@ -647,6 +647,7 @@ public class TacticDetails {
     }
 
     public void globalSearchDeletedTactic(String tacticName) {
+        navigation.refreshPage();
         OPEN_GLOBAL_SEARCH.click();
         GLOBAL_SEARCH_INPUT_FIELD.fill(tacticName);
         GLOBAL_SEARCH_INPUT_FIELD.press("Enter");
