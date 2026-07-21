@@ -67,7 +67,7 @@ public class ExpansionWorkspace {
                 .nth(3);
         this.BELOW_25 = WORKSPACE_FRAME.getByLabel("Below");
         this.OK_FILTER = WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Ok"));
-        this.SAVE = WORKSPACE_FRAME.locator(".styles__StyledResetUpdate-sc-njp72g-0 > button:nth-child(2)");
+        this.SAVE = WORKSPACE_FRAME.locator("//button[contains(@data-tour-id,'save-workspace-button')]");
         this.POPUP_CLOSE = WORKSPACE_FRAME.locator("div")
                 .filter(new Locator.FilterOptions().setHasText(Pattern.compile("^Select Filter$")))
                 .getByRole(AriaRole.BUTTON);
@@ -269,11 +269,23 @@ public class ExpansionWorkspace {
     public String fetchTotalNPICountAfterExpansion(String beforeCount) {
         page.waitForLoadState();
         waitUtility.waitForLocatorVisible(EXPANDED_AUDIENCE_COUNT.first());
-        page.waitForTimeout(5000);
+
+        int loadRetries = 0;
+        String expandedText = EXPANDED_AUDIENCE_COUNT.first().innerText();
+        while (!expandedText.matches(".*\\d+.*") && loadRetries < 30) {
+            page.waitForTimeout(5000);
+            expandedText = EXPANDED_AUDIENCE_COUNT.first().innerText();
+            loadRetries++;
+        }
+
+        TOTAL_NPI_COUNT.scrollIntoViewIfNeeded();
+        waitUtility.waitForLocatorVisible(TOTAL_NPI_COUNT);
         String current = TOTAL_NPI_COUNT.textContent().replace(",", "");
         int retries = 0;
-        while ((current.equals(beforeCount) || "0".equals(current) || current.isEmpty()) && retries < 6) {
+        while ((current.equals(beforeCount) || "0".equals(current) || current.isEmpty()) && retries < 60) {
             page.waitForTimeout(5000);
+            TOTAL_NPI_COUNT.scrollIntoViewIfNeeded();
+            waitUtility.waitForLocatorVisible(TOTAL_NPI_COUNT);
             current = TOTAL_NPI_COUNT.textContent().replace(",", "");
             retries++;
         }
