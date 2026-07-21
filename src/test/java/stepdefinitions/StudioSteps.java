@@ -1044,14 +1044,9 @@ public class StudioSteps {
                 explorerWorkspace.clickFilterOKButton();
             }
             explorerWorkspace.applyFilter();
-            logger.info(
-                    "Expected recency: '{}' | Actual recency: '{}'",
-                    recency,
-                    explorerWorkspace.fetchRecencyValue(filterType));
-            Assert.assertEquals(
-                    filterType + " recency value is not matched",
-                    recency,
-                    explorerWorkspace.fetchRecencyValue(filterType));
+            String actualRecency = explorerWorkspace.fetchRecencyValue();
+            logger.info("Expected recency: '{}' | Actual recency: '{}'", recency, actualRecency);
+            Assert.assertEquals(filterType + " recency value is not matched", recency, actualRecency);
         }
     }
 
