@@ -6645,13 +6645,13 @@ public class LifeSteps {
         dimensionName = destinationName + '_' + CommonUtils.timeStampCalculation();
         logger.info(
                 "Entering destination details: Name='{}', Type='{}', Host='{}', Port='{}', Server Path='{}'",
-                destinationName,
+                dimensionName,
                 destinationType,
                 host,
                 port,
                 serverPath);
         runReportPanel.enterDestinationDetails(
-                destinationName, destinationType, host, username, password, port, serverPath);
+                dimensionName, destinationType, host, username, password, port, serverPath);
     }
 
     @Then("User runs the connection test and creates the destination")
@@ -6661,7 +6661,7 @@ public class LifeSteps {
         runReportPanel.clickCreateDestinationButton();
         logger.info("Destination creation initiated successfully");
         String text = runReportPanel.fetchSuccessAlert();
-        Assert.assertEquals("Destination created successfully", text);
+        Assert.assertEquals("Destination's settings saved successfully", text);
     }
 
     @And("Verify destination created should populate in the Destination dropdown field")
