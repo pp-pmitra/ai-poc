@@ -10,6 +10,9 @@ import com.microsoft.playwright.options.BoundingBox;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import utils.CommonUtils;
 import utils.WaitUtility;
 
@@ -475,16 +478,28 @@ public class ExplorerWorkspace {
     }
 
     public void selectRecency(String recency) {
+        // both clinical and contextual recency falls under same data-tour-id
         WORKSPACE_FRAME
-                .locator("//p[normalize-space()='Recency']/following-sibling::div//label[normalize-space()='" + recency
-                        + "']")
-                .click();
+                .locator(String.format("//div[@data-tour-id = 'clinical-recency_filter']//label[text()='%s']",
+                        recency)).click();
     }
 
-    public String fetchRecencyValue(String filterType) {
-        Locator recencyLocator = WORKSPACE_FRAME.locator(String.format(
-                "//p[normalize-space()='%s Recency']/parent::div//following-sibling::div//p", filterType));
-        return recencyLocator.textContent().trim();
+    public String fetchRecencyValue() {
+        waitForDashboardLoad();
+        Locator recencyLocator = WORKSPACE_FRAME.locator(
+                "//div[@data-tour-id='filters-container']//div[@role='img']/following-sibling::p");
+        String text = recencyLocator.last().textContent().trim();
+        // Assertion expects first character as uppercase while after applying filter lowercase is shown on UI
+        Matcher matcher = Pattern.compile(
+                "\\b(\\d+)\\s+(day|days|week|weeks|month|months|year|years)\\b",
+                Pattern.CASE_INSENSITIVE
+        ).matcher(text);
+        if (!matcher.find()) {
+            return "";
+        }
+        String unit = matcher.group(2).toLowerCase();
+        unit = unit.substring(0, 1).toUpperCase() + unit.substring(1);
+        return matcher.group(1) + " " + unit;
     }
 
     public void selectDraftOption(String DraftOption) {
