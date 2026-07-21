@@ -1409,5 +1409,29 @@ public class StudioSteps {
         logger.info("Actual dialog message: {}", actualMessage);
         Assert.assertEquals("Dialog message does not match", expectedMessage, actualMessage);
     }
+
+    @And("User clicks on the Filters tab")
+    public void userClicksOnTheFiltersTab() {
+        logger.info("Clicking on Filters tab");
+        brandExplorerWorkspace.clickFiltersTab();
+    }
+
+    @And("User adds a filter on {string} from {string} category with value {string}")
+    public void userAddsAFilterOnFieldFromCategoryWithValue(String field, String category, String value) {
+        logger.info("Adding filter on '{}' from '{}' category with value '{}'", field, category, value);
+        brandExplorerWorkspace.clickAddFilter();
+        brandExplorerWorkspace.selectFilterField(category, field);
+        brandExplorerWorkspace.closeFilterDialog();
+        brandExplorerWorkspace.enterFilterValue(field, value);
+    }
+
+    @Then("Verify the filter on {string} shows value {string}")
+    public void verifyTheFilterOnFieldShowsValue(String field, String value) {
+        String summary = brandExplorerWorkspace.getAppliedFilterSummary(field, value);
+        logger.info("Applied filter summary for '{}': {}", field, summary);
+        Assert.assertTrue(
+                "Filter summary '" + summary + "' does not contain expected value '" + value + "'",
+                summary.contains(value));
+    }
 }
 

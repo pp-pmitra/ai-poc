@@ -26,6 +26,8 @@ public class BrandExplorerWorkspace {
     private final Locator DATE_RANGE_ERROR;
     private final Locator DATE_CELLS;
     private final Locator SPINNER;
+    private final Locator FILTERS_TAB;
+    private final Locator ADD_FILTER_BUTTON;
     WaitUtility waitUtility;
 
     public BrandExplorerWorkspace(Page page) {
@@ -46,6 +48,9 @@ public class BrandExplorerWorkspace {
         this.DATE_CELLS =
                 WORKSPACE_FRAME.locator("//div[contains(@class,'Box')]//table//tbody//tr//td[1][@aria-colindex]");
         this.SPINNER = WORKSPACE_FRAME.locator("//div[@data-testid='loading-spinner']");
+        this.FILTERS_TAB = WORKSPACE_FRAME.locator("//div[normalize-space(text())='Filters']");
+        this.ADD_FILTER_BUTTON =
+                WORKSPACE_FRAME.locator("//div[normalize-space(text())='Add Filters']");
     }
 
     public void waitForDashboardLoad() {
@@ -330,5 +335,82 @@ public class BrandExplorerWorkspace {
             }
         }
         return failures;
+    }
+
+    public void clickFiltersTab() {
+        waitUtility.waitForLocatorVisible(FILTERS_TAB.first());
+        FILTERS_TAB.first().click();
+    }
+
+    public void clickAddFilter() {
+        waitUtility.waitForLocatorVisible(ADD_FILTER_BUTTON.first());
+        ADD_FILTER_BUTTON.first().click();
+    }
+
+    // Filter fields are organized into the same accordion categories as dimensions/metrics,
+    // inside the "Select Filter" modal opened by clickAddFilter().
+    private Locator filterCategoryButton(String category) {
+        return WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName(category));
+    }
+
+    private Locator filterFieldCheckbox(String category, String field) {
+        return WORKSPACE_FRAME
+                .getByRole(AriaRole.REGION, new FrameLocator.GetByRoleOptions().setName(category))
+                .getByRole(AriaRole.CHECKBOX, new Locator.GetByRoleOptions().setName(field).setExact(true));
+    }
+
+    public void selectFilterField(String category, String field) {
+        Locator categoryButton = filterCategoryButton(category);
+        waitUtility.waitForLocatorVisible(categoryButton);
+        if (!"true".equals(categoryButton.getAttribute("aria-expanded"))) {
+            categoryButton.click();
+        }
+        Locator checkbox = filterFieldCheckbox(category, field);
+        waitUtility.waitForLocatorVisible(checkbox);
+        checkbox.check();
+    }
+
+    public void closeFilterDialog() {
+        page.keyboard().press("Escape");
+    }
+
+    // Scoped to the field's own card in the "Data Filters" panel, since the field name can be
+    // echoed elsewhere (e.g. an accessibility live region) once a value is applied.
+    private Locator filterFieldCard(String field) {
+        return WORKSPACE_FRAME
+                .locator(String.format("//p[normalize-space()='%s']/ancestor::div[2]", field))
+                .first();
+    }
+
+    // The value control is a searchable multi-select list: each option is a div[role='option']
+    // whose checkbox has no accessible name (its <label> is empty; the visible text lives in a
+    // sibling <p>), so the option's own accessible name - built from that sibling text - is what
+    // getByRole(OPTION) must match, not getByRole(CHECKBOX). Typing narrows the options, and the
+    // exact-match option must be clicked directly - pressing Enter instead selects every option
+    // still matching the search text, not just the intended one.
+    public void enterFilterValue(String field, String value) {
+        Locator input = filterFieldCard(field).locator("input:not([readonly])").first();
+        waitUtility.waitForLocatorVisible(input);
+        input.click();
+        input.fill(value);
+        Locator option = WORKSPACE_FRAME.getByRole(
+                AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName(value).setExact(true));
+        waitUtility.waitForLocatorVisible(option.first());
+        option.first().click();
+        page.keyboard().press("Escape");
+        waitForSpinnerToDisappear();
+    }
+
+    // The applied value renders asynchronously after the field's checkbox list loads, so the card's
+    // text reads as just "<field> is" for a brief window - most noticeable right after reopening a
+    // saved workspace, where the value has to round-trip from the server before it appears. Wait for
+    // the expected value's own text node rather than a generic "loading done" signal, since no
+    // reliable loading-skeleton element exists in this card's DOM.
+    public String getAppliedFilterSummary(String field, String expectedValue) {
+        Locator card = filterFieldCard(field);
+        waitUtility.waitForLocatorVisible(card);
+        waitUtility.waitForLocatorVisible(
+                card.getByText(expectedValue, new Locator.GetByTextOptions().setExact(true)).first());
+        return card.innerText().replaceAll("\\s+", " ").trim();
     }
 }

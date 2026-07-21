@@ -183,3 +183,22 @@ Feature: Brand Explorer Workspace creation in Studio
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
 
+  @regression
+  Scenario Outline: Verify a saved filter persists when the workspace is closed and reopened
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User edits the workspace name as "<WORKSPACE_NAME>"
+    And User clicks on the Filters tab
+    And User adds a filter on "<FIELD>" from "<CATEGORY>" category with value "<VALUE>"
+    Then Verify the filter on "<FIELD>" shows value "<VALUE>"
+    And User saves the "Brand Explorer" workspace
+    Then Verify the "Brand Explorer" Workspace is saved
+    When User navigates back to the workspace list and reopens the saved Brand Explorer workspace
+    And User clicks on the Filters tab
+    Then Verify the filter on "<FIELD>" shows value "<VALUE>"
+    Examples:
+      | ADVERTISER         | WORKSPACE_NAME     | CATEGORY                 | FIELD      | VALUE     |
+      | TAMTESTING ACCOUNT | Automation_Persist | Healthcare Professionals | Profession | Physician |
+
