@@ -7364,11 +7364,12 @@ public class LifeSteps {
     }
 
     @Then("Verify Bid multiplier panel with all options under below categories")
-    public void verifyTargetingPanelWithAllBidmultiplierUnderBelowCategories(DataTable bidCategory) {
+    public void verifyTargetingPanelWithAllBidmultiplierUnderBelowCategories(DataTable bidCategory) throws InterruptedException {
         tacticSettings.clickBidMultipliers();
         List<String> bidCategoryList = bidCategory.asList(String.class);
         logger.info("Verifying Bid multiplier panel contains the following categories: {}", bidCategoryList);
         for (String category : bidCategoryList) {
+            Thread.sleep(1000); // Adding a delay for better visualization
             boolean isPresent = tacticSettings.fetchAndVerifyBidCategoryName(Collections.singletonList(category));
             Assert.assertTrue("Bid multiplier category '" + category + "' not found or not visible on UI", isPresent);
         }
@@ -7397,7 +7398,7 @@ public class LifeSteps {
     }
 
     @Given("User configures Bid multiplier rules as below with {string}")
-    public void user_selects_the_Bid_multiplier_rules(String fillValue, DataTable bidRuleTypeAndOptions) {
+    public void user_selects_the_Bid_multiplier_rules(String fillValue, DataTable bidRuleTypeAndOptions) throws InterruptedException {
         logger.info("Configuring Bid multiplier rules from DataTable");
         Map<String, String> rawMap = bidRuleTypeAndOptions.asMap(String.class, String.class);
         Map<String, List<String>> rulesMap = CommonUtils.processDataTable(rawMap);

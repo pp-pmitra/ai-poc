@@ -224,8 +224,18 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
       | Behavioral Segment | 111 > 222 > Patients of HCPs prescribing Ivig and SCIg competitors |
       | NPI                | AutoSmartList954103283                                             |
       | Day of The Week    | Monday                                                             |
-#      | Speciality         | Allergy & Immunology                                               |
+      | Speciality         | Behavioral Health & Social Service Providers                       |
       | Practitioner Type  | Nurse Practitioner                                                 |
+      | Age                | 35-39                                                              |
+      | Gender             | Female                                                             |
+      | Geo Targets        | Afghanistan                                                        |
+      | Browser            | Chrome                                                             |
+      | Device             | Mobile                                                             |
+      | Operating Systems  | Linux                                                              |
+      | Inventory Source   | Aug14                                                              |
+      | Domains and Apps   | 1Domain_0617                                                       |
+      | Creative Size      | 120x20                                                             |
+
     Then Verify the configured Bid multiplier rules
     When User saves the Bid multiplier settings
     Then Verify settings details are saved and user is navigated to the creatives tab

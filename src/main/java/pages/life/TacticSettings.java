@@ -1069,7 +1069,7 @@ public class TacticSettings {
         return Collections.emptyList();
     }
 
-    public void selectMultipleBidRuleTypes(String ruleType, List<String> ruleValues, String fillValue) {
+    public void selectMultipleBidRuleTypes(String ruleType, List<String> ruleValues, String fillValue) throws InterruptedException {
 
         switch (ruleType) {
             case "Behavioral Segment":
@@ -1119,10 +1119,11 @@ public class TacticSettings {
                 splRuleType.click();
                 for (String value : ruleValues) {
                     String cleanedValue = value.replace("[", "").replace("]", "");
-                    String splXpath2 = String.format("//div[contains(text(),'%s')]/ancestor::td/preceding-sibling::td//input", cleanedValue);
+                    String splXpath2 = String.format("//div[contains(@class,'bmtTreeNodeName') and normalize-space(text())='%s']/preceding-sibling::div//input[@bidmultiplierconverter]", cleanedValue);
                     Locator splItems = page.locator(splXpath2);
                     splItems.fill(fillValue);
                 }
+                Thread.sleep(1000); // Adding a small delay to ensure the input is registered before moving to the next one
                 clickRuleTypeOkButton();
                 break;
             case "Practitioner Type":
@@ -1134,6 +1135,115 @@ public class TacticSettings {
                     String prtXpath2 = String.format("//div[contains(text(),'%s')]/ancestor::td/preceding-sibling::td//input", cleanedValue);
                     Locator prtItems = page.locator(prtXpath2);
                     prtItems.fill(fillValue);
+                }
+                clickRuleTypeOkButton();
+                break;
+            case "Age":
+                String ageXpath = String.format("//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
+                Locator ageRuleType = page.locator(ageXpath);
+                ageRuleType.click();
+                for (String value : ruleValues) {
+                    String cleanedValue = value.replace("[", "").replace("]", "");
+                    String ageXpath2 = String.format("//div[contains(text(),'%s')]/ancestor::td/preceding-sibling::td//input", cleanedValue);
+                    Locator ageItems = page.locator(ageXpath2);
+                    ageItems.fill(fillValue);
+                }
+                clickRuleTypeOkButton();
+                break;
+            case "Gender":
+                String gdrXpath = String.format("//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
+                Locator gdrRuleType = page.locator(gdrXpath);
+                gdrRuleType.click();
+                for (String value : ruleValues) {
+                    String cleanedValue = value.replace("[", "").replace("]", "");
+                    String gdrXpath2 = String.format("//div[contains(text(),'%s')]/ancestor::td/preceding-sibling::td//input", cleanedValue);
+                    Locator gdrItems = page.locator(gdrXpath2);
+                    gdrItems.fill(fillValue);
+                }
+                clickRuleTypeOkButton();
+                break;
+            case "Geo Targets":
+                String geoXpath = String.format("//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
+                Locator geoRuleType = page.locator(geoXpath);
+                geoRuleType.click();
+                for (String value : ruleValues) {
+                    String cleanedValue = value.replace("[", "").replace("]", "");
+                    String geoXpath2 = String.format("//div[contains(@class,'bmtTreeNodeName') and normalize-space(text())='%s']/preceding-sibling::div//input[@bidmultiplierconverter]", cleanedValue);
+                    Locator geoItems = page.locator(geoXpath2);
+                    geoItems.fill(fillValue);
+                }
+                Thread.sleep(1000); // Adding a small delay to ensure the input is registered before moving to the next one
+                clickRuleTypeOkButton();
+                break;
+            case "Browser":
+                String brwXpath = String.format("//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
+                Locator brwRuleType = page.locator(brwXpath);
+                brwRuleType.click();
+                for (String value : ruleValues) {
+                    String cleanedValue = value.replace("[", "").replace("]", "");
+                    String brwXpath2 = String.format("//div[contains(text(),'%s')]/ancestor::td/preceding-sibling::td//input", cleanedValue);
+                    Locator brwItems = page.locator(brwXpath2);
+                    brwItems.fill(fillValue);
+                }
+                clickRuleTypeOkButton();
+                break;
+            case "Device":
+                String dvcXpath = String.format("//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
+                Locator dvcRuleType = page.locator(dvcXpath);
+                dvcRuleType.click();
+                for (String value : ruleValues) {
+                    String cleanedValue = value.replace("[", "").replace("]", "");
+                    String dvcXpath2 = String.format("//div[contains(text(),'%s')]/ancestor::td/preceding-sibling::td//input", cleanedValue);
+                    Locator dvcItems = page.locator(dvcXpath2);
+                    dvcItems.fill(fillValue);
+                }
+                clickRuleTypeOkButton();
+                break;
+            case "Operating Systems":
+                String osXpath = String.format("//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
+                Locator osRuleType = page.locator(osXpath);
+                osRuleType.click();
+                for (String value : ruleValues) {
+                    String cleanedValue = value.replace("[", "").replace("]", "");
+                    String osXpath2 = String.format("//tr[td[@class='name-column' and normalize-space(text())='%s']]/td[contains(@class,'bmtPriceCol')]/input", cleanedValue);
+                    Locator osItems = page.locator(osXpath2);
+                    osItems.fill(fillValue);
+                }
+                clickRuleTypeOkButton();
+                break;
+            case "Inventory Source":
+                String ivsXpath = String.format("//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
+                Locator ivsRuleType = page.locator(ivsXpath);
+                ivsRuleType.click();
+                for (String value : ruleValues) {
+                    String cleanedValue = value.replace("[", "").replace("]", "");
+                    String ivsXpath2 = String.format("//div[contains(text(),'%s')]/ancestor::td/preceding-sibling::td//input", cleanedValue);
+                    Locator ivsItems = page.locator(ivsXpath2);
+                    ivsItems.fill(fillValue);
+                }
+                clickRuleTypeOkButton();
+                break;
+            case "Domains and Apps":
+                String daXpath = String.format("//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
+                Locator daRuleType = page.locator(daXpath);
+                daRuleType.click();
+                for (String value : ruleValues) {
+                    String cleanedValue = value.replace("[", "").replace("]", "");
+                    String daXpath2 = String.format("//div[contains(@class,'cliptext') and @title='%s']/preceding-sibling::div[contains(@class,'left')]/input", cleanedValue);
+                    Locator daItems = page.locator(daXpath2);
+                    daItems.fill(fillValue);
+                }
+                clickRuleTypeOkButton();
+                break;
+            case "Creative Size":
+                String csXpath = String.format("//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
+                Locator csRuleType = page.locator(csXpath);
+                csRuleType.click();
+                for (String value : ruleValues) {
+                    String cleanedValue = value.replace("[", "").replace("]", "");
+                    String csXpath2 = String.format("//tr[td[@class='name-column' and normalize-space(text())='120x20']]/td[contains(@class,'bmtPriceCol')]/input", cleanedValue);
+                    Locator csItems = page.locator(csXpath2);
+                    csItems.fill(fillValue);
                 }
                 clickRuleTypeOkButton();
                 break;
@@ -1163,7 +1273,7 @@ public class TacticSettings {
     public List<Object> fetchBidRuleOptions() {
         ruleOptions = new ArrayList<>();
         for (int i = 0; i < FETCH_BID_MULTIPLIER_RULE_OPTIONS.count(); i++) {
-            String text = FETCH_TARGET_RULE_OPTIONS.nth(i).innerText();
+            String text = FETCH_BID_MULTIPLIER_RULE_OPTIONS.nth(i).innerText();
             text = text.replaceAll("≥", "").trim();
             ruleOptions.add(text);
         }
