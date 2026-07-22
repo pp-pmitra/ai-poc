@@ -1416,6 +1416,12 @@ public class StudioSteps {
         brandExplorerWorkspace.clickFiltersTab();
     }
 
+    @And("User clicks on the Components tab")
+    public void userClicksOnTheComponentsTab() {
+        logger.info("Clicking on Components tab");
+        brandExplorerWorkspace.clickComponentsTab();
+    }
+
     @And("User adds a filter on {string} from {string} category with value {string}")
     public void userAddsAFilterOnFieldFromCategoryWithValue(String field, String category, String value) {
         logger.info("Adding filter on '{}' from '{}' category with value '{}'", field, category, value);
@@ -1423,6 +1429,24 @@ public class StudioSteps {
         brandExplorerWorkspace.selectFilterField(category, field);
         brandExplorerWorkspace.closeFilterDialog();
         brandExplorerWorkspace.enterFilterValue(field, value);
+    }
+
+    @Then("Verify {string} is visible as a table column")
+    public void verifyComponentIsVisibleAsATableColumn(String component) {
+        logger.info("Verifying '{}' is visible as a table column", component);
+        Assert.assertTrue(
+                "Component '" + component + "' is not visible as a table column",
+                brandExplorerWorkspace.isComponentVisibleAsTableColumn(component));
+    }
+
+    @Then("Verify the table column {string} only shows rows with value {string}")
+    public void verifyTheTableColumnOnlyShowsRowsWithValue(String field, String value) {
+        List<String> columnValues = brandExplorerWorkspace.getTableColumnValues(field);
+        logger.info("Values in table column '{}': {}", field, columnValues);
+        Assert.assertFalse("No rows found in table column: " + field, columnValues.isEmpty());
+        Assert.assertTrue(
+                "Table column '" + field + "' contains values other than '" + value + "': " + columnValues,
+                columnValues.stream().allMatch(v -> v.equalsIgnoreCase(value)));
     }
 
     @Then("Verify the filter on {string} shows value {string}")

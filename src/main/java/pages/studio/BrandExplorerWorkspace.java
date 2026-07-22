@@ -28,6 +28,7 @@ public class BrandExplorerWorkspace {
     private final Locator SPINNER;
     private final Locator FILTERS_TAB;
     private final Locator ADD_FILTER_BUTTON;
+    private final Locator COMPONENTS_TAB;
     WaitUtility waitUtility;
 
     public BrandExplorerWorkspace(Page page) {
@@ -51,6 +52,7 @@ public class BrandExplorerWorkspace {
         this.FILTERS_TAB = WORKSPACE_FRAME.locator("//div[normalize-space(text())='Filters']");
         this.ADD_FILTER_BUTTON =
                 WORKSPACE_FRAME.locator("//div[normalize-space(text())='Add Filters']");
+        this.COMPONENTS_TAB = WORKSPACE_FRAME.locator("//div[normalize-space(text())='Components']");
     }
 
     public void waitForDashboardLoad() {
@@ -114,12 +116,19 @@ public class BrandExplorerWorkspace {
         return getDefaultTimeFrame();
     }
 
+    // Some actions (e.g. applying a filter) trigger more than one loading spinner at once - one per
+    // panel that reloads (Filters tabpanel, chart/table container, etc.) - so each matched spinner is
+    // waited on individually via nth() rather than through the bare (multi-match) SPINNER locator,
+    // which throws a Playwright strict-mode violation as soon as more than one is present.
     public void waitForSpinnerToDisappear() {
-        waitUtility.waitForLocatorHidden(SPINNER);
+        int count = SPINNER.count();
+        for (int i = 0; i < count; i++) {
+            waitUtility.waitForLocatorHidden(SPINNER.nth(i));
+        }
     }
 
     public void waitForSpinnerToAppear() {
-        waitUtility.waitForLocatorVisible(SPINNER);
+        waitUtility.waitForLocatorVisible(SPINNER.first());
     }
 
     public List<String> getTableDates(int days) {
@@ -342,6 +351,11 @@ public class BrandExplorerWorkspace {
         FILTERS_TAB.first().click();
     }
 
+    public void clickComponentsTab() {
+        waitUtility.waitForLocatorVisible(COMPONENTS_TAB.first());
+        COMPONENTS_TAB.first().click();
+    }
+
     public void clickAddFilter() {
         waitUtility.waitForLocatorVisible(ADD_FILTER_BUTTON.first());
         ADD_FILTER_BUTTON.first().click();
@@ -412,5 +426,26 @@ public class BrandExplorerWorkspace {
         waitUtility.waitForLocatorVisible(
                 card.getByText(expectedValue, new Locator.GetByTextOptions().setExact(true)).first());
         return card.innerText().replaceAll("\\s+", " ").trim();
+    }
+
+    // Every cell in the table body carries the same aria-colindex as its header, so the header's
+    // index is what scopes the read to this one column instead of every cell in the row.
+    private Locator tableColumnCells(String columnName) {
+        Locator header = tableColumnHeader(columnName).locator("xpath=ancestor::th[1]");
+        waitUtility.waitForLocatorVisible(header);
+        String colIndex = header.getAttribute("aria-colindex");
+        return WORKSPACE_FRAME.locator(
+                String.format("//div[contains(@class,'Box')]//table//tbody//tr//td[@aria-colindex='%s']", colIndex));
+    }
+
+    public List<String> getTableColumnValues(String columnName) {
+        Locator cells = tableColumnCells(columnName);
+        waitUtility.waitForLocatorVisible(cells.first());
+        int count = cells.count();
+        List<String> values = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            values.add(cells.nth(i).innerText().trim());
+        }
+        return values;
     }
 }
