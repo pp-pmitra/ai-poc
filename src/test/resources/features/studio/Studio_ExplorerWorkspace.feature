@@ -39,7 +39,7 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
       | Specialty            | Foot & Ankle Surgery, Internal Medicine                                                                                 |
       #| NPI List Name      | Large file test                                                                                                         |
       | Medical School       | New York College                                                                                                        |
-      | Patient Facility     | .Arizona Autism United٫ Inc.                                                                                            |
+      | Patient Facility     | Arizona Autism United٫ Inc.                                                                                            |
       | Prescriptions        | .Insulin Aspart Protamine And Insulin Aspart                                                                            |
       | Prescribing behavior | .Insulin Aspart Protamine And Insulin Aspart                                                                            |
       | Diagnoses            | ABO incompatibility w hemolytic transfs react٫ unsp٫ subs                                                               |

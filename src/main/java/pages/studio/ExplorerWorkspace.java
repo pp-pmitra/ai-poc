@@ -10,6 +10,9 @@ import com.microsoft.playwright.options.BoundingBox;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import utils.CommonUtils;
 import utils.WaitUtility;
 
@@ -127,7 +130,7 @@ public class ExplorerWorkspace {
         this.ZOOM_OUT = WORKSPACE_FRAME
                 .locator("#extension-root iframe")
                 .contentFrame()
-                .locator("//div[@class='gmnoprint']//button[@title='Zoom out' and @class='gm-control-active']");
+                .locator("//div[@class='gmnoprint']//button[@title='Zoom out' and contains(@class, 'gm-control-active')]");
         this.MAP_CONTENT = WORKSPACE_FRAME
                 .locator("#extension-root iframe")
                 .contentFrame()
@@ -151,7 +154,7 @@ public class ExplorerWorkspace {
         this.ADVERTISER_LIST = WORKSPACE_FRAME.locator("//p[text()='Advertisers']");
         this.SEARCH_ADVERTISER = WORKSPACE_FRAME.locator("//input[@placeholder='Search']");
         this.ADVERTISER_BUTTON = WORKSPACE_FRAME.locator("//button[contains(@data-tour-id,'workspace-advertiser')]");
-        this.SPECIALITY_PANEL = WORKSPACE_FRAME.locator("//div[@id='panel-speciality_all']");
+        this.SPECIALITY_PANEL = WORKSPACE_FRAME.locator("//div[@id='panel-all']");
         this.INCLUDE_EXCLUDE_CHECK = WORKSPACE_FRAME.locator("//button[@data-testid='bi-include-exclude-check']");
         this.ALERT = WORKSPACE_FRAME.locator("//div[contains(@class, 'Toastify')]//div[@role='alert']//p");
     }
@@ -183,6 +186,8 @@ public class ExplorerWorkspace {
 
     public void saveWorkspaceName() {
         SAVE_WORKSPACE_NAME.click();
+        waitUtility.waitForLocatorVisible(ALERT);
+        waitUtility.waitForLocatorHidden(ALERT);
     }
 
     public void waitUntilAlertDisappears() {
@@ -221,17 +226,18 @@ public class ExplorerWorkspace {
                     "IAB",
                     "MeSH":
                 if (filter.equals("Specialty")) {
+                    WORKSPACE_FRAME.locator("//div//p[text()='Specialty']").click();
                     WORKSPACE_FRAME
                             .locator("//span[contains(text(),'All Specialties')]")
                             .click();
-                    waitUtility.waitForLocatorVisible(SPECIALITY_PANEL);
+                    waitUtility.waitForLocatorVisible(SPECIALITY_PANEL.last());
                 }
                 for (String option : options) {
                     waitUtility.waitForLocatorVisible(INCLUDE_EXCLUDE_CHECK.last());
                     Locator locator = WORKSPACE_FRAME.locator(String.format(
                             "//p[contains(text(),'%s')]/preceding-sibling::div/button[@data-testid='bi-include-exclude-check']",
                             option.trim()));
-                    TAB_PANEL_SEARCH.fill(option.trim());
+                    tabPanelSearch(filter).fill(option.trim());
                     waitUtility.waitForLocatorVisible(locator.first());
                     page.waitForTimeout(1000);
                     if (SELECT_DESELECT_ALL.isVisible()) SELECT_DESELECT_ALL.click();
@@ -341,7 +347,9 @@ public class ExplorerWorkspace {
                             .locator(String.format(
                                     "//h2[@data-title='%s']/parent::div/following-sibling::div//div[contains(@style,'z-index: 3;')]",
                                     visual));
-                    isInView = CommonUtils.scrollElementIntoView(MAP_CONTENT, CAMERA_CONTROL_ICON, 1000, 100, page);
+                    // Scroll each map visual by its own dashboard tile before scanning/clicking, instead of relying on the shared map camera control.
+                    // This fixes the second map scan for NPI Facilities Geography when the tile is not in view.
+                    isInView = CommonUtils.scrollElementIntoView(MAP_CONTENT, MAP_TILE, 1000, 100, page);
                     if (!isInView) {
                         continue;
                     }
@@ -395,7 +403,9 @@ public class ExplorerWorkspace {
                         continue;
                     }
                     if (NPI_PATIENT_ENTITIES.count() > 0) {
-                        NPI_PATIENT_ENTITIES.first().click();
+                        // Force-click Highcharts SVG points after verifying they exist and are in view, because
+                        // chart data labels can overlay the point and intercept Playwright's normal click.
+                        NPI_PATIENT_ENTITIES.first().click(new Locator.ClickOptions().setForce(true));
                     }
                     break;
             }
@@ -457,6 +467,13 @@ public class ExplorerWorkspace {
         };
     }
 
+    private Locator tabPanelSearch(String filter) {
+        // Profession & Specialty renders two matching search inputs: Profession first, Specialty last.
+        if (filter.equals("Profession")) return TAB_PANEL_SEARCH.first();
+        if (filter.equals("Specialty")) return TAB_PANEL_SEARCH.last();
+        return TAB_PANEL_SEARCH;
+    }
+
     public String isAdvertiserDisabled() {
         return ADVERTISER_SELECTED.evaluate("el => getComputedStyle(el).color").toString();
     }
@@ -471,16 +488,28 @@ public class ExplorerWorkspace {
     }
 
     public void selectRecency(String recency) {
+        // both clinical and contextual recency falls under same data-tour-id
         WORKSPACE_FRAME
-                .locator("//p[normalize-space()='Recency']/following-sibling::div//label[normalize-space()='" + recency
-                        + "']")
-                .click();
+                .locator(String.format("//div[@data-tour-id = 'clinical-recency_filter']//label[text()='%s']",
+                        recency)).click();
     }
 
-    public String fetchRecencyValue(String filterType) {
-        Locator recencyLocator = WORKSPACE_FRAME.locator(String.format(
-                "//p[normalize-space()='%s Recency']/parent::div//following-sibling::div//p", filterType));
-        return recencyLocator.textContent().trim();
+    public String fetchRecencyValue() {
+        waitForDashboardLoad();
+        Locator recencyLocator = WORKSPACE_FRAME.locator(
+                "//div[@data-tour-id='filters-container']//div[@role='img']/following-sibling::p");
+        String text = recencyLocator.last().textContent().trim();
+        // Assertion expects first character as uppercase while after applying filter lowercase is shown on UI
+        Matcher matcher = Pattern.compile(
+                "\\b(\\d+)\\s+(day|days|week|weeks|month|months|year|years)\\b",
+                Pattern.CASE_INSENSITIVE
+        ).matcher(text);
+        if (!matcher.find()) {
+            return "";
+        }
+        String unit = matcher.group(2).toLowerCase();
+        unit = unit.substring(0, 1).toUpperCase() + unit.substring(1);
+        return matcher.group(1) + " " + unit;
     }
 
     public void selectDraftOption(String DraftOption) {

@@ -221,9 +221,13 @@ public class BrandExplorerWorkspace {
         return WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName(category));
     }
 
-    private Locator componentCheckbox(String component) {
-        return WORKSPACE_FRAME.getByRole(
-                AriaRole.CHECKBOX, new FrameLocator.GetByRoleOptions().setName(component).setExact(true));
+    // Scoped to the category's own accordion region: some component labels (e.g. "Avg. Video Progress")
+    // repeat across multiple metric categories, and accordions don't auto-collapse siblings, so an
+    // unscoped lookup can match more than one checkbox once several categories are expanded.
+    private Locator componentCheckbox(String category, String component) {
+        return WORKSPACE_FRAME
+                .getByRole(AriaRole.REGION, new FrameLocator.GetByRoleOptions().setName(category))
+                .getByRole(AriaRole.CHECKBOX, new Locator.GetByRoleOptions().setName(component).setExact(true));
     }
 
     private Locator tableColumnHeader(String columnName) {
@@ -251,9 +255,44 @@ public class BrandExplorerWorkspace {
         }
     }
 
+    public void selectComponent(String category, String component) {
+        expandComponentCategory(category);
+        Locator checkbox = componentCheckbox(category, component);
+        waitUtility.waitForLocatorVisible(checkbox);
+        checkbox.check();
+        waitForSpinnerToAppear();
+        waitForSpinnerToDisappear();
+        clickColumnHeader(component);
+    }
+
+    public void clickColumnHeader(String columnName) {
+        Locator header = tableColumnHeader(columnName);
+        waitUtility.waitForLocatorVisible(header);
+        header.click();
+        waitForSpinnerToDisappear();
+    }
+
+    public boolean isChartVisible() {
+        try {
+            waitUtility.waitForLocatorVisible(BRAND_EXPLORER_CHART);
+            return true;
+        } catch (TimeoutError e) {
+            return false;
+        }
+    }
+
+    public boolean isComponentVisibleAsTableColumn(String component) {
+        try {
+            waitUtility.waitForLocatorVisible(tableColumnHeader(component));
+            return true;
+        } catch (TimeoutError e) {
+            return false;
+        }
+    }
+
     public void deselectComponent(String category, String component) {
         expandComponentCategory(category);
-        Locator checkbox = componentCheckbox(component);
+        Locator checkbox = componentCheckbox(category, component);
         waitUtility.waitForLocatorVisible(checkbox);
         checkbox.uncheck();
     }
@@ -272,7 +311,7 @@ public class BrandExplorerWorkspace {
     public List<String> verifyComponentsSelectAndRemove(String category, List<String> components) {
         expandComponentCategory(category);
         List<String> failures = new ArrayList<>();
-        components.forEach(component -> componentCheckbox(component).check());
+        components.forEach(component -> componentCheckbox(category, component).check());
         waitForSpinnerToAppear();
         waitForSpinnerToDisappear();
         for (String component : components) {
@@ -282,7 +321,7 @@ public class BrandExplorerWorkspace {
                 failures.add(component + ": did not appear as a table column after being selected");
             }
         }
-        components.forEach(component -> componentCheckbox(component).uncheck());
+        components.forEach(component -> componentCheckbox(category, component).uncheck());
         for (String component : components) {
             try {
                 waitUtility.waitForLocatorHidden(tableColumnHeader(component));

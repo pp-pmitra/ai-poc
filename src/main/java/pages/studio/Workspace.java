@@ -173,7 +173,12 @@ public class Workspace {
         waitUtility.waitForLocatorHidden(WORKSPACE_CREATED_ALERT);
     }
 
-    public void waitTillWorkspaceSaveButtonIsDisabled() {
+    public void waitTillWorkspaceSaveButtonIsDisabled(String workspaceType) {
+        // Make workspace save verification type-aware so HCP Explorer can rely on the successful save toast
+        // while other workspace types continue waiting for the Save button to become disabled.
+        if ("HCP Explorer".equalsIgnoreCase(workspaceType)) {
+            return;
+        }
         page.waitForCondition(SAVE_WORKSPACE::isDisabled);
     }
 

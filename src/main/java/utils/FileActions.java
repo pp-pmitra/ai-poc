@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Stream;
+
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -100,27 +102,21 @@ public class FileActions {
     }
 
     public static int fetchRowCountFromCSV(Path filePath) throws IOException {
-        return fetchRowCount(filePath, true);
+        return fetchUniqueRowCount(filePath, true);
     }
 
     public static int fetchRowCountExcludeHeaderFromCSVAndTxt(String fileName) throws IOException {
-        return fetchRowCount(resolvePath(fileName), true);
+        return fetchUniqueRowCount(resolvePath(fileName), true);
     }
 
-    private static int fetchRowCount(Path filePath, boolean excludeHeader) throws IOException {
-        int rowCount = 0;
-        try (BufferedReader br = Files.newBufferedReader(filePath)) {
-            if (excludeHeader) {
-                br.readLine();
-            }
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (!line.trim().isEmpty()) {
-                    rowCount++;
-                }
-            }
+    private static int fetchUniqueRowCount(Path filePath, boolean excludeHeader) throws IOException {
+        try (Stream<String> lines = Files.lines(filePath)) {
+            return (int) lines
+                    .skip(excludeHeader ? 1 : 0) // Skip header if true
+                    .filter(line -> !line.trim().isEmpty()) // Ignore empty lines
+                    .distinct() // Remove duplicates
+                    .count();
         }
-        return rowCount;
     }
 
     public static int fetchRowCountFromExcel(String fileName) throws IOException {

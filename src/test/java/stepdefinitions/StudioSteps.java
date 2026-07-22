@@ -348,7 +348,7 @@ public class StudioSteps {
                         "Sent for asynchronous processing, forced by upstream dependencies - need to refresh upstream workspaces first");
         Assert.assertTrue("Unexpected message for " + workspaceType + " workspace: " + actualMessage, isValid);
         workspace.waitTillWorkspaceAlertHide();
-        workspace.waitTillWorkspaceSaveButtonIsDisabled();
+        workspace.waitTillWorkspaceSaveButtonIsDisabled(workspaceType);
     }
 
     @And("User clicks Edit button and updates workspace name to {string}")
@@ -1044,14 +1044,9 @@ public class StudioSteps {
                 explorerWorkspace.clickFilterOKButton();
             }
             explorerWorkspace.applyFilter();
-            logger.info(
-                    "Expected recency: '{}' | Actual recency: '{}'",
-                    recency,
-                    explorerWorkspace.fetchRecencyValue(filterType));
-            Assert.assertEquals(
-                    filterType + " recency value is not matched",
-                    recency,
-                    explorerWorkspace.fetchRecencyValue(filterType));
+            String actualRecency = explorerWorkspace.fetchRecencyValue();
+            logger.info("Expected recency: '{}' | Actual recency: '{}'", recency, actualRecency);
+            Assert.assertEquals(filterType + " recency value is not matched", recency, actualRecency);
         }
     }
 
@@ -1234,6 +1229,24 @@ public class StudioSteps {
         Assert.assertEquals("Time Frame did not persist after reopening the workspace", timeFrame, actualTimeFrame);
     }
 
+    @And("User selects {string} from {string} component panel")
+    public void userSelectsComponentFromPanel(String component, String category) {
+        logger.info("Selecting component '{}' from category '{}'", component, category);
+        brandExplorerWorkspace.selectComponent(category, component);
+    }
+
+    @Then("Verify {string} and {string} persist as table columns after reopening")
+    public void verifyDimensionAndMetricPersistAfterReopen(String dimension, String metric) {
+        logger.info("Verifying dimension '{}' and metric '{}' persist as table columns after reopening", dimension, metric);
+        Assert.assertTrue(
+                "Dimension '" + dimension + "' did not persist as a table column after reopening",
+                brandExplorerWorkspace.isComponentVisibleAsTableColumn(dimension));
+        Assert.assertTrue(
+                "Metric '" + metric + "' did not persist as a table column after reopening",
+                brandExplorerWorkspace.isComponentVisibleAsTableColumn(metric));
+        Assert.assertTrue("Chart is not visible after reopening the workspace", brandExplorerWorkspace.isChartVisible());
+    }
+
     @Then("All 9 preset timeframe options are visible in the dropdown with correct labels")
     public void allPresetOptionsAreVisibleInDropdownWithCorrectLabels(DataTable dataTable) {
         List<String> expected = dataTable.asList(String.class);
@@ -1397,3 +1410,4 @@ public class StudioSteps {
         Assert.assertEquals("Dialog message does not match", expectedMessage, actualMessage);
     }
 }
+
