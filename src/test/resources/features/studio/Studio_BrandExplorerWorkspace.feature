@@ -204,7 +204,7 @@ Feature: Brand Explorer Workspace creation in Studio
   #     | TAMTESTING ACCOUNT | Automation_Persist | Healthcare Professionals | Profession | Physician |
 
   @regression
-  Scenario Outline: Verify an applied filter is reflected immediately without saving and correctly narrows its own dimension/metric column
+  Scenario Outline: Verify an applied filter is reflected immediately and correctly narrows the dataset in the table
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "Brand Explorer" workspace
