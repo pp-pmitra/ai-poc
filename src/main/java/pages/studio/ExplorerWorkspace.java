@@ -184,8 +184,12 @@ public class ExplorerWorkspace {
         SEARCH_ADVERTISER_IN_EDIT_WORKSPACE.press("Enter");
     }
 
-    public void saveWorkspaceName() {
+    // Brand Explorer doesn't show a confirmation toast on rename, unlike other workspace types.
+    public void saveWorkspaceName(String workspaceType) {
         SAVE_WORKSPACE_NAME.click();
+        if ("Brand Explorer".equalsIgnoreCase(workspaceType)) {
+            return;
+        }
         waitUtility.waitForLocatorVisible(ALERT);
         waitUtility.waitForLocatorHidden(ALERT);
     }

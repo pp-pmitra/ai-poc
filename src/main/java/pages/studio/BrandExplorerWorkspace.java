@@ -229,19 +229,19 @@ public class BrandExplorerWorkspace {
         return parts[1] + "/" + parts[2] + "/" + parts[0];
     }
 
-    // Both Dimensions and Metrics are organized as accordion categories containing checkboxes,
-    // so these locators and the methods below serve either component type.
-    private Locator componentCategoryTab(String category) {
+    // Dimensions, Metrics, and Filter fields are all organized as accordion categories containing
+    // checkboxes, so these locators and the methods below serve all three panels.
+    private Locator categoryTab(String category) {
         return WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName(category));
     }
 
-    // Scoped to the category's own accordion region: some component labels (e.g. "Avg. Video Progress")
-    // repeat across multiple metric categories, and accordions don't auto-collapse siblings, so an
+    // Scoped to the category's own accordion region: some field labels (e.g. "Avg. Video Progress")
+    // repeat across multiple categories, and accordions don't auto-collapse siblings, so an
     // unscoped lookup can match more than one checkbox once several categories are expanded.
-    private Locator componentCheckbox(String category, String component) {
+    private Locator categoryCheckbox(String category, String field) {
         return WORKSPACE_FRAME
                 .getByRole(AriaRole.REGION, new FrameLocator.GetByRoleOptions().setName(category))
-                .getByRole(AriaRole.CHECKBOX, new Locator.GetByRoleOptions().setName(component).setExact(true));
+                .getByRole(AriaRole.CHECKBOX, new Locator.GetByRoleOptions().setName(field).setExact(true));
     }
 
     private Locator tableColumnHeader(String columnName) {
@@ -252,7 +252,7 @@ public class BrandExplorerWorkspace {
         List<String> missing = new ArrayList<>();
         for (String category : categories) {
             try {
-                waitUtility.waitForLocatorVisible(componentCategoryTab(category));
+                waitUtility.waitForLocatorVisible(categoryTab(category));
             } catch (TimeoutError e) {
                 missing.add(category);
             }
@@ -261,8 +261,8 @@ public class BrandExplorerWorkspace {
     }
 
     // Component checkboxes only render once their category accordion is expanded.
-    private void expandComponentCategory(String category) {
-        Locator categoryTab = componentCategoryTab(category);
+    private void expandCategory(String category) {
+        Locator categoryTab = categoryTab(category);
         waitUtility.waitForLocatorVisible(categoryTab);
         if (!"true".equals(categoryTab.getAttribute("aria-expanded"))) {
             categoryTab.click();
@@ -270,8 +270,8 @@ public class BrandExplorerWorkspace {
     }
 
     public void selectComponent(String category, String component) {
-        expandComponentCategory(category);
-        Locator checkbox = componentCheckbox(category, component);
+        expandCategory(category);
+        Locator checkbox = categoryCheckbox(category, component);
         waitUtility.waitForLocatorVisible(checkbox);
         checkbox.check();
         waitForSpinnerToAppear();
@@ -305,8 +305,8 @@ public class BrandExplorerWorkspace {
     }
 
     public void deselectComponent(String category, String component) {
-        expandComponentCategory(category);
-        Locator checkbox = componentCheckbox(category, component);
+        expandCategory(category);
+        Locator checkbox = categoryCheckbox(category, component);
         waitUtility.waitForLocatorVisible(checkbox);
         checkbox.uncheck();
     }
@@ -323,9 +323,9 @@ public class BrandExplorerWorkspace {
     // component list and the select/remove behavior for the whole category in one pass. Returns a
     // human-readable failure per component that didn't behave as expected, empty if all passed.
     public List<String> verifyComponentsSelectAndRemove(String category, List<String> components) {
-        expandComponentCategory(category);
+        expandCategory(category);
         List<String> failures = new ArrayList<>();
-        components.forEach(component -> componentCheckbox(category, component).check());
+        components.forEach(component -> categoryCheckbox(category, component).check());
         waitForSpinnerToAppear();
         waitForSpinnerToDisappear();
         for (String component : components) {
@@ -335,7 +335,7 @@ public class BrandExplorerWorkspace {
                 failures.add(component + ": did not appear as a table column after being selected");
             }
         }
-        components.forEach(component -> componentCheckbox(category, component).uncheck());
+        components.forEach(component -> categoryCheckbox(category, component).uncheck());
         for (String component : components) {
             try {
                 waitUtility.waitForLocatorHidden(tableColumnHeader(component));
@@ -362,24 +362,11 @@ public class BrandExplorerWorkspace {
     }
 
     // Filter fields are organized into the same accordion categories as dimensions/metrics,
-    // inside the "Select Filter" modal opened by clickAddFilter().
-    private Locator filterCategoryButton(String category) {
-        return WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName(category));
-    }
-
-    private Locator filterFieldCheckbox(String category, String field) {
-        return WORKSPACE_FRAME
-                .getByRole(AriaRole.REGION, new FrameLocator.GetByRoleOptions().setName(category))
-                .getByRole(AriaRole.CHECKBOX, new Locator.GetByRoleOptions().setName(field).setExact(true));
-    }
-
+    // inside the "Select Filter" modal opened by clickAddFilter() - reuses categoryTab()/
+    // categoryCheckbox()/expandCategory() above.
     public void selectFilterField(String category, String field) {
-        Locator categoryButton = filterCategoryButton(category);
-        waitUtility.waitForLocatorVisible(categoryButton);
-        if (!"true".equals(categoryButton.getAttribute("aria-expanded"))) {
-            categoryButton.click();
-        }
-        Locator checkbox = filterFieldCheckbox(category, field);
+        expandCategory(category);
+        Locator checkbox = categoryCheckbox(category, field);
         waitUtility.waitForLocatorVisible(checkbox);
         checkbox.check();
     }

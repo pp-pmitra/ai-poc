@@ -250,7 +250,7 @@ public class StudioSteps {
         explorerWorkspace.waitForDashboardLoad();
         explorerWorkspace.clickEditWorkspace();
         explorerWorkspace.enterWorkspaceName(workspaceName);
-        explorerWorkspace.saveWorkspaceName();
+        explorerWorkspace.saveWorkspaceName("HCP Explorer");
         explorerWorkspace.waitUntilAlertDisappears();
         explorerWorkspace.waitForDashboardLoad();
     }
@@ -357,7 +357,7 @@ public class StudioSteps {
         workspaceName = editedName + CommonUtils.timeStampCalculation();
         logger.info("Updating workspace name to: {}", workspaceName);
         explorerWorkspace.enterWorkspaceName(workspaceName);
-        explorerWorkspace.saveWorkspaceName();
+        explorerWorkspace.saveWorkspaceName("HCP Explorer");
         explorerWorkspace.waitForDashboardLoad();
     }
 
@@ -1172,15 +1172,17 @@ public class StudioSteps {
                 "Workspace is not visible for external user with draft option: " + draftOption, isWorkspaceVisible);
     }
 
-    @And("User edits the workspace name as {string}")
-    public void userEditsTheWorkspaceNameAs(String wName) {
+    @And("User edits the {string} workspace name as {string}")
+    public void userEditsTheWorkspaceNameAs(String workspaceType, String wName) {
         workspaceName = wName + '_' + CommonUtils.timeStampCalculation();
         logger.info("Adding workspace name: {}", workspaceName);
         brandExplorerWorkspace.waitForDashboardLoad();
         explorerWorkspace.clickEditWorkspace();
         explorerWorkspace.enterWorkspaceName(workspaceName);
-        explorerWorkspace.saveWorkspaceName();
-        explorerWorkspace.waitUntilAlertDisappears();
+        explorerWorkspace.saveWorkspaceName(workspaceType);
+        if (!"Brand Explorer".equalsIgnoreCase(workspaceType)) {
+            explorerWorkspace.waitUntilAlertDisappears();
+        }
         brandExplorerWorkspace.waitForDashboardLoad();
     }
 
