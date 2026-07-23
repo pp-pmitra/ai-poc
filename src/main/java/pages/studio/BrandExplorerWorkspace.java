@@ -255,6 +255,41 @@ public class BrandExplorerWorkspace {
         }
     }
 
+    public void selectComponent(String category, String component) {
+        expandComponentCategory(category);
+        Locator checkbox = componentCheckbox(category, component);
+        waitUtility.waitForLocatorVisible(checkbox);
+        checkbox.check();
+        waitForSpinnerToAppear();
+        waitForSpinnerToDisappear();
+        clickColumnHeader(component);
+    }
+
+    public void clickColumnHeader(String columnName) {
+        Locator header = tableColumnHeader(columnName);
+        waitUtility.waitForLocatorVisible(header);
+        header.click();
+        waitForSpinnerToDisappear();
+    }
+
+    public boolean isChartVisible() {
+        try {
+            waitUtility.waitForLocatorVisible(BRAND_EXPLORER_CHART);
+            return true;
+        } catch (TimeoutError e) {
+            return false;
+        }
+    }
+
+    public boolean isComponentVisibleAsTableColumn(String component) {
+        try {
+            waitUtility.waitForLocatorVisible(tableColumnHeader(component));
+            return true;
+        } catch (TimeoutError e) {
+            return false;
+        }
+    }
+
     public void deselectComponent(String category, String component) {
         expandComponentCategory(category);
         Locator checkbox = componentCheckbox(category, component);
