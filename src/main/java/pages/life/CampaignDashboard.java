@@ -56,6 +56,7 @@ public class CampaignDashboard {
     private final Locator SEARCH_CAMPAIGN;
     private final Locator CLICK_CAMPAIGN_SEARCH;
     private final Locator EXPAND_CREATED_LINE_ITEM;
+    private final Locator LINE_ITEM_EXPAND_ICON;
     private final Locator VERIFY_CREATED_TACTIC;
     private final Locator CAMPAIGN_ENTRIES;
     private final Locator SUB_TITLE_AFTER_CAMPAIGN_SEARCH;
@@ -71,6 +72,7 @@ public class CampaignDashboard {
     private final Locator INACTIVE_FLIGHT_LIST;
     private final Locator NO_CAMPAIGN_AVAILABLE_TEXT;
     private final Locator CAMPAIGN_FROM_DASHBOARD;
+    private final Locator GLOBAL_TACTIC_ICON;
     WaitUtility waitUtility;
     String lineItemClassBeforeClick, lineItemClassAfterClick, tacticClassBeforeClick, tacticClassAfterClick;
 
@@ -78,22 +80,16 @@ public class CampaignDashboard {
         this.page = page;
         this.waitUtility = new WaitUtility(page);
         this.CAMPAIGN_PAGE_TEXT = page.locator("//span[contains(text(),'Campaigns')]");
-        this.CAMPAIGN_COMMENT_BOX =
-                page.locator("//div[@class='camp-data']//span[@class='notesIconEmpty' or @class='notesIconProvided']");
-        this.LINE_ITEM_COMMENT_BOX = page.locator(
-                "//div[contains(@class,'lineitem-data pointer')]//span[@class='notesIconEmpty' or @class='notesIconProvided']");
-        this.TACTIC_NAME_COMMENT_BOX = page.locator(
-                "//div[contains(@class,'tactic-data pointer')]//span[@class='notesIconEmpty' or @class='notesIconProvided']");
+        this.CAMPAIGN_COMMENT_BOX = page.locator("//div[@class='camp-data']//span[@class='notesIconEmpty' or @class='notesIconProvided']");
+        this.LINE_ITEM_COMMENT_BOX = page.locator("//div[contains(@class,'lineitem-data pointer')]//span[@class='notesIconEmpty' or @class='notesIconProvided']");
+        this.TACTIC_NAME_COMMENT_BOX = page.locator("//div[contains(@class,'tactic-data pointer')]//span[@class='notesIconEmpty' or @class='notesIconProvided']");
         this.COMMENT_BOX = page.locator("//textarea[@id='notesId']");
         this.COMMENT_BOX_OK_BUTTON = page.locator("//button[@class='okButton']");
-        this.COMMENT_SUCCESS_ALERT = page.locator(
-                "//div[@aria-label='Success!']/following-sibling::div[contains(text(),'Notes saved successfully.')]");
+        this.COMMENT_SUCCESS_ALERT = page.locator("//div[@aria-label='Success!']/following-sibling::div[contains(text(),'Notes saved successfully.')]");
         this.COMMENT_ICON = page.locator("span.notesIconProvided");
         this.TOOLTIP_TEXT = page.locator("//span[@class='tooltip-text']");
-        this.LINE_ITEM_TOGGLE_BUTTON = page.locator(
-                "//div[contains(@class,'lineitem-data pointer')]//sui-checkbox[contains(@class,'ng-valid')]");
-        this.TACTIC_TOGGLE_BUTTON = page.locator(
-                "//div[contains(@class,'tactic-data pointer')]//sui-checkbox[contains(@class,'ng-valid')]");
+        this.LINE_ITEM_TOGGLE_BUTTON = page.locator("//div[contains(@class,'lineitem-data pointer')]//sui-checkbox[contains(@class,'ng-valid')]");
+        this.TACTIC_TOGGLE_BUTTON = page.locator("//div[contains(@class,'tactic-data pointer')]//sui-checkbox[contains(@class,'ng-valid')]");
         this.LINE_ITEM_NAME = page.locator("//span[contains(@class,'color-black lineitem-name-section')]");
         this.LINE_ITEM_PAGE_TITLE = page.locator("//div[contains(@class,'lineitem-name')]");
         this.CAMPAIGN_PAGE_TITLE = page.locator("//div[contains(@class,'campaign-name')]");
@@ -103,68 +99,55 @@ public class CampaignDashboard {
         this.SELECT_COLUMNS_FROM_ICON = page.locator("//sui-checkbox[contains(@class,'form-control')]/label");
         this.SHOW_ALL = page.locator("//div[contains(@class,'menuButtons')]//div[contains(@class,'show-all')]");
         this.HIDE_ALL = page.locator("//div[contains(@class,'menuButtons')]//div[contains(@class,'hide-all')]");
-        this.DASHBOARD_MENU_COLUMNS = page.locator(
-                "//div[contains(@class,'data-table-header')]/div[contains(@id,'liHeader') or contains(@class,'align-left')]");
+        this.DASHBOARD_MENU_COLUMNS = page.locator("//div[contains(@class,'data-table-header')]/div[contains(@id,'liHeader') or contains(@class,'align-left')]");
         this.FILTER_OK_BUTTON = page.locator("//button[contains(@class,'ui primary button')]");
         this.SELECTED_FILTER_LABEL = page.locator("//div[contains(@class,'selected-filters')]//label");
         this.FILTER_ICON = page.locator("//div[contains(@class,'filterApplied')]");
         this.FAVORITE_ONLY_CHECKBOX = page.locator("//sui-checkbox[contains(@class,'gaFavoritesOnly')]");
         this.FAVORITE_CAMPAIGN_LIST = page.locator("//i[@class = 'star display-inline']");
         this.HIDE_FINISHED_CHECKBOX = page.locator("//label[contains(text(),'Hide Finished')]/ancestor::sui-checkbox");
-        this.CALENDER_APPLY_BUTTON =
-                page.locator("//button[contains(@class, 'applyBtn') and (contains(text(), 'Apply'))]");
+        this.CALENDER_APPLY_BUTTON = page.locator("//button[contains(@class, 'applyBtn') and (contains(text(), 'Apply'))]");
         this.CUSTOM_DATE_TEXTBOX = page.locator("//input[@name='customDateRange']");
         this.SETTING_ICON = page.locator("//div[contains(@class,'gaGroupingType')]/i");
         this.GROUP_BY_CAMPAIGN_RADIO_BUTTON = page.locator("//i[contains(@class,'gaGroupCampaigns')]");
         this.GROUP_BY_ADVERTISER_RADIO_BUTTON = page.locator("//i[contains(@class,'gaGroupAdvertisers')]");
         this.NO_GROUP_RADIO_BUTTON = page.locator("//i[contains(@class,'gaNoGrouping')]");
         this.ADVERTISER_COLUMN_NAME = page.locator("//div[contains(@id,'liHeaderAdvertiser')]");
-        this.CAMPAIGN_COLUMN_NAME =
-                page.locator("//div[contains(@class,'display-inline')]/span[contains(text(),'Campaign')]");
-        this.CREATIVE_TOOLTIP = page.locator(
-                "//div[contains(@class, 'tactic-data')]//span[contains(@class,'approval-icon creative-red') or contains(@class, 'approval-icon creative')]");
+        this.CAMPAIGN_COLUMN_NAME = page.locator("//div[contains(@class,'display-inline')]/span[contains(text(),'Campaign')]");
+        this.CREATIVE_TOOLTIP = page.locator("//div[contains(@class, 'tactic-data')]//span[contains(@class,'approval-icon creative-red') or contains(@class, 'approval-icon creative')]");
         this.LIFE_TIME_FILTER = page.locator("//button[@data-title='Lifetime']");
         this.CLICK_SETTINGS = page.locator("//i[@class='icon gearIcon']");
         this.SEARCH_CAMPAIGN = page.locator("//input[@placeholder='Search' and contains(@class, 'gaTableSearch')]");
         this.CLICK_CAMPAIGN_SEARCH = page.locator("//div[contains(@class,'gaTableSearchBtn')]");
-        this.EXPAND_CREATED_LINE_ITEM =
-                page.locator("//div[contains(@class,'campaignExpand')]/div[contains(@class,'collapsed-thin')]");
+        this.EXPAND_CREATED_LINE_ITEM = page.locator("//div[contains(@class,'campaignExpand')]/div[contains(@class,'collapsed-thin')]");
+        this.LINE_ITEM_EXPAND_ICON = page.locator("//i[contains(@class,'fa-angle-right')]");
         this.VERIFY_CREATED_TACTIC = page.locator("//span[contains(@class,'tactic-name')]");
         this.CAMPAIGN_ENTRIES = page.locator("//div[contains(@class,'name-section-wrapper')]");
-        this.SUB_TITLE_AFTER_CAMPAIGN_SEARCH =
-                page.locator("//div[contains(@class,'sub-title') and contains(text(),'Line items, 1 Campaigns')]");
+        this.SUB_TITLE_AFTER_CAMPAIGN_SEARCH = page.locator("//div[contains(@class,'sub-title') and contains(text(),'Line items, 1 Campaigns')]");
         this.FILTER_APPLIED_ICON = page.locator("//div[contains(@class,'filterApplied')]");
         this.RESET_FILTER_ICON = page.locator("//span[contains(text(),'Reset All Filters')]");
         this.SELECTED_FILTER_VALUES = page.locator("//div[contains(@class,'filter-value')]");
         this.FILTER_LIST = page.locator("//app-overlay[@class='line-item-list-filter']//label");
-        this.STATUS_COLUMN_DATA = page.locator(
-                "//div[contains(@class,'status-col') and not(contains(@id,'liHeaderStatus'))]//span[contains(@class,'display-inline')]//span");
-        this.TYPE_COLUMN_DATA =
-                page.locator("//div[contains(@class,'type-col') and not(contains(@id,'liHeaderType'))]");
-        this.ENABLED_COLUMN_DATA = page.locator(
-                "//div[contains(@class,'enable-col') and not(contains(@id,'liHeaderEnabled'))]//sui-checkbox");
+        this.STATUS_COLUMN_DATA = page.locator("//div[contains(@class,'status-col') and not(contains(@id,'liHeaderStatus'))]//span[contains(@class,'display-inline')]//span");
+        this.TYPE_COLUMN_DATA = page.locator("//div[contains(@class,'type-col') and not(contains(@id,'liHeaderType'))]");
+        this.ENABLED_COLUMN_DATA = page.locator("//div[contains(@class,'enable-col') and not(contains(@id,'liHeaderEnabled'))]//sui-checkbox");
         this.CAMPAIGN_COUNT_FROM_PAGINATION = page.locator("//div[contains(@class,'paging-desc')]");
         this.FLIGHT_START_END_DATE = page.locator("//div[contains(@class,'date-col trc lac')]//span");
-        this.INACTIVE_FLIGHT_LIST =
-                page.locator("//div[contains(@class, 'active-flight-col') and (contains(text(), 'inactive flight'))]");
-        this.NO_CAMPAIGN_AVAILABLE_TEXT =
-                page.locator("//p[contains(text(), 'No campaigns matching filtering criteria found')]");
+        this.INACTIVE_FLIGHT_LIST = page.locator("//div[contains(@class, 'active-flight-col') and (contains(text(), 'inactive flight'))]");
+        this.NO_CAMPAIGN_AVAILABLE_TEXT = page.locator("//p[contains(text(), 'No campaigns matching filtering criteria found')]");
         this.CAMPAIGN_FROM_DASHBOARD = page.locator("//span[contains(@class,'adv-camp-name')]//span");
+        this.GLOBAL_TACTIC_ICON = page.locator("//img[contains(@src,'T.svg')]");
     }
 
     public String isCampaignDashboardVisibleWithTitle(String text) {
         waitUtility.waitUntilSpinnerHidden();
         waitUtility.waitUntilPreLoaderHidden();
-        page.waitForCondition(() -> CAMPAIGN_PAGE_TEXT
-                        .filter(new Locator.FilterOptions().setHasText(text))
-                        .count()
-                == 1);
+        page.waitForCondition(() -> CAMPAIGN_PAGE_TEXT.filter(new Locator.FilterOptions().setHasText(text)).count() == 1);
         return CAMPAIGN_PAGE_TEXT.innerText();
     }
 
     public String verifyCampaignDetails(String campaignID) {
-        return page.locator(String.format("//span[contains(text(),'%s')]", campaignID))
-                .innerText();
+        return page.locator(String.format("//span[contains(text(),'%s')]", campaignID)).innerText();
     }
 
     public String addCommentsToCampaign(String commentType, List<String> commentValues) {
@@ -208,10 +191,7 @@ public class CampaignDashboard {
     public List<String> verifyCommentIconColor() {
         List<String> backgroundImages = new ArrayList<>();
         for (int i = 0; i < COMMENT_ICON.count(); i++) {
-            String bgImage = COMMENT_ICON
-                    .nth(i)
-                    .evaluate("element => getComputedStyle(element).backgroundImage")
-                    .toString();
+            String bgImage = COMMENT_ICON.nth(i).evaluate("element => getComputedStyle(element).backgroundImage").toString();
             backgroundImages.add(bgImage.substring(bgImage.lastIndexOf("/") + 1, bgImage.length() - 2));
         }
         return backgroundImages;
@@ -243,8 +223,7 @@ public class CampaignDashboard {
     }
 
     public boolean verifyLineTacticToggleStatus() {
-        return !Objects.equals(lineItemClassBeforeClick, lineItemClassAfterClick)
-                && !Objects.equals(tacticClassBeforeClick, tacticClassAfterClick);
+        return !Objects.equals(lineItemClassBeforeClick, lineItemClassAfterClick) && !Objects.equals(tacticClassBeforeClick, tacticClassAfterClick);
     }
 
     public List<String> fetchLineAndTacticToggleStatus() {
@@ -299,15 +278,13 @@ public class CampaignDashboard {
     }
 
     public void applyFilterOnSelectedColumns(String filterName, List<String> filterValues) {
-        String filterXpath = String.format(
-                "//span[contains(text(), '%s')]/following-sibling::div//span[contains(@class,'filter')]", filterName);
+        String filterXpath = String.format("//span[contains(text(), '%s')]/following-sibling::div//span[contains(@class,'filter')]", filterName);
         page.locator(filterXpath).click();
         for (int i = 0; i < FILTER_LIST.count(); i++) {
             Locator option = FILTER_LIST.nth(i);
             String text = option.innerText().trim();
             boolean shouldBeSelected = filterValues.stream().anyMatch(text::equals);
-            boolean isChecked =
-                    option.locator("xpath=//preceding-sibling::input").isChecked();
+            boolean isChecked = option.locator("xpath=//preceding-sibling::input").isChecked();
             if (shouldBeSelected && !isChecked) {
                 option.click();
             }
@@ -328,9 +305,7 @@ public class CampaignDashboard {
     }
 
     public String verifyFilterIcon() {
-        String bgImage = FILTER_ICON
-                .evaluate("element => getComputedStyle(element).backgroundImage")
-                .toString();
+        String bgImage = FILTER_ICON.evaluate("element => getComputedStyle(element).backgroundImage").toString();
         return bgImage.substring(bgImage.lastIndexOf("/") + 1, bgImage.length() - 2);
     }
 
@@ -351,8 +326,8 @@ public class CampaignDashboard {
     public boolean isFavoriteNonFavoriteCampaignAvailable() {
         boolean flag = false;
         for (int i = 0; i < FAVORITE_CAMPAIGN_LIST.count(); i++) {
-            if (!FAVORITE_CAMPAIGN_LIST.nth(i).getAttribute("class").contains("empty")
-                    || FAVORITE_CAMPAIGN_LIST.nth(i).getAttribute("class").contains("empty")) flag = true;
+            if (!FAVORITE_CAMPAIGN_LIST.nth(i).getAttribute("class").contains("empty") || FAVORITE_CAMPAIGN_LIST.nth(i).getAttribute("class").contains("empty"))
+                flag = true;
         }
         return flag;
     }
@@ -378,12 +353,7 @@ public class CampaignDashboard {
         boolean flag = false;
         for (int i = 0; i < STATUS_COLUMN_DATA.count(); i++) {
             String text = STATUS_COLUMN_DATA.nth(i).innerText().trim();
-            if (text.equalsIgnoreCase("FINISHED")
-                    || text.equalsIgnoreCase("INCOMPLETE")
-                    || text.equalsIgnoreCase("PENDING APPROVAL")
-                    || text.equalsIgnoreCase("READY")
-                    || text.equalsIgnoreCase("RUNNING")
-                    || text.equalsIgnoreCase("DENIED")) {
+            if (text.equalsIgnoreCase("FINISHED") || text.equalsIgnoreCase("INCOMPLETE") || text.equalsIgnoreCase("PENDING APPROVAL") || text.equalsIgnoreCase("READY") || text.equalsIgnoreCase("RUNNING") || text.equalsIgnoreCase("DENIED")) {
                 flag = true;
             }
         }
@@ -449,9 +419,7 @@ public class CampaignDashboard {
         String text = "";
         String tooltipText = CREATIVE_TOOLTIP.getAttribute("tooltip-text");
         if (tooltipText != null) {
-            if (tooltipText.contains("No creative assigned")
-                    || tooltipText.contains("are pending approval")
-                    || tooltipText.contains("are denied")) {
+            if (tooltipText.contains("No creative assigned") || tooltipText.contains("are pending approval") || tooltipText.contains("are denied")) {
                 text = tooltipText;
             }
         } else {
@@ -527,6 +495,21 @@ public class CampaignDashboard {
         }
     }
 
+    public void searchCreatedTactic(String tacticName) {
+        waitUtility.waitForLocatorVisible(CAMPAIGN_ENTRIES.last());
+        while (true) {
+            SEARCH_CAMPAIGN.fill(tacticName);
+            CLICK_CAMPAIGN_SEARCH.click();
+            waitUtility.waitUntilPreLoaderHidden();
+            if (CAMPAIGN_FROM_DASHBOARD.first().isVisible()) {
+                break;
+            }
+            if (NO_CAMPAIGN_AVAILABLE_TEXT.isVisible()) {
+                break;
+            }
+        }
+    }
+
     public String verifyCreatedCampaign(String createdCampaign) {
         String campaignNameXpath = String.format("//span[contains(text(),'%s')]", createdCampaign);
         waitUtility.waitForLocatorVisible(page.locator(campaignNameXpath).first());
@@ -545,6 +528,10 @@ public class CampaignDashboard {
         }
     }
 
+    public void clickLineItemExpandIcon() {
+            LINE_ITEM_EXPAND_ICON.first().click();
+    }
+
     public String verifyCreatedTactic() {
         page.waitForLoadState();
         return VERIFY_CREATED_TACTIC.innerText();
@@ -558,10 +545,7 @@ public class CampaignDashboard {
     public List<String> fetchSelectedFilterValues() {
         List<String> selectedFilter = new ArrayList<>();
         for (int i = 0; i < SELECTED_FILTER_VALUES.count(); i++) {
-            List<String> splitValues = Arrays.stream(
-                            SELECTED_FILTER_VALUES.nth(i).innerText().split(","))
-                    .map(String::trim)
-                    .toList();
+            List<String> splitValues = Arrays.stream(SELECTED_FILTER_VALUES.nth(i).innerText().split(",")).map(String::trim).toList();
             selectedFilter.addAll(splitValues);
         }
         return selectedFilter;
@@ -603,6 +587,10 @@ public class CampaignDashboard {
 
     public boolean isCampaignDataAvailableInCustomDateRange() {
         return NO_CAMPAIGN_AVAILABLE_TEXT.isVisible();
+    }
+
+   public void clickGlobalTacticResult() {
+        GLOBAL_TACTIC_ICON.click();
     }
 
     public void clickCampaignFromDashboard() {

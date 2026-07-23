@@ -341,7 +341,7 @@ public class LifeSteps {
         List<String> expectedTactic = new ArrayList<>();
 
         for (Map<String, String> tacticData : tactics) {
-            String tacticName = tacticData.get("Tactic Name");
+            String tacticName = tacticData.get("Tactic Name")+'_' + CommonUtils.timeStampCalculation();
             metricName = tacticName;
             String channel = tacticData.get("Channel");
             String ruleType = tacticData.get("RuleType");
@@ -479,17 +479,25 @@ public class LifeSteps {
         logger.info("Custom field created and verified successfully");
     }
 
-    @And("User verifies if new custom field is visible and empty in new tactic")
-    public void user_verifies_if_new_custom_field_is_visible_and_empty_in_new_tactic() {
+    @And("User verifies if new custom field is visible and empty in new tactic {string}")
+    public void user_verifies_if_new_custom_field_is_visible_and_empty_in_new_tactic(String tacticSearch) {
         logger.info("Verifying custom field is visible and empty in new tactic");
+        navigation.clickPulsePointLogo();
+        campaignDashboard.searchCreatedTactic(tacticSearch);
+        campaignDashboard.clickCampaignFromDashboard();
+        campaignDashboard.clickLineItemExpandIcon();
+        tacticDetails.clickFirstTacticTab();
+        tacticDetails.clickDetailsTab();
+        Assert.assertEquals("Custom field name did not match", customFieldName, uiCustomFieldName);
+        navigation.clickPulsePointLogo();
+        tacticDetails.globalSearchDeletedTactic(metricName);
+        campaignDashboard.clickGlobalTacticResult();
         tacticDetails.clickNewTactic();
         Assert.assertEquals(customFieldName, uiCustomFieldName);
-        Assert.assertTrue(
-                tacticDetails.customFieldValue(customFieldName).inputValue().isEmpty());
+        Assert.assertTrue(tacticDetails.customFieldValue(customFieldName).inputValue().isEmpty());
         tacticDetails.clickLastTactic();
         Assert.assertEquals(customFieldName, uiCustomFieldName);
-        Assert.assertFalse(
-                tacticDetails.customFieldValue(customFieldName).inputValue().isEmpty());
+        Assert.assertFalse(tacticDetails.customFieldValue(customFieldName).inputValue().isEmpty());
     }
 
     @Then("User deletes the custom field and verify its removed from new tactic")
