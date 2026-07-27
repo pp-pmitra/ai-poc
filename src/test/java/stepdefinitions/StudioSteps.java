@@ -250,7 +250,7 @@ public class StudioSteps {
         explorerWorkspace.waitForDashboardLoad();
         explorerWorkspace.clickEditWorkspace();
         explorerWorkspace.enterWorkspaceName(workspaceName);
-        explorerWorkspace.saveWorkspaceName("HCP Explorer");
+        explorerWorkspace.saveWorkspaceName(true);
         explorerWorkspace.waitUntilAlertDisappears();
         explorerWorkspace.waitForDashboardLoad();
     }
@@ -357,7 +357,7 @@ public class StudioSteps {
         workspaceName = editedName + CommonUtils.timeStampCalculation();
         logger.info("Updating workspace name to: {}", workspaceName);
         explorerWorkspace.enterWorkspaceName(workspaceName);
-        explorerWorkspace.saveWorkspaceName("HCP Explorer");
+        explorerWorkspace.saveWorkspaceName(true);
         explorerWorkspace.waitForDashboardLoad();
     }
 
@@ -1179,8 +1179,9 @@ public class StudioSteps {
         brandExplorerWorkspace.waitForDashboardLoad();
         explorerWorkspace.clickEditWorkspace();
         explorerWorkspace.enterWorkspaceName(workspaceName);
-        explorerWorkspace.saveWorkspaceName(workspaceType);
-        if (!"Brand Explorer".equalsIgnoreCase(workspaceType)) {
+        boolean expectsConfirmationAlert = !"Brand Explorer".equalsIgnoreCase(workspaceType);
+        explorerWorkspace.saveWorkspaceName(expectsConfirmationAlert);
+        if (expectsConfirmationAlert) {
             explorerWorkspace.waitUntilAlertDisappears();
         }
         brandExplorerWorkspace.waitForDashboardLoad();

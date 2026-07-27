@@ -185,9 +185,9 @@ public class ExplorerWorkspace {
     }
 
     // Brand Explorer doesn't show a confirmation toast on rename, unlike other workspace types.
-    public void saveWorkspaceName(String workspaceType) {
+    public void saveWorkspaceName(boolean expectsConfirmationAlert) {
         SAVE_WORKSPACE_NAME.click();
-        if ("Brand Explorer".equalsIgnoreCase(workspaceType)) {
+        if (!expectsConfirmationAlert) {
             return;
         }
         waitUtility.waitForLocatorVisible(ALERT);
