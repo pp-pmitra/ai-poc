@@ -216,10 +216,10 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
       | GEOGRAPHY          |
       | MEDIA SUPPLY       |
     And Verify Bid type with respect to category
-      | AUDIENCE ATTRIBUTE | Behavioral Segment,Day of The Week,Speciality,Practitioner Type,NPI              |
-      | DEMOGRAPHICS       | Age,Gender                                                                       |
-      | GEOGRAPHY          | Geo Targets                                                                      |
-      | MEDIA SUPPLY       | Browser,Device,Operating Systems,Inventory Source,Domains and Apps,Creative Size |
+      | AUDIENCE ATTRIBUTE | Behavioral Segment,Day of The Week,Speciality,Practitioner Type,NPI |
+      | DEMOGRAPHICS       | Age,Gender                                                          |
+      | GEOGRAPHY          | Geo Targets                                                         |
+      | MEDIA SUPPLY       | Browser,Device,Operating Systems,Inventory Source,Domains and Apps  |
     And User configures Bid multiplier rules as below with "<BID_VALUE>"
       | Behavioral Segment | 111 > 222 > Patients of HCPs prescribing Ivig and SCIg competitors |
       | NPI                | AutoSmartList954103283                                             |
@@ -234,8 +234,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
       | Operating Systems  | Linux                                                              |
       | Inventory Source   | Aug14                                                              |
       | Domains and Apps   | 1Domain_0617                                                       |
-      | Creative Size      | 120x20                                                             |
-
     Then Verify the configured Bid multiplier rules
     When User saves the Bid multiplier settings
     Then Verify settings details are saved and user is navigated to the creatives tab

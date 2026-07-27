@@ -7431,7 +7431,6 @@ public class LifeSteps {
         Collections.sort(actualUniqueAndSortedBid);
 
         List<String> expectedNormalizedBidRuleOptions = normalizeObjectList(keyValues);
-        System.out.println(expectedNormalizedBidRuleOptions);
         List<String> actualNormalizedBidRuleOptions = normalizeObjectList(tacticSettings.fetchBidRuleOptions());
         System.out.println(actualNormalizedBidRuleOptions);
         Assert.assertEquals("Rule types mismatch", expectedUniqueAndSortedBid, actualUniqueAndSortedBid);
