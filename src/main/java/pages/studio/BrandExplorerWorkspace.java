@@ -116,19 +116,12 @@ public class BrandExplorerWorkspace {
         return getDefaultTimeFrame();
     }
 
-    // Some actions (e.g. applying a filter) trigger more than one loading spinner at once - one per
-    // panel that reloads (Filters tabpanel, chart/table container, etc.) - so each matched spinner is
-    // waited on individually via nth() rather than through the bare (multi-match) SPINNER locator,
-    // which throws a Playwright strict-mode violation as soon as more than one is present.
     public void waitForSpinnerToDisappear() {
-        int count = SPINNER.count();
-        for (int i = 0; i < count; i++) {
-            waitUtility.waitForLocatorHidden(SPINNER.nth(i));
-        }
+        waitUtility.waitForLocatorHidden(SPINNER);
     }
 
     public void waitForSpinnerToAppear() {
-        waitUtility.waitForLocatorVisible(SPINNER.first());
+        waitUtility.waitForLocatorVisible(SPINNER);
     }
 
     public List<String> getTableDates(int days) {
@@ -229,15 +222,12 @@ public class BrandExplorerWorkspace {
         return parts[1] + "/" + parts[2] + "/" + parts[0];
     }
 
-    // Dimensions, Metrics, and Filter fields are all organized as accordion categories containing
-    // checkboxes, so these locators and the methods below serve all three panels.
+    // Dimensions, Metrics, and Filter fields share the same accordion-of-checkboxes structure.
     private Locator categoryTab(String category) {
         return WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName(category));
     }
 
-    // Scoped to the category's own accordion region: some field labels (e.g. "Avg. Video Progress")
-    // repeat across multiple categories, and accordions don't auto-collapse siblings, so an
-    // unscoped lookup can match more than one checkbox once several categories are expanded.
+    // Scoped to the category's region since labels can repeat across categories once several are expanded.
     private Locator categoryCheckbox(String category, String field) {
         return WORKSPACE_FRAME
                 .getByRole(AriaRole.REGION, new FrameLocator.GetByRoleOptions().setName(category))
@@ -311,17 +301,13 @@ public class BrandExplorerWorkspace {
         checkbox.uncheck();
     }
 
-    // Removes the workspace's default dimension (Day, under Time Frame) and default metric
-    // (Identified NPIs, under NPI Events) so later selections can be verified against an empty table.
+    // Removes the default dimension (Day) and metric (Identified NPIs) to start from an empty table.
     public void removeDefaultDimensionAndMetric() {
         deselectComponent("Time Frame", "Day");
         deselectComponent("NPI Events", "Identified NPIs");
     }
 
-    // Selects every item in the category (dimension or metric), verifies each renders as a table
-    // column, then deselects all of them and verifies the columns disappear - proves both the
-    // component list and the select/remove behavior for the whole category in one pass. Returns a
-    // human-readable failure per component that didn't behave as expected, empty if all passed.
+    // Selects then deselects every component in the category, verifying each appears/disappears as a table column.
     public List<String> verifyComponentsSelectAndRemove(String category, List<String> components) {
         expandCategory(category);
         List<String> failures = new ArrayList<>();
@@ -361,9 +347,7 @@ public class BrandExplorerWorkspace {
         ADD_FILTER_BUTTON.first().click();
     }
 
-    // Filter fields are organized into the same accordion categories as dimensions/metrics,
-    // inside the "Select Filter" modal opened by clickAddFilter() - reuses categoryTab()/
-    // categoryCheckbox()/expandCategory() above.
+    // Filter fields live in the same accordion categories as dimensions/metrics, inside the "Select Filter" modal.
     public void selectFilterField(String category, String field) {
         expandCategory(category);
         Locator checkbox = categoryCheckbox(category, field);
@@ -375,20 +359,15 @@ public class BrandExplorerWorkspace {
         page.keyboard().press("Escape");
     }
 
-    // Scoped to the field's own card in the "Data Filters" panel, since the field name can be
-    // echoed elsewhere (e.g. an accessibility live region) once a value is applied.
+    // Scoped to the field's own card, since the field name can be echoed elsewhere once a value is applied.
     private Locator filterFieldCard(String field) {
         return WORKSPACE_FRAME
                 .locator(String.format("//p[normalize-space()='%s']/ancestor::div[2]", field))
                 .first();
     }
 
-    // The value control is a searchable multi-select list: each option is a div[role='option']
-    // whose checkbox has no accessible name (its <label> is empty; the visible text lives in a
-    // sibling <p>), so the option's own accessible name - built from that sibling text - is what
-    // getByRole(OPTION) must match, not getByRole(CHECKBOX). Typing narrows the options, and the
-    // exact-match option must be clicked directly - pressing Enter instead selects every option
-    // still matching the search text, not just the intended one.
+    // Options have no accessible checkbox name, so match by OPTION role/text instead; must click the
+    // exact option since Enter would select every option still matching the typed search text.
     public void enterFilterValue(String field, String value) {
         Locator input = filterFieldCard(field).locator("input:not([readonly])").first();
         waitUtility.waitForLocatorVisible(input);
@@ -402,11 +381,7 @@ public class BrandExplorerWorkspace {
         waitForSpinnerToDisappear();
     }
 
-    // The applied value renders asynchronously after the field's checkbox list loads, so the card's
-    // text reads as just "<field> is" for a brief window - most noticeable right after reopening a
-    // saved workspace, where the value has to round-trip from the server before it appears. Wait for
-    // the expected value's own text node rather than a generic "loading done" signal, since no
-    // reliable loading-skeleton element exists in this card's DOM.
+    // The applied value renders asynchronously, so wait for its text node rather than a generic loading signal.
     public String getAppliedFilterSummary(String field, String expectedValue) {
         Locator card = filterFieldCard(field);
         waitUtility.waitForLocatorVisible(card);
