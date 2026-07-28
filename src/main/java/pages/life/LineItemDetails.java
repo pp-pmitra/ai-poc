@@ -159,7 +159,7 @@ public class LineItemDetails {
         this.PACING_MODE = page.locator("//sui-select[@placeholder='PacingMode']");
         this.FLAT_CPM = page.locator("//input[@formcontrolname='flatCPM']");
         this.PACING_MODE_INPUT = page.locator("//input[contains(@class,'pacing-mode-input')]");
-        this.PLACEMENT_ID = page.locator("//label[contains(text(),'PlacementId')]/following-sibling::input");
+        this.PLACEMENT_ID = page.locator("//label[span[normalize-space()='PlacementId']]/following-sibling::input");
         this.MANAGEMENT_FEE_LABEL_VALUE = page.locator("//span[contains(@class, 'fee-value')]");
         this.MANAGEMENT_FEE_OVERRIDE = page.locator(
                 "//div[contains(@class,'management-fee')]//span/following-sibling::span//label[contains(text(),'Override')]");
