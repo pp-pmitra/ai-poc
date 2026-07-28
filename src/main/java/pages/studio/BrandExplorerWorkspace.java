@@ -357,7 +357,6 @@ public class BrandExplorerWorkspace {
         page.keyboard().press("Escape");
     }
 
-    // Scoped to the field's own card, since the field name can be echoed elsewhere once a value is applied.
     private Locator filterFieldCard(String field) {
         return WORKSPACE_FRAME
                 .locator(String.format("//p[normalize-space()='%s']/ancestor::div[2]", field))
@@ -388,8 +387,6 @@ public class BrandExplorerWorkspace {
         return card.innerText().replaceAll("\\s+", " ").trim();
     }
 
-    // Every cell in the table body carries the same aria-colindex as its header, so the header's
-    // index is what scopes the read to this one column instead of every cell in the row.
     private Locator tableColumnCells(String columnName) {
         Locator header = tableColumnHeader(columnName).locator("xpath=ancestor::th[1]");
         waitUtility.waitForLocatorVisible(header);
