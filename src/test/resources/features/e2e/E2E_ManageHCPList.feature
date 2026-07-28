@@ -5,7 +5,7 @@ Feature: E2E Workflow for Targeting a Studio HCP Explorer List in LIFE at the Ta
   4. Target the published Studio list at Tactic level in LIFE
   5. Verify that the list, once targeted, cannot be deleted from the Studio dashboard
 
-  @e2e @prs
+  @e2e
   Scenario Outline: Create HCP Explorer Workspace in Studio and Publish in LIFE and Target at Tactic level
     Given This scenario will be executed in the "Pre-release" environment as a "User"
     And "Studio" application is logged in successfully with Account "automation@pulsepoint"
