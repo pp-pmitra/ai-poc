@@ -222,12 +222,10 @@ public class BrandExplorerWorkspace {
         return parts[1] + "/" + parts[2] + "/" + parts[0];
     }
 
-    // Dimensions, Metrics, and Filter fields share the same accordion-of-checkboxes structure.
     private Locator categoryTab(String category) {
         return WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName(category));
     }
 
-    // Scoped to the category's region since labels can repeat across categories once several are expanded.
     private Locator categoryCheckbox(String category, String field) {
         return WORKSPACE_FRAME
                 .getByRole(AriaRole.REGION, new FrameLocator.GetByRoleOptions().setName(category))
@@ -403,11 +401,6 @@ public class BrandExplorerWorkspace {
     public List<String> getTableColumnValues(String columnName) {
         Locator cells = tableColumnCells(columnName);
         waitUtility.waitForLocatorVisible(cells.first());
-        int count = cells.count();
-        List<String> values = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            values.add(cells.nth(i).innerText().trim());
-        }
-        return values;
+        return cells.allInnerTexts().stream().map(String::trim).collect(Collectors.toList());
     }
 }
