@@ -93,7 +93,7 @@ public class LineItemDetails {
             endDay = startDay + 5;
         }
         this.page = page;
-        this.VERIFY_LINE_ITEM_PAGE = page.locator("//div[text()='New Line Item']");
+        this.VERIFY_LINE_ITEM_PAGE = page.locator("//div[text()='New Line Item' and @class='left lineitem-name']");
         this.LINE_ITEM_NAME = page.locator("//input[@placeholder='Line Item Name']");
         this.LINE_ITEM_BUDGET = page.locator("//input[contains(@class,'gaFlightBudget')]");
         this.ENABLE_LINE_ITEM =
