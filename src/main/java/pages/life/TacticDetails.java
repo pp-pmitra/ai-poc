@@ -85,6 +85,7 @@ public class TacticDetails {
     private final Locator VALUE_LOCATOR;
     private final Locator PERCENT_TYPE_FEE_INPUT;
     private final Locator DOLLAR_TYPE_FEE_INPUT;
+    private final Locator CANCEL_BUTTON;
     private List<String> showExpressionRawValues;
     private List<String> showExpressionValues;
     Campaigns campaigns = new Campaigns(DriverFactory.getPage());
@@ -169,6 +170,7 @@ public class TacticDetails {
         this.CONNECTION_LOCATOR = page.locator("//span[@class='inlineDiv connector']");
         this.PERCENT_TYPE_FEE_INPUT = page.locator("//div[contains(@class,'management-fee-container')]//input[contains(@class,'percent-img')]");
         this.DOLLAR_TYPE_FEE_INPUT = page.locator("//div[contains(@class,'management-fee-container')]//input[contains(@class,'doller-img')]");
+        this.CANCEL_BUTTON = page.locator("//span[contains(@class,'cancleButton')]");
     }
 
     public void clickNewTactic() {
@@ -207,12 +209,18 @@ public class TacticDetails {
         } else if (entryPoint.contains("navigation")) {
             NAVIGATION_COMMENT.click();
         }
-        String actualComment = COMMENT_TEXT_BOX.inputValue();
+        return COMMENT_TEXT_BOX.inputValue();
+    }
+
+    public void clearComment(){
         COMMENT_TEXT_BOX.clear();
         SAVE_BUTTON.click();
         waitUtility.waitForLocatorHidden(COMMENT_SUCCESS_ALERT.first());
         waitUtility.waitForElementVisible("//span[@class='notes-icon-empty-dashboard']");
-        return actualComment;
+    }
+
+    public void clickCancelButton(){
+        CANCEL_BUTTON.click();
     }
 
     public List<String> getShowExpressionRawValues() {

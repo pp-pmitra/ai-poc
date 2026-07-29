@@ -378,6 +378,14 @@ public class LifeSteps {
         logger.info("Validating comment in section: '{}'. Expected: '{}'", entryPoint, expectedComment);
         String actualComment = tacticDetails.validateComment(entryPoint);
         Assert.assertEquals(expectedComment, actualComment);
+        tacticDetails.clearComment();
+    }
+
+    @Then("Verify that {string} is visible in {string} section")
+    public void verifyIfTheCommentAddedInIsVisibleInSection(String headerComment, String sectionName) {
+        String actualComment = tacticDetails.validateComment(sectionName);
+        Assert.assertEquals(headerComment, actualComment);
+        tacticDetails.clickCancelButton();
     }
 
     @Then("User adds frequency cap with details {string} {string} {string} {string}")
