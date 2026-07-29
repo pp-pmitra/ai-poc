@@ -132,6 +132,7 @@ public class CampaignDashboard {
         this.SEARCH_CAMPAIGN = page.locator("//input[@placeholder='Search' and contains(@class, 'gaTableSearch')]");
         this.CLICK_CAMPAIGN_SEARCH = page.locator("//div[contains(@class,'gaTableSearchBtn')]");
         this.LINE_ITEM_EXPAND_ICON = page.locator("//i[contains(@class,'fa-angle-right')]");
+        this.VERIFY_CREATED_TACTIC = page.locator("//span[contains(@class,'tactic-name')]");
         this.EXPAND_CREATED_LINE_ITEM =
                 page.locator("//div[contains(@class,'cl-expand-li')]/div[contains(@class,'collapsed-thin')]");
         this.CREATED_TACTIC = page.locator("//div[contains(@class,'cl-entity--tactic')]//span[contains(@class,'cl-entity__name')]");
