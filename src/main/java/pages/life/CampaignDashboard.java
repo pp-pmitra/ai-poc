@@ -56,6 +56,8 @@ public class CampaignDashboard {
     private final Locator SEARCH_CAMPAIGN;
     private final Locator CLICK_CAMPAIGN_SEARCH;
     private final Locator EXPAND_CREATED_LINE_ITEM;
+    private final Locator LINE_ITEM_EXPAND_ICON;
+    private final Locator VERIFY_CREATED_TACTIC;
     private final Locator CREATED_TACTIC;
     private final Locator CAMPAIGN_ENTRIES;
     private final Locator SUB_TITLE_AFTER_CAMPAIGN_SEARCH;
@@ -71,6 +73,7 @@ public class CampaignDashboard {
     private final Locator INACTIVE_FLIGHT_LIST;
     private final Locator NO_CAMPAIGN_AVAILABLE_TEXT;
     private final Locator CAMPAIGN_FROM_DASHBOARD;
+    private final Locator GLOBAL_TACTIC_ICON;
     private final Locator CAMPAIGN_TILE;
     WaitUtility waitUtility;
     String lineItemClassBeforeClick, lineItemClassAfterClick, tacticClassBeforeClick, tacticClassAfterClick;
@@ -128,6 +131,8 @@ public class CampaignDashboard {
         this.CLICK_SETTINGS = page.locator("//i[@class='icon gearIcon']");
         this.SEARCH_CAMPAIGN = page.locator("//input[@placeholder='Search' and contains(@class, 'gaTableSearch')]");
         this.CLICK_CAMPAIGN_SEARCH = page.locator("//div[contains(@class,'gaTableSearchBtn')]");
+        this.LINE_ITEM_EXPAND_ICON = page.locator("//i[contains(@class,'fa-angle-right')]");
+        this.VERIFY_CREATED_TACTIC = page.locator("//span[contains(@class,'tactic-name')]");
         this.EXPAND_CREATED_LINE_ITEM =
                 page.locator("//div[contains(@class,'cl-expand-li')]/div[contains(@class,'collapsed-thin')]");
         this.CREATED_TACTIC = page.locator("//div[contains(@class,'cl-entity--tactic')]//span[contains(@class,'cl-entity__name')]");
@@ -151,6 +156,7 @@ public class CampaignDashboard {
         this.NO_CAMPAIGN_AVAILABLE_TEXT =
                 page.locator("//p[contains(text(), 'No campaigns matching filtering criteria found')]");
         this.CAMPAIGN_FROM_DASHBOARD = page.locator("//span[contains(@class,'adv-camp-name')]//span");
+        this.GLOBAL_TACTIC_ICON = page.locator("//img[contains(@src,'T.svg')]");
         this.CAMPAIGN_TILE = page.locator("//div[contains(@class,'campaign-tile')]");
     }
 
@@ -529,6 +535,21 @@ public class CampaignDashboard {
         }
     }
 
+    public void searchCreatedTactic(String tacticName) {
+        waitUtility.waitForLocatorVisible(CAMPAIGN_ENTRIES.last());
+        while (true) {
+            SEARCH_CAMPAIGN.fill(tacticName);
+            CLICK_CAMPAIGN_SEARCH.click();
+            waitUtility.waitUntilPreLoaderHidden();
+            if (CAMPAIGN_FROM_DASHBOARD.first().isVisible()) {
+                break;
+            }
+            if (NO_CAMPAIGN_AVAILABLE_TEXT.isVisible()) {
+                break;
+            }
+        }
+    }
+
     public String verifyCreatedCampaign(String createdCampaign) {
         String campaignNameXpath = String.format("//span[contains(text(),'%s')]", createdCampaign);
         waitUtility.waitForLocatorVisible(page.locator(campaignNameXpath).first());
@@ -545,6 +566,10 @@ public class CampaignDashboard {
         if (EXPAND_CREATED_LINE_ITEM.first().isVisible()) {
             EXPAND_CREATED_LINE_ITEM.first().click();
         }
+    }
+
+    public void clickLineItemExpandIcon() {
+            LINE_ITEM_EXPAND_ICON.first().click();
     }
 
     public String verifyCreatedTactic() {
@@ -620,6 +645,10 @@ public class CampaignDashboard {
 
     public boolean isCampaignDataAvailableInCustomDateRange() {
         return NO_CAMPAIGN_AVAILABLE_TEXT.isVisible();
+    }
+
+   public void clickGlobalTacticResult() {
+        GLOBAL_TACTIC_ICON.click();
     }
 
     public void clickCampaignFromDashboard() {

@@ -43,12 +43,12 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
       | Targeting Segment | Email   | Health Population |
     Then User clicks on first tactic and goes to details tab
     Then User creates new custom field "<CUSTOM_NAME>" and verifies the same
-    And User verifies if new custom field is visible and empty in new tactic
+    And User verifies if new custom field is visible and empty in new tactic "<TACTIC_SEARCH>"
     Then User clears the custom field text
     Then User deletes the custom field and verify its removed from new tactic
     Examples:
-      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | CUSTOM_NAME |
-      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Custom ID   |
+      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | CUSTOM_NAME | TACTIC_SEARCH |
+      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Custom ID   | Tactic        |
 
   @regression
   Scenario Outline: Verify Base bid price and Max bid price populates correctly for a tactic
@@ -157,8 +157,10 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
       | Targeting Segment | Email   | Health Population |
     When User navigates to Tactic and clicks on settings tab
     And User clicks the comments icon in the tactic "header" section and add "<HEADER_COMMENT>"
+    Then Verify that "<HEADER_COMMENT>" is visible in "navigation" section
     Then User validates the comment added in "header" is "<HEADER_COMMENT>" then clear it
     And User clicks the comments icon in the tactic "navigation" section and add "<NAV_COMMENT>"
+    Then Verify that "<NAV_COMMENT>" is visible in "header" section
     Then User validates the comment added in "navigation" is "<NAV_COMMENT>" then clear it
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | HEADER_COMMENT        | NAV_COMMENT              |
