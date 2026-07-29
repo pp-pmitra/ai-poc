@@ -6564,7 +6564,7 @@ public class LifeSteps {
     public void userNavigatesToTheCreatedCampaign() {
         logger.info("Navigating to the created campaign '{}'", campaignNameRandom);
         campaignDashboard.searchCreatedCampaign(campaignNameRandom);
-        campaignDashboard.navigateToCampaign(campaignNameRandom);
+        campaignDashboard.navigateToCreatedCampaign(lineItemNameRandom);
     }
 
     @And("Admin user approves the campaign")

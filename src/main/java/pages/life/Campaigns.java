@@ -92,8 +92,8 @@ public class Campaigns {
         this.CAMPAIGN_SUCCESS = page.locator(
                 "//div[@aria-label='Success!']/following-sibling::div[@role='alert' and contains(text(),'Campaign')]");
         this.CAMPAIGN_DASHBOARD = page.locator("//span[@class='breadCrumbRoot']");
-        this.LIFE_TIME_FILTER = page.locator("//button[@data-title='Lifetime']");
-        this.CAMPAIGN_ENTRIES = page.locator("//div[contains(@class,'name-section-wrapper')]");
+        this.LIFE_TIME_FILTER = page.locator("//button[normalize-space()='Lifetime']");
+        this.CAMPAIGN_ENTRIES = page.locator("//tr[contains(@class,'cl-li-row')]");
         this.ADVERTISER_DROPDOWN_VALUES = page.locator(
                 "//input[@placeholder='Select Advertiser']/following-sibling::div[@class='menu transition visible']//div");
         this.MANDATORY_FIELD_ERROR = page.locator("//div[contains(@class,'errorsWrapper')]//p");
@@ -169,7 +169,7 @@ public class Campaigns {
         this.CAMPAIGN_APPROVAL_STATUS = page.locator("//label[contains(text(),'Approval Status')]");
         this.CAMPAIGN_STATUS_APPROVED_BUTTON = page.locator(
                 "//label[contains(text(),'Approval Status')]/following-sibling::div[contains(@class,'display-inlineBlock')]//button[text()='Approved']");
-        this.FAVORITE_ONLY_CHECKBOX = page.locator("//sui-checkbox[contains(@class,'gaFavoritesOnly')]");
+        this.FAVORITE_ONLY_CHECKBOX = page.locator("//sui-checkbox[label[normalize-space()='Favorite Only']]");
     }
 
     public void createCampaign() {
