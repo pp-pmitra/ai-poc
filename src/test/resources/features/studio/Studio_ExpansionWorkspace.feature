@@ -9,16 +9,16 @@ Feature: HCP Audience Workspace in Studio Application
   Background:
     Given This scenario will be executed in the "Pre-release" environment as a "User"
     And "Studio" application is logged in successfully with Account "automation@pulsepoint"
-    #When User navigates to Administrative section
-    #And User navigates to Accounts Tab
-    #And User searches the account "PP engineering test" and checks Studio permissions
-    #And User clicks PulsePoint icon to navigate back to Life
-    #And User navigates to Studio application
+    When User navigates to Administrative section
+    And User navigates to Accounts Tab
+    And User searches the account "PP engineering test" and checks Studio permissions
+    And User clicks PulsePoint icon to navigate back to Life
+    And User navigates to Studio application
 
-  @regression @ps1
+  @todo
   Scenario Outline: Create and save an HCP Audience Expansion workspace with Expansion Audience
     When User clicks on Create New Workspace
-    #Then User sees the types of workspaces they have permissions for
+    Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Audience Expansion" workspace
     And User selects the advertiser "<ADVERTISER>" for HCP Audience Expansion workspace
     Then User selects Source Audience details as "<SOURCE_AUDIENCE>", "<OPTIONS>"
@@ -30,13 +30,13 @@ Feature: HCP Audience Workspace in Studio Application
     Then Verify the "HCP Audience Expansion" Workspace is saved
     Then Verify the workspace is visible in workspace management page
     Examples:
-      | ADVERTISER | WORKSPACE_NAME | SOURCE_AUDIENCE  | OPTIONS                  | EXPANDED_AUDIENCE             |
-      | Abbvie     | HCP_Expansion  | Studio Workspace | Explorer_20260608_201107 | Expand with Care Team         |
-      | Abbvie     | HCP_Expansion  | Studio Workspace | Explorer_20260608_201107 | Expand with Affiliation Graph |
-      | Abbvie     | HCP_Expansion  | NPI List         | testsmart                | Expand with Care Team         |
-      | Abbvie     | HCP_Expansion  | NPI List         | testsmart                | Expand with Affiliation Graph |
+      | ADVERTISER | WORKSPACE_NAME | SOURCE_AUDIENCE  | OPTIONS             | EXPANDED_AUDIENCE             |
+      | Abbvie     | HCP_Expansion  | Studio Workspace | Explorer_c3f71fa1-a | Expand with Care Team         |
+      | Abbvie     | HCP_Expansion  | Studio Workspace | Explorer_c3f71fa1-a | Expand with Affiliation Graph |
+      | Abbvie     | HCP_Expansion  | NPI List         | testsmart           | Expand with Care Team         |
+      | Abbvie     | HCP_Expansion  | NPI List         | testsmart           | Expand with Affiliation Graph |
 
-  @regression @ps
+  @todo
   Scenario Outline: Create and save an HCP Audience Expansion workspace and publish the workspace
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -56,9 +56,6 @@ Feature: HCP Audience Workspace in Studio Application
       | Years Practiced    | Below 5, 5 to 10, 10 to 15, 15 to 20, 20 to 25, 25 to 30, 30 to 35, 35 to 40, 40 to 45, 45 to 50, 50 or Above           |
       | Facility Name      | Visiting Nurse Service, Ahs Hospital Corp, Centrastate, Robert Wood Johnson University Hospital, Montclair Hospital Llc |
       | State              | New                                                                                                                     |
-      | Profession         | Physician                                                                                                               |
-      | Specialty          | Foot & Ankle Surgery, Internal Medicine                                                                                 |
-      | NPI List Name      | Large file test                                                                                                         |
       | Medical School     | New York College                                                                                                        |
     And User clicks on Ok and closes the filter popup
     Then Verify that the applied filters are displayed correctly
@@ -75,15 +72,15 @@ Feature: HCP Audience Workspace in Studio Application
     And User clicks on the published workspace
     Then User Verify the list is displayed in the LIFE
     Examples:
-      | ADVERTISER | SOURCE_AUDIENCE  | OPTIONS                  | EXPANDED_AUDIENCE                                           | LIST_TYPE | PLATFORM                      |
-      | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Basic, Exact Diagnosis, Extended, Professions, Specialities | Static    | Life, HCP365,Audience Manager |
-      | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Basic, Exact Diagnosis, Extended, Professions, Specialities | Live      | Life, HCP365,Audience Manager |
-      | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Affiliation Graph                               | Static    | Life, HCP365,Audience Manager |
-      | Abbvie     | NPI List         | testsmart                | Basic, Exact Diagnosis, Extended, Professions, Specialities | Live      | Life, HCP365,Audience Manager |
-      | Abbvie     | NPI List         | testsmart                | Expand with Affiliation Graph                               | Static    | Life, HCP365,Audience Manager |
-      | Abbvie     | NPI List         | testsmart                | Expand with Affiliation Graph                               | Live      | Life, HCP365,Audience Manager |
+      | ADVERTISER | SOURCE_AUDIENCE  | OPTIONS                  | EXPANDED_AUDIENCE             | LIST_TYPE | PLATFORM                      |
+      | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Care Team         | Static    | Life, HCP365,Audience Manager |
+      | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Care Team         | Live      | Life, HCP365,Audience Manager |
+      | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Affiliation Graph | Static    | Life, HCP365,Audience Manager |
+      | Abbvie     | NPI List         | testsmart                | Expand with Care Team         | Live      | Life, HCP365,Audience Manager |
+      | Abbvie     | NPI List         | testsmart                | Expand with Affiliation Graph | Static    | Life, HCP365,Audience Manager |
+      | Abbvie     | NPI List         | testsmart                | Expand with Affiliation Graph | Live      | Life, HCP365,Audience Manager |
 
-  @regression @ps
+  @todo
   Scenario Outline: Create and save <DRAFT_OPTION> HCP Audience Expansion workspace and check workspace is visible in respective user accordingly
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -106,7 +103,7 @@ Feature: HCP Audience Workspace in Studio Application
       | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Care Team         | Private      | HCP_Expansion  | PP engineering test |
       | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Affiliation Graph | Public       | HCP_Expansion  | PP engineering test |
 
-  @regression @ps
+  @todo
   Scenario Outline: Create Private HCP Audience Expansion workspace then save and publish the workspace then check the change in status
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -133,7 +130,7 @@ Feature: HCP Audience Workspace in Studio Application
       | Abbvie     | NPI List         | testsmart                | Expand with Affiliation Graph                               | Static    | Life, HCP365, Audience Manager |
       | Abbvie     | NPI List         | testsmart                | Expand with Affiliation Graph                               | Live      | Life, HCP365, Audience Manager |
 
-  @regression @ps
+  @todo
   Scenario Outline: Create and save an HCP Audience Expansion workspace and Download NPI's
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -152,7 +149,7 @@ Feature: HCP Audience Workspace in Studio Application
       | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Care Team         | CSV    | HCP_Expansion  |
       | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Affiliation Graph | EXCEL  | HCP_Expansion  |
 
-  @regression @ps
+  @todo
   Scenario Outline: Create and save an HCP Audience Expansion workspace and Schedule NPI's
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -171,7 +168,7 @@ Feature: HCP Audience Workspace in Studio Application
       | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Care Team         | HCP_Expansion  |
       | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Affiliation Graph | HCP_Expansion  |
 
-  @regression @ps
+  @todo
   Scenario Outline: Create and save an HCP Audience Expansion workspace and Download Report
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -191,7 +188,7 @@ Feature: HCP Audience Workspace in Studio Application
       | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Care Team         | CSV    | HCP_Expansion  |
       | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Affiliation Graph | EXCEL  | HCP_Expansion  |
 
-  @regression @ps
+  @todo
   Scenario Outline: Create and save an HCP Audience Expansion workspace and Schedule Report
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
