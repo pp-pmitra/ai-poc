@@ -67,7 +67,7 @@ public class WorkspaceCreation {
         this.CREATE_WORKSPACE = WORKSPACE_FRAME.locator(
                 "//div[text()='Create New Workspace' or contains(text(),'Open New Workspace')]");
         this.HCP_EXPLORER = WORKSPACE_FRAME.locator("//p[contains(text(),'HCP Explorer')]");
-        this.HCP_EXPANSION = WORKSPACE_FRAME.locator("//p[contains(text(),'HCP Audience Expansion')]");
+        this.HCP_EXPANSION = WORKSPACE_FRAME.locator("//label[contains(text(),'HCP Audience Expansion')]");
         this.BRAND_EXPLORER = WORKSPACE_FRAME.locator("//p[contains(text(),'Brand Explorer')]");
         this.DTC_EXPLORER = WORKSPACE_FRAME.locator("//p[contains(text(),'DTC Explorer')]");
         this.BACK_TO_WORKSPACE_DASHBOARD = WORKSPACE_FRAME.getByRole(AriaRole.BUTTON);
@@ -183,7 +183,6 @@ public class WorkspaceCreation {
     }
 
     public void verifyStudioWorkspaceFrame() {
-        closeAIPanel();
         OUTER_FRAME.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         CREATE_WORKSPACE.first().waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         waitForStudioWorkspacePage(CREATE_WORKSPACE);
@@ -447,31 +446,5 @@ public class WorkspaceCreation {
         } else {
             return ABSENT_WORKSPACE.isVisible();
         }
-    }
-
-    public void clickHCPAudienceExpansionWorkspace() {
-        HCP_EXPANSION.click();
-    }
-
-    public boolean isWorkspacePublished(String workspaceName, String status) {
-        Locator workspaceRow = WORKSPACE_FRAME
-                .locator(String.format("//span[contains(text(),'%s')]/ancestor::tr", workspaceName));
-        waitUtility.waitForLocatorVisible(workspaceRow);
-        Locator icons = workspaceRow.locator("svg");
-        Locator firstIcon = icons.first();
-        waitUtility.waitForLocatorVisible(firstIcon);
-        Object result = firstIcon.evaluate(
-                "el => {"
-                        + "  const fill = el.getAttribute('fill') || '';"
-                        + "  const child = el.querySelector('path, circle, rect');"
-                        + "  const childFill = child ? (child.getAttribute('fill') || '') : '';"
-                        + "  const style = getComputedStyle(el).color || '';"
-                        + "  return (fill + '|' + childFill + '|' + style).toLowerCase();"
-                        + "}");
-        String colors = result != null ? result.toString() : "";
-        return colors.contains("green") || colors.contains("#4caf50") || colors.contains("#00c853")
-                || colors.contains("#2e7d32") || colors.contains("#43a047") || colors.contains("#66bb6a")
-                || colors.contains("rgb(76, 175, 80)") || colors.contains("rgb(0, 200, 83)")
-                || colors.contains("rgb(46, 125, 50)") || colors.contains("rgb(67, 160, 71)");
     }
 }
