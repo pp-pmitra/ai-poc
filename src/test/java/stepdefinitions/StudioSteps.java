@@ -2,7 +2,6 @@ package stepdefinitions;
 
 import factory.DriverFactory;
 import io.cucumber.datatable.DataTable;
-import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -20,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pages.Navigation;
 import pages.admin.Accounts;
-import pages.life.NPILists;
 import pages.studio.*;
 import utils.CommonUtils;
 import utils.ConfigReader;
@@ -32,7 +30,6 @@ public class StudioSteps {
     static String workspaceName;
     static String newWorkspaceName;
     static String draftOption;
-    static String activeWorkspaceType;
     Boolean flag = true;
     Boolean isOverwritten = false;
     List<String[]> fileContent;
@@ -45,14 +42,12 @@ public class StudioSteps {
     Workspace workspace = new Workspace(DriverFactory.getPage());
     BrandExplorerWorkspace brandExplorerWorkspace = new BrandExplorerWorkspace(DriverFactory.getPage());
     DTCExplorerWorkspace dtcExplorerWorkspace = new DTCExplorerWorkspace(DriverFactory.getPage());
-    NPILists npiLists = new NPILists(DriverFactory.getPage());
     List<String> appliedFilterEntries = new ArrayList<>();
     List<String> appliedFilterValues = new ArrayList<>();
     List<String> previousNpiDetails = null;
     List<String> metricNames = new ArrayList<>();
     List<String> fetchedMetricNames = new ArrayList<>();
     String npiCount;
-    String totalNpiCount;
     Path targetFilePath;
     long uniqueConsumersCount;
 
@@ -116,7 +111,7 @@ public class StudioSteps {
     @Then("the user saves the workspace and check the workspace is Saved")
     public void the_user_saves_the_workspace_and_check_the_workspace_is_Saved() {
         logger.info("Saving the workspace");
-        expansionWorkspace.saveExpansionWorkspace();
+        expansionWorkspace.saveExpansion();
         String workspaceSuccessMsg = explorerWorkspace.workspaceSuccess();
         logger.info("Workspace save message: {}", workspaceSuccessMsg);
         Assert.assertTrue("Unable to save workspace", workspaceSuccessMsg.contains("Workspace saved"));
@@ -214,7 +209,6 @@ public class StudioSteps {
     @And("User clicks on {string} workspace")
     public void userClicksOnWorkspace(String workspaceType) {
         logger.info("Selecting {} workspace", workspaceType);
-        activeWorkspaceType = workspaceType;
 
         if (fetchedMetricNames.contains(workspaceType)) {
             String explorer =
@@ -222,7 +216,6 @@ public class StudioSteps {
                         case "HCP Explorer" -> workspaceCreation.verifyHCPExplorer();
                         case "Brand Explorer" -> workspaceCreation.verifyBrandExplorer();
                         case "DTC Explorer" -> workspaceCreation.verifyDTCExplorer();
-                        case "HCP Audience Expansion" -> workspaceCreation.verifyHCPAudienceExpansion();
                         default -> throw new IllegalArgumentException(
                                 "Unsupported workspace verification: " + workspaceType);
                     };
@@ -235,7 +228,6 @@ public class StudioSteps {
             case "HCP Explorer" -> workspaceCreation.clickHCPExplorerWorkspace();
             case "Brand Explorer" -> workspaceCreation.clickBrandExplorerWorkspace();
             case "DTC Explorer" -> workspaceCreation.clickDTCExplorerWorkspace();
-            case "HCP Audience Expansion" -> workspaceCreation.clickHCPAudienceExpansionWorkspace();
             default -> throw new IllegalArgumentException("Unsupported workspace click: " + workspaceType);
         }
     }
@@ -251,26 +243,16 @@ public class StudioSteps {
         //        Assert.assertEquals("Workspace created successfully", alertText);
     }
 
-    @And("User selects the advertiser {string} for HCP Audience Expansion workspace")
-    public void userSelectsTheAdvertiserForHCPAudienceExpansionWorkspace(String advertiser) {
-        logger.info("Selecting advertiser for HCP Audience Expansion workspace: {}", advertiser);
-        expansionWorkspace.clickAdvertiserDropdown(advertiser);
-    }
-
     @And("User updates the workspace name as {string}")
     public void userUpdatesTheWorkspaceNameAs(String wName) {
         workspaceName = wName + '_' + CommonUtils.timeStampCalculation();
         logger.info("Adding workspace name: {}", workspaceName);
-        if ("HCP Audience Expansion".equals(activeWorkspaceType)) {
-            expansionWorkspace.renameExpansion(workspaceName);
-        } else {
-            explorerWorkspace.waitForDashboardLoad();
-            explorerWorkspace.clickEditWorkspace();
-            explorerWorkspace.enterWorkspaceName(workspaceName);
-            explorerWorkspace.saveWorkspaceName();
-            explorerWorkspace.waitUntilAlertDisappears();
-            explorerWorkspace.waitForDashboardLoad();
-        }
+        explorerWorkspace.waitForDashboardLoad();
+        explorerWorkspace.clickEditWorkspace();
+        explorerWorkspace.enterWorkspaceName(workspaceName);
+        explorerWorkspace.saveWorkspaceName();
+        explorerWorkspace.waitUntilAlertDisappears();
+        explorerWorkspace.waitForDashboardLoad();
     }
 
     @When("User applies the filter and selects option")
@@ -352,9 +334,6 @@ public class StudioSteps {
                 break;
             case "DTC Explorer":
                 dtcExplorerWorkspace.saveDTCExplorerWorkspace();
-                break;
-            case "HCP Audience Expansion":
-                expansionWorkspace.saveExpansionWorkspace();
                 break;
         }
     }
@@ -438,13 +417,6 @@ public class StudioSteps {
         logger.info("Identified NPI count fetched: {}", npiCount);
     }
 
-    @And("User fetches the Total NPI count from the workspace")
-    public void userFetchesTheTotalNPICountFromTheWorkspace() {
-        logger.info("Fetching Total NPI count from workspace");
-        totalNpiCount = expansionWorkspace.fetchTotalNPICount();
-        logger.info("Total NPI count fetched: {}", totalNpiCount);
-    }
-
     @And("Download button is enabled to the user")
     public void download_button_is_enabled_to_the_user() {
         logger.info("Verifying Download button is enabled");
@@ -508,24 +480,6 @@ public class StudioSteps {
         if (!alertMsg.isEmpty()) {
             logger.info("Publish alert message: {}", alertMsg);
             Assert.assertEquals("NPI list published successfully", alertMsg);
-        } else {
-            Assert.assertFalse("Publish alert is not displayed", false);
-        }
-        logger.info("Verifying published NPI list");
-        workspace.clickFlyOrPageButton();
-        String publishedNpi = workspace.verifyPublishedNpi();
-        logger.info("Published NPI: {}", publishedNpi);
-        Assert.assertEquals("Published NPI List", publishedNpi);
-    }
-
-    @Then("Verify HCP Audience Expansion list is published")
-    public void verifyHCPAudienceExpansionListIsPublished() {
-        logger.info("Publishing HCP Audience Expansion list");
-        expansionWorkspace.clickPublish();
-        String alertMsg = expansionWorkspace.fetchNPIListPublishAlertDisplayed();
-        if (!alertMsg.isEmpty()) {
-            logger.info("Publish alert message: {}", alertMsg);
-            Assert.assertEquals("Workspace saved successfully", alertMsg);
         } else {
             Assert.assertFalse("Publish alert is not displayed", false);
         }
@@ -1360,129 +1314,6 @@ public class StudioSteps {
                 brandExplorerWorkspace.isEndDateLastInTable(endDate));
     }
 
-    @Then("User selects Source Audience details as {string}, {string}")
-    public void userSelectsSourceAudienceDetailsAs(String sourceAudience, String options) {
-        logger.info("Selecting source audience: {} with options: {}", sourceAudience, options);
-        expansionWorkspace.selectSourceAudienceWithOptions(sourceAudience, options);
-    }
-
-    @And("User selects {string}")
-    public void userSelectsExpandedAudience(String expandedAudience) {
-        logger.info("Selecting expanded audience: {}", expandedAudience);
-        expansionWorkspace.selectExpandedAudience(expandedAudience);
-    }
-
-    @Then("User verifies the expanded audience count")
-    public void userVerifiesTheExpandedAudienceCount() {
-        logger.info("Verifying the expanded audience count");
-        String expandedCount = expansionWorkspace.fetchTotalNPICountAfterExpansion(totalNpiCount);
-        int beforeCount = Integer.parseInt(totalNpiCount);
-        int afterCount = Integer.parseInt(expandedCount);
-        Assert.assertTrue(
-                "Expected expanded audience count (" + afterCount
-                        + ") to be greater than Total NPI count ("
-                        + beforeCount + ")",
-                afterCount > beforeCount);
-    }
-
-    @Then("Verify the workspace is visible in workspace management page")
-    public void verifyTheWorkspaceIsVisibleInWorkspaceManagementPage() {
-        logger.info("Verifying workspace is visible in workspace management page: {}", workspaceName);
-        workspace.goToWorkspaceList();
-        boolean isVisible = workspaceCreation.searchWorkspaceName(workspaceName);
-        Assert.assertTrue("Workspace is not visible in workspace management page: " + workspaceName, isVisible);
-    }
-
-    @And("User select the {string} to publish the list")
-    public void userSelectThePlatformToPublishTheList(String platform) {
-        logger.info("Selecting platforms to publish: {}", platform);
-        List<String> platforms = CommonUtils.parseCommaSeparatedString(platform);
-        expansionWorkspace.selectPublishPlatforms(platforms);
-    }
-
-    @And("User searches the workspace in {string} and selects it")
-    public void userSearchesTheWorkspaceInPlatformAndSelectsIt(String platform) {
-        logger.info("Searching workspace in {} platform(s): {}", platform, workspaceName);
-        List<String> platforms = CommonUtils.parseCommaSeparatedString(platform);
-        boolean hasLife = platforms.stream().anyMatch(p -> p.equalsIgnoreCase("Life"));
-        if (hasLife) {
-            npiLists.searchNPILists(workspaceName);
-        } else {
-            logger.warn("Platform(s) '{}' navigation not yet implemented", platform);
-            throw new PendingException();
-        }
-    }
-
-    @Then("User Verify the list is displayed in the LIFE")
-    public void userVerifyTheListIsDisplayedInTheLIFE() {
-        logger.info("Verifying list is displayed in LIFE");
-        Assert.assertTrue("NPI list is not available in LIFE", npiLists.availablePlatforms());
-    }
-
-    @Then("User selects Draft option as {string}")
-    public void userSelectsDraftOptionAs(String draft) {
-        logger.info("Selecting draft option: {}", draft);
-        expansionWorkspace.selectDraftOption(draft);
-    }
-
-    @And("Internal User is able to view {string} in workspace management page")
-    public void internalUserIsAbleToViewInWorkspaceManagementPage(String wsName) {
-        logger.info("Verifying internal user can view workspace: {}", workspaceName);
-        workspaceCreation.verifyStudioWorkspaceFrame();
-        boolean isVisible = workspaceCreation.searchWorkspaceName(workspaceName);
-        Assert.assertTrue("Internal user cannot view workspace: " + workspaceName, isVisible);
-    }
-
-    @And("{string} logs out from the {string} application")
-    public void logsOutFromTheApplication(String userType, String appName) {
-        logger.info("{} logs out from the {} application", userType, appName);
-        accounts.internalUserLogout();
-    }
-
-    @And("Verify the workspace status should be {string}")
-    public void workspaceStatusShouldBe(String status) {
-        logger.info("Verifying workspace is {}", status);
-        Assert.assertTrue(
-                "Workspace status is not updated to " + status,
-                workspaceCreation.isWorkspacePublished(workspaceName, status));
-    }
-
-    @And("User clicks Schedule NPI button")
-    public void userClicksScheduleNPIButton() {
-        logger.info("User clicks Schedule NPI button");
-        expansionWorkspace.clickScheduleNPIButton();
-    }
-
-    @And("User enters data and clicks Save button")
-    public void userEntersDataAndClicksSaveButton() {
-        logger.info("User enters schedule data and clicks Save button");
-        expansionWorkspace.enterScheduleDataAndSave();
-    }
-
-    @And("Report button is enabled to the user")
-    public void reportButtonIsEnabledToTheUser() {
-        logger.info("Verifying Report button is enabled");
-        workspace.clickFlyOrPageButton();
-    }
-
-    @And("User clicks on Download Report")
-    public void userClicksOnDownloadReport() {
-        logger.info("User clicks on Download Report");
-        expansionWorkspace.clickDownloadReport();
-    }
-
-    @And("User enters the Report Name")
-    public void userEntersTheReportName() {
-        logger.info("User enters the report name");
-        expansionWorkspace.enterReportName();
-    }
-
-    @And("User clicks on Schedule Report button")
-    public void userClicksOnScheduleReportButton() {
-        logger.info("User clicks Schedule Report button");
-        expansionWorkspace.clickScheduleReport();
-    }
-
     @And("Verify the Day column shows {int} dates in ascending order")
     public void verifyDayColumnShowsDatesInAscendingOrder(int expectedDays) {
         logger.info("Verifying Day column shows {} dates in ascending order", expectedDays);
@@ -1566,5 +1397,4 @@ public class StudioSteps {
         Assert.assertEquals("Dialog message does not match", expectedMessage, actualMessage);
     }
 }
-
 
