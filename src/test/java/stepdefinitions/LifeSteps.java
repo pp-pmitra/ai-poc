@@ -399,6 +399,21 @@ public class LifeSteps {
         campaigns.addFrequencyCap(level, FREQ_VALUE, TIMES_PER, SCOPE);
     }
 
+    @Then("User adds {string} frequency cap with details {string} {string} {string} {string}")
+    public void user_adds_frequency_cap_with_details(String EXCEEDED, String level, String FREQ_VALUE, String TIMES_PER, String SCOPE) {
+        campaigns.addFrequencyCap(level, FREQ_VALUE, TIMES_PER, SCOPE, EXCEEDED);
+    }
+
+    @Then("User gets error of limit exceeded {string}")
+    public void userGetsErrorOfLimitExceeded(String level) {
+        String actualError = campaigns.frequencyLimitExceedCheck(level);
+        if (level.contains("Line Item"))
+            Assert.assertEquals("Line Item frequency cap can not exceed Campaign frequency cap", actualError);
+        else if (level.contains("tactic")) {
+            Assert.assertEquals("Tactic frequency cap can not exceed Line Item or Campaign frequency cap", actualError);
+        }
+    }
+
     @Then("User clicks on details tab")
     public void user_clicks_on_details_tab() {
         logger.info("Clicking on details tab");
