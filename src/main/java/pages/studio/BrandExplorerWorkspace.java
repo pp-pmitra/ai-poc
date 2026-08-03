@@ -115,7 +115,14 @@ public class BrandExplorerWorkspace {
     }
 
     public void waitForSpinnerToDisappear() {
-        waitUtility.waitForLocatorHidden(SPINNER);
+        page.waitForCondition(() -> {
+            for (int i = 0; i < SPINNER.count(); i++) {
+                if (SPINNER.nth(i).isVisible()) {
+                    return false;
+                }
+            }
+            return true;
+        });
     }
 
     public void waitForSpinnerToAppear() {
@@ -177,7 +184,7 @@ public class BrandExplorerWorkspace {
     public void waitForStartDateInTable(String startDate) {
         // Wait until the table actually reflects the new start date, not just that containers are visible
         Locator startDateCell = WORKSPACE_FRAME.locator(String.format(
-                "//div[contains(@class,'Box')]//table//tbody//tr//td[1]//p[normalize-space()='%s']", startDate));
+                "//div[contains(@class,'Box')]//table//tbody//tr//td[1]//ds-typography[normalize-space()='%s']", startDate));
         waitUtility.waitForLocatorVisible(startDateCell);
     }
 
@@ -357,7 +364,7 @@ public class BrandExplorerWorkspace {
 
     private Locator filterFieldCard(String field) {
         return WORKSPACE_FRAME
-                .locator(String.format("//p[normalize-space()='%s']/ancestor::div[2]", field))
+                .locator(String.format("//ds-typography[normalize-space()='%s']/ancestor::div[2]", field))
                 .first();
     }
 
