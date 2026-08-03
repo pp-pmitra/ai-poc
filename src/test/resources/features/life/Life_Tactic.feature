@@ -126,24 +126,30 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Then User navigates to campaign
     Then User clicks on details tab
     Then User verifies if Frequency Cap is in disabled state by default
-    Then User adds frequency cap with details "<ON_CAMPAIGN_LEVEL>" "<FREQUENCY_VALUE>" "<TIMES_PER>" "<SCOPE>"
+    Then User adds frequency cap with details "<ON_CAMPAIGN_LEVEL>" "<FREQUENCY_VALUE_1>" "<TIMES_PER_1>" "<SCOPE_1>"
     Then User navigates to LineItem
     Then User clicks on details tab
-    Then User verifies if frequency cap is saved with details "<FREQUENCY_VALUE>" "<TIMES_PER>" "<SCOPE>" "<ON_CAMPAIGN_LEVEL>"
+    Then User verifies if frequency cap is saved with details "<FREQUENCY_VALUE_1>" "<TIMES_PER_1>" "<SCOPE_1>" "<ON_CAMPAIGN_LEVEL>"
     Then User verifies if Frequency Cap is in disabled state by default
-    Then User adds frequency cap with details "<ON_LI_LEVEL>" "<FREQUENCY_VALUE>" "<TIMES_PER>" "<SCOPE>"
+    Then User adds frequency cap with details "<ON_LI_LEVEL>" "<FREQUENCY_VALUE_2>" "<TIMES_PER_2>" "<SCOPE_2>"
     Then User navigates to Tactic and clicks on settings tab
-    Then User verifies if frequency cap is saved with details "<FREQUENCY_VALUE>" "<TIMES_PER>" "<SCOPE>" "<ON_CAMPAIGN_LEVEL>"
-    Then User verifies if frequency cap is saved with details "<FREQUENCY_VALUE>" "<TIMES_PER>" "<SCOPE>" "<ON_LI_LEVEL>"
+    Then User verifies if frequency cap is saved with details "<FREQUENCY_VALUE_1>" "<TIMES_PER_1>" "<SCOPE_1>" "<ON_CAMPAIGN_LEVEL>"
+    Then User verifies if frequency cap is saved with details "<FREQUENCY_VALUE_2>" "<TIMES_PER_2>" "<SCOPE_2>" "<ON_LI_LEVEL>"
     Then User verifies if Frequency Cap is in disabled state by default
-    Then User adds frequency cap with details "<ON_TACTIC_LEVEL>" "<FREQUENCY_VALUE>" "<TIMES_PER>" "<SCOPE>"
+    Then User adds frequency cap with details "<ON_TACTIC_LEVEL>" "<FREQUENCY_VALUE_3>" "<TIMES_PER_3>" "<SCOPE_3>"
     Then User navigates to LineItem
     Then User navigates to Tactic and clicks on settings tab
     Then Verify that frequency cap is saved in tactic
+    Then User adds "exceeded" frequency cap with details "<ON_TACTIC_LEVEL>" "<EXCEEDED_FREQUENCY_VALUE>" "<TIMES_PER_2>" "<SCOPE_2>"
+    Then User gets error of limit exceeded "<ON_TACTIC_LEVEL>"
+    Then User navigates to LineItem
+    Then User clicks on details tab
+    Then User adds "exceeded" frequency cap with details "<ON_LI_LEVEL>" "<EXCEEDED_FREQUENCY_VALUE>" "<TIMES_PER_1>" "<SCOPE_1>"
+    Then User gets error of limit exceeded "<ON_LI_LEVEL>"
+
     Examples:
-      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | FREQUENCY_VALUE | TIMES_PER | SCOPE         | ON_CAMPAIGN_LEVEL | ON_LI_LEVEL        | ON_TACTIC_LEVEL |
-      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | 10              | hour(s)   | Per Person    | on Campaign Level | on Line Item Level | on tactic level |
-      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | 80              | week      | Per Household | on Campaign Level | on Line Item Level | on tactic level |
+      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | FREQUENCY_VALUE_1 | FREQUENCY_VALUE_2 | FREQUENCY_VALUE_3 | EXCEEDED_FREQUENCY_VALUE | TIMES_PER_1 | TIMES_PER_2 | TIMES_PER_3 | SCOPE_1       | SCOPE_2    | SCOPE_3       | ON_CAMPAIGN_LEVEL | ON_LI_LEVEL        | ON_TACTIC_LEVEL |
+      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | 10                | 15                | 20                | 999                      | hour(s)     | month       | day         | Per Person    | Per Person | Per Household | on Campaign Level | on Line Item Level | on tactic level |
 
   @regression
   Scenario Outline: Add and Verify Comment/notes on New Tactic from Header and Navigation
