@@ -98,6 +98,7 @@ public class TacticSettings {
     private final Locator CREATIVE_TAB;
     private final Locator PERCENT_TYPE_FEE_INPUT;
     private final Locator DOLLAR_TYPE_FEE_INPUT;
+    private final Locator BID_PANEL;
     public final Set<String> ACTUAL_TARGET_RULE = new HashSet<>();
     public final Set<String> EXPECTED_TARGET_RULE = new HashSet<>();
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
@@ -223,6 +224,8 @@ public class TacticSettings {
                 "//div[contains(@class,'management-fee-container')]//input[contains(@class,'percent-img')]");
         this.DOLLAR_TYPE_FEE_INPUT = page.locator(
                 "//div[contains(@class,'management-fee-container')]//input[contains(@class,'doller-img')]");
+        this.BID_PANEL = page.locator("//div[@class='bidMultiplierCategoryName ng-star-inserted' and contains(text(), 'AUDIENCE ATTRIBUTE')]");
+
     }
 
     public String verifyTacticSettingsText() {
@@ -1184,5 +1187,11 @@ public class TacticSettings {
             icon.click();
             expanded++;
         }
+    }
+
+    public void waitForBidPanel() {
+        waitUtility.waitUntilSpinnerHidden();
+        waitUtility.waitForLocatorVisible(BID_PANEL);
+
     }
 }
