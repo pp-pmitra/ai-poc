@@ -208,9 +208,6 @@ public class WorkspaceCreation {
             if (HCP_EXPANSION.isVisible()) {
                 page.waitForLoadState();
                 counter = 4;
-                //                if (clickFlag) {
-                //                    HCP_EXPLORER.click();
-                //                }
             } else {
                 counter++;
                 BACK_TO_WORKSPACE_DASHBOARD.click();
