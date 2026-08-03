@@ -67,7 +67,7 @@ public class WorkspaceCreation {
         this.CREATE_WORKSPACE = WORKSPACE_FRAME.locator(
                 "//div[text()='Create New Workspace' or contains(text(),'Open New Workspace')]");
         this.HCP_EXPLORER = WORKSPACE_FRAME.getByText("HCP Explorer", new FrameLocator.GetByTextOptions().setExact(true));
-        this.HCP_EXPANSION = WORKSPACE_FRAME.locator("//label[contains(text(),'HCP Audience Expansion')]");
+        this.HCP_EXPANSION = WORKSPACE_FRAME.getByText("HCP Audience Expansion", new FrameLocator.GetByTextOptions().setExact(true));
         this.BRAND_EXPLORER = WORKSPACE_FRAME.getByText("Brand Explorer", new FrameLocator.GetByTextOptions().setExact(true));
         this.DTC_EXPLORER = WORKSPACE_FRAME.getByText("DTC Explorer", new FrameLocator.GetByTextOptions().setExact(true));
         this.BACK_TO_WORKSPACE_DASHBOARD = WORKSPACE_FRAME.getByRole(AriaRole.BUTTON);
