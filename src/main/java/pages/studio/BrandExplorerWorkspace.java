@@ -19,7 +19,7 @@ public class BrandExplorerWorkspace {
     private final Locator BRAND_EXPLORER_CHART;
     private final Locator BRAND_EXPLORER_TABLE;
     private final Locator SAVE_WORKSPACE;
-    private final Locator DATE_RANGE_SELECTOR;
+    private final Locator TIMEFRAME;
     private final Locator DATE_RANGE_PICKER;
     private final Locator START_DATE_INPUT;
     private final Locator END_DATE_INPUT;
@@ -39,8 +39,8 @@ public class BrandExplorerWorkspace {
         this.BRAND_EXPLORER_TABLE = WORKSPACE_FRAME.locator("//div[contains(@class,'Box')]//table");
         this.SAVE_WORKSPACE = WORKSPACE_FRAME.locator(
                 "//button[contains(@data-tour-id,'save-workspace-button')]//div[contains(text(),'Save')]");
-        this.DATE_RANGE_SELECTOR = WORKSPACE_FRAME.locator(
-                "//ds-typography[normalize-space()='Time Frame']/following::input[starts-with(@id,'listbox-input-')][1]");
+        this.TIMEFRAME = WORKSPACE_FRAME.locator(
+                "//ds-typography[normalize-space()='Time Frame']/following-sibling::div//input[starts-with(@id,'listbox-input-')]");
         this.DATE_RANGE_PICKER = WORKSPACE_FRAME.locator("[data-testid='date-range-picker']");
         this.START_DATE_INPUT = WORKSPACE_FRAME.locator("input[data-testid='date-from-text-input']");
         this.END_DATE_INPUT = WORKSPACE_FRAME.locator("input[data-testid='date-to-text-input']");
@@ -75,8 +75,8 @@ public class BrandExplorerWorkspace {
     }
 
     public String getDefaultTimeFrame() {
-        waitUtility.waitForLocatorVisible(DATE_RANGE_SELECTOR);
-        return DATE_RANGE_SELECTOR.inputValue().trim();
+        waitUtility.waitForLocatorVisible(TIMEFRAME);
+        return TIMEFRAME.inputValue().trim();
     }
 
     public void saveBrandExplorerWorkspace() {
@@ -85,8 +85,8 @@ public class BrandExplorerWorkspace {
     }
 
     public void clickTimeFrameSelector() {
-        waitUtility.waitForLocatorVisible(DATE_RANGE_SELECTOR);
-        DATE_RANGE_SELECTOR.click();
+        waitUtility.waitForLocatorVisible(TIMEFRAME);
+        TIMEFRAME.click();
     }
 
     public List<String> getTimeFrameOptions() {
