@@ -75,7 +75,6 @@ public class CampaignDashboard {
     private final Locator CAMPAIGN_FROM_DASHBOARD;
     private final Locator GLOBAL_TACTIC_ICON;
     private final Locator CAMPAIGN_TILE;
-    private final Locator LINE_ITEM_EXPAND_ICON;
     private final Locator CAMPAIGN_EXPANDED_ICON;
     private final Locator LINE_ITEM_CHECKBOX;
     private final Locator TACTIC_CHECKBOX;
@@ -100,9 +99,9 @@ public class CampaignDashboard {
         this.COMMENT_ICON = page.locator("span.notesIconProvided");
         this.TOOLTIP_TEXT = page.locator("//span[@class='tooltip-text']");
         this.LINE_ITEM_TOGGLE_BUTTON = page.locator(
-                "//div[contains(@class,'lineitem-data pointer')]//sui-checkbox[contains(@class,'ng-valid')]");
+                "//tr[contains(@class,'cl-li-row')]//sui-checkbox[contains(@class,'cl-enabled-toggle')]");
         this.TACTIC_TOGGLE_BUTTON = page.locator(
-                "//div[contains(@class,'tactic-data pointer')]//sui-checkbox[contains(@class,'ng-valid')]");
+                "//tr[contains(@class,'cl-tactic-row')]//sui-checkbox[contains(@class,'cl-enabled-toggle')]");
         this.LINE_ITEM_NAME = page.locator("//span[contains(@class,'color-black lineitem-name-section')]");
         this.LINE_ITEM_PAGE_TITLE = page.locator("//div[contains(@class,'lineitem-name')]");
         this.CAMPAIGN_PAGE_TITLE = page.locator("//div[contains(@class,'campaign-name')]");
@@ -163,10 +162,9 @@ public class CampaignDashboard {
         this.CAMPAIGN_FROM_DASHBOARD = page.locator("//span[contains(@class,'adv-camp-name')]//span");
         this.GLOBAL_TACTIC_ICON = page.locator("//img[contains(@src,'T.svg')]");
         this.CAMPAIGN_TILE = page.locator("//div[contains(@class,'campaign-tile')]");
-        this.LINE_ITEM_EXPAND_ICON = page.locator("//div[contains(@class,'name-section-wrapper') and not(@hidden)]//div[contains(@class,'lineitem-name')]//div[contains(@class,'campaignExpand')]//div");
-        this.CAMPAIGN_EXPANDED_ICON = page.locator("//div[contains(@class,'camp-name')]//div[contains(@class,'campaignExpand')]//div");
-        this.LINE_ITEM_CHECKBOX = page.locator("//div[contains(@class,'lineitem-name')]//sui-checkbox");
-        this.TACTIC_CHECKBOX = page.locator("//div[contains(@class,'tactic-name')]//sui-checkbox");
+        this.CAMPAIGN_EXPANDED_ICON = page.locator("//tr[contains(@class,'cl-campaign-row')]//div[@class='cl-expand-li']//div");
+        this.LINE_ITEM_CHECKBOX = page.locator("//tr[contains(@class,'cl-li-row')]//sui-checkbox[contains(@class,'checkboxClickableArea')]");
+        this.TACTIC_CHECKBOX = page.locator("//tr[contains(@class,'cl-tactic-row')]//sui-checkbox[contains(@class,'checkboxClickableArea')]");
         this.BULK_ACTIONS_DROPDOWN = page.locator("//span[text()='Bulk Actions']");
     }
 
@@ -677,16 +675,16 @@ public class CampaignDashboard {
     public void selectTacticCheckbox() {
         if(CAMPAIGN_EXPANDED_ICON.first().getAttribute("class").contains("collapsed")){
             CAMPAIGN_EXPANDED_ICON.first().click();
-            if(LINE_ITEM_EXPAND_ICON.first().getAttribute("class").contains("collapsed")){
-                LINE_ITEM_EXPAND_ICON.first().click();
+            if(EXPAND_CREATED_LINE_ITEM.first().getAttribute("class").contains("collapsed")){
+                EXPAND_CREATED_LINE_ITEM.first().click();
             }
         }
         TACTIC_CHECKBOX.first().click();
     }
 
-    public boolean areTacticCheckboxesEnabled() {
+    public boolean areTacticCheckboxesDisabled() {
         if(!TACTIC_CHECKBOX.isVisible()){
-            LINE_ITEM_EXPAND_ICON.click();
+            EXPAND_CREATED_LINE_ITEM.click();
         }
         return TACTIC_CHECKBOX.locator("//input").getAttribute("disabled").contains("disabled");
     }

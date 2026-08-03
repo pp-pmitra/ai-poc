@@ -176,7 +176,6 @@ public class Campaigns {
                 "//label[contains(text(),'Approval Status')]/following-sibling::div[contains(@class,'display-inlineBlock')]//button[text()='Approved']");
         this.FAVORITE_ONLY_CHECKBOX = page.locator("//sui-checkbox[label[normalize-space()='Favorite Only']]");
         this.FREQUENCY_CAP_VALIDATION_ERROR = page.locator("//p[contains(@class,'ng-star-inserted')]");
-        this.FAVORITE_ONLY_CHECKBOX = page.locator("//sui-checkbox[contains(@class,'gaFavoritesOnly')]");
         this.APPLY_FREQUENCY_CAPPING = page.locator("//label[contains(text(),'Apply Frequency Capping')]");
         this.PER_TARGET_AUDIENCE_DROPDOWN = page.locator("//div[contains(@class,'crossDevice-dropdown')]");
         this.WINDOWS_LIMIT_INPUT = page.locator("//input[@formcontrolname='windowLimit']");

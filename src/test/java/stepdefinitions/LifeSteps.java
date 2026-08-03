@@ -7809,7 +7809,7 @@ public class LifeSteps {
     @Then("Verify that Tactic checkboxes are disabled when the entity checkbox is selected for a Line Item")
     public void verifyThatTacticCheckboxesAreDisabledWhenTheEntityCheckboxIsSelectedForALineItem() {
         logger.info("Verifying that Tactic checkboxes are disabled when the entity checkbox is selected for a Line Item");
-        Assert.assertTrue("Tactic checkboxes are not disabled when Line Item checkbox is selected", campaignDashboard.areTacticCheckboxesEnabled());
+        Assert.assertTrue("Tactic checkboxes are not disabled when Line Item checkbox is selected", campaignDashboard.areTacticCheckboxesDisabled());
     }
 
     @Then("Verify that bulk actions are enabled when the entity checkbox is selected for a {string}")
