@@ -29,6 +29,7 @@ public class StudioSteps {
     private static final Logger logger = LoggerFactory.getLogger(StudioSteps.class);
     static String workspaceName;
     static String newWorkspaceName;
+    static String draftOption;
     Boolean flag = true;
     Boolean isOverwritten = false;
     List<String[]> fileContent;
@@ -251,7 +252,7 @@ public class StudioSteps {
         explorerWorkspace.waitForDashboardLoad();
         explorerWorkspace.clickEditWorkspace();
         explorerWorkspace.enterWorkspaceName(workspaceName);
-        explorerWorkspace.saveWorkspaceName();
+        explorerWorkspace.saveWorkspaceName(true);
         explorerWorkspace.waitUntilAlertDisappears();
         explorerWorkspace.waitForDashboardLoad();
     }
@@ -352,7 +353,7 @@ public class StudioSteps {
                         "Sent for asynchronous processing, forced by upstream dependencies - need to refresh upstream workspaces first");
         Assert.assertTrue("Unexpected message for " + workspaceType + " workspace: " + actualMessage, isValid);
         workspace.waitTillWorkspaceAlertHide();
-        workspace.waitTillWorkspaceSaveButtonIsDisabled();
+        workspace.waitTillWorkspaceSaveButtonIsDisabled(workspaceType);
     }
 
     @And("User clicks Edit button and updates workspace name to {string}")
@@ -361,7 +362,7 @@ public class StudioSteps {
         workspaceName = editedName + CommonUtils.timeStampCalculation();
         logger.info("Updating workspace name to: {}", workspaceName);
         explorerWorkspace.enterWorkspaceName(workspaceName);
-        explorerWorkspace.saveWorkspaceName();
+        explorerWorkspace.saveWorkspaceName(true);
         explorerWorkspace.waitForDashboardLoad();
     }
 
@@ -1048,14 +1049,9 @@ public class StudioSteps {
                 explorerWorkspace.clickFilterOKButton();
             }
             explorerWorkspace.applyFilter();
-            logger.info(
-                    "Expected recency: '{}' | Actual recency: '{}'",
-                    recency,
-                    explorerWorkspace.fetchRecencyValue(filterType));
-            Assert.assertEquals(
-                    filterType + " recency value is not matched",
-                    recency,
-                    explorerWorkspace.fetchRecencyValue(filterType));
+            String actualRecency = explorerWorkspace.fetchRecencyValue();
+            logger.info("Expected recency: '{}' | Actual recency: '{}'", recency, actualRecency);
+            Assert.assertEquals(filterType + " recency value is not matched", recency, actualRecency);
         }
     }
 
@@ -1181,15 +1177,18 @@ public class StudioSteps {
                 "Workspace is not visible for external user with draft option: " + draftOption, isWorkspaceVisible);
     }
 
-    @And("User edits the workspace name as {string}")
-    public void userEditsTheWorkspaceNameAs(String wName) {
+    @And("User edits the {string} workspace name as {string}")
+    public void userEditsTheWorkspaceNameAs(String workspaceType, String wName) {
         workspaceName = wName + '_' + CommonUtils.timeStampCalculation();
         logger.info("Adding workspace name: {}", workspaceName);
         brandExplorerWorkspace.waitForDashboardLoad();
         explorerWorkspace.clickEditWorkspace();
         explorerWorkspace.enterWorkspaceName(workspaceName);
-        explorerWorkspace.saveWorkspaceName();
-        explorerWorkspace.waitUntilAlertDisappears();
+        boolean expectsConfirmationAlert = !"Brand Explorer".equalsIgnoreCase(workspaceType);
+        explorerWorkspace.saveWorkspaceName(expectsConfirmationAlert);
+        if (expectsConfirmationAlert) {
+            explorerWorkspace.waitUntilAlertDisappears();
+        }
         brandExplorerWorkspace.waitForDashboardLoad();
     }
 
@@ -1236,6 +1235,24 @@ public class StudioSteps {
         String actualTimeFrame = brandExplorerWorkspace.getDefaultTimeFrame();
         logger.info("Time Frame after reopen: {}", actualTimeFrame);
         Assert.assertEquals("Time Frame did not persist after reopening the workspace", timeFrame, actualTimeFrame);
+    }
+
+    @And("User selects {string} from {string} component panel")
+    public void userSelectsComponentFromPanel(String component, String category) {
+        logger.info("Selecting component '{}' from category '{}'", component, category);
+        brandExplorerWorkspace.selectComponent(category, component);
+    }
+
+    @Then("Verify {string} and {string} persist as table columns after reopening")
+    public void verifyDimensionAndMetricPersistAfterReopen(String dimension, String metric) {
+        logger.info("Verifying dimension '{}' and metric '{}' persist as table columns after reopening", dimension, metric);
+        Assert.assertTrue(
+                "Dimension '" + dimension + "' did not persist as a table column after reopening",
+                brandExplorerWorkspace.isComponentVisibleAsTableColumn(dimension));
+        Assert.assertTrue(
+                "Metric '" + metric + "' did not persist as a table column after reopening",
+                brandExplorerWorkspace.isComponentVisibleAsTableColumn(metric));
+        Assert.assertTrue("Chart is not visible after reopening the workspace", brandExplorerWorkspace.isChartVisible());
     }
 
     @Then("All 9 preset timeframe options are visible in the dropdown with correct labels")
@@ -1407,10 +1424,58 @@ public class StudioSteps {
         Assert.assertEquals("Dialog message does not match", expectedMessage, actualMessage);
     }
 
+    @And("User clicks on the Filters tab")
+    public void userClicksOnTheFiltersTab() {
+        logger.info("Clicking on Filters tab");
+        brandExplorerWorkspace.clickFiltersTab();
+    }
+
+    @And("User clicks on the Components tab")
+    public void userClicksOnTheComponentsTab() {
+        logger.info("Clicking on Components tab");
+        brandExplorerWorkspace.clickComponentsTab();
+    }
+
+    @And("User adds a filter on {string} from {string} category with value {string}")
+    public void userAddsAFilterOnFieldFromCategoryWithValue(String field, String category, String value) {
+        logger.info("Adding filter on '{}' from '{}' category with value '{}'", field, category, value);
+        brandExplorerWorkspace.clickAddFilter();
+        brandExplorerWorkspace.selectFilterField(category, field);
+        brandExplorerWorkspace.closeFilterDialog();
+        brandExplorerWorkspace.enterFilterValue(field, value);
+    }
+
+    @Then("Verify {string} is visible as a table column")
+    public void verifyComponentIsVisibleAsATableColumn(String component) {
+        logger.info("Verifying '{}' is visible as a table column", component);
+        Assert.assertTrue(
+                "Component '" + component + "' is not visible as a table column",
+                brandExplorerWorkspace.isComponentVisibleAsTableColumn(component));
+    }
+
+    @Then("Verify the table column {string} only shows rows with value {string}")
+    public void verifyTheTableColumnOnlyShowsRowsWithValue(String field, String value) {
+        List<String> columnValues = brandExplorerWorkspace.getTableColumnValues(field);
+        logger.info("Values in table column '{}': {}", field, columnValues);
+        Assert.assertFalse("No rows found in table column: " + field, columnValues.isEmpty());
+        Assert.assertTrue(
+                "Table column '" + field + "' contains values other than '" + value + "': " + columnValues,
+                columnValues.stream().allMatch(v -> v.equalsIgnoreCase(value)));
+    }
+
     @And("User selects the advertiser {string} for HCP Audience Expansion workspace")
     public void userSelectsTheAdvertiserForHCPAudienceExpansionWorkspace(String advertiser) {
         logger.info("Selecting advertiser '{}' for HCP Audience Expansion workspace", advertiser);
         expansionWorkspace.clickAdvertiserDropdown(advertiser);
 
+    }
+
+    @Then("Verify the filter on {string} shows value {string}")
+    public void verifyTheFilterOnFieldShowsValue(String field, String value) {
+        String summary = brandExplorerWorkspace.getAppliedFilterSummary(field, value);
+        logger.info("Applied filter summary for '{}': {}", field, summary);
+        Assert.assertTrue(
+                "Filter summary '" + summary + "' does not contain expected value '" + value + "'",
+                summary.contains(value));
     }
 }

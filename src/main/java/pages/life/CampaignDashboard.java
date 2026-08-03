@@ -56,7 +56,9 @@ public class CampaignDashboard {
     private final Locator SEARCH_CAMPAIGN;
     private final Locator CLICK_CAMPAIGN_SEARCH;
     private final Locator EXPAND_CREATED_LINE_ITEM;
+    private final Locator LINE_ITEM_EXPAND_ICON;
     private final Locator VERIFY_CREATED_TACTIC;
+    private final Locator CREATED_TACTIC;
     private final Locator CAMPAIGN_ENTRIES;
     private final Locator SUB_TITLE_AFTER_CAMPAIGN_SEARCH;
     private final Locator FILTER_APPLIED_ICON;
@@ -71,6 +73,8 @@ public class CampaignDashboard {
     private final Locator INACTIVE_FLIGHT_LIST;
     private final Locator NO_CAMPAIGN_AVAILABLE_TEXT;
     private final Locator CAMPAIGN_FROM_DASHBOARD;
+    private final Locator GLOBAL_TACTIC_ICON;
+    private final Locator CAMPAIGN_TILE;
     WaitUtility waitUtility;
     String lineItemClassBeforeClick, lineItemClassAfterClick, tacticClassBeforeClick, tacticClassAfterClick;
 
@@ -108,7 +112,7 @@ public class CampaignDashboard {
         this.FILTER_OK_BUTTON = page.locator("//button[contains(@class,'ui primary button')]");
         this.SELECTED_FILTER_LABEL = page.locator("//div[contains(@class,'selected-filters')]//label");
         this.FILTER_ICON = page.locator("//div[contains(@class,'filterApplied')]");
-        this.FAVORITE_ONLY_CHECKBOX = page.locator("//sui-checkbox[contains(@class,'gaFavoritesOnly')]");
+        this.FAVORITE_ONLY_CHECKBOX = page.locator("//sui-checkbox[label[normalize-space()='Favorite Only']]");
         this.FAVORITE_CAMPAIGN_LIST = page.locator("//i[@class = 'star display-inline']");
         this.HIDE_FINISHED_CHECKBOX = page.locator("//label[contains(text(),'Hide Finished')]/ancestor::sui-checkbox");
         this.CALENDER_APPLY_BUTTON =
@@ -127,10 +131,12 @@ public class CampaignDashboard {
         this.CLICK_SETTINGS = page.locator("//i[@class='icon gearIcon']");
         this.SEARCH_CAMPAIGN = page.locator("//input[@placeholder='Search' and contains(@class, 'gaTableSearch')]");
         this.CLICK_CAMPAIGN_SEARCH = page.locator("//div[contains(@class,'gaTableSearchBtn')]");
-        this.EXPAND_CREATED_LINE_ITEM =
-                page.locator("//div[contains(@class,'campaignExpand')]/div[contains(@class,'collapsed-thin')]");
+        this.LINE_ITEM_EXPAND_ICON = page.locator("//i[contains(@class,'fa-angle-right')]");
         this.VERIFY_CREATED_TACTIC = page.locator("//span[contains(@class,'tactic-name')]");
-        this.CAMPAIGN_ENTRIES = page.locator("//div[contains(@class,'name-section-wrapper')]");
+        this.EXPAND_CREATED_LINE_ITEM =
+                page.locator("//div[contains(@class,'cl-expand-li')]/div[contains(@class,'collapsed-thin')]");
+        this.CREATED_TACTIC = page.locator("//div[contains(@class,'cl-entity--tactic')]//span[contains(@class,'cl-entity__name')]");
+        this.CAMPAIGN_ENTRIES = page.locator("//tr[contains(@class,'cl-li-row')]");
         this.SUB_TITLE_AFTER_CAMPAIGN_SEARCH =
                 page.locator("//div[contains(@class,'sub-title') and contains(text(),'Line items, 1 Campaigns')]");
         this.FILTER_APPLIED_ICON = page.locator("//div[contains(@class,'filterApplied')]");
@@ -150,6 +156,8 @@ public class CampaignDashboard {
         this.NO_CAMPAIGN_AVAILABLE_TEXT =
                 page.locator("//p[contains(text(), 'No campaigns matching filtering criteria found')]");
         this.CAMPAIGN_FROM_DASHBOARD = page.locator("//span[contains(@class,'adv-camp-name')]//span");
+        this.GLOBAL_TACTIC_ICON = page.locator("//img[contains(@src,'T.svg')]");
+        this.CAMPAIGN_TILE = page.locator("//div[contains(@class,'campaign-tile')]");
     }
 
     public String isCampaignDashboardVisibleWithTitle(String text) {
@@ -527,6 +535,21 @@ public class CampaignDashboard {
         }
     }
 
+    public void searchCreatedTactic(String tacticName) {
+        waitUtility.waitForLocatorVisible(CAMPAIGN_ENTRIES.last());
+        while (true) {
+            SEARCH_CAMPAIGN.fill(tacticName);
+            CLICK_CAMPAIGN_SEARCH.click();
+            waitUtility.waitUntilPreLoaderHidden();
+            if (CAMPAIGN_FROM_DASHBOARD.first().isVisible()) {
+                break;
+            }
+            if (NO_CAMPAIGN_AVAILABLE_TEXT.isVisible()) {
+                break;
+            }
+        }
+    }
+
     public String verifyCreatedCampaign(String createdCampaign) {
         String campaignNameXpath = String.format("//span[contains(text(),'%s')]", createdCampaign);
         waitUtility.waitForLocatorVisible(page.locator(campaignNameXpath).first());
@@ -545,13 +568,32 @@ public class CampaignDashboard {
         }
     }
 
+    public void clickLineItemExpandIcon() {
+            LINE_ITEM_EXPAND_ICON.first().click();
+    }
+
     public String verifyCreatedTactic() {
         page.waitForLoadState();
-        return VERIFY_CREATED_TACTIC.innerText();
+        return CREATED_TACTIC.innerText();
     }
 
     public void navigateToCampaign(String campaignID) {
         page.locator(String.format("//span[contains(text(),'%s')]", campaignID)).click();
+        waitUtility.waitForLocatorVisible(CAMPAIGN_PAGE_TITLE);
+    }
+
+    /**
+     * Temporary workaround:
+     * In the demo environment, campaigns are currently not clickable, so navigation
+     * is performed through the associated line item instead.
+     *
+     * We are investigating whether this is a temporary issue in the demo environment
+     * or an intended permanent change.
+     */
+    public void navigateToCreatedCampaign(String lineItemName) {
+        page.locator(String.format("//span[contains(text(),'%s')]", lineItemName)).click();
+        waitUtility.waitForLocatorVisible(LINE_ITEM_PAGE_TITLE);
+        CAMPAIGN_TILE.click();
         waitUtility.waitForLocatorVisible(CAMPAIGN_PAGE_TITLE);
     }
 
@@ -603,6 +645,10 @@ public class CampaignDashboard {
 
     public boolean isCampaignDataAvailableInCustomDateRange() {
         return NO_CAMPAIGN_AVAILABLE_TEXT.isVisible();
+    }
+
+   public void clickGlobalTacticResult() {
+        GLOBAL_TACTIC_ICON.click();
     }
 
     public void clickCampaignFromDashboard() {
