@@ -16,7 +16,7 @@ Feature: Brand Explorer Workspace creation in Studio
     And User clicks on "Brand Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
     And User edits the "Brand Explorer" workspace name as "<WORKSPACE_NAME>"
-    Then Verify that advertiser field is disabled and displayed in "rgb(34, 34, 34)" after saving the workspace
+    Then Verify that advertiser field is disabled and displayed in "rgba(34, 34, 34, 0.55)" after saving the workspace
     Then Verify Dimension "Day" and Metric "Identified NPIs" are selected by default in the workspace
     Then Verify Time Frame is selected as "Last 7 Days" by default in the workspace
     And User saves the "Brand Explorer" workspace
