@@ -151,7 +151,7 @@ public class ExplorerWorkspace {
         this.WORKSPACE_EDIT_BUTTON = WORKSPACE_FRAME.locator("//button//div[text()='Edit']");
         this.WORKSPACE_HEADER =
                 WORKSPACE_FRAME.locator("//div[@data-tour-id='workspace-back-button']/following-sibling::div//h1");
-        this.ADVERTISER_LIST = WORKSPACE_FRAME.locator("//p[text()='Advertisers']");
+        this.ADVERTISER_LIST = WORKSPACE_FRAME.getByText("Advertisers", new FrameLocator.GetByTextOptions().setExact(true));
         this.SEARCH_ADVERTISER = WORKSPACE_FRAME.locator("//input[@placeholder='Search']");
         this.ADVERTISER_BUTTON = WORKSPACE_FRAME.locator("//button[contains(@data-tour-id,'workspace-advertiser')]");
         this.SPECIALITY_PANEL = WORKSPACE_FRAME.locator("//div[@id='panel-all']");
