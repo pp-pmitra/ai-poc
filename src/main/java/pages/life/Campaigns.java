@@ -77,7 +77,9 @@ public class Campaigns {
     private final Locator CAMPAIGN_APPROVAL_STATUS;
     private final Locator CAMPAIGN_STATUS_APPROVED_BUTTON;
     private final Locator FAVORITE_ONLY_CHECKBOX;
+    private final Locator FREQUENCY_CAP_VALIDATION_ERROR;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
+    TacticSettings tacticSettings = new TacticSettings(DriverFactory.getPage());
 
     public Campaigns(Page page) {
         this.page = page;
@@ -92,8 +94,8 @@ public class Campaigns {
         this.CAMPAIGN_SUCCESS = page.locator(
                 "//div[@aria-label='Success!']/following-sibling::div[@role='alert' and contains(text(),'Campaign')]");
         this.CAMPAIGN_DASHBOARD = page.locator("//span[@class='breadCrumbRoot']");
-        this.LIFE_TIME_FILTER = page.locator("//button[@data-title='Lifetime']");
-        this.CAMPAIGN_ENTRIES = page.locator("//div[contains(@class,'name-section-wrapper')]");
+        this.LIFE_TIME_FILTER = page.locator("//button[normalize-space()='Lifetime']");
+        this.CAMPAIGN_ENTRIES = page.locator("//tr[contains(@class,'cl-li-row')]");
         this.ADVERTISER_DROPDOWN_VALUES = page.locator(
                 "//input[@placeholder='Select Advertiser']/following-sibling::div[@class='menu transition visible']//div");
         this.MANDATORY_FIELD_ERROR = page.locator("//div[contains(@class,'errorsWrapper')]//p");
@@ -169,7 +171,8 @@ public class Campaigns {
         this.CAMPAIGN_APPROVAL_STATUS = page.locator("//label[contains(text(),'Approval Status')]");
         this.CAMPAIGN_STATUS_APPROVED_BUTTON = page.locator(
                 "//label[contains(text(),'Approval Status')]/following-sibling::div[contains(@class,'display-inlineBlock')]//button[text()='Approved']");
-        this.FAVORITE_ONLY_CHECKBOX = page.locator("//sui-checkbox[contains(@class,'gaFavoritesOnly')]");
+        this.FAVORITE_ONLY_CHECKBOX = page.locator("//sui-checkbox[label[normalize-space()='Favorite Only']]");
+        this.FREQUENCY_CAP_VALIDATION_ERROR = page.locator("//p[contains(@class,'ng-star-inserted')]");
     }
 
     public void createCampaign() {
@@ -219,6 +222,37 @@ public class Campaigns {
         FREQUENCY_CAP_SCOPE.click();
         SAVE_CAMPAIGN.click();
         waitUtility.waitForElementVisible("//div[@role='alert']");
+    }
+
+    public void addFrequencyCap(String level, String frequencyValue, String timesPer, String scope, String exceed) {
+        Locator TIMES_PER_OPTION = page.locator(String.format("//div[contains(text(),'%s')]", timesPer));
+        Locator FREQUENCY_CAP_SCOPE = page.locator(String.format("//div[contains(text(),'%s')]", scope));
+        if (level.contains("Line Item")) {
+            waitUtility.waitForLocatorVisible(CUSTOM_FIELD.first());
+        }
+        if (!FREQUENCY_CAP.first().getAttribute("class").contains("checked")) {
+            FREQUENCY_CAP.click();
+        }
+        FREQUENCY_CAP_VALUE.fill(frequencyValue);
+        TIMES_PER_DROPDOWN.click();
+        TIMES_PER_OPTION.first().click();
+        if (timesPer.contains("hour(s)")) {
+            TIMES_PER_HOURS_VALUE.fill(frequencyValue);
+        }
+        SCOPE_DROPDOWN.click();
+        FREQUENCY_CAP_SCOPE.first().click();
+        SAVE_CAMPAIGN.click();
+        waitUtility.waitForElementVisible("//div[contains(@aria-label,'can not exceed')]");
+    }
+
+    public String frequencyLimitExceedCheck(String level) {
+        String errorMessage = "Error message not fetched yet";
+        if (level.contains("Line Item")) {
+            errorMessage = FREQUENCY_CAP_VALIDATION_ERROR.nth(1).innerText();
+        } else if (level.contains("tactic"))
+            errorMessage = FREQUENCY_CAP_VALIDATION_ERROR.nth(2).innerText();
+        tacticSettings.clickCancel();
+        return errorMessage;
     }
 
     public boolean getFrequencyCapState() {

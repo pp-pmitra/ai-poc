@@ -43,12 +43,12 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
       | Targeting Segment | Email   | Health Population |
     Then User clicks on first tactic and goes to details tab
     Then User creates new custom field "<CUSTOM_NAME>" and verifies the same
-    And User verifies if new custom field is visible and empty in new tactic
+    And User verifies if new custom field is visible and empty in new tactic "<TACTIC_SEARCH>"
     Then User clears the custom field text
     Then User deletes the custom field and verify its removed from new tactic
     Examples:
-      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | CUSTOM_NAME |
-      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Custom ID   |
+      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | CUSTOM_NAME | TACTIC_SEARCH |
+      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Custom ID   | Tactic        |
 
   @regression
   Scenario Outline: Verify Base bid price and Max bid price populates correctly for a tactic
@@ -126,24 +126,30 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Then User navigates to campaign
     Then User clicks on details tab
     Then User verifies if Frequency Cap is in disabled state by default
-    Then User adds frequency cap with details "<ON_CAMPAIGN_LEVEL>" "<FREQUENCY_VALUE>" "<TIMES_PER>" "<SCOPE>"
+    Then User adds frequency cap with details "<ON_CAMPAIGN_LEVEL>" "<FREQUENCY_VALUE_1>" "<TIMES_PER_1>" "<SCOPE_1>"
     Then User navigates to LineItem
     Then User clicks on details tab
-    Then User verifies if frequency cap is saved with details "<FREQUENCY_VALUE>" "<TIMES_PER>" "<SCOPE>" "<ON_CAMPAIGN_LEVEL>"
+    Then User verifies if frequency cap is saved with details "<FREQUENCY_VALUE_1>" "<TIMES_PER_1>" "<SCOPE_1>" "<ON_CAMPAIGN_LEVEL>"
     Then User verifies if Frequency Cap is in disabled state by default
-    Then User adds frequency cap with details "<ON_LI_LEVEL>" "<FREQUENCY_VALUE>" "<TIMES_PER>" "<SCOPE>"
+    Then User adds frequency cap with details "<ON_LI_LEVEL>" "<FREQUENCY_VALUE_2>" "<TIMES_PER_2>" "<SCOPE_2>"
     Then User navigates to Tactic and clicks on settings tab
-    Then User verifies if frequency cap is saved with details "<FREQUENCY_VALUE>" "<TIMES_PER>" "<SCOPE>" "<ON_CAMPAIGN_LEVEL>"
-    Then User verifies if frequency cap is saved with details "<FREQUENCY_VALUE>" "<TIMES_PER>" "<SCOPE>" "<ON_LI_LEVEL>"
+    Then User verifies if frequency cap is saved with details "<FREQUENCY_VALUE_1>" "<TIMES_PER_1>" "<SCOPE_1>" "<ON_CAMPAIGN_LEVEL>"
+    Then User verifies if frequency cap is saved with details "<FREQUENCY_VALUE_2>" "<TIMES_PER_2>" "<SCOPE_2>" "<ON_LI_LEVEL>"
     Then User verifies if Frequency Cap is in disabled state by default
-    Then User adds frequency cap with details "<ON_TACTIC_LEVEL>" "<FREQUENCY_VALUE>" "<TIMES_PER>" "<SCOPE>"
+    Then User adds frequency cap with details "<ON_TACTIC_LEVEL>" "<FREQUENCY_VALUE_3>" "<TIMES_PER_3>" "<SCOPE_3>"
     Then User navigates to LineItem
     Then User navigates to Tactic and clicks on settings tab
     Then Verify that frequency cap is saved in tactic
+    Then User adds "exceeded" frequency cap with details "<ON_TACTIC_LEVEL>" "<EXCEEDED_FREQUENCY_VALUE>" "<TIMES_PER_2>" "<SCOPE_2>"
+    Then User gets error of limit exceeded "<ON_TACTIC_LEVEL>"
+    Then User navigates to LineItem
+    Then User clicks on details tab
+    Then User adds "exceeded" frequency cap with details "<ON_LI_LEVEL>" "<EXCEEDED_FREQUENCY_VALUE>" "<TIMES_PER_1>" "<SCOPE_1>"
+    Then User gets error of limit exceeded "<ON_LI_LEVEL>"
+
     Examples:
-      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | FREQUENCY_VALUE | TIMES_PER | SCOPE         | ON_CAMPAIGN_LEVEL | ON_LI_LEVEL        | ON_TACTIC_LEVEL |
-      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | 10              | hour(s)   | Per Person    | on Campaign Level | on Line Item Level | on tactic level |
-      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | 80              | week      | Per Household | on Campaign Level | on Line Item Level | on tactic level |
+      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | FREQUENCY_VALUE_1 | FREQUENCY_VALUE_2 | FREQUENCY_VALUE_3 | EXCEEDED_FREQUENCY_VALUE | TIMES_PER_1 | TIMES_PER_2 | TIMES_PER_3 | SCOPE_1       | SCOPE_2    | SCOPE_3       | ON_CAMPAIGN_LEVEL | ON_LI_LEVEL        | ON_TACTIC_LEVEL |
+      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | 10                | 15                | 20                | 999                      | hour(s)     | month       | day         | Per Person    | Per Person | Per Household | on Campaign Level | on Line Item Level | on tactic level |
 
   @regression
   Scenario Outline: Add and Verify Comment/notes on New Tactic from Header and Navigation
@@ -157,8 +163,10 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
       | Targeting Segment | Email   | Health Population |
     When User navigates to Tactic and clicks on settings tab
     And User clicks the comments icon in the tactic "header" section and add "<HEADER_COMMENT>"
+    Then Verify that "<HEADER_COMMENT>" is visible in "navigation" section
     Then User validates the comment added in "header" is "<HEADER_COMMENT>" then clear it
     And User clicks the comments icon in the tactic "navigation" section and add "<NAV_COMMENT>"
+    Then Verify that "<NAV_COMMENT>" is visible in "header" section
     Then User validates the comment added in "navigation" is "<NAV_COMMENT>" then clear it
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | HEADER_COMMENT        | NAV_COMMENT              |
