@@ -250,7 +250,7 @@ public class StudioSteps {
         explorerWorkspace.waitForDashboardLoad();
         explorerWorkspace.clickEditWorkspace();
         explorerWorkspace.enterWorkspaceName(workspaceName);
-        explorerWorkspace.saveWorkspaceName();
+        explorerWorkspace.saveWorkspaceName(true);
         explorerWorkspace.waitUntilAlertDisappears();
         explorerWorkspace.waitForDashboardLoad();
     }
@@ -357,7 +357,7 @@ public class StudioSteps {
         workspaceName = editedName + CommonUtils.timeStampCalculation();
         logger.info("Updating workspace name to: {}", workspaceName);
         explorerWorkspace.enterWorkspaceName(workspaceName);
-        explorerWorkspace.saveWorkspaceName();
+        explorerWorkspace.saveWorkspaceName(true);
         explorerWorkspace.waitForDashboardLoad();
     }
 
@@ -1172,15 +1172,18 @@ public class StudioSteps {
                 "Workspace is not visible for external user with draft option: " + draftOption, isWorkspaceVisible);
     }
 
-    @And("User edits the workspace name as {string}")
-    public void userEditsTheWorkspaceNameAs(String wName) {
+    @And("User edits the {string} workspace name as {string}")
+    public void userEditsTheWorkspaceNameAs(String workspaceType, String wName) {
         workspaceName = wName + '_' + CommonUtils.timeStampCalculation();
         logger.info("Adding workspace name: {}", workspaceName);
         brandExplorerWorkspace.waitForDashboardLoad();
         explorerWorkspace.clickEditWorkspace();
         explorerWorkspace.enterWorkspaceName(workspaceName);
-        explorerWorkspace.saveWorkspaceName();
-        explorerWorkspace.waitUntilAlertDisappears();
+        boolean expectsConfirmationAlert = !"Brand Explorer".equalsIgnoreCase(workspaceType);
+        explorerWorkspace.saveWorkspaceName(expectsConfirmationAlert);
+        if (expectsConfirmationAlert) {
+            explorerWorkspace.waitUntilAlertDisappears();
+        }
         brandExplorerWorkspace.waitForDashboardLoad();
     }
 
@@ -1408,6 +1411,54 @@ public class StudioSteps {
         String actualMessage = dtcExplorerWorkspace.getDialogMessage();
         logger.info("Actual dialog message: {}", actualMessage);
         Assert.assertEquals("Dialog message does not match", expectedMessage, actualMessage);
+    }
+
+    @And("User clicks on the Filters tab")
+    public void userClicksOnTheFiltersTab() {
+        logger.info("Clicking on Filters tab");
+        brandExplorerWorkspace.clickFiltersTab();
+    }
+
+    @And("User clicks on the Components tab")
+    public void userClicksOnTheComponentsTab() {
+        logger.info("Clicking on Components tab");
+        brandExplorerWorkspace.clickComponentsTab();
+    }
+
+    @And("User adds a filter on {string} from {string} category with value {string}")
+    public void userAddsAFilterOnFieldFromCategoryWithValue(String field, String category, String value) {
+        logger.info("Adding filter on '{}' from '{}' category with value '{}'", field, category, value);
+        brandExplorerWorkspace.clickAddFilter();
+        brandExplorerWorkspace.selectFilterField(category, field);
+        brandExplorerWorkspace.closeFilterDialog();
+        brandExplorerWorkspace.enterFilterValue(field, value);
+    }
+
+    @Then("Verify {string} is visible as a table column")
+    public void verifyComponentIsVisibleAsATableColumn(String component) {
+        logger.info("Verifying '{}' is visible as a table column", component);
+        Assert.assertTrue(
+                "Component '" + component + "' is not visible as a table column",
+                brandExplorerWorkspace.isComponentVisibleAsTableColumn(component));
+    }
+
+    @Then("Verify the table column {string} only shows rows with value {string}")
+    public void verifyTheTableColumnOnlyShowsRowsWithValue(String field, String value) {
+        List<String> columnValues = brandExplorerWorkspace.getTableColumnValues(field);
+        logger.info("Values in table column '{}': {}", field, columnValues);
+        Assert.assertFalse("No rows found in table column: " + field, columnValues.isEmpty());
+        Assert.assertTrue(
+                "Table column '" + field + "' contains values other than '" + value + "': " + columnValues,
+                columnValues.stream().allMatch(v -> v.equalsIgnoreCase(value)));
+    }
+
+    @Then("Verify the filter on {string} shows value {string}")
+    public void verifyTheFilterOnFieldShowsValue(String field, String value) {
+        String summary = brandExplorerWorkspace.getAppliedFilterSummary(field, value);
+        logger.info("Applied filter summary for '{}': {}", field, summary);
+        Assert.assertTrue(
+                "Filter summary '" + summary + "' does not contain expected value '" + value + "'",
+                summary.contains(value));
     }
 }
 
