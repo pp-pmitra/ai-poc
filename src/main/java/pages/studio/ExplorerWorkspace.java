@@ -25,6 +25,7 @@ public class ExplorerWorkspace {
     private final Locator DASHBOARD_RELOAD_ICON;
     private final Locator ADD_FILTER;
     private final Locator SEARCH_FILTER;
+    private final Locator ADVERTISER_LABEL;
     private final Locator ADVERTISER_SELECTED;
     private final Locator FILTER_OK_BUTTON;
     private final Locator FILTER_CLOSE_BUTTON;
@@ -71,7 +72,7 @@ public class ExplorerWorkspace {
         this.page = page;
         this.waitUtility = new WaitUtility(page);
         this.WORKSPACE_FRAME = page.frameLocator("iframe").frameLocator("iframe");
-        this.WORKSPACE_NAME = WORKSPACE_FRAME.locator("//p[text()='Workspace Name']/following-sibling::div//input");
+        this.WORKSPACE_NAME = WORKSPACE_FRAME.locator("[data-tour-id='workspace-name-control'] input");
         this.SEARCH_ADVERTISER_IN_EDIT_WORKSPACE = WORKSPACE_FRAME.locator("input[id^='listbox-input']");
         this.DASHBOARD_CONTENT = WORKSPACE_FRAME
                 .locator("#extension-root iframe")
@@ -88,8 +89,8 @@ public class ExplorerWorkspace {
         this.ADD_FILTER = WORKSPACE_FRAME.locator("//div[contains(text(),'Add Filter')]");
         this.SEARCH_FILTER =
                 WORKSPACE_FRAME.getByRole(AriaRole.TEXTBOX, new FrameLocator.GetByRoleOptions().setName("Search"));
-        this.ADVERTISER_SELECTED = WORKSPACE_FRAME.locator(
-                "//div[@data-tour-id='workspace-back-button']/following-sibling::div//p[contains(text(),'Advertiser:')]");
+        this.ADVERTISER_LABEL = WORKSPACE_FRAME.locator("[data-tour-id='advertiser-control'] ds-typography");
+        this.ADVERTISER_SELECTED = WORKSPACE_FRAME.locator("[data-tour-id='advertiser-control'] input");
         this.FILTER_OK_BUTTON =
                 WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Ok"));
         this.FILTER_CLOSE_BUTTON =
@@ -103,8 +104,7 @@ public class ExplorerWorkspace {
                 .locator("[id=\"\\32 \"] div")
                 .filter(new Locator.FilterOptions().setHasText("Workspace managementWorkspace"))
                 .nth(2);
-        this.SAVE_WORKSPACE_NAME = WORKSPACE_FRAME.locator(
-                "//button[contains(@data-tour-id,'save-workspace-details-button')]//div[contains(text(),'Save')]");
+        this.SAVE_WORKSPACE_NAME = WORKSPACE_FRAME.locator("[data-tour-id='save-workspace-details-button']");
         this.TAB_PANEL_SEARCH = WORKSPACE_FRAME.locator("//div[@role='tabpanel']//input[@placeholder='Search']");
         this.TO_YEAR = WORKSPACE_FRAME.locator("//input[@data-testid='bi-slider-input-0']");
         this.FROM_YEAR = WORKSPACE_FRAME.locator("//input[@data-testid='bi-slider-input-1']");
@@ -479,7 +479,8 @@ public class ExplorerWorkspace {
     }
 
     public String isAdvertiserDisabled() {
-        return ADVERTISER_SELECTED.evaluate("el => getComputedStyle(el).color").toString();
+        waitUtility.waitForLocatorVisible(ADVERTISER_LABEL);
+        return ADVERTISER_LABEL.evaluate("el => getComputedStyle(el).color").toString();
     }
 
     public void clickEditWorkspace() {

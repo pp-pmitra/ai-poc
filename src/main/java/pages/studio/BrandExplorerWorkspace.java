@@ -40,7 +40,7 @@ public class BrandExplorerWorkspace {
         this.SAVE_WORKSPACE = WORKSPACE_FRAME.locator(
                 "//button[contains(@data-tour-id,'save-workspace-button')]//div[contains(text(),'Save')]");
         this.DATE_RANGE_SELECTOR = WORKSPACE_FRAME.locator(
-                "//p[normalize-space()='Time Frame']/following-sibling::div//input[starts-with(@id,'listbox-input-')]");
+                "//ds-typography[normalize-space()='Time Frame']/following::input[starts-with(@id,'listbox-input-')][1]");
         this.DATE_RANGE_PICKER = WORKSPACE_FRAME.locator("[data-testid='date-range-picker']");
         this.START_DATE_INPUT = WORKSPACE_FRAME.locator("input[data-testid='date-from-text-input']");
         this.END_DATE_INPUT = WORKSPACE_FRAME.locator("input[data-testid='date-to-text-input']");
@@ -62,23 +62,21 @@ public class BrandExplorerWorkspace {
 
     public String getDefaultDimensions(String defaultDimension) {
         Locator locator = WORKSPACE_FRAME.locator(String.format(
-                "//table//thead//th[@aria-selected='true']//p[normalize-space()='%s']", defaultDimension));
+                "//table//thead//th[@aria-selected='true' and normalize-space()='%s']", defaultDimension));
         waitUtility.waitForLocatorVisible(locator);
         return locator.innerText().trim();
     }
 
     public String getDefaultMetrics(String defaultMetric) {
         Locator locator = WORKSPACE_FRAME.locator(
-                String.format("//table//thead//th[@aria-selected='true']//p[normalize-space()='%s']", defaultMetric));
+                String.format("//table//thead//th[@aria-selected='true' and normalize-space()='%s']", defaultMetric));
         waitUtility.waitForLocatorVisible(locator);
         return locator.innerText().trim();
     }
 
     public String getDefaultTimeFrame() {
-        Locator locator = WORKSPACE_FRAME.locator(
-                "//p[normalize-space()='Time Frame']/following-sibling::div//input[starts-with(@id,'listbox-input-')]");
-        waitUtility.waitForLocatorVisible(locator);
-        return locator.inputValue().trim();
+        waitUtility.waitForLocatorVisible(DATE_RANGE_SELECTOR);
+        return DATE_RANGE_SELECTOR.inputValue().trim();
     }
 
     public void saveBrandExplorerWorkspace() {
