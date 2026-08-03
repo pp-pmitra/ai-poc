@@ -26,6 +26,9 @@ public class BrandExplorerWorkspace {
     private final Locator DATE_RANGE_ERROR;
     private final Locator DATE_CELLS;
     private final Locator SPINNER;
+    private final Locator FILTERS_TAB;
+    private final Locator ADD_FILTER_BUTTON;
+    private final Locator COMPONENTS_TAB;
     WaitUtility waitUtility;
 
     public BrandExplorerWorkspace(Page page) {
@@ -46,6 +49,10 @@ public class BrandExplorerWorkspace {
         this.DATE_CELLS =
                 WORKSPACE_FRAME.locator("//div[contains(@class,'Box')]//table//tbody//tr//td[1][@aria-colindex]");
         this.SPINNER = WORKSPACE_FRAME.locator("//div[@data-testid='loading-spinner']");
+        this.FILTERS_TAB = WORKSPACE_FRAME.locator("//div[normalize-space(text())='Filters']");
+        this.ADD_FILTER_BUTTON =
+                WORKSPACE_FRAME.locator("//div[normalize-space(text())='Add Filters']");
+        this.COMPONENTS_TAB = WORKSPACE_FRAME.locator("//div[normalize-space(text())='Components']");
     }
 
     public void waitForDashboardLoad() {
@@ -215,19 +222,14 @@ public class BrandExplorerWorkspace {
         return parts[1] + "/" + parts[2] + "/" + parts[0];
     }
 
-    // Both Dimensions and Metrics are organized as accordion categories containing checkboxes,
-    // so these locators and the methods below serve either component type.
-    private Locator componentCategoryTab(String category) {
+    private Locator categoryTab(String category) {
         return WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName(category));
     }
 
-    // Scoped to the category's own accordion region: some component labels (e.g. "Avg. Video Progress")
-    // repeat across multiple metric categories, and accordions don't auto-collapse siblings, so an
-    // unscoped lookup can match more than one checkbox once several categories are expanded.
-    private Locator componentCheckbox(String category, String component) {
+    private Locator categoryCheckbox(String category, String field) {
         return WORKSPACE_FRAME
                 .getByRole(AriaRole.REGION, new FrameLocator.GetByRoleOptions().setName(category))
-                .getByRole(AriaRole.CHECKBOX, new Locator.GetByRoleOptions().setName(component).setExact(true));
+                .getByRole(AriaRole.CHECKBOX, new Locator.GetByRoleOptions().setName(field).setExact(true));
     }
 
     private Locator tableColumnHeader(String columnName) {
@@ -238,7 +240,7 @@ public class BrandExplorerWorkspace {
         List<String> missing = new ArrayList<>();
         for (String category : categories) {
             try {
-                waitUtility.waitForLocatorVisible(componentCategoryTab(category));
+                waitUtility.waitForLocatorVisible(categoryTab(category));
             } catch (TimeoutError e) {
                 missing.add(category);
             }
@@ -247,36 +249,67 @@ public class BrandExplorerWorkspace {
     }
 
     // Component checkboxes only render once their category accordion is expanded.
-    private void expandComponentCategory(String category) {
-        Locator categoryTab = componentCategoryTab(category);
+    private void expandCategory(String category) {
+        Locator categoryTab = categoryTab(category);
         waitUtility.waitForLocatorVisible(categoryTab);
         if (!"true".equals(categoryTab.getAttribute("aria-expanded"))) {
             categoryTab.click();
         }
     }
 
+    public void selectComponent(String category, String component) {
+        expandCategory(category);
+        Locator checkbox = categoryCheckbox(category, component);
+        waitUtility.waitForLocatorVisible(checkbox);
+        checkbox.check();
+        waitForSpinnerToAppear();
+        waitForSpinnerToDisappear();
+        clickColumnHeader(component);
+    }
+
+    public void clickColumnHeader(String columnName) {
+        Locator header = tableColumnHeader(columnName);
+        waitUtility.waitForLocatorVisible(header);
+        header.click();
+        waitForSpinnerToDisappear();
+    }
+
+    public boolean isChartVisible() {
+        try {
+            waitUtility.waitForLocatorVisible(BRAND_EXPLORER_CHART);
+            return true;
+        } catch (TimeoutError e) {
+            return false;
+        }
+    }
+
+    public boolean isComponentVisibleAsTableColumn(String component) {
+        try {
+            waitUtility.waitForLocatorVisible(tableColumnHeader(component));
+            return true;
+        } catch (TimeoutError e) {
+            return false;
+        }
+    }
+
     public void deselectComponent(String category, String component) {
-        expandComponentCategory(category);
-        Locator checkbox = componentCheckbox(category, component);
+        expandCategory(category);
+        Locator checkbox = categoryCheckbox(category, component);
         waitUtility.waitForLocatorVisible(checkbox);
         checkbox.uncheck();
     }
 
-    // Removes the workspace's default dimension (Day, under Time Frame) and default metric
-    // (Identified NPIs, under NPI Events) so later selections can be verified against an empty table.
+    // Removes the default dimension (Day) and metric (Identified NPIs) to start from an empty table.
     public void removeDefaultDimensionAndMetric() {
         deselectComponent("Time Frame", "Day");
         deselectComponent("NPI Events", "Identified NPIs");
     }
 
-    // Selects every item in the category (dimension or metric), verifies each renders as a table
-    // column, then deselects all of them and verifies the columns disappear - proves both the
-    // component list and the select/remove behavior for the whole category in one pass. Returns a
-    // human-readable failure per component that didn't behave as expected, empty if all passed.
+    // Selects then deselects every component in the category, verifying each appears/disappears as a table column.
     public List<String> verifyComponentsSelectAndRemove(String category, List<String> components) {
-        expandComponentCategory(category);
+        expandCategory(category);
         List<String> failures = new ArrayList<>();
-        components.forEach(component -> componentCheckbox(category, component).check());
+        components.forEach(component -> categoryCheckbox(category, component).check());
         waitForSpinnerToAppear();
         waitForSpinnerToDisappear();
         for (String component : components) {
@@ -286,7 +319,7 @@ public class BrandExplorerWorkspace {
                 failures.add(component + ": did not appear as a table column after being selected");
             }
         }
-        components.forEach(component -> componentCheckbox(category, component).uncheck());
+        components.forEach(component -> categoryCheckbox(category, component).uncheck());
         for (String component : components) {
             try {
                 waitUtility.waitForLocatorHidden(tableColumnHeader(component));
@@ -295,5 +328,76 @@ public class BrandExplorerWorkspace {
             }
         }
         return failures;
+    }
+
+    public void clickFiltersTab() {
+        waitUtility.waitForLocatorVisible(FILTERS_TAB.first());
+        FILTERS_TAB.first().click();
+    }
+
+    public void clickComponentsTab() {
+        waitUtility.waitForLocatorVisible(COMPONENTS_TAB.first());
+        COMPONENTS_TAB.first().click();
+    }
+
+    public void clickAddFilter() {
+        waitUtility.waitForLocatorVisible(ADD_FILTER_BUTTON.first());
+        ADD_FILTER_BUTTON.first().click();
+    }
+
+    // Filter fields live in the same accordion categories as dimensions/metrics, inside the "Select Filter" modal.
+    public void selectFilterField(String category, String field) {
+        expandCategory(category);
+        Locator checkbox = categoryCheckbox(category, field);
+        waitUtility.waitForLocatorVisible(checkbox);
+        checkbox.check();
+    }
+
+    public void closeFilterDialog() {
+        page.keyboard().press("Escape");
+    }
+
+    private Locator filterFieldCard(String field) {
+        return WORKSPACE_FRAME
+                .locator(String.format("//p[normalize-space()='%s']/ancestor::div[2]", field))
+                .first();
+    }
+
+    // Options have no accessible checkbox name, so match by OPTION role/text instead; must click the
+    // exact option since Enter would select every option still matching the typed search text.
+    public void enterFilterValue(String field, String value) {
+        Locator input = filterFieldCard(field).locator("input:not([readonly])").first();
+        waitUtility.waitForLocatorVisible(input);
+        input.click();
+        input.fill(value);
+        Locator option = WORKSPACE_FRAME.getByRole(
+                AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName(value).setExact(true));
+        waitUtility.waitForLocatorVisible(option.first());
+        option.first().click();
+        page.keyboard().press("Escape");
+        waitForSpinnerToDisappear();
+    }
+
+    // The applied value renders asynchronously, so wait for its text node rather than a generic loading signal.
+    public String getAppliedFilterSummary(String field, String expectedValue) {
+        Locator card = filterFieldCard(field);
+        waitUtility.waitForLocatorVisible(card);
+        waitUtility.waitForLocatorVisible(
+                card.getByText(expectedValue, new Locator.GetByTextOptions().setExact(true)).first());
+        return card.innerText().replaceAll("\\s+", " ").trim();
+    }
+
+    private Locator tableColumnCells(String columnName) {
+        Locator header = tableColumnHeader(columnName).locator("xpath=ancestor::th[1]");
+        waitUtility.waitForLocatorVisible(header);
+        String colIndex = header.getAttribute("aria-colindex");
+        return WORKSPACE_FRAME.locator(
+                String.format("//div[contains(@class,'Box')]//table//tbody//tr//td[@aria-colindex='%s']", colIndex));
+    }
+
+    public List<String> getTableColumnValues(String columnName) {
+        Locator cells = tableColumnCells(columnName);
+        waitUtility.waitForLocatorVisible(cells.first());
+        return cells.allInnerTexts().stream().map(String::trim).collect(Collectors.toList());
     }
 }

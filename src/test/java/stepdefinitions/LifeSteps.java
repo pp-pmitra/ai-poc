@@ -341,7 +341,7 @@ public class LifeSteps {
         List<String> expectedTactic = new ArrayList<>();
 
         for (Map<String, String> tacticData : tactics) {
-            String tacticName = tacticData.get("Tactic Name");
+            String tacticName = tacticData.get("Tactic Name")+'_' + CommonUtils.timeStampCalculation();
             metricName = tacticName;
             String channel = tacticData.get("Channel");
             String ruleType = tacticData.get("RuleType");
@@ -378,6 +378,14 @@ public class LifeSteps {
         logger.info("Validating comment in section: '{}'. Expected: '{}'", entryPoint, expectedComment);
         String actualComment = tacticDetails.validateComment(entryPoint);
         Assert.assertEquals(expectedComment, actualComment);
+        tacticDetails.clearComment();
+    }
+
+    @Then("Verify that {string} is visible in {string} section")
+    public void verifyIfTheCommentAddedInIsVisibleInSection(String headerComment, String sectionName) {
+        String actualComment = tacticDetails.validateComment(sectionName);
+        Assert.assertEquals(headerComment, actualComment);
+        tacticDetails.clickCancelButton();
     }
 
     @Then("User adds frequency cap with details {string} {string} {string} {string}")
@@ -389,6 +397,21 @@ public class LifeSteps {
                 TIMES_PER,
                 SCOPE);
         campaigns.addFrequencyCap(level, FREQ_VALUE, TIMES_PER, SCOPE);
+    }
+
+    @Then("User adds {string} frequency cap with details {string} {string} {string} {string}")
+    public void user_adds_frequency_cap_with_details(String EXCEEDED, String level, String FREQ_VALUE, String TIMES_PER, String SCOPE) {
+        campaigns.addFrequencyCap(level, FREQ_VALUE, TIMES_PER, SCOPE, EXCEEDED);
+    }
+
+    @Then("User gets error of limit exceeded {string}")
+    public void userGetsErrorOfLimitExceeded(String level) {
+        String actualError = campaigns.frequencyLimitExceedCheck(level);
+        if (level.contains("Line Item"))
+            Assert.assertEquals("Line Item frequency cap can not exceed Campaign frequency cap", actualError);
+        else if (level.contains("tactic")) {
+            Assert.assertEquals("Tactic frequency cap can not exceed Line Item or Campaign frequency cap", actualError);
+        }
     }
 
     @Then("User clicks on details tab")
@@ -479,17 +502,25 @@ public class LifeSteps {
         logger.info("Custom field created and verified successfully");
     }
 
-    @And("User verifies if new custom field is visible and empty in new tactic")
-    public void user_verifies_if_new_custom_field_is_visible_and_empty_in_new_tactic() {
+    @And("User verifies if new custom field is visible and empty in new tactic {string}")
+    public void user_verifies_if_new_custom_field_is_visible_and_empty_in_new_tactic(String tacticSearch) {
         logger.info("Verifying custom field is visible and empty in new tactic");
+        navigation.clickPulsePointLogo();
+        campaignDashboard.searchCreatedTactic(tacticSearch);
+        campaignDashboard.clickCampaignFromDashboard();
+        campaignDashboard.clickLineItemExpandIcon();
+        tacticDetails.clickFirstTacticTab();
+        tacticDetails.clickDetailsTab();
+        Assert.assertEquals("Custom field name did not match", customFieldName, uiCustomFieldName);
+        navigation.clickPulsePointLogo();
+        tacticDetails.globalSearchDeletedTactic(metricName);
+        campaignDashboard.clickGlobalTacticResult();
         tacticDetails.clickNewTactic();
         Assert.assertEquals(customFieldName, uiCustomFieldName);
-        Assert.assertTrue(
-                tacticDetails.customFieldValue(customFieldName).inputValue().isEmpty());
+        Assert.assertTrue(tacticDetails.customFieldValue(customFieldName).inputValue().isEmpty());
         tacticDetails.clickLastTactic();
         Assert.assertEquals(customFieldName, uiCustomFieldName);
-        Assert.assertFalse(
-                tacticDetails.customFieldValue(customFieldName).inputValue().isEmpty());
+        Assert.assertFalse(tacticDetails.customFieldValue(customFieldName).inputValue().isEmpty());
     }
 
     @Then("User deletes the custom field and verify its removed from new tactic")
@@ -6574,7 +6605,7 @@ public class LifeSteps {
     public void userNavigatesToTheCreatedCampaign() {
         logger.info("Navigating to the created campaign '{}'", campaignNameRandom);
         campaignDashboard.searchCreatedCampaign(campaignNameRandom);
-        campaignDashboard.navigateToCampaign(campaignNameRandom);
+        campaignDashboard.navigateToCreatedCampaign(lineItemNameRandom);
     }
 
     @And("Admin user approves the campaign")
@@ -6671,13 +6702,13 @@ public class LifeSteps {
         dimensionName = destinationName + '_' + CommonUtils.timeStampCalculation();
         logger.info(
                 "Entering destination details: Name='{}', Type='{}', Host='{}', Port='{}', Server Path='{}'",
-                destinationName,
+                dimensionName,
                 destinationType,
                 host,
                 port,
                 serverPath);
         runReportPanel.enterDestinationDetails(
-                destinationName, destinationType, host, username, password, port, serverPath);
+                dimensionName, destinationType, host, username, password, port, serverPath);
     }
 
     @Then("User runs the connection test and creates the destination")
@@ -6687,7 +6718,7 @@ public class LifeSteps {
         runReportPanel.clickCreateDestinationButton();
         logger.info("Destination creation initiated successfully");
         String text = runReportPanel.fetchSuccessAlert();
-        Assert.assertEquals("Destination created successfully", text);
+        Assert.assertEquals("Destination's settings saved successfully", text);
     }
 
     @And("Verify destination created should populate in the Destination dropdown field")
