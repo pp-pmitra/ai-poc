@@ -111,7 +111,7 @@ public class WorkspaceCreation {
         this.WORKSPACE_ADVERTISER_DROPDOWN =
                 WORKSPACE_FRAME.locator("//div[@data-tour-id='workspaces-advertiser-filter']//input");
         this.WORKSPACE_TYPE = WORKSPACE_FRAME.locator(
-                "//div[@data-tour-id='workspaces-types-filter']//div[@role='img']//following-sibling::span");
+                "//div[@data-tour-id='workspaces-types-filter']//div[@role='img']//following-sibling::ds-typography");
         this.WORKSPACE_CREATED_BY_DROPDOWN =
                 WORKSPACE_FRAME.locator("//div[@data-tour-id='workspaces-created-by-filter']//input");
         this.DROPDOWN_LIST_ITEMS = WORKSPACE_FRAME.locator("//div[@role='dialog']//li//span");
@@ -355,7 +355,7 @@ public class WorkspaceCreation {
         waitForStudioWorkspacePage(WORKSPACE_TYPE);
         waitUtility.waitForLocatorVisible(WORKSPACE_TYPE.last());
         CommonUtils.selectAndClickElement(WORKSPACE_TYPE, Collections.singletonList(workspaceType));
-        Locator workspaceRow = WORKSPACE_FRAME.locator(String.format("//span[contains(text(),'%s')]", workspaceName));
+        Locator workspaceRow = WORKSPACE_FRAME.locator(String.format("//ds-typography[contains(text(),'%s')]", workspaceName));
         waitUtility.waitForLocatorVisible(workspaceRow);
         workspaceRow.click();
     }

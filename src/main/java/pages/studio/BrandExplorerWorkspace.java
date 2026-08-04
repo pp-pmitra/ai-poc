@@ -49,10 +49,18 @@ public class BrandExplorerWorkspace {
         this.DATE_CELLS =
                 WORKSPACE_FRAME.locator("//div[contains(@class,'Box')]//table//tbody//tr//td[1][@aria-colindex]");
         this.SPINNER = WORKSPACE_FRAME.locator("//div[@data-testid='loading-spinner']");
-        this.FILTERS_TAB = WORKSPACE_FRAME.locator("//div[normalize-space(text())='Filters']");
-        this.ADD_FILTER_BUTTON =
-                WORKSPACE_FRAME.locator("//div[normalize-space(text())='Add Filters']");
-        this.COMPONENTS_TAB = WORKSPACE_FRAME.locator("//div[normalize-space(text())='Components']");
+        this.FILTERS_TAB = WORKSPACE_FRAME.getByRole(
+                                AriaRole.TAB,
+                                new FrameLocator.GetByRoleOptions().setName("Filters").setExact(true)
+                            );
+        this.ADD_FILTER_BUTTON = WORKSPACE_FRAME.getByRole(
+                                        AriaRole.BUTTON,
+                                        new FrameLocator.GetByRoleOptions().setName("Add Filters").setExact(true)
+                                );
+        this.COMPONENTS_TAB = WORKSPACE_FRAME.getByRole(
+                                AriaRole.TAB,
+                                new FrameLocator.GetByRoleOptions().setName("Components").setExact(true)
+                            );
     }
 
     public void waitForDashboardLoad() {
@@ -238,7 +246,7 @@ public class BrandExplorerWorkspace {
     }
 
     private Locator tableColumnHeader(String columnName) {
-        return WORKSPACE_FRAME.locator(String.format("//th//p[text()='%s']", columnName));
+        return WORKSPACE_FRAME.locator(String.format("//th//ds-typography[text()='%s']", columnName));
     }
 
     public List<String> getMissingComponentCategories(List<String> categories) {
