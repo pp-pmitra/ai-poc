@@ -218,4 +218,3 @@ Feature: Brand Explorer Workspace creation in Studio
     Examples:
       | ADVERTISER         | CATEGORY                 | FIELD      | VALUE     |
       | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | Physician |
-
