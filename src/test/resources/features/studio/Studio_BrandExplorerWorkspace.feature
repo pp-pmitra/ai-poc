@@ -218,3 +218,42 @@ Feature: Brand Explorer Workspace creation in Studio
     Examples:
       | ADVERTISER         | CATEGORY                 | FIELD      | VALUE     |
       | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | Physician |
+
+  @regression
+  Scenario Outline: Manage operations on Workspace - Rename, Duplication, and Delete on Brand Explorer workspace
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User edits the "Brand Explorer" workspace name as "<WORKSPACE_NAME>"
+    And User saves the "Brand Explorer" workspace
+    Then Verify the "Brand Explorer" Workspace is saved
+    And Navigate to workspace dashboard
+    And User selects the workspace type "Brand Explorer"
+    And User clicks on the More Actions menu for the saved workspace 
+    And User selects the "Rename" option by clicking More Actions menu
+    And Verify user is able to rename the "Brand Explorer" workspace as "<NEW_WORKSPACE_NAME>"
+    And User is able to search the workspace after performing operation - "Rename"
+    And User searches the workspace created to perform Actions from More menu
+    And User selects the "Duplicate" option by clicking More Actions menu
+    And Verify user is able to duplicate the "Brand Explorer" workspace
+    And User is able to search the workspace after performing operation - "Duplicate"
+    And User searches the workspace created to perform Actions from More menu
+    And User selects the "Delete" option by clicking More Actions menu
+    And Verify user is able to delete the workspace
+    Examples:
+      | ADVERTISER         | WORKSPACE_NAME     | NEW_WORKSPACE_NAME  |
+      | TAMTESTING ACCOUNT | Automation_Persist | New_Brand_Explorer_ |
+
+  @regression
+  Scenario Outline: Validate the persistence of applied filters (Workspace Type, Advertiser, Created By, Workspace Name) on the Studio Workspace Details page for Brand Explorer
+    When User selects the workspace type "<WORKSPACE_TYPE>"
+    And User selects "<ADVERTISER>" from the Studio Workspace Advertiser dropdown
+    And User selects "<CREATED_BY>" from the Studio Workspace Created By dropdown
+    And User searches for a workspace by name using the search box on the Workspace Details page
+    And User navigates to another page within Studio and then returns to the workspace list page
+    Then User verifies that the selected filters, dropdown values, and search input remain persistent unless they are manually deselected or cleared - "<WORKSPACE_TYPE>", "<ADVERTISER>", "<CREATED_BY>"
+    And Verify on refresh of the page, the filters are reset and search input is cleared
+    Examples:
+      | WORKSPACE_TYPE | ADVERTISER         | CREATED_BY                     |
+      | Brand Explorer | TAMTESTING ACCOUNT | ppqa_automation@pulsepoint.com |
