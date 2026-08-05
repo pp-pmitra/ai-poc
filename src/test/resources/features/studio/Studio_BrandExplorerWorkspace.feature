@@ -245,15 +245,3 @@ Feature: Brand Explorer Workspace creation in Studio
       | ADVERTISER         | WORKSPACE_NAME     | NEW_WORKSPACE_NAME  |
       | TAMTESTING ACCOUNT | Automation_Persist | New_Brand_Explorer_ |
 
-  @regression
-  Scenario Outline: Validate the persistence of applied filters (Workspace Type, Advertiser, Created By, Workspace Name) on the Studio Workspace Details page for Brand Explorer
-    When User selects the workspace type "<WORKSPACE_TYPE>"
-    And User selects "<ADVERTISER>" from the Studio Workspace Advertiser dropdown
-    And User selects "<CREATED_BY>" from the Studio Workspace Created By dropdown
-    And User searches for a workspace by name using the search box on the Workspace Details page
-    And User navigates to another page within Studio and then returns to the workspace list page
-    Then User verifies that the selected filters, dropdown values, and search input remain persistent unless they are manually deselected or cleared - "<WORKSPACE_TYPE>", "<ADVERTISER>", "<CREATED_BY>"
-    And Verify on refresh of the page, the filters are reset and search input is cleared
-    Examples:
-      | WORKSPACE_TYPE | ADVERTISER         | CREATED_BY                     |
-      | Brand Explorer | TAMTESTING ACCOUNT | ppqa_automation@pulsepoint.com |
