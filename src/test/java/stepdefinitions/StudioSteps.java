@@ -216,6 +216,7 @@ public class StudioSteps {
                         case "HCP Explorer" -> workspaceCreation.verifyHCPExplorer();
                         case "Brand Explorer" -> workspaceCreation.verifyBrandExplorer();
                         case "DTC Explorer" -> workspaceCreation.verifyDTCExplorer();
+                        case "HCP Audience Expansion" -> workspaceCreation.verifyHCPAudienceExpansion();
                         default -> throw new IllegalArgumentException(
                                 "Unsupported workspace verification: " + workspaceType);
                     };
@@ -228,6 +229,7 @@ public class StudioSteps {
             case "HCP Explorer" -> workspaceCreation.clickHCPExplorerWorkspace();
             case "Brand Explorer" -> workspaceCreation.clickBrandExplorerWorkspace();
             case "DTC Explorer" -> workspaceCreation.clickDTCExplorerWorkspace();
+            case "HCP Audience Expansion" -> workspaceCreation.clickHCPAudienceExpansionWorkspace();
             default -> throw new IllegalArgumentException("Unsupported workspace click: " + workspaceType);
         }
     }
@@ -334,6 +336,9 @@ public class StudioSteps {
                 break;
             case "DTC Explorer":
                 dtcExplorerWorkspace.saveDTCExplorerWorkspace();
+                break;
+            case "HCP Audience Expansion":
+                expansionWorkspace.saveExpansion();
                 break;
         }
     }
@@ -1387,6 +1392,12 @@ public class StudioSteps {
         }
     }
 
+    @And("User selects Source Audience details as {string},{string}")
+    public void userSelectsSourceAudienceDetailsAs(String sourceAudience, String options) {
+        logger.info("Selecting source audience: {} with options: {}", sourceAudience, options);
+        expansionWorkspace.selectSourceAudienceWithOptions(sourceAudience, options);
+    }
+
     @Then("User captures the {string} count")
     public void userCapturesTheCount(String countType) {
         String countText = dtcExplorerWorkspace.getUniqueConsumerCount().replaceAll("[^0-9]", "");
@@ -1457,6 +1468,13 @@ public class StudioSteps {
         Assert.assertTrue(
                 "Table column '" + field + "' contains values other than '" + value + "': " + columnValues,
                 columnValues.stream().allMatch(v -> v.equalsIgnoreCase(value)));
+    }
+
+    @And("User selects the advertiser {string} for HCP Audience Expansion workspace")
+    public void userSelectsTheAdvertiserForHCPAudienceExpansionWorkspace(String advertiser) {
+        logger.info("Selecting advertiser '{}' for HCP Audience Expansion workspace", advertiser);
+        expansionWorkspace.clickAdvertiserDropdown(advertiser);
+
     }
 
     @Then("Verify the filter on {string} shows value {string}")
