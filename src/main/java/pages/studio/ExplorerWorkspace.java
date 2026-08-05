@@ -65,6 +65,7 @@ public class ExplorerWorkspace {
     private final Locator SPECIALITY_PANEL;
     private final Locator INCLUDE_EXCLUDE_CHECK;
     private final Locator ALERT;
+    private Locator SPINNER;
     WaitUtility waitUtility;
 
     public ExplorerWorkspace(Page page) {
@@ -92,9 +93,9 @@ public class ExplorerWorkspace {
         this.FILTER_OK_BUTTON =
                 WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Ok"));
         this.FILTER_CLOSE_BUTTON =
-                WORKSPACE_FRAME.locator("//h1[contains(text(),'Select Filter')]/following-sibling::button");
+                WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'Select Filter')]/following-sibling::button");
         this.APPLIED_FILTER = WORKSPACE_FRAME.locator(
-                "//div[contains(@data-tour-id,'filters-container')]//button/preceding-sibling::p");
+                "//div[contains(@data-tour-id,'filters-container')]//button/preceding-sibling::ds-typography");
         this.APPLIED_FILTER_OPTION = WORKSPACE_FRAME.locator("//div[contains(@class,'style__FilterExpression-sc')]");
         this.SAVE_WORKSPACE = WORKSPACE_FRAME.locator(
                 "//button[contains(@data-tour-id,'save-workspace-button')]//div[contains(text(),'Save')]");
@@ -148,13 +149,15 @@ public class ExplorerWorkspace {
                 .locator("//span[text()='Owned & Operated']");
         this.WORKSPACE_EDIT_BUTTON = WORKSPACE_FRAME.locator("//button//div[text()='Edit']");
         this.WORKSPACE_HEADER =
-                WORKSPACE_FRAME.locator("//div[@data-tour-id='workspace-back-button']/following-sibling::div//h1");
+                WORKSPACE_FRAME.locator("//div[@data-tour-id='workspace-back-button']/following-sibling::div//ds-typography");
         this.ADVERTISER_LIST = WORKSPACE_FRAME.getByText("Advertisers", new FrameLocator.GetByTextOptions().setExact(true));
         this.SEARCH_ADVERTISER = WORKSPACE_FRAME.locator("//input[@placeholder='Search']");
         this.ADVERTISER_BUTTON = WORKSPACE_FRAME.locator("//button[contains(@data-tour-id,'workspace-advertiser')]");
         this.SPECIALITY_PANEL = WORKSPACE_FRAME.locator("//div[@id='panel-all']");
         this.INCLUDE_EXCLUDE_CHECK = WORKSPACE_FRAME.locator("//button[@data-testid='bi-include-exclude-check']");
         this.ALERT = WORKSPACE_FRAME.locator("//div[contains(@class, 'Toastify')]//div[@role='alert']//p");
+        this.SPINNER = WORKSPACE_FRAME.locator("//button[@data-tour-id='save-workspace-button']//div[@data-testid='loading-spinner']");
+
     }
 
     public void enterWorkspaceName(String workspaceName) {
@@ -210,7 +213,7 @@ public class ExplorerWorkspace {
         SEARCH_FILTER.clear();
         SEARCH_FILTER.fill(filter);
         WORKSPACE_FRAME
-                .locator(String.format("//span[contains(text(),'%s')]", filter))
+                .locator(String.format("//ds-typography[contains(text(),'%s')]", filter))
                 .first()
                 .click();
         switch (filter) {
@@ -304,6 +307,14 @@ public class ExplorerWorkspace {
 
     public List<String> verifyAllSelectedOptions() {
         return APPLIED_FILTER_OPTION.allInnerTexts();
+    }
+
+    public void waitForSpinnerToDisappear() {
+        waitUtility.waitForLocatorHidden(SPINNER);
+    }
+
+    public void waitForSpinnerToAppear() {
+        waitUtility.waitForLocatorVisible(SPINNER);
     }
 
     public void saveExplorerWorkspace() {
@@ -486,7 +497,7 @@ public class ExplorerWorkspace {
     }
 
     public String fetchWorkspaceHeader() {
-        return WORKSPACE_HEADER.textContent().trim();
+        return WORKSPACE_HEADER.first().textContent().trim();
     }
 
     public void selectRecency(String recency) {
