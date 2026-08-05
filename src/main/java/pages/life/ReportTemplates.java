@@ -36,7 +36,7 @@ public class ReportTemplates {
     private final Locator SEARCH_TEMPLATE;
     private final Locator CLICK_TEMPLATE_SEARCH;
     private final Locator SELECT_TEMPLATE;
-    private final Locator SELECT_TACTIC;
+    private final Locator TACTIC_DROPDOWN;
     private final Locator SELECT_LIFETIME;
     private final Locator RUN_REPORT;
     private final Locator REPORT_DOWNLOAD_OPTION;
@@ -83,7 +83,7 @@ public class ReportTemplates {
         this.SEARCH_TEMPLATE = page.locator("//input[contains(@class,'gaTableSearch') and @placeholder='Search']");
         this.CLICK_TEMPLATE_SEARCH = page.locator("//div[contains(@class,'gaTableSearchBtn')]");
         this.SELECT_TEMPLATE = page.locator("//input[@placeholder='Select Template']");
-        this.SELECT_TACTIC = page.locator("//input[@placeholder='All Tactics']");
+        this.TACTIC_DROPDOWN = page.locator("//input[@placeholder='Enter or Paste Tactics']");
         this.SELECT_LIFETIME = page.locator("//button[normalize-space()='Lifetime']");
         this.TEMPLATE_COLUMNS =
                 page.locator("//tr[contains(@class, 'highlighted') and contains(@class, 'loadedall')]//td[1]/div");
@@ -197,7 +197,7 @@ public class ReportTemplates {
             page.waitForTimeout(2000);
         }
         optionLocator.click();
-        SELECT_TACTIC.fill(tactic);
+        TACTIC_DROPDOWN.fill(tactic);
         page.locator(String.format("//div[@id='tacticLookup']//div[@data-text='%s']", tactic))
                 .click();
         REPORT_PANEL.click();

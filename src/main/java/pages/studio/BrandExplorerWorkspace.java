@@ -19,7 +19,7 @@ public class BrandExplorerWorkspace {
     private final Locator BRAND_EXPLORER_CHART;
     private final Locator BRAND_EXPLORER_TABLE;
     private final Locator SAVE_WORKSPACE;
-    private final Locator DATE_RANGE_SELECTOR;
+    private final Locator TIMEFRAME;
     private final Locator DATE_RANGE_PICKER;
     private final Locator START_DATE_INPUT;
     private final Locator END_DATE_INPUT;
@@ -39,8 +39,8 @@ public class BrandExplorerWorkspace {
         this.BRAND_EXPLORER_TABLE = WORKSPACE_FRAME.locator("//div[contains(@class,'Box')]//table");
         this.SAVE_WORKSPACE = WORKSPACE_FRAME.locator(
                 "//button[contains(@data-tour-id,'save-workspace-button')]//div[contains(text(),'Save')]");
-        this.DATE_RANGE_SELECTOR = WORKSPACE_FRAME.locator(
-                "//p[normalize-space()='Time Frame']/following-sibling::div//input[starts-with(@id,'listbox-input-')]");
+        this.TIMEFRAME = WORKSPACE_FRAME.locator(
+                "//ds-typography[normalize-space()='Time Frame']/following-sibling::div//input[starts-with(@id,'listbox-input-')]");
         this.DATE_RANGE_PICKER = WORKSPACE_FRAME.locator("[data-testid='date-range-picker']");
         this.START_DATE_INPUT = WORKSPACE_FRAME.locator("input[data-testid='date-from-text-input']");
         this.END_DATE_INPUT = WORKSPACE_FRAME.locator("input[data-testid='date-to-text-input']");
@@ -49,10 +49,18 @@ public class BrandExplorerWorkspace {
         this.DATE_CELLS =
                 WORKSPACE_FRAME.locator("//div[contains(@class,'Box')]//table//tbody//tr//td[1][@aria-colindex]");
         this.SPINNER = WORKSPACE_FRAME.locator("//div[@data-testid='loading-spinner']");
-        this.FILTERS_TAB = WORKSPACE_FRAME.locator("//div[normalize-space(text())='Filters']");
-        this.ADD_FILTER_BUTTON =
-                WORKSPACE_FRAME.locator("//div[normalize-space(text())='Add Filters']");
-        this.COMPONENTS_TAB = WORKSPACE_FRAME.locator("//div[normalize-space(text())='Components']");
+        this.FILTERS_TAB = WORKSPACE_FRAME.getByRole(
+                                AriaRole.TAB,
+                                new FrameLocator.GetByRoleOptions().setName("Filters").setExact(true)
+                            );
+        this.ADD_FILTER_BUTTON = WORKSPACE_FRAME.getByRole(
+                                        AriaRole.BUTTON,
+                                        new FrameLocator.GetByRoleOptions().setName("Add Filters").setExact(true)
+                                );
+        this.COMPONENTS_TAB = WORKSPACE_FRAME.getByRole(
+                                AriaRole.TAB,
+                                new FrameLocator.GetByRoleOptions().setName("Components").setExact(true)
+                            );
     }
 
     public void waitForDashboardLoad() {
@@ -62,23 +70,21 @@ public class BrandExplorerWorkspace {
 
     public String getDefaultDimensions(String defaultDimension) {
         Locator locator = WORKSPACE_FRAME.locator(String.format(
-                "//table//thead//th[@aria-selected='true']//p[normalize-space()='%s']", defaultDimension));
+                "//table//thead//th[@aria-selected='true' and normalize-space()='%s']", defaultDimension));
         waitUtility.waitForLocatorVisible(locator);
         return locator.innerText().trim();
     }
 
     public String getDefaultMetrics(String defaultMetric) {
         Locator locator = WORKSPACE_FRAME.locator(
-                String.format("//table//thead//th[@aria-selected='true']//p[normalize-space()='%s']", defaultMetric));
+                String.format("//table//thead//th[@aria-selected='true' and normalize-space()='%s']", defaultMetric));
         waitUtility.waitForLocatorVisible(locator);
         return locator.innerText().trim();
     }
 
     public String getDefaultTimeFrame() {
-        Locator locator = WORKSPACE_FRAME.locator(
-                "//p[normalize-space()='Time Frame']/following-sibling::div//input[starts-with(@id,'listbox-input-')]");
-        waitUtility.waitForLocatorVisible(locator);
-        return locator.inputValue().trim();
+        waitUtility.waitForLocatorVisible(TIMEFRAME);
+        return TIMEFRAME.inputValue().trim();
     }
 
     public void saveBrandExplorerWorkspace() {
@@ -87,8 +93,8 @@ public class BrandExplorerWorkspace {
     }
 
     public void clickTimeFrameSelector() {
-        waitUtility.waitForLocatorVisible(DATE_RANGE_SELECTOR);
-        DATE_RANGE_SELECTOR.click();
+        waitUtility.waitForLocatorVisible(TIMEFRAME);
+        TIMEFRAME.click();
     }
 
     public List<String> getTimeFrameOptions() {
@@ -117,7 +123,14 @@ public class BrandExplorerWorkspace {
     }
 
     public void waitForSpinnerToDisappear() {
-        waitUtility.waitForLocatorHidden(SPINNER);
+        page.waitForCondition(() -> {
+            for (int i = 0; i < SPINNER.count(); i++) {
+                if (SPINNER.nth(i).isVisible()) {
+                    return false;
+                }
+            }
+            return true;
+        });
     }
 
     public void waitForSpinnerToAppear() {
@@ -179,7 +192,7 @@ public class BrandExplorerWorkspace {
     public void waitForStartDateInTable(String startDate) {
         // Wait until the table actually reflects the new start date, not just that containers are visible
         Locator startDateCell = WORKSPACE_FRAME.locator(String.format(
-                "//div[contains(@class,'Box')]//table//tbody//tr//td[1]//p[normalize-space()='%s']", startDate));
+                "//div[contains(@class,'Box')]//table//tbody//tr//td[1]//ds-typography[normalize-space()='%s']", startDate));
         waitUtility.waitForLocatorVisible(startDateCell);
     }
 
@@ -233,7 +246,7 @@ public class BrandExplorerWorkspace {
     }
 
     private Locator tableColumnHeader(String columnName) {
-        return WORKSPACE_FRAME.locator(String.format("//th//p[text()='%s']", columnName));
+        return WORKSPACE_FRAME.locator(String.format("//th//ds-typography[text()='%s']", columnName));
     }
 
     public List<String> getMissingComponentCategories(List<String> categories) {
@@ -359,7 +372,7 @@ public class BrandExplorerWorkspace {
 
     private Locator filterFieldCard(String field) {
         return WORKSPACE_FRAME
-                .locator(String.format("//p[normalize-space()='%s']/ancestor::div[2]", field))
+                .locator(String.format("//ds-typography[normalize-space()='%s']/ancestor::div[2]", field))
                 .first();
     }
 
