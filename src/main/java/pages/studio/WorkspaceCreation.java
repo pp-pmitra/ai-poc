@@ -66,15 +66,15 @@ public class WorkspaceCreation {
         this.WORKSPACE_FRAME = page.frameLocator("iframe").frameLocator("iframe");
         this.CREATE_WORKSPACE = WORKSPACE_FRAME.locator(
                 "//div[text()='Create New Workspace' or contains(text(),'Open New Workspace')]");
-        this.HCP_EXPLORER = WORKSPACE_FRAME.getByText("HCP Explorer", new FrameLocator.GetByTextOptions().setExact(true));
-        this.HCP_EXPANSION = WORKSPACE_FRAME.getByText("HCP Audience Expansion", new FrameLocator.GetByTextOptions().setExact(true));
-        this.BRAND_EXPLORER = WORKSPACE_FRAME.getByText("Brand Explorer", new FrameLocator.GetByTextOptions().setExact(true));
-        this.DTC_EXPLORER = WORKSPACE_FRAME.getByText("DTC Explorer", new FrameLocator.GetByTextOptions().setExact(true));
+        this.HCP_EXPLORER = WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'HCP Explorer')]");
+        this.HCP_EXPANSION = WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'HCP Audience Expansion')]");
+        this.BRAND_EXPLORER = WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'Brand Explorer')]");
+        this.DTC_EXPLORER = WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'DTC Explorer')]");
         this.BACK_TO_WORKSPACE_DASHBOARD = WORKSPACE_FRAME.getByRole(AriaRole.BUTTON);
         this.WORKSPACE_CREATED_ALERT = WORKSPACE_FRAME.locator(
                 "//p[contains(text(),'Workspace created successfully') or contains(text(),'Workspace saved successfully')]");
         this.MENU_ICON = page.locator("//img[contains(@class,'menu-icon')]");
-        this.WORKSPACE_TYPE_TITLE = WORKSPACE_FRAME.getByText("Workspace Type", new FrameLocator.GetByTextOptions().setExact(true));
+        this.WORKSPACE_TYPE_TITLE = WORKSPACE_FRAME.locator("//ds-typography[text()='Workspace Type']");
         this.MORE_ACTION_DIALOG = WORKSPACE_FRAME.locator("//div[@role='dialog']");
         this.DELETE_BUTTON = WORKSPACE_FRAME.locator("//div[contains(text(),'Delete')]");
         this.REMOVAL_CONFIRMATION_POPUP = WORKSPACE_FRAME.locator("//h3[contains(text(),'Removal Confirmation')]");
@@ -101,7 +101,7 @@ public class WorkspaceCreation {
                 .contentFrame()
                 .locator("//div[contains(text(),'Reload')]");
         this.PAGINATION = WORKSPACE_FRAME.locator(
-                "//table[@data-tour-id='workspaces-table']/parent::div/following-sibling::div//span");
+                "//table[@data-tour-id='workspaces-table']/parent::div/following-sibling::div");
         this.DEPENDENT_WORKSPACE_TEXT =
                 WORKSPACE_FRAME.locator("//div[contains(text(),'Checking for dependent workspaces...')]");
         this.REMOVE_WORKSPACE_BUTTON = WORKSPACE_FRAME.locator("//button/div[text()='Remove']");
@@ -158,6 +158,10 @@ public class WorkspaceCreation {
 
     public void clickBrandExplorerWorkspace() {
         BRAND_EXPLORER.click();
+    }
+
+    public void clickHCPAudienceExpansionWorkspace() {
+        HCP_EXPANSION.click();
     }
 
     public void clickDTCExplorerWorkspace() {
@@ -217,7 +221,7 @@ public class WorkspaceCreation {
 
     public void clickMoreActionsMenu(String workspaceName) {
         waitUtility.waitForLocatorVisible(
-                WORKSPACE_FRAME.locator(String.format("//span[contains(text(),'%s')]", workspaceName)));
+                WORKSPACE_FRAME.locator(String.format("//ds-typography[contains(text(),'%s')]", workspaceName)));
         WORKSPACE_FRAME
                 .locator(String.format("//td[contains(@id,'%s')]//button", workspaceName))
                 .first()
@@ -282,7 +286,7 @@ public class WorkspaceCreation {
         waitUtility.waitForLocatorVisible(SEARCH_WORKSPACE);
         page.waitForCondition(() -> SEARCH_WORKSPACE.filter().count() == 1);
         if (WORKSPACE_FRAME
-                .locator(String.format("//span[contains(text(),'%s')]", workspaceName))
+                .locator(String.format("//ds-typography[contains(text(),'%s')]", workspaceName))
                 .isVisible()) {
             return true;
         } else {
@@ -290,9 +294,9 @@ public class WorkspaceCreation {
             page.keyboard().press("Enter");
             waitUtility.waitForLocatorVisible(PAGINATION.first());
             waitUtility.waitForLocatorVisible(
-                    WORKSPACE_FRAME.locator(String.format("//span[contains(text(),'%s')]", workspaceName)));
+                    WORKSPACE_FRAME.locator(String.format("//ds-typography[contains(text(),'%s')]", workspaceName)));
             return WORKSPACE_FRAME
-                    .locator(String.format("//span[contains(text(),'%s')]", workspaceName))
+                    .locator(String.format("//ds-typography[contains(text(),'%s')]", workspaceName))
                     .isVisible();
         }
     }
@@ -310,7 +314,7 @@ public class WorkspaceCreation {
 
     public void clickWorkspace(String workspaceName) {
         WORKSPACE_FRAME
-                .locator(String.format("//span[contains(text(),'%s')]", workspaceName))
+                .locator(String.format("//ds-typography[contains(text(),'%s')]", workspaceName))
                 .click();
     }
 
