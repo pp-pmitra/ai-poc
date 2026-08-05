@@ -85,8 +85,8 @@ public class SmartActions {
         SAVE_BUTTON.click();
     }
 
-    public void enterSmartActionName(String SmartActionName) {
-        SMART_ACTION_NAME.fill(SmartActionName);
+    public void enterSmartActionName(String smartActionName) {
+        SMART_ACTION_NAME.fill(smartActionName);
     }
 
     public void enterAdvertiser(String advertiser) {

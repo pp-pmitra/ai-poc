@@ -107,12 +107,11 @@ public class WorkspaceCreation {
         this.REMOVE_WORKSPACE_BUTTON = WORKSPACE_FRAME.locator("//button/div[text()='Remove']");
         this.DELETE_WORKSPACE_ERROR_TEXT = WORKSPACE_FRAME.locator(
                 "//p[contains(text(),\"Deletion blocked by Life. Message: This list can't be deleted\")]");
-        this.WORKSPACE_TYPE_LIST = WORKSPACE_FRAME.locator(
-                "//p[contains(text(),'Workspace Type')]/following-sibling::div//p[not(@color)]");
+        this.WORKSPACE_TYPE_LIST = WORKSPACE_FRAME.locator("//div[starts-with(@data-tour-id,'create-workspace-')]//ds-typography[1]");
         this.WORKSPACE_ADVERTISER_DROPDOWN =
                 WORKSPACE_FRAME.locator("//div[@data-tour-id='workspaces-advertiser-filter']//input");
         this.WORKSPACE_TYPE = WORKSPACE_FRAME.locator(
-                "//div[@data-tour-id='workspaces-types-filter']//div[@role='img']//following-sibling::span");
+                "//div[@data-tour-id='workspaces-types-filter']//div[@role='img']//following-sibling::ds-typography");
         this.WORKSPACE_CREATED_BY_DROPDOWN =
                 WORKSPACE_FRAME.locator("//div[@data-tour-id='workspaces-created-by-filter']//input");
         this.DROPDOWN_LIST_ITEMS = WORKSPACE_FRAME.locator("//div[@role='dialog']//li//span");
@@ -212,9 +211,6 @@ public class WorkspaceCreation {
             if (HCP_EXPANSION.isVisible()) {
                 page.waitForLoadState();
                 counter = 4;
-                //                if (clickFlag) {
-                //                    HCP_EXPLORER.click();
-                //                }
             } else {
                 counter++;
                 BACK_TO_WORKSPACE_DASHBOARD.click();
@@ -360,7 +356,7 @@ public class WorkspaceCreation {
         waitForStudioWorkspacePage(WORKSPACE_TYPE);
         waitUtility.waitForLocatorVisible(WORKSPACE_TYPE.last());
         CommonUtils.selectAndClickElement(WORKSPACE_TYPE, Collections.singletonList(workspaceType));
-        Locator workspaceRow = WORKSPACE_FRAME.locator(String.format("//span[contains(text(),'%s')]", workspaceName));
+        Locator workspaceRow = WORKSPACE_FRAME.locator(String.format("//ds-typography[contains(text(),'%s')]", workspaceName));
         waitUtility.waitForLocatorVisible(workspaceRow);
         workspaceRow.click();
     }

@@ -40,5 +40,5 @@ Feature: End to End Workflow of Report Generation.
     # 4 & 5
     Then User downloads the report and verify the data in downloaded report
     Examples:
-      | USER  | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | CREATIVE            | REPORT_TEMPLATE | TEMPLATE NAME | DIMENSIONS                    | METRICS            | RULE_TYPE          |
-      | Admin | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Automation_Creative | E2E Report      | Template      | Advertiser Name,Campaign Name | Impressions,Clicks | Behavioral Segment |
+      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | CREATIVE            | TEMPLATE NAME | DIMENSIONS                    | METRICS            | RULE_TYPE          |
+      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Automation_Creative | Template      | Advertiser Name,Campaign Name | Impressions,Clicks | Behavioral Segment |
