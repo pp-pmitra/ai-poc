@@ -4,9 +4,7 @@ import com.microsoft.playwright.FrameLocator;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
-
 import java.util.regex.Pattern;
-
 import utils.WaitUtility;
 
 public class ExpansionWorkspace {
@@ -35,7 +33,6 @@ public class ExpansionWorkspace {
     private final Locator LISTBOX;
     private final FrameLocator WORKSPACE_FRAME_OVERVIEW;
     WaitUtility waitUtility;
-
 
     public ExpansionWorkspace(Page page) {
         this.page = page;
