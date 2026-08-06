@@ -350,7 +350,7 @@ public class WorkspaceCreation {
         waitForStudioWorkspacePage(WORKSPACE_TYPE);
         waitUtility.waitForLocatorVisible(WORKSPACE_TYPE.last());
         CommonUtils.selectAndClickElement(WORKSPACE_TYPE, Collections.singletonList(workspaceType));
-        waitUtility.waitForLocatorVisible(PAGINATION.locator("//ds-typography[contains(text(), '1')]").last());
+        waitUtility.waitForLocatorVisible(PAGINATION.locator("//ds-typography[contains(text(), '1 of')]"));
     }
 
     public void filterByWorkspaceTypeAndOpen(String workspaceType, String workspaceName) {
