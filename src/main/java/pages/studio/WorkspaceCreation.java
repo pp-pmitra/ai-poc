@@ -268,8 +268,7 @@ public class WorkspaceCreation {
     }
 
     public String renameWorkspaceName(String newWorkspace, boolean expectsConfirmationAlert) {
-        Locator workspaceNameInput = WORKSPACE_FRAME.locator("//h3[text()='Rename " +
-                "Workspace']/parent::header/following-sibling::div]");
+        Locator workspaceNameInput = WORKSPACE_FRAME.locator("//h3[text()='Rename Workspace']/parent::header/following-sibling::div");
         workspaceNameInput.locator("ds-input input").fill(newWorkspace);
         if (!UPDATE_BUTTON.isEnabled()) page.waitForTimeout(2000);
         UPDATE_BUTTON.click();
