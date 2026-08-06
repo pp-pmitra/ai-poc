@@ -142,7 +142,6 @@ public class ExplorerWorkspace {
         this.INCLUDE_EXCLUDE_CHECK = WORKSPACE_FRAME.locator("//button[@data-testid='bi-include-exclude-check']");
         this.ALERT = WORKSPACE_FRAME.locator("//div[contains(@class, 'Toastify')]//div[@role='alert']//p");
         this.SPINNER = WORKSPACE_FRAME.locator("//button[@data-tour-id='save-workspace-button']//div[@data-testid='loading-spinner']");
-
     }
 
     public void enterWorkspaceName(String workspaceName) {

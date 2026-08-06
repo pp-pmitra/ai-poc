@@ -220,7 +220,7 @@ Feature: Brand Explorer Workspace creation in Studio
       | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | Physician |
 
   @regression
-  Scenario Outline: Manage operations on Workspace - Rename, Duplication, and Delete on Brand Explorer workspace
+  Scenario Outline: Verify user can rename, duplicate, and delete a Brand Explorer workspace
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "Brand Explorer" workspace
