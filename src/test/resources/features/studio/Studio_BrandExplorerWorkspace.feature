@@ -226,6 +226,8 @@ Feature: Brand Explorer Workspace creation in Studio
     And User clicks on "Brand Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
     And User edits the "Brand Explorer" workspace name as "<WORKSPACE_NAME>"
+    And User clicks the TimeFrame selector
+    And User selects the timeframe preset "<TIMEFRAME>"
     And User saves the "Brand Explorer" workspace
     Then Verify the "Brand Explorer" Workspace is saved
     And Navigate to workspace dashboard
@@ -242,6 +244,6 @@ Feature: Brand Explorer Workspace creation in Studio
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
     Examples:
-      | ADVERTISER         | WORKSPACE_NAME     | NEW_WORKSPACE_NAME  |
-      | TAMTESTING ACCOUNT | Automation_Persist | New_Brand_Explorer_ |
+      | ADVERTISER         | WORKSPACE_NAME     | NEW_WORKSPACE_NAME  | TIMEFRAME    |
+      | TAMTESTING ACCOUNT | Automation_Persist | New_Brand_Explorer_ | Last 30 Days |
 

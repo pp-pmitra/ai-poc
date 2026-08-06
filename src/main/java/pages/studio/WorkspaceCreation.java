@@ -268,7 +268,8 @@ public class WorkspaceCreation {
     }
 
     public String renameWorkspaceName(String newWorkspace, boolean expectsConfirmationAlert) {
-        Locator workspaceNameInput = WORKSPACE_FRAME.locator(String.format("//h3[text()='Rename Workspace']/parent::header/following-sibling::div"));
+        Locator workspaceNameInput = WORKSPACE_FRAME.locator("//h3[text()='Rename " +
+                "Workspace']/parent::header/following-sibling::div]");
         workspaceNameInput.locator("ds-input input").fill(newWorkspace);
         if (!UPDATE_BUTTON.isEnabled()) page.waitForTimeout(2000);
         UPDATE_BUTTON.click();
@@ -350,7 +351,7 @@ public class WorkspaceCreation {
         waitForStudioWorkspacePage(WORKSPACE_TYPE);
         waitUtility.waitForLocatorVisible(WORKSPACE_TYPE.last());
         CommonUtils.selectAndClickElement(WORKSPACE_TYPE, Collections.singletonList(workspaceType));
-        waitUtility.waitForLocatorVisible(PAGINATION.locator("//ds-typography[contains(text(), '1 of')]"));
+        waitUtility.waitForLocatorVisible(PAGINATION.getByText("1 of"));
     }
 
     public void filterByWorkspaceTypeAndOpen(String workspaceType, String workspaceName) {
