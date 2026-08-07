@@ -7395,7 +7395,7 @@ public class LifeSteps {
     }
 
     @Then("Verify Bid multiplier panel with all options under below categories")
-    public void verifyTargetingPanelWithAllBidmultiplierUnderBelowCategories(DataTable bidCategory) throws InterruptedException {
+    public void verifyTargetingPanelWithAllBidmultiplierUnderBelowCategories(DataTable bidCategory) {
         tacticSettings.clickBidMultipliers();
         List<String> bidCategoryList = bidCategory.asList(String.class);
         logger.info("Verifying Bid multiplier panel contains the following categories: {}", bidCategoryList);
@@ -7429,7 +7429,7 @@ public class LifeSteps {
     }
 
     @Given("User configures Bid multiplier rules as below with {string}")
-    public void user_selects_the_Bid_multiplier_rules(String fillValue, DataTable bidRuleTypeAndOptions) throws InterruptedException {
+    public void user_selects_the_Bid_multiplier_rules(String fillValue, DataTable bidRuleTypeAndOptions) {
         logger.info("Configuring Bid multiplier rules from DataTable");
         Map<String, String> rawMap = bidRuleTypeAndOptions.asMap(String.class, String.class);
         Map<String, List<String>> rulesMap = CommonUtils.processDataTable(rawMap);

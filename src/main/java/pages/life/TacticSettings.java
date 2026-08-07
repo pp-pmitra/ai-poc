@@ -1072,7 +1072,7 @@ public class TacticSettings {
         return Collections.emptyList();
     }
 
-    public void selectMultipleBidRuleTypes(String ruleType, List<String> ruleValues, String fillValue) throws InterruptedException {
+    public void selectMultipleBidRuleTypes(String ruleType, List<String> ruleValues, String fillValue) {
 
         String ruleTypeXpath = String.format(
                 "//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
@@ -1088,7 +1088,7 @@ public class TacticSettings {
             case "Speciality", "Geo Targets":
                 fillRuleValues("//div[contains(@class,'bmtTreeNodeName') and normalize-space(text())='%s']/preceding-sibling::div//input[@bidmultiplierconverter]",
                         ruleValues, fillValue);
-                Thread.sleep(1000); // Small delay to ensure the input is registered
+                page.waitForTimeout(1000);
                 break;
 
             case "Operating Systems", "Creative Size":
@@ -1108,8 +1108,8 @@ public class TacticSettings {
     private void fillRuleValues(String xpathTemplate, List<String> ruleValues, String fillValue) {
         for (String value : ruleValues) {
             String cleanedValue = value.replace("[", "").replace("]", "");
-            String xpath = String.format(xpathTemplate, cleanedValue);
-            page.locator(xpath).fill(fillValue);
+            String BidValuexpath = String.format(xpathTemplate, cleanedValue);
+            page.locator(BidValuexpath).fill(fillValue);
         }
     }
 
