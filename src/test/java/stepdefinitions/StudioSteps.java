@@ -1491,5 +1491,22 @@ public class StudioSteps {
         logger.info("Clicking on the More Actions menu for the saved workspace: {}", workspaceName);
         workspaceCreation.clickMoreActionsMenu(workspaceName);
     }
+
+    @And("User removes the default {string} only")
+    public void userRemovesTheDefaultComponentOnly(String componentType) {
+        logger.info("Removing default {} only", componentType);
+        if ("dimension".equalsIgnoreCase(componentType)) {
+            brandExplorerWorkspace.deselectComponent("Time Frame", "Day");
+        } else {
+            brandExplorerWorkspace.deselectComponent("NPI Events", "Identified NPIs");
+        }
+    }
+
+    @Then("Verify the chart shows the empty state message")
+    public void verifyTheChartShowsTheEmptyStateMessage() {
+        Assert.assertTrue(
+                "Chart did not show the 'requires at least 1 dimension and 1 metric' empty state",
+                brandExplorerWorkspace.isChartEmptyStateDisplayed());
+    }
 }
 
