@@ -18,7 +18,7 @@ Feature: Webhook Creation and Validation in HCP Explorer Workspace
     And User clicks PulsePoint icon to navigate back to Life
     And User navigates to Studio application
 
-  @e2e
+  @e2e @prs
   Scenario Outline: Create a webhook and verify macros are appended to the GET request URL and body
     #1
     When User clicks on Create New Workspace
@@ -56,10 +56,10 @@ Feature: Webhook Creation and Validation in HCP Explorer Workspace
     When User tries to delete the workspace associated with active webhook from the workspace list
     Then Verify user receives a warning when attempting to delete a workspace with an active webhook
     Examples:
-      | ADVERTISER | WORKSPACE_NAME | PARAM   | INVALID_WEBHOOK_DATA | ERROR_DATA                             |
-      | Abbvie     | Explorer       | Param 4 | Test                 | https:www.google.com, WebhookData.json |
+      | ADVERTISER | WORKSPACE_NAME   | PARAM   | INVALID_WEBHOOK_DATA | ERROR_DATA                             |
+      | Abbvie     | Explorer_Webhook | Param 4 | Test                 | https:www.google.com, WebhookData.json |
 
-  @e2e
+  @e2e @prs
   Scenario Outline: Create a webhook and verify macros are appended to the POST request URL and body
     #1
     When User clicks on Create New Workspace
@@ -105,5 +105,5 @@ Feature: Webhook Creation and Validation in HCP Explorer Workspace
     When User tries to delete the workspace associated with active webhook from the workspace list
     Then Verify user receives a warning when attempting to delete a workspace with an active webhook
     Examples:
-      | ADVERTISER | WORKSPACE_NAME | PARAM   | BODY             | CONTENT_TYPE | INVALID_WEBHOOK_DATA | ERROR_DATA                             |
-      | Abbvie     | Explorer       | Param 4 | WebhookData.json | JSON         | Test                 | https:www.google.com, WebhookData.json |
+      | ADVERTISER | WORKSPACE_NAME   | PARAM   | BODY             | CONTENT_TYPE | INVALID_WEBHOOK_DATA | ERROR_DATA                             |
+      | Abbvie     | Explorer_Webhook | Param 4 | WebhookData.json | JSON         | Test                 | https:www.google.com, WebhookData.json |
