@@ -9,7 +9,7 @@ Feature: End to End Workflow of NPI Lists.
   7. In case of Smart List, navigate to Response tab and add response to the smart action.
   8. And verify Smart action is saved successfully with details Smart List name and days.
 
-  @e2e @regression
+  @e2e @regression @prs
   Scenario Outline: End to End Workflow of LIFE NPI Smart lists Integration with HCP365
     # 1
     Given This scenario will be executed in the "Demo" environment as a "User"
@@ -55,8 +55,8 @@ Feature: End to End Workflow of NPI Lists.
     When User clicks on Response and enter the details and creates smart list "<SMART_LIST_NAME>" "<DAYS>" and saves
     Then Verify data is saved successfully
     Examples:
-      | ADVERTISER   | LIST_NAME  | DRUG_NAME | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | SMART_ACTION_NAME | SMART_LIST_NAME | DAYS |
-      | Z_Automation | Smart List | Glynase   | Auto    | Regular | 2000      | Line      | 500         | TACTIC      | Display Advanced | SMART_ACTION      | SMART_LIST      | 5    |
+      | ADVERTISER   | LIST_NAME  | DRUG_NAME | CP_NAME        | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | SMART_ACTION_NAME | SMART_LIST_NAME | DAYS |
+      | Z_Automation | Smart List | Glynase   | Life_To_HCP365 | Regular | 2000      | Line      | 500         | TACTIC      | Display Advanced | SMART_ACTION      | SMART_LIST      | 5    |
 
   @e2e @regression
   Scenario Outline: End to End Workflow of Static NPI lists Integration with HCP365 Smart Action
@@ -98,5 +98,5 @@ Feature: End to End Workflow of NPI Lists.
     When User clicks on Action and enters the details and saves
     Then Verify data is saved successfully
     Examples:
-      | ADVERTISER   | LIST_NAME  | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | SMART_ACTION_NAME | NPI_NUMBER |
-      | Z_Automation | STATIC_NPI | Auto    | Regular | 2000      | Line      | 500         | TACTIC      | Display Advanced | SMART_ACTION      | 1234567890 |
+      | ADVERTISER   | LIST_NAME  | CP_NAME        | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | SMART_ACTION_NAME | NPI_NUMBER |
+      | Z_Automation | STATIC_NPI | Life_To_HCP365 | Regular | 2000      | Line      | 500         | TACTIC      | Display Advanced | SMART_ACTION      | 1234567890 |
