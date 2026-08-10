@@ -176,11 +176,11 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     And Navigate to workspace dashboard
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Rename" option by clicking More Actions menu
-    And Verify user is able to rename the workspace as "<NEW_WORKSPACE_NAME>"
+    And Verify user is able to rename the "HCP Explorer" workspace as "<NEW_WORKSPACE_NAME>"
     And User is able to search the workspace after performing operation - "Rename"
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Duplicate" option by clicking More Actions menu
-    And Verify user is able to duplicate the workspace
+    And Verify user is able to duplicate the "HCP Explorer" workspace
     And User is able to search the workspace after performing operation - "Duplicate"
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu

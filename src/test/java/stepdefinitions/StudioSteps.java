@@ -353,6 +353,7 @@ public class StudioSteps {
                         "Sent for asynchronous processing, forced by upstream dependencies - need to refresh upstream workspaces first");
         Assert.assertTrue("Unexpected message for " + workspaceType + " workspace: " + actualMessage, isValid);
         workspace.waitTillWorkspaceAlertHide();
+        explorerWorkspace.waitForSpinnerToDisappear();
         workspace.waitTillWorkspaceSaveButtonIsDisabled(workspaceType);
     }
 
@@ -786,23 +787,29 @@ public class StudioSteps {
         workspaceCreation.performActionOnWorkspace(actionName);
     }
 
-    @And("Verify user is able to rename the workspace as {string}")
-    public void verifyUserIsAbleToRenameTheWorkspace(String newWorkspace) {
+    @And("Verify user is able to rename the {string} workspace as {string}")
+    public void verifyUserIsAbleToRenameTheWorkspace(String workspaceType, String newWorkspace) {
         newWorkspaceName = newWorkspace + CommonUtils.timeStampCalculation();
         logger.info("Renaming workspace from {} to {}", workspaceName, newWorkspaceName);
-        String renameMsg = workspaceCreation.renameWorkspaceName(workspaceName, newWorkspaceName);
+        boolean expectsConfirmationAlert = !"Brand Explorer".equalsIgnoreCase(workspaceType);
+        String renameMsg = workspaceCreation.renameWorkspaceName(newWorkspaceName, expectsConfirmationAlert);
         logger.info("Rename workspace message: {}", renameMsg);
-        Assert.assertEquals("Workspace renamed successfully", renameMsg);
+        if (expectsConfirmationAlert) {
+            Assert.assertEquals("Workspace renamed successfully", renameMsg);
+        }
         workspaceName = newWorkspaceName;
     }
 
-    @And("Verify user is able to duplicate the workspace")
-    public void verifyUserIsAbleToDuplicateTheWorkspace() {
+    @And("Verify user is able to duplicate the {string} workspace")
+    public void verifyUserIsAbleToDuplicateTheWorkspace(String workspaceType) {
         logger.info("Duplicating workspace: {}", workspaceName);
         workspaceName = workspaceCreation.fetchDuplicateWorkspaceName();
-        String duplicateMsg = workspaceCreation.clickDuplicateButton();
+        boolean expectsConfirmationAlert = !"Brand Explorer".equalsIgnoreCase(workspaceType);
+        String duplicateMsg = workspaceCreation.clickDuplicateButton(expectsConfirmationAlert);
         logger.info("Duplicate workspace message: {}", duplicateMsg);
-        Assert.assertEquals("Workspace duplicated successfully", duplicateMsg);
+        if (expectsConfirmationAlert) {
+            Assert.assertEquals("Workspace duplicated successfully", duplicateMsg);
+        }
     }
 
     @And("User is able to search the workspace after performing operation - {string}")
@@ -1478,4 +1485,11 @@ public class StudioSteps {
                 "Filter summary '" + summary + "' does not contain expected value '" + value + "'",
                 summary.contains(value));
     }
+
+    @And("User clicks on the More Actions menu for the saved workspace")
+    public void userClicksOnTheMoreActionsMenuForTheSavedWorkspace() {
+        logger.info("Clicking on the More Actions menu for the saved workspace: {}", workspaceName);
+        workspaceCreation.clickMoreActionsMenu(workspaceName);
+    }
 }
+
