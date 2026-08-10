@@ -57,6 +57,7 @@ public class WorkspaceCreation {
     private final Locator AI_PANEL;
     private final Locator AI_PANEL_CLOSE_BUTTON;
     private final Locator ABSENT_WORKSPACE;
+    private final locator RENAME_WORKSPACE_OUTER_AREA;
     WaitUtility waitUtility;
     int counter = 0;
 
@@ -122,6 +123,7 @@ public class WorkspaceCreation {
         this.AI_PANEL_CLOSE_BUTTON =
                 page.locator("//button[@aria-label='Close AI Assistant' and @class='ai-icon-btn']");
         this.ABSENT_WORKSPACE = WORKSPACE_FRAME.locator("//p[text()='Nothing Found...']");
+        this.RENAME_WORKSPACE_OUTER_AREA = WORKSPACE_FRAME.locator("//h3[text()='Rename Workspace']/parent::header/following-sibling::div");
     }
 
     public String studioDashboard() {
@@ -268,8 +270,7 @@ public class WorkspaceCreation {
     }
 
     public String renameWorkspaceName(String newWorkspace, boolean expectsConfirmationAlert) {
-        Locator workspaceNameInput = WORKSPACE_FRAME.locator("//h3[text()='Rename Workspace']/parent::header/following-sibling::div");
-        workspaceNameInput.locator("ds-input input").fill(newWorkspace);
+        RENAME_WORKSPACE_OUTER_AREA.locator("ds-input input").fill(newWorkspace);
         if (!UPDATE_BUTTON.isEnabled()) page.waitForTimeout(2000);
         UPDATE_BUTTON.click();
         String text = "";
