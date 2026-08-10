@@ -84,15 +84,17 @@ public class CommonUtils {
     }
 
     public static void selectAndClickElement(Locator locator, List<String> values) {
-        for (int i = 0; i < locator.count(); i++) {
+        int count = locator.count();
+        for (int i = 0; i < count; i++) {
             String text = locator.nth(i).innerText().trim();
             for (String value : values) {
                 if (text.equalsIgnoreCase(value.trim())) {
                     locator.nth(i).click();
-                    break;
+                    return;
                 }
             }
         }
+        throw new NoSuchElementException("No element matching any of the provided values " + values + " was found.");
     }
 
     public static String readJsonTestDataFile(String jsonFileName) throws IOException {

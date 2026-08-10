@@ -75,6 +75,7 @@ public class CampaignDashboard {
     private final Locator CAMPAIGN_FROM_DASHBOARD;
     private final Locator GLOBAL_TACTIC_ICON;
     private final Locator CAMPAIGN_TILE;
+    private final Locator CAMPAIGN_PAGINATION;
     WaitUtility waitUtility;
     String lineItemClassBeforeClick, lineItemClassAfterClick, tacticClassBeforeClick, tacticClassAfterClick;
 
@@ -158,6 +159,7 @@ public class CampaignDashboard {
         this.CAMPAIGN_FROM_DASHBOARD = page.locator("//span[contains(@class,'adv-camp-name')]//span");
         this.GLOBAL_TACTIC_ICON = page.locator("//img[contains(@src,'T.svg')]");
         this.CAMPAIGN_TILE = page.locator("//div[contains(@class,'campaign-tile')]");
+        this.CAMPAIGN_PAGINATION = page.locator("//div[@class='paging-desc']");
     }
 
     public String isCampaignDashboardVisibleWithTitle(String text) {
@@ -517,7 +519,7 @@ public class CampaignDashboard {
     }
 
     public void searchCreatedCampaign(String createdCampaign) {
-        waitUtility.waitForLocatorVisible(CAMPAIGN_ENTRIES.last());
+        waitUtility.waitForLocatorVisible(CAMPAIGN_PAGINATION.last());
         ensureCampaignRadioBtnSelected();
         unselectFavoriteCheckboxIfSelected();
         unselectHideFinishedCheckboxIfSelected();
@@ -551,7 +553,7 @@ public class CampaignDashboard {
     }
 
     public String verifyCreatedCampaign(String createdCampaign) {
-        String campaignNameXpath = String.format("//span[contains(text(),'%s')]", createdCampaign);
+        String campaignNameXpath = String.format("//a[contains(text(),'%s')]", createdCampaign);
         waitUtility.waitForLocatorVisible(page.locator(campaignNameXpath).first());
         return page.locator(campaignNameXpath).first().innerText();
     }
