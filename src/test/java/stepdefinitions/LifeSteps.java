@@ -389,19 +389,19 @@ public class LifeSteps {
     }
 
     @Then("User adds frequency cap with details {string} {string} {string} {string}")
-    public void user_adds_frequency_cap_with_details(String level, String FREQ_VALUE, String TIMES_PER, String SCOPE) {
+    public void user_adds_frequency_cap_with_details(String level, String frequencyValue, String timesPer, String scope) {
         logger.info(
                 "Adding Frequency Cap - Level: {}, Value: {}, Times Per: {}, Scope: {}",
                 level,
-                FREQ_VALUE,
-                TIMES_PER,
-                SCOPE);
-        campaigns.addFrequencyCap(level, FREQ_VALUE, TIMES_PER, SCOPE);
+                frequencyValue,
+                timesPer,
+                scope);
+        campaigns.addFrequencyCap(level, frequencyValue, timesPer, scope);
     }
 
     @Then("User adds {string} frequency cap with details {string} {string} {string} {string}")
-    public void user_adds_frequency_cap_with_details(String EXCEEDED, String level, String FREQ_VALUE, String TIMES_PER, String SCOPE) {
-        campaigns.addFrequencyCap(level, FREQ_VALUE, TIMES_PER, SCOPE, EXCEEDED);
+    public void user_adds_frequency_cap_with_details(String exceeded, String level, String frequencyValue, String timesPer, String scope) {
+        campaigns.addFrequencyCap(level, frequencyValue, timesPer, scope, exceeded);
     }
 
     @Then("User gets error of limit exceeded {string}")
