@@ -57,7 +57,7 @@ public class WorkspaceCreation {
     private final Locator AI_PANEL;
     private final Locator AI_PANEL_CLOSE_BUTTON;
     private final Locator ABSENT_WORKSPACE;
-    private final locator RENAME_WORKSPACE_OUTER_AREA;
+    private final Locator RENAME_WORKSPACE_OUTER_AREA;
     WaitUtility waitUtility;
     int counter = 0;
 
