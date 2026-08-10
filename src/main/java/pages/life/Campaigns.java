@@ -78,6 +78,7 @@ public class Campaigns {
     private final Locator CAMPAIGN_STATUS_APPROVED_BUTTON;
     private final Locator FAVORITE_ONLY_CHECKBOX;
     private final Locator FREQUENCY_CAP_VALIDATION_ERROR;
+    private final Locator CAMPAIGN_PAGINATION_ON_DASHBOARD;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
     TacticSettings tacticSettings = new TacticSettings(DriverFactory.getPage());
 
@@ -173,6 +174,7 @@ public class Campaigns {
                 "//label[contains(text(),'Approval Status')]/following-sibling::div[contains(@class,'display-inlineBlock')]//button[text()='Approved']");
         this.FAVORITE_ONLY_CHECKBOX = page.locator("//sui-checkbox[label[normalize-space()='Favorite Only']]");
         this.FREQUENCY_CAP_VALIDATION_ERROR = page.locator("//p[contains(@class,'ng-star-inserted')]");
+        this.CAMPAIGN_PAGINATION_ON_DASHBOARD = page.locator("//div[@class='paging-desc']");
     }
 
     public void createCampaign() {
@@ -319,7 +321,7 @@ public class Campaigns {
         }
         if (LIFE_TIME_FILTER.getAttribute("class").contains("inactive")) {
             LIFE_TIME_FILTER.click();
-            waitUtility.waitForLocatorVisible(CAMPAIGN_ENTRIES.last());
+            waitUtility.waitForLocatorVisible(CAMPAIGN_PAGINATION_ON_DASHBOARD.last());
         }
     }
 
