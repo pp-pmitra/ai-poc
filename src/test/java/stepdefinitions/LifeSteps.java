@@ -7713,7 +7713,9 @@ public class LifeSteps {
                 timesPerTarget,
                 perTargetAudience);
         campaigns.selectTimesPerTarget(timesPerTarget);
+        Assert.assertEquals("Times per Target dropdown value does not match", campaigns.getTimesPerTargetDropdownValue(), timesPerTarget);
         campaigns.selectPerTargetAudience(perTargetAudience);
+        Assert.assertEquals("Per Target Audience dropdown value does not match", campaigns.getPerTargetAudienceDropdownValue(), perTargetAudience);
     }
 
     @And("User makes the template {string}")
