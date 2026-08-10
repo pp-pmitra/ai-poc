@@ -7622,4 +7622,14 @@ public class LifeSteps {
         List<String> advertiser = bulkCreativeUpload.fetchAdvertisers();
         Assert.assertTrue("Advertiser List does not match", advertiser.containsAll(itemList));
     }
+
+    @When("User deletes the created campaign")
+    public void userDeletesTheCreatedCampaign() {
+
+    }
+
+    @Then("verify that the created campaign is deleted successfully")
+    public void verifyThatTheCreatedCampaignIsDeletedSuccessfully() {
+
+    }
 }
