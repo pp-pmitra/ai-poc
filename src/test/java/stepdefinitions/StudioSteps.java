@@ -1493,6 +1493,20 @@ public class StudioSteps {
                 brandExplorerWorkspace.isComponentVisibleAsTableColumn(component));
     }
 
+    @Then("Verify {string} is not visible as a table column")
+    public void verifyComponentIsNotVisibleAsATableColumn(String component) {
+        logger.info("Verifying '{}' is not visible as a table column", component);
+        Assert.assertFalse(
+                "Component '" + component + "' is still visible as a table column",
+                brandExplorerWorkspace.isComponentVisibleAsTableColumn(component));
+    }
+
+    @When("User removes {string} from the table header")
+    public void userRemovesColumnFromTheTableHeader(String columnName) {
+        logger.info("Removing '{}' from the table header", columnName);
+        brandExplorerWorkspace.removeTableColumnFromHeader(columnName);
+    }
+
     @Then("Verify the table column {string} only shows rows with value {string}")
     public void verifyTheTableColumnOnlyShowsRowsWithValue(String field, String value) {
         List<String> columnValues = brandExplorerWorkspace.getTableColumnValues(field);

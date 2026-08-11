@@ -338,6 +338,16 @@ public class BrandExplorerWorkspace {
         }
     }
 
+    public void removeTableColumnFromHeader(String columnName) {
+        Locator header = tableColumnHeader(columnName).locator("xpath=ancestor::th[1]");
+        waitUtility.waitForLocatorVisible(header);
+        header.hover();
+        header.locator("button").last().click(new Locator.ClickOptions().setForce(true));
+        waitUtility.waitForLocatorHidden(tableColumnHeader(columnName));
+        waitForSpinnerToAppear();
+        waitForSpinnerToDisappear();
+    }
+
     public void deselectComponent(String category, String component) {
         expandCategory(category);
         Locator checkbox = categoryCheckbox(category, component);
