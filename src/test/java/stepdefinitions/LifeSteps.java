@@ -7623,13 +7623,17 @@ public class LifeSteps {
         Assert.assertTrue("Advertiser List does not match", advertiser.containsAll(itemList));
     }
 
-    @When("User deletes the created campaign")
-    public void userDeletesTheCreatedCampaign() {
-
+    @When("User deletes the campaign")
+    public void userDeletesTheCampaign() {
+        campaigns.clickCampaignOptions();
+        campaigns.deleteCampaign();
     }
 
-    @Then("verify that the created campaign is deleted successfully")
-    public void verifyThatTheCreatedCampaignIsDeletedSuccessfully() {
-
+    @Then("Verify that the campaign is deleted successfully")
+    public void verifyThatTheCampaignIsDeletedSuccessfully() {
+        String successMessage = campaigns.fetchCampaignDeleteSuccessAlert();
+        Assert.assertEquals("Campaign deleted successfully", successMessage);
+        String noCampaignFoundError = campaignDashboard.fetchNoCampaignFoundMessage(campaignNameRandom);
+        Assert.assertEquals("No campaigns matching filtering criteria found", noCampaignFoundError);
     }
 }
