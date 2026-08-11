@@ -184,6 +184,36 @@ Feature: Brand Explorer Workspace creation in Studio
       | TAMTESTING ACCOUNT |
 
   @regression
+  Scenario Outline: Verify Brand Explorer segments can be selected and removed
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User removes the default dimensions and metric
+    Then Verify each "segment" under below categories can be selected and removed
+      | NPI List Name                 |
+      | NPI List Name - separate rows |
+    Examples:
+      | ADVERTISER         |
+      | TAMTESTING ACCOUNT |
+
+  @regression
+  Scenario Outline: Verify Brand Explorer chart can be hidden and shown
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    Then Verify the Brand Explorer chart is visible
+    When User clicks the "Hide Chart" chart toggle
+    Then Verify the Brand Explorer chart is hidden
+    And Verify the Brand Explorer table is visible
+    When User clicks the "Show Chart" chart toggle
+    Then Verify the Brand Explorer chart is visible
+    Examples:
+      | ADVERTISER         |
+      | TAMTESTING ACCOUNT |
+
+  @regression
   Scenario Outline: Verify a saved filter persists when the workspace is closed and reopened
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -246,4 +276,3 @@ Feature: Brand Explorer Workspace creation in Studio
     Examples:
       | ADVERTISER         | WORKSPACE_NAME     | NEW_WORKSPACE_NAME  | TIMEFRAME    |
       | TAMTESTING ACCOUNT | Automation_Persist | New_Brand_Explorer_ | Last 30 Days |
-
