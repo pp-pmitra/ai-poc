@@ -214,6 +214,20 @@ Feature: Brand Explorer Workspace creation in Studio
       | TAMTESTING ACCOUNT |
 
   @regression
+  Scenario Outline: Verify a Brand Explorer table column can be removed from the table header
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User selects "<FIELD>" from "<CATEGORY>" component panel
+    Then Verify "<FIELD>" is visible as a table column
+    When User removes "<FIELD>" from the table header
+    Then Verify "<FIELD>" is not visible as a table column
+    Examples:
+      | ADVERTISER         | CATEGORY                 | FIELD      |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession |
+
+  @regression
   Scenario Outline: Verify a saved filter persists when the workspace is closed and reopened
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
