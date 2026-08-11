@@ -245,8 +245,17 @@ public class BrandExplorerWorkspace {
                 .getByRole(AriaRole.CHECKBOX, new Locator.GetByRoleOptions().setName(field).setExact(true));
     }
 
+    private Locator componentCheckbox(String component) {
+        return WORKSPACE_FRAME.getByRole(
+                AriaRole.CHECKBOX, new FrameLocator.GetByRoleOptions().setName(component).setExact(true));
+    }
+
     private Locator tableColumnHeader(String columnName) {
         return WORKSPACE_FRAME.locator(String.format("//th//ds-typography[text()='%s']", columnName));
+    }
+
+    private Locator chartToggleButton(String label) {
+        return WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName(label)).first();
     }
 
     public List<String> getMissingComponentCategories(List<String> categories) {
@@ -296,6 +305,30 @@ public class BrandExplorerWorkspace {
         }
     }
 
+    public boolean isChartHidden() {
+        try {
+            waitUtility.waitForLocatorHidden(BRAND_EXPLORER_CHART);
+            return true;
+        } catch (TimeoutError e) {
+            return false;
+        }
+    }
+
+    public boolean isTableVisible() {
+        try {
+            waitUtility.waitForLocatorVisible(BRAND_EXPLORER_TABLE);
+            return true;
+        } catch (TimeoutError e) {
+            return false;
+        }
+    }
+
+    public void clickChartToggle(String label) {
+        Locator toggle = chartToggleButton(label);
+        waitUtility.waitForLocatorVisible(toggle);
+        toggle.click();
+    }
+
     public boolean isComponentVisibleAsTableColumn(String component) {
         try {
             waitUtility.waitForLocatorVisible(tableColumnHeader(component));
@@ -333,6 +366,29 @@ public class BrandExplorerWorkspace {
             }
         }
         components.forEach(component -> categoryCheckbox(category, component).uncheck());
+        for (String component : components) {
+            try {
+                waitUtility.waitForLocatorHidden(tableColumnHeader(component));
+            } catch (TimeoutError e) {
+                failures.add(component + ": was not removed from the table after being deselected");
+            }
+        }
+        return failures;
+    }
+
+    public List<String> verifyStandaloneComponentsSelectAndRemove(List<String> components) {
+        List<String> failures = new ArrayList<>();
+        components.forEach(component -> componentCheckbox(component).check());
+        waitForSpinnerToAppear();
+        waitForSpinnerToDisappear();
+        for (String component : components) {
+            try {
+                waitUtility.waitForLocatorVisible(tableColumnHeader(component));
+            } catch (TimeoutError e) {
+                failures.add(component + ": did not appear as a table column after being selected");
+            }
+        }
+        components.forEach(component -> componentCheckbox(component).uncheck());
         for (String component : components) {
             try {
                 waitUtility.waitForLocatorHidden(tableColumnHeader(component));
