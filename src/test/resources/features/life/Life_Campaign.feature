@@ -7,7 +7,7 @@ Feature: LIFE Regression - Create a Campaign
   5. Custom field addition, modification, and deletion on the Campaign creation page
   6. Create a campaign for an external user
 
-  @regression
+  @regression @puru
   Scenario Outline: Create a Campaign with a Tactic & a Line Item
     Given This scenario will be executed in the "Demo" environment as a "User"
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
@@ -26,8 +26,9 @@ Feature: LIFE Regression - Create a Campaign
     Then Verify the newly created campaign is in running state
     Then Verify the newly created campaign details in the campaign list: Campaign name, Line item name and Tactic name
     #Then Verify the newly created campaign in the database
-    When User deletes the created campaign
-    Then verify that the created campaign is deleted successfully
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          | CREATIVE      |
       | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Behavioral Segment | Auto_Creative |
@@ -58,8 +59,9 @@ Feature: LIFE Regression - Create a Campaign
     And User assigns the existing creative named "<CREATIVE>", enables the tactic and saves the changes
     Then Verify the newly created campaign is in running state
     Then Verify the newly created campaign details in the campaign list: Campaign name, Line item name and Tactic name
-    When User deletes the created campaign
-    Then verify that the created campaign is deleted successfully
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | CREATIVE           |
       | 01- Advertiser | Test    | Regular | 10000     | Line      | 120         | Tactic      | Display Advanced | Please_Dont_Delete |
@@ -171,8 +173,9 @@ Feature: LIFE Regression - Create a Campaign
     Then Verify that the campaign is in "Pending Appr" state
     Then Verify that the approval status of the campaign is "Pending Appr"
     Then Verify the newly created campaign details in the campaign list: Campaign name, Line item name and Tactic name
-    When User deletes the created campaign
-    Then verify that the created campaign is deleted successfully
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
     Examples:
       | ADVERTISER       | CP_NAME       | CP_TYPE | CP_BUDGET | LINE_NAME     | LINE_BUDGET | TACTIC_NAME     | RULE_TYPE          | CREATIVE          |
       | 1Demo Advertiser | External_Auto | Regular | 10000     | External_Line | 500         | External_Tactic | Behavioral Segment | External_Creative |
@@ -195,8 +198,9 @@ Feature: LIFE Regression - Create a Campaign
       | Native Display | ND_Line    | 6000      | ND_Standard_Tactic | Standard         | Retargeting Pixels | Retargeting_20250910_113545, Retargeting_20260117_030813, Retargeting_20260406_175539, Test_232434, Test_20251205_152023, New_Test123               | Clickers           | AutoImportedNPI_Campaign_20260502_235258, CreativeCampaign_20260508_151430, TargetingTemplate_20260506_194240, Auto_20260506_192726, Test_20260525_175528, Campaign_20260524_220810 | Legal Pages              | Emancipation, Adoption, Considering Divorce                                                                                     | Ethnicity            | Asian, Arab                                                                                               | Inventory Type      | App, Site                                                                                      | Geo Targets     | New York, California, Texas, Florida, Illinois, Ohio, Georgia                               |
       | Native Display | ND_Line    | 6000      | ND_EHR_Tactic      | EHR              | Sensitive Areas    | Anxiety, Memory Disorders, Anxiety Disorders                                                                                                        | IAB Categories New | Amusement and Theme Parks, Museums & Galleries, Marriage and Civil Unions, Telecommunications Industry                                                                              | Inventory Type           | App, Site                                                                                                                       | Keywords             | Custom_Keyword_Test, TestingKeyword123, QwertyTest, MedKeywordCheck, MedKeywordCheck2, HealthKeywordTest1 | Legal Populations   | Adoption, Emancipation, Divorce, Separation, Child Custody, Child Support, Considering Divorce | Geo Radius      | 35.5::122.42::400                                                                           |
     Then Verify the newly created campaign details in the campaign list
-    When User deletes the created campaign
-    Then verify that the created campaign is deleted successfully
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
     Examples:
       | CREATIVE      |
       | Auto_Creative |
@@ -235,8 +239,9 @@ Feature: LIFE Regression - Create a Campaign
     And User assigns the existing creative named "<CREATIVE>", enables the tactic and saves the changes
     Then Verify the newly created campaign is in running state
     Then Verify the newly created campaign details in the campaign list: Campaign name, Line item name and Tactic name
-    When User deletes the created campaign
-    Then verify that the created campaign is deleted successfully
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
     Examples:
       | ADVERTISER     | CP_NAME   | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | CREATIVE           |
       | 01- Advertiser | Persisted | Regular | 10000     | Line      | 120         | Tactic      | Display Advanced | Please_Dont_Delete |
