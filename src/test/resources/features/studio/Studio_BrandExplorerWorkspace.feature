@@ -257,9 +257,9 @@ Feature: Brand Explorer Workspace creation in Studio
     Then Verify the chart shows the empty state message
     And Verify "<REMAINING_COLUMN>" is visible as a table column
     Examples:
-      | ADVERTISER         | COMPONENT         | REMAINING_COLUMN |
-      | TAMTESTING ACCOUNT | dimension         | Identified NPIs  |
-      | TAMTESTING ACCOUNT | metric            | Day              |
+      | ADVERTISER         | COMPONENT | REMAINING_COLUMN |
+      | TAMTESTING ACCOUNT | dimension | Identified NPIs  |
+      | TAMTESTING ACCOUNT | metric    | Day              |
 
   @regression
   Scenario Outline: Verify the chart shows an empty state when both the dimension and metric are removed
