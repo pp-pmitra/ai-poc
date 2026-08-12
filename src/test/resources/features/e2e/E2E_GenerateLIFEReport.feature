@@ -6,7 +6,7 @@ Feature: End to End Workflow of Report Generation.
   4. Download the report from generated report tab.
   5. Verify the Column headers of Template and Report file.
 
-  @e2e @regression @prs
+  @e2e @regression
   Scenario Outline: End to End Workflow of Report Generation with Campaign and Report Template creation.
     # 1
     Given This scenario will be executed in the "Demo" environment as a "User"
