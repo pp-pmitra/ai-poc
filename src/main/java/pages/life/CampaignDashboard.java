@@ -658,4 +658,10 @@ public class CampaignDashboard {
         CAMPAIGN_FROM_DASHBOARD.first().click();
         waitUtility.waitForLocatorVisible(CAMPAIGN_PAGE_TITLE);
     }
+
+    public String fetchNoCampaignFoundMessage(String campaignName) {
+        waitUtility.waitForLocatorVisible(CAMPAIGN_PAGE_TEXT);
+        searchCreatedCampaign(campaignName);
+        return NO_CAMPAIGN_AVAILABLE_TEXT.innerText();
+    }
 }

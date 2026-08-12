@@ -53,4 +53,4 @@ Feature: E2E Workflow for Targeting a Studio HCP Explorer List in LIFE at the Ta
     Then Verify that the workspace cannot be deleted and appropriate message is displayed to the user
     Examples:
       | ADVERTISER | WORKSPACE_NAME | LIST_TYPE | CP_NAME     | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE |
-      | Abbvie     | Studio_HCP     | Static    | Studio_List | Regular | 10000     | New_Line  | 50          | New_Tactic  | Display Advanced | NPI       |
+      | Abbvie     | HCP_To_Life    | Static    | Studio_List | Regular | 10000     | New_Line  | 50          | New_Tactic  | Display Advanced | NPI       |
