@@ -9,7 +9,7 @@ Feature: End to End Workflow of NPI Lists.
   7. In case of Smart List, navigate to Response tab and add response to the smart action.
   8. And verify Smart action is saved successfully with details Smart List name and days.
 
-  @e2e @regression @prs
+  @e2e @regression
   Scenario Outline: End to End Workflow of LIFE NPI Smart lists Integration with HCP365
     # 1
     Given This scenario will be executed in the "Demo" environment as a "User"

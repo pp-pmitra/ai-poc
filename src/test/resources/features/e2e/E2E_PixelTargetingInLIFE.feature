@@ -5,7 +5,7 @@ Feature: End to End workflow for all types of Pixel creation and targeting at Ta
   3. Creation of Conversion Pixel.
   4. Targeting the created Pixel at Tactic level.
 
-  @e2e @prs
+  @e2e
   Scenario Outline: Create a Retargeting Pixel and target in 'Retargeting Pixel' targeting at Tactic level
     Given This scenario will be executed in the "Demo" environment as a "User"
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
