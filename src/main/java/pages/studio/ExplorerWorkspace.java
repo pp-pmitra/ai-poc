@@ -66,6 +66,8 @@ public class ExplorerWorkspace {
     private final Locator SPECIALITY_PANEL;
     private final Locator INCLUDE_EXCLUDE_CHECK;
     private final Locator ALERT;
+    private final Locator CLINICAL_RECENCY_FILTER;
+    private final Locator WORKSPACE_LOADING_SPINNER;
     WaitUtility waitUtility;
 
     public ExplorerWorkspace(Page page) {
@@ -98,7 +100,7 @@ public class ExplorerWorkspace {
                 .nth(2);
         this.SAVE_WORKSPACE_NAME = WORKSPACE_FRAME.locator(
                 "//button[contains(@data-tour-id,'save-workspace-details-button')]//div[contains(text(),'Save')]");
-        this.TAB_PANEL_SEARCH = WORKSPACE_FRAME.locator("//div[@role='tabpanel']//input[@placeholder='Search']");
+        this.TAB_PANEL_SEARCH = WORKSPACE_FRAME.locator("//div[@data-tour-id='include-exclude-filter-container' or @data-tour-id='filter-hero']//input[@placeholder='Search']");
         this.TO_YEAR = WORKSPACE_FRAME.locator("//input[@data-testid='bi-slider-input-0']");
         this.FROM_YEAR = WORKSPACE_FRAME.locator("//input[@data-testid='bi-slider-input-1']");
         this.REACHABLE_AUDIENCE =
@@ -120,12 +122,12 @@ public class ExplorerWorkspace {
                 .locator("//div[@class='gmnoprint']//button[@title='Zoom out' and contains(@class, 'gm-control-active')]");
         this.MAP_CONTENT = DASHBOARD_FRAME
                 .locator("div[aria-label='Dashboard Content']");
-        this.DASHBOARD_FILTER_TITLE = WORKSPACE_FRAME.locator("//p[contains(text(),'Dashboard Filters')]");
-        this.MERGED_TEXT = WORKSPACE_FRAME.locator("//p[contains(text(),'Merged with Primary after Save')]");
+        this.DASHBOARD_FILTER_TITLE = WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'Dashboard Filters')]");
+        this.MERGED_TEXT = WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'Merged with Primary after Save')]");
         this.DASHBOARD_FILTERS = WORKSPACE_FRAME.locator(
-                "//p[contains(text(),'Dashboard Filters')]/ancestor::div/following-sibling::div//p");
-        this.MOMENTS = WORKSPACE_FRAME.locator("//div[@data-tour-id='filters-drawer']//p[normalize-space(.)='IAB']");
-        this.IBHEALTH = WORKSPACE_FRAME.locator("//div[@data-tour-id='filters-drawer']//p[normalize-space(.)='WebMD']");
+                "//ds-typography[contains(text(),'Dashboard Filters')]/ancestor::div/following-sibling::div//ds-typography");
+        this.MOMENTS = WORKSPACE_FRAME.locator("//div[@data-tour-id='filters-drawer']//ds-typography[normalize-space(.)='IAB']");
+        this.IBHEALTH = WORKSPACE_FRAME.locator("//div[@data-tour-id='filters-drawer']//ds-typography[normalize-space(.)='WebMD']");
         this.MOMENTS_WIDGET =
                 WORKSPACE_FRAME.getByText("Contextual", new FrameLocator.GetByTextOptions().setExact(true));
         this.CLAIMS_WIDGET = WORKSPACE_FRAME.getByText("Clinical", new FrameLocator.GetByTextOptions().setExact(true));
@@ -133,13 +135,15 @@ public class ExplorerWorkspace {
                 .locator("//span[text()='Owned & Operated']");
         this.WORKSPACE_EDIT_BUTTON = WORKSPACE_FRAME.locator("//button//div[text()='Edit']");
         this.WORKSPACE_HEADER =
-                WORKSPACE_FRAME.locator("//div[@data-tour-id='workspace-back-button']/following-sibling::div//h1");
+                WORKSPACE_FRAME.locator("//div[@data-tour-id='workspace-back-button']/following-sibling::div//ds-typography[@role='heading']");
         this.ADVERTISER_LIST = WORKSPACE_FRAME.locator("//ds-typography[text()='Advertisers']");
         this.SEARCH_ADVERTISER = WORKSPACE_FRAME.locator("//input[@placeholder='Search']");
         this.ADVERTISER_BUTTON = WORKSPACE_FRAME.locator("//button[contains(@data-tour-id,'workspace-advertiser')]");
-        this.SPECIALITY_PANEL = WORKSPACE_FRAME.locator("//div[@data-tour-id='include-exclude-filter-container']//p/text()");
+        this.SPECIALITY_PANEL = WORKSPACE_FRAME.locator("//div[@data-testid='bi-include-exclude']/following-sibling::p/text()");
         this.INCLUDE_EXCLUDE_CHECK = WORKSPACE_FRAME.locator("//button[@data-testid='bi-include-exclude-check']");
         this.ALERT = WORKSPACE_FRAME.locator("//div[contains(@class, 'Toastify')]//div[@role='alert']//p");
+        this.CLINICAL_RECENCY_FILTER = WORKSPACE_FRAME.locator("[data-tour-id='clinical-recency_filter']");
+        this.WORKSPACE_LOADING_SPINNER = WORKSPACE_FRAME.locator("//div[@data-testid='loading-spinner']");
     }
 
     public void enterWorkspaceName(String workspaceName) {
@@ -167,14 +171,10 @@ public class ExplorerWorkspace {
         SEARCH_ADVERTISER_IN_EDIT_WORKSPACE.press("Enter");
     }
 
-    // Brand Explorer doesn't show a confirmation toast on rename, unlike other workspace types.
-    public void saveWorkspaceName(boolean expectsConfirmationAlert) {
+    public boolean saveWorkspaceName() {
         SAVE_WORKSPACE_NAME.click();
-        if (!expectsConfirmationAlert) {
-            return;
-        }
-        waitUtility.waitForLocatorVisible(ALERT);
-        waitUtility.waitForLocatorHidden(ALERT);
+        if(WORKSPACE_LOADING_SPINNER.isVisible()) waitUtility.waitForLocatorHidden(WORKSPACE_LOADING_SPINNER.first());
+        return ALERT.isVisible();
     }
 
     public void waitUntilAlertDisappears() {
@@ -213,11 +213,12 @@ public class ExplorerWorkspace {
                     "IAB",
                     "MeSH":
                 if (filter.equals("Specialty")) {
-                    WORKSPACE_FRAME.locator("//div//ds-typography[text()='Specialty']").click();
+                    WORKSPACE_FRAME.locator("//div[@data-tour-id='filter-hero']//ds-typography[text()='Specialty']")
+                            .first()
+                            .click();
                     WORKSPACE_FRAME
-                            .locator("ds-tab")
+                            .locator("ds-typography")
                             .filter(new Locator.FilterOptions().setHasText("All Specialties")).click();
-                    waitUtility.waitForLocatorVisible(SPECIALITY_PANEL.last());
                 }
                 for (String option : options) {
                     waitUtility.waitForLocatorVisible(INCLUDE_EXCLUDE_CHECK.last());
@@ -468,15 +469,13 @@ public class ExplorerWorkspace {
     }
 
     public void selectRecency(String recency) {
-        WORKSPACE_FRAME
-                .locator(String.format("//div[@data-tour-id = 'clinical-recency_filter']//label[text()='%s']",
-                        recency)).click();
+        CLINICAL_RECENCY_FILTER.getByText(recency).click();
     }
 
     public String fetchRecencyValue() {
         waitForDashboardLoad();
         Locator recencyLocator = WORKSPACE_FRAME.locator(
-                "//div[@data-tour-id='filters-container']//div[@role='img']/following-sibling::p");
+                "//div[@data-tour-id='filters-container']//div[@role='img']/following-sibling::ds-typography");
         String text = recencyLocator.last().textContent().trim();
         // Assertion expects first character as uppercase while after applying filter lowercase is shown on UI
         Matcher matcher = Pattern.compile(

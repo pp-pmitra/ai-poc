@@ -136,7 +136,7 @@ public class Accounts {
         this.USER_SIGNAL_TAB = page.locator("//button[normalize-space(.)='Signal']");
         this.USER_PERMISSIONS_SAVE_BUTTON = page.locator("//button[@class='ui primary button okButton']");
         this.USER_PROFILE_ICON = page.locator("//div[@class='accountname']");
-        this.LOGOUT_BUTTON = page.locator("//span[text()='Sign Out']");
+        this.LOGOUT_BUTTON = page.locator("//div[text()='Sign Out'] | //span[text()='Sign Out']");
         this.MOMENTS_CHECKBOX = page.locator("//*[@id='44_0' and not(contains(@class, 'checked'))]");
         this.IBHEALTH_CHECKBOX = page.locator("//*[@id='45_0' and not(contains(@class, 'checked'))]");
         this.CLAIMSDATA_CHECKBOX = page.locator("//*[@id='43_0' and not(contains(@class, 'checked'))]");

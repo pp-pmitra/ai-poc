@@ -523,11 +523,11 @@ public class LifeSteps {
         Assert.assertFalse(tacticDetails.customFieldValue(customFieldName).inputValue().isEmpty());
     }
 
-    @Then("User deletes the custom field and verify its removed from new tactic")
-    public void user_deletes_the_custom_field_and_verify_its_removed_from_new_tactic() {
-        logger.info("Deleting custom field: {}", customFieldName);
+    @Then("User deletes the custom field and verify its removed from new {string}")
+    public void user_deletes_the_custom_field_and_verify_its_removed_from_new(String pageType) {
+        logger.info("Deleting custom field: {} from {}", customFieldName, pageType);
         Assert.assertTrue(
-                "Unable to delete Custom field",
+                "Unable to delete Custom field from " + pageType,
                 tacticDetails.deleteCustomField(customFieldName).contains("Successfully deleted the Field"));
         Assert.assertFalse("Custom Field is available", tacticDetails.isCustomFieldAvailable(customFieldName));
     }

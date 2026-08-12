@@ -135,7 +135,7 @@ Feature: LIFE Regression - Line Item Management
     And User navigates to Campaign Dashboard
     And User clicks on the existing campaign to open the campaign details page
     Then Verify the custom field created in line item details page is available for all line items under the campaign
-    Then User deletes the custom field and verify its removed from new tactic
+    Then User deletes the custom field and verify its removed from new "line item"
     Examples:
       | LINE_ITEM  | CUSTOM_NAME     | LINE_BUDGET |
       | Line_Item_ | Custom_Field_ID | 50          |
