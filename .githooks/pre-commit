@@ -1,0 +1,9 @@
+#!/bin/sh
+
+echo "Running Checkstyle..."
+mvn checkstyle:check
+
+if [ $? -ne 0 ]; then
+  echo "Checkstyle failed — commit cancelled."
+  exit 1
+fi
