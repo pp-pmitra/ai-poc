@@ -180,7 +180,7 @@ Feature: LIFE Regression - Create a Campaign
       | ADVERTISER       | CP_NAME       | CP_TYPE | CP_BUDGET | LINE_NAME     | LINE_BUDGET | TACTIC_NAME     | RULE_TYPE          | CREATIVE          |
       | 1Demo Advertiser | External_Auto | Regular | 10000     | External_Line | 500         | External_Tactic | Behavioral Segment | External_Creative |
 
-  @regression @puru
+  @regression
   Scenario Outline: Create a campaign with multiple line items, multiple tactics per line item and multiple targeting rules with multiple values per rule
     Given This scenario will be executed in the "Demo" environment as a "User"
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
