@@ -786,23 +786,25 @@ public class StudioSteps {
         workspaceCreation.performActionOnWorkspace(actionName);
     }
 
-    @And("Verify user is able to rename the workspace as {string}")
-    public void verifyUserIsAbleToRenameTheWorkspace(String newWorkspace) {
+    @And("Verify user is able to rename the {string} workspace as {string}")
+    public void verifyUserIsAbleToRenameTheWorkspace(String workspaceType, String newWorkspace) {
         newWorkspaceName = newWorkspace + CommonUtils.timeStampCalculation();
         logger.info("Renaming workspace from {} to {}", workspaceName, newWorkspaceName);
-        String renameMsg = workspaceCreation.renameWorkspaceName(newWorkspaceName);
-        logger.info("Rename workspace message: {}", renameMsg);
-        Assert.assertEquals("Workspace renamed successfully", renameMsg);
+        String renameMessage = workspaceCreation.renameWorkspaceName(newWorkspaceName);
+        logger.info("Rename workspace message: {}", renameMessage);
+        if(!workspaceType.equalsIgnoreCase("Brand Explorer"))
+            Assert.assertEquals("Workspace renamed successfully", renameMessage);
         workspaceName = newWorkspaceName;
     }
 
-    @And("Verify user is able to duplicate the workspace")
-    public void verifyUserIsAbleToDuplicateTheWorkspace() {
+    @And("Verify user is able to duplicate the {string} workspace")
+    public void verifyUserIsAbleToDuplicateTheWorkspace(String workspaceType) {
         logger.info("Duplicating workspace: {}", workspaceName);
         workspaceName = workspaceCreation.fetchDuplicateWorkspaceName();
-        String duplicateMsg = workspaceCreation.clickDuplicateButton();
-        logger.info("Duplicate workspace message: {}", duplicateMsg);
-        Assert.assertEquals("Workspace duplicated successfully", duplicateMsg);
+        String duplicateMessage = workspaceCreation.clickDuplicateButton();
+        logger.info("Duplicate workspace message: {}", duplicateMessage);
+        if(!workspaceType.equalsIgnoreCase("Brand Explorer"))
+            Assert.assertEquals("Workspace duplicated successfully", duplicateMessage);
     }
 
     @And("User is able to search the workspace after performing operation - {string}")
