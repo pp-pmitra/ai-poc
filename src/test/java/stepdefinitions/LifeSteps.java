@@ -7633,6 +7633,7 @@ public class LifeSteps {
     public void verifyThatTheCampaignIsDeletedSuccessfully() {
         String successMessage = campaigns.fetchCampaignDeleteSuccessAlert();
         Assert.assertEquals("Campaign deleted successfully", successMessage);
+        campaignDashboard.clickLifetimeFilter();
         String noCampaignFoundError = campaignDashboard.fetchNoCampaignFoundMessage(campaignNameRandom);
         Assert.assertEquals("No campaigns matching filtering criteria found", noCampaignFoundError);
     }
