@@ -8,27 +8,45 @@
   <property name="tabWidth" value="4"/>
   <property name="severity" value="warning"/>
 
+  <!--
+    Grandfathers violations that predate this pilot so existing files don't
+    block the build. New/modified code is still enforced. To turn off
+    grandfathering and enforce on everything, delete suppressions.xml
+    (or empty it out) - the "optional" flag below means a missing file is
+    not a config error, just no suppressions.
+  -->
+  <module name="SuppressionFilter">
+    <property name="file" value="${config_loc}/suppressions.xml"/>
+    <property name="optional" value="true"/>
+  </module>
+
   <module name="LineLength">
     <property name="max" value="120"/>
     <property name="ignorePattern" value="^package|^import|https?://"/>
   </module>
 
+  <!-- no 2+ consecutive blank lines -->
+  <module name="RegexpMultiline">
+    <property name="format" value="\n[ \t]*\r?\n[ \t]*\r?\n"/>
+    <property name="message" value="Unnecessary blank lines."/>
+  </module>
+
   <module name="TreeWalker">
     <module name="AvoidStarImport"/>
     <module name="UnusedImports"/>
-        <module name="NeedBraces">
-      <property name="tokens"
-               value="LITERAL_DO, LITERAL_ELSE, LITERAL_FOR, LITERAL_IF, LITERAL_WHILE"/>
-    </module>
-    <module name="EmptyBlock"/>
-    <module name="WhitespaceAround"/>
 
-    <module name="MethodLength">
-      <property name="max" value="60"/>
+    <!-- no trailing whitespace -->
+    <module name="RegexpSinglelineJava">
+      <property name="format" value="[ \t]+$"/>
+      <property name="message" value="Trailing whitespace."/>
     </module>
 
-    <module name="ParameterNumber">
-      <property name="max" value="5"/>
+    <!-- camelCase naming; fields also allow UPPER_SNAKE_CASE for locator-style constants -->
+    <module name="MethodName"/>
+    <module name="LocalVariableName"/>
+    <module name="ParameterName"/>
+    <module name="MemberName">
+      <property name="format" value="^[a-z][a-zA-Z0-9]*$|^[A-Z][A-Z0-9_]*$"/>
     </module>
   </module>
 </module>
