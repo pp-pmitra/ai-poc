@@ -252,7 +252,7 @@ public class CreateCreatives {
         this.DURATION_FROM_CREATIVE_TILE = page.locator("//span[contains(text(),'DURATION:')]/following-sibling::span");
         this.CREATIVE_STATUS_FROM_CREATIVE_TILE = page.locator("//div[contains(@class,'status-label')]//span");
         this.CREATED_BY_FROM_CREATIVE_TILE =
-                page.locator("//span[contains(text(),'Created by :')]/following-sibling::span");
+                page.locator("//span[contains(text(),'Created by:')]/following-sibling::span");
         this.SOURCE_FROM_CREATIVE_TILE = page.locator("//span[contains(text(),'Source:')]/following-sibling::span");
         this.LAST_UPDATED_FROM_CREATIVE_TILE =
                 page.locator("//span[contains(text(),'Last updated:')]/following-sibling::span");
@@ -611,7 +611,7 @@ public class CreateCreatives {
                         || type.contains("VAST XML")) {
                     if (CREATIVE_WIDTH_TYPE.first().isVisible()) {
                         CommonUtils.selectAndClickElement(
-                                CREATIVE_TYPE_ICON, Collections.singletonList(attributeMap.get("Type")));
+                                CREATIVE_WIDTH_TYPE, Collections.singletonList(attributeMap.get("Type")));
                     }
                     DURATION.fill(attributeMap.get("Durations"));
                     if (WIDTH.isVisible() && HEIGHT.isVisible()) {
