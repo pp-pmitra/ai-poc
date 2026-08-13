@@ -24,6 +24,50 @@ features, step definitions, page classes & common functions etc.
 3. Create run configuration as shown below & execute.
    <img width="595" alt="image" src="https://github.com/user-attachments/assets/86967dc0-fc6b-47fe-8873-aad598bdff31" />
 
+## Code Style (Checkstyle)
+
+This repo runs [Checkstyle](https://checkstyle.org) with a deliberately lightweight ruleset
+(`config/checkstyle/checkstyle.xml`) suited to an automation framework rather than a strict
+production-app style guide. It checks:
+
+- Line length (max 120 chars)
+- No wildcard imports, no unused imports
+- No 2+ consecutive blank lines, no trailing whitespace
+- camelCase for methods, parameters, local variables & fields (fields may also be
+  `UPPER_SNAKE_CASE`, since that's the existing convention for locator constants)
+
+Only `src/main/java` is checked - tests, resources, and everything outside `src/` are out of
+scope.
+
+### When it runs
+
+- `mvn verify` runs Checkstyle as part of the build.
+- Every `git commit` runs it via the `.githooks/pre-commit` hook and cancels the commit on
+  failure.
+
+### Enabling the pre-commit hook
+
+Hooks live in `.githooks/` (not `.git/hooks/`) so they're versioned with the repo, but
+`core.hooksPath` itself is a local git setting - each clone needs to opt in once:
+
+```
+git config core.hooksPath .githooks
+```
+
+### Running it manually
+
+```
+mvn checkstyle:check
+```
+
+### Pre-existing violations
+
+Violations that existed before Checkstyle was introduced are grandfathered in via
+`config/checkstyle/suppressions.xml`, so turning this on didn't break the build for legacy
+code. New or modified code is fully enforced. As a suppressed file gets cleaned up, remove its
+entry from `suppressions.xml` to enforce it again; deleting the whole file lifts every
+suppression at once.
+
 ## References
 
 For additional details on Approach, Roadmap, Documentation etc. refer to
