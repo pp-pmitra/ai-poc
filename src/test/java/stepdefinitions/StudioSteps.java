@@ -1467,4 +1467,10 @@ public class StudioSteps {
                 "Filter summary '" + summary + "' does not contain expected value '" + value + "'",
                 summary.contains(value));
     }
+
+    @And("User clicks on the More Actions menu for the saved workspace")
+    public void userClicksOnTheMoreActionsMenuForTheSavedWorkspace() {
+        logger.info("Clicking on the More Actions menu for the saved workspace: {}", workspaceName);
+        workspaceCreation.clickMoreActionsMenu(workspaceName);
+    }
 }

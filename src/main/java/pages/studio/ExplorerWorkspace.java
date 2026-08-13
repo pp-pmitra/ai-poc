@@ -291,6 +291,14 @@ public class ExplorerWorkspace {
         return APPLIED_FILTER_OPTION.allInnerTexts();
     }
 
+    public void waitForSpinnerToDisappear() {
+        waitUtility.waitForLocatorHidden(SPINNER);
+    }
+
+    public void waitForSpinnerToAppear() {
+        waitUtility.waitForLocatorVisible(SPINNER);
+    }
+
     public void saveExplorerWorkspace() {
         waitForDashboardLoad();
         SAVE_WORKSPACE.first().click();

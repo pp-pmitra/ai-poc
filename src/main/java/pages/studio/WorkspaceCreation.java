@@ -62,6 +62,7 @@ public class WorkspaceCreation {
     private final Locator WORKSPACE_TYPE_CHECKBOX;
     private final Locator RENAME_WORKSPACE_TEXTBOX;
     private final Locator WORKSPACE_LOADING_SPINNER;
+    private final Locator RENAME_WORKSPACE_OUTER_AREA;
     WaitUtility waitUtility;
     int counter = 0;
 
@@ -134,6 +135,7 @@ public class WorkspaceCreation {
         this.WORKSPACE_TYPE_CHECKBOX = WORKSPACE_FRAME.locator("//div[@data-tour-id='workspaces-types-filter']//ds-checkbox");
         this.RENAME_WORKSPACE_TEXTBOX = WORKSPACE_FRAME.locator("div:has(h3:has-text('Rename Workspace')) ds-input input");
         this.WORKSPACE_LOADING_SPINNER = WORKSPACE_FRAME.locator("//div[@data-testid='loading-spinner']");
+        this.RENAME_WORKSPACE_OUTER_AREA = WORKSPACE_FRAME.locator("//h3[text()='Rename Workspace']/parent::header/following-sibling::div");
     }
 
     public String studioDashboard() {
