@@ -518,8 +518,12 @@ public class CampaignDashboard {
         }
     }
 
-    public void searchCreatedCampaign(String createdCampaign) {
+    public void waitUntilCampaignPaginationAppears(){
         waitUtility.waitForLocatorVisible(CAMPAIGN_PAGINATION.last());
+    }
+
+    public void searchCreatedCampaign(String createdCampaign) {
+        waitUntilCampaignPaginationAppears();
         ensureCampaignRadioBtnSelected();
         unselectFavoriteCheckboxIfSelected();
         unselectHideFinishedCheckboxIfSelected();

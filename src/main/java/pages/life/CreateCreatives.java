@@ -601,8 +601,10 @@ public class CreateCreatives {
                         waitUtility.waitForLocatorVisible(UPLOAD_DELETE_ICON);
                     } else {
                         waitUtility.waitUntilSpinnerHidden();
+                        waitUtility.waitForLocatorVisible(page.locator(String.format("//span[contains(text(),'%s')]", attributeMap.get("FileName"))));
                     }
-                } else if (type.contains("Audio URL") || type.contains("Video URL")) URL.fill(attributeMap.get("URL"));
+                }
+                else if (type.contains("Audio URL") || type.contains("Video URL")) URL.fill(attributeMap.get("URL"));
                 else if (type.contains("VAST URL")) URL.fill(attributeMap.get("VASTURL"));
                 else VAST_XML_TEXTAREA.fill(attributeMap.get("VASTXML"));
                 if (type.contains("Audio URL")
@@ -627,6 +629,9 @@ public class CreateCreatives {
                 if (SPONSORED_BY.isVisible()) SPONSORED_BY.fill(attributeMap.get("SponsoredBy"));
                 if (PRODUCT_DESCRIPTION.isVisible()) PRODUCT_DESCRIPTION.fill(attributeMap.get("Description"));
                 if (DISPLAY_URL.isVisible()) DISPLAY_URL.fill(attributeMap.get("DisplayURL"));
+                // Adding below two conditions since Duration and URL are getting blanked automatically
+                if(DURATION.isVisible() && DURATION.textContent().isEmpty() && attributeMap.get("Durations")!=null && !attributeMap.get("Durations").isEmpty()) DURATION.fill(attributeMap.get("Durations"));
+                if(URL.isVisible() && URL.textContent().isEmpty() && attributeMap.get("URL")!=null && !attributeMap.get("URL").isEmpty()) URL.fill(attributeMap.get("URL"));
                 break;
 
             case "Search":
