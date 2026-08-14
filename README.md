@@ -68,6 +68,33 @@ code. New or modified code is fully enforced. As a suppressed file gets cleaned 
 entry from `suppressions.xml` to enforce it again; deleting the whole file lifts every
 suppression at once.
 
+## Feature File Formatting (gherkin-utils)
+
+`.feature` files are checked for consistent Gherkin formatting (indentation, table column
+alignment, blank lines) using [`@cucumber/gherkin-utils`](https://github.com/cucumber/gherkin-utils),
+Cucumber's own formatter. It only normalizes style - it doesn't check step wording, tags, or
+scenario semantics.
+
+### Setup
+
+Requires Node/npm. Install the tooling once per clone:
+
+```
+npm install
+```
+
+### When it runs
+
+Every `git commit` runs it via `.githooks/pre-commit`, but only against the `.feature` files
+you've actually staged - untouched files aren't checked until you edit them.
+
+### Running it manually
+
+```
+npm run feature:check    # reports files that don't match canonical formatting
+npm run feature:format   # reformats files in place
+```
+
 ## References
 
 For additional details on Approach, Roadmap, Documentation etc. refer to
