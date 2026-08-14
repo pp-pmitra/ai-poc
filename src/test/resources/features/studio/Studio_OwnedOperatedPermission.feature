@@ -23,6 +23,7 @@ Feature: Verify visibility of Owned and Operated Data based on Admin Permission 
     And Verify Owned And Operated section is "<VISIBILITY_FLAG>" within the Cross-Filter section of the Workspace
     And User saves the "HCP Explorer" workspace
     Then Verify the "HCP Explorer" Workspace is saved
+
     Examples:
       | PERMISSION_FLAG | ADVERTISER | WORKSPACE_NAME | VISIBILITY_FLAG |
       | Enabled         | Abbvie     | Explorer       | Present         |

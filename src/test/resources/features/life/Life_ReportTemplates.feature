@@ -20,6 +20,7 @@ Feature: LIFE Regression - Create a Report Template
     And Verify availability of "Run Report", "Copy" and "Delete" actions for the created template
     And Verify the details of the created template
     And Verify the delete button is enabled on the Edit Template panel
+
     Examples:
       | TEMPLATE NAME | DIMENSIONS      | METRICS     |
       | AutoTemplate  | Advertiser Name | Impressions |
@@ -46,6 +47,7 @@ Feature: LIFE Regression - Create a Report Template
     And Verify the delete button is enabled on the Edit Template panel
     And User deletes the created template
     Then Verify the template is deleted and not displayed in the template list
+
     Examples:
       | TEMPLATE NAME         | DIMENSIONS                                                                                                          | METRICS                                                          |
       | MultiCategoryTemplate | Advertiser Name, Campaign Name, NPI First Name, Device Type, Area code, Keywords, Deal Name, Age, Current Step Name | Impressions, Clicks, Platform Fee, Complete Views, Midpoint Rate |
@@ -65,6 +67,7 @@ Feature: LIFE Regression - Create a Report Template
     Then Verify new template is saved and displayed in the template list
     And User deletes the existing template from the template list
     Then Verify the template is deleted and not displayed in the template list
+
     Examples:
       | TEMPLATE NAME | DIMENSIONS      | METRICS     |
       | AutoTemplate  | Advertiser Name | Impressions |

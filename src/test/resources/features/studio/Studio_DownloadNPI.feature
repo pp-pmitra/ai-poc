@@ -10,6 +10,7 @@ Feature: Studio Download NPI List
     And User clicks Download NPI option
     And User selects download format as "<FILE_EXTENSION>" and clicks Download button
     And User verifies the total Identified "NPI" count in the downloaded file - "<FILE_EXTENSION>"
+
     Examples:
       | WORKSPACE              | FILE_EXTENSION |
       | Automation_HCPExplorer | CSV            |

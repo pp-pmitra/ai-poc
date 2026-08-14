@@ -22,6 +22,7 @@ Feature: LIFE Regression - This feature verifies the export/download functionali
     And Verify that the counter on the left displays the correct value after file upload "<UPLOAD_FILENAME1>"
     And Verify that user is able to download the uploaded "Keyword" list
     And Verify that the count of items in the downloaded "Keyword" list is the same as the item count displayed in the UI
+
     Examples:
       | LIST_NAME          | UPLOAD_FILENAME1  |
       | Keyword_FileUpload | KeywordsFile1.csv |
@@ -38,6 +39,7 @@ Feature: LIFE Regression - This feature verifies the export/download functionali
     And Verify that the counter on the left displays the correct value after file upload "<UPLOAD_FILENAME1>"
     And Verify that user is able to download the uploaded "Domain" list
     And Verify that the count of items in the downloaded "Domain" list is the same as the item count displayed in the UI
+
     Examples:
       | LIST_NAME         | UPLOAD_FILENAME1    |
       | Domain_FileUpload | DomainNameFile1.csv |
@@ -55,6 +57,7 @@ Feature: LIFE Regression - This feature verifies the export/download functionali
     And Verify that the counter on the left displays the correct value after file upload "<UPLOAD_FILENAME1>"
     And Verify that user is able to download the uploaded "App Bundle" list
     And Verify that the count of items in the downloaded "App Bundle" list is the same as the item count displayed in the UI
+
     Examples:
       | LIST_NAME            | UPLOAD_FILENAME1   |
       | AppBundle_FileUpload | AppBundleFile1.csv |
@@ -70,6 +73,7 @@ Feature: LIFE Regression - This feature verifies the export/download functionali
     And Verify that the counter on the left displays the correct value after file upload "<UPLOAD_FILENAME1>"
     And Verify that user is able to download the uploaded "IP" list
     And Verify that the count of items in the downloaded "IP" list is the same as the item count displayed in the UI
+
     Examples:
       | LIST_NAME            | UPLOAD_FILENAME1   |
       | IPAddress_FileUpload | IPAddressFile1.csv |
@@ -86,6 +90,7 @@ Feature: LIFE Regression - This feature verifies the export/download functionali
     Then Verify list gets saved successfully
     And Verify that user is able to download the uploaded "NPI" list
     And Verify that the count of items in the downloaded "NPI" list is the same as the item count displayed in the UI
+
     Examples:
       | LIST_NAME  | ADVERTISER     | FILE_NAME          |
       | STATIC_NPI | 01- Advertiser | NPIStaticList.xlsx |
@@ -105,6 +110,7 @@ Feature: LIFE Regression - This feature verifies the export/download functionali
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that user is able to download the "NPI" list
     And Verify that the count of items in the downloaded "NPI" list is the same as the item count displayed in the UI
+
     Examples:
       | ADVERTISER     | LIST_NAME | TYPE                   | MEDICAL_PROCEDURE                                 |
       | 01- Advertiser | SMART_NPI | Medical Procedure Code | Cardiac shunt imaging, Florbetaben f18 diagnostic |
@@ -115,6 +121,7 @@ Feature: LIFE Regression - This feature verifies the export/download functionali
     And User searches and selects the NPI List "<LIST_NAME>"
     And Verify that user is able to download the "NPI" list
     And Verify that the count of items in the downloaded "NPI" list is the same as the item count displayed in the UI
+
     Examples:
       | LIST_NAME             |
       | AutoNPIAdmin257977008 |
@@ -128,6 +135,7 @@ Feature: LIFE Regression - This feature verifies the export/download functionali
     And User saves the Email list and verify that the list is created successfully
     And Verify that the counter on the left displays the correct value after file upload for "Email list"
     And Verify that download option should not be available for uploaded Email list
+
     Examples:
       | LIST_NAME        | UPLOAD_FILENAME1 |
       | Email_FileUpload | EmailFile1.csv   |
@@ -151,9 +159,10 @@ Feature: LIFE Regression - This feature verifies the export/download functionali
     Then Verify that user is able to export the audit log for "line item"
     When User navigates to "tactic" page
     Then Verify that user is able to export the audit log for "tactic"
+
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          | CREATIVE      |
-      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Behavioral Segment | Auto_Creative |
+      | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced | Behavioral Segment | Auto_Creative |
 
   @regression
   Scenario Outline: Verify user is able to export settings of the campaign having "Single" line items
@@ -166,6 +175,7 @@ Feature: LIFE Regression - This feature verifies the export/download functionali
     And User clicks New Tactic button, create tactic with details - "<RULE_TYPE>", "<CREATIVE>"
     And User navigates to campaign
     Then Verify that user is able to export the campaign settings
+
     Examples:
       | CAMPAIGN_NAME      | RULE_TYPE          | CREATIVE           |
       | Single_LI_Campaign | Behavioral Segment | Please_Dont_Delete |
@@ -182,6 +192,7 @@ Feature: LIFE Regression - This feature verifies the export/download functionali
     And User clicks New Tactic button, create tactic with details - "<RULE_TYPE>", "<CREATIVE>"
     And User navigates to campaign
     Then Verify that user is able to export the campaign settings
+
     Examples:
       | CAMPAIGN_NAME        | RULE_TYPE          | CREATIVE           |
       | Multiple_LI_Campaign | Behavioral Segment | Please_Dont_Delete |
@@ -199,6 +210,7 @@ Feature: LIFE Regression - This feature verifies the export/download functionali
     And User clicks New Tactic button, create tactic with details - "<RULE_TYPE>", "<CREATIVE>"
     And User navigates to campaign
     Then Verify that user is able to export the campaign settings
+
     Examples:
       | CAMPAIGN_NAME         | RULE_TYPE          | CREATIVE           |
       | Different_LI_Campaign | Behavioral Segment | Please_Dont_Delete |

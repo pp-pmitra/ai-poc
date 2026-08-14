@@ -32,6 +32,7 @@ Feature: DTC Workspace creation in Studio
     And User clicks on Submit button
     And User verifies if workspace is saved successfully and the submission is successful
     Then User verifies the dialog message as "Your Audience is being processed"
+
     Examples:
       | ADVERTISER         | WORKSPACE_NAME          |
       | TAMTESTING ACCOUNT | Automation_DTC_Explorer |

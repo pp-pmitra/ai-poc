@@ -25,6 +25,7 @@ Feature: LIFE Regression – Generate IP Address Lists in the following ways:
     And User retrieves all the entered data after saving the list details "<LIST_NAME>"
     And Verify that the user is able to delete an existing "IP Address" name list
     And Verify the deleted list is no longer displayed in the left panel
+
     Examples:
       | LIST_NAME  | IP_ADDRESS             | EDITED_IP_ADDRESS                            | IP_ADDRESS_ACROSS_LINES                                                |
       | IP_Address | 123.46.7.5, 123.46.7.7 | 123.46.7.0, 684D:1111:222:3333:4444:5555:6:9 | 123.46.7.5, 123.46.7.7 :: 123.46.7.0, 684D:1111:222:3333:4444:5555:6:9 |
@@ -44,6 +45,7 @@ Feature: LIFE Regression – Generate IP Address Lists in the following ways:
     And Verify that the user is able to delete the uploaded file "<UPLOAD_FILENAME1>"
     And Verify that the user is able to delete an existing "IP Address" name list
     And Verify the deleted list is no longer displayed in the left panel
+
     Examples:
       | LIST_NAME            | UPLOAD_FILENAME1   | UPLOAD_FILENAME2   |
       | IPAddress_FileUpload | IPAddressFile1.csv | IPAddressFile2.csv |

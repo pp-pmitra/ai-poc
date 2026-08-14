@@ -30,9 +30,10 @@ Feature: End to End workflow for all types of Pixel creation and targeting at Ta
     Then Verify the count of rule options for the selected targeting rule "<RULE_TYPE>" on the Tactic Settings page
     When User saves the settings
     Then Verify settings details are saved and user is navigated to the creatives tab
+
     Examples:
       | PIXEL_TYPE        | PIXEL_NAME  | ADVERTISER     | CP_NAME              | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          |
-      | Retargeting Pixel | Retargeting | 01- Advertiser | Retargeting_Campaign | Regular | 10000     | New_Line  | 50          | New_Tactic  | Display Advanced | Retargeting Pixels |
+      | Retargeting Pixel | Retargeting | 01- Advertiser | Retargeting_Campaign | Regular |     10000 | New_Line  |          50 | New_Tactic  | Display Advanced | Retargeting Pixels |
 
   @e2e
   Scenario Outline: Create a Smart Pixel and then create a Smart list with that Smart Pixel and target the Smart list in Tactic
@@ -65,9 +66,10 @@ Feature: End to End workflow for all types of Pixel creation and targeting at Ta
     Then Verify the count of rule options for the selected targeting rule "<RULE_TYPE>" on the Tactic Settings page
     When User saves the settings
     Then Verify settings details are saved and user is navigated to the creatives tab
+
     Examples:
       | PIXEL_TYPE  | ADVERTISER       | LIST_NAME   | CP_NAME        | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE |
-      | Smart Pixel | 1Demo Advertiser | Smart_Pixel | Smart_Campaign | Regular | 12500     | Auto_Line | 70          | Auto_Tactic | Display Advanced | NPI       |
+      | Smart Pixel | 1Demo Advertiser | Smart_Pixel | Smart_Campaign | Regular |     12500 | Auto_Line |          70 | Auto_Tactic | Display Advanced | NPI       |
 
   @e2e
   Scenario Outline: Create a Conversion Pixel and target in 'Converters' targeting at Tactic level
@@ -94,6 +96,7 @@ Feature: End to End workflow for all types of Pixel creation and targeting at Ta
     Then Verify the count of rule options for the selected targeting rule "<RULE_TYPE>" on the Tactic Settings page
     When User saves the settings
     Then Verify settings details are saved and user is navigated to the creatives tab
+
     Examples:
       | PIXEL_TYPE       | PIXEL_NAME | ADVERTISER       | SCOPE  | TYPE     | CP_NAME             | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE  |
-      | Conversion Pixel | Conversion | 1Demo Advertiser | Device | Download | Conversion_Campaign | Regular | 1000      | New_Line  | 20          | New_Tactic  | Display Advanced | Converters |
+      | Conversion Pixel | Conversion | 1Demo Advertiser | Device | Download | Conversion_Campaign | Regular |      1000 | New_Line  |          20 | New_Tactic  | Display Advanced | Converters |

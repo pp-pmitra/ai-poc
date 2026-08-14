@@ -16,6 +16,7 @@ Feature: Curated Markets - Verify Deal Import, Validation, and Tactic Assignment
   Scenario Outline: Verify the error messages for mandatory fields - market name, accounts and market KPI and benchmark
     When User clicks Create Curated Market link
     And User creates a curated market with only "<DESCRIPTION>"
+
     Examples:
       | DESCRIPTION                |
       | Curated Market Description |
@@ -30,7 +31,7 @@ Feature: Curated Markets - Verify Deal Import, Validation, and Tactic Assignment
     And User downloads the curated market template
     And User fills the template with deal details and uploads the template
       | DEAL_NAME    | EXCHANGE  | MEDIA_TYPE | CURATOR | DEAL_PRICE | PRICING_TYPE | MPC_DEAL_TYPE                     |
-      | Curated_Deal | JW Player | Display    | Client  | 234        | Fixed        | Deals that can run on any adgroup |
+      | Curated_Deal | JW Player | Display    | Client  |        234 | Fixed        | Deals that can run on any adgroup |
     Then Verify the imported deal is displayed in the Deals Tab on Admin's Curated Market page with details matching the uploaded template
     And User fetches floor price for the imported deal
     And User enables the Curated Market created
@@ -39,10 +40,10 @@ Feature: Curated Markets - Verify Deal Import, Validation, and Tactic Assignment
     And Verify Curated Market tab is displayed
     And User searches for the created Curated Market
     Then Verify the market id, media type, and floor price displayed in Curated Markets section matches the media type in Admin Setup for the same market
+
     Examples:
       | MARKET_NAME    | ACCOUNTS              | DESCRIPTION                | MARKET_KPI_BENCHMARK |
-      | Curated_Market | automation@pulsepoint | Curated Market Description | 0.5                  |
-
+      | Curated_Market | automation@pulsepoint | Curated Market Description |                  0.5 |
 
   @regression
   Scenario Outline: Create a Curated Market from Admin settings by importing multiple deals using a template and verify its details in the Admin Deals tab and Curated Markets section of the Supply module
@@ -54,10 +55,10 @@ Feature: Curated Markets - Verify Deal Import, Validation, and Tactic Assignment
     And User downloads the curated market template
     And User fills the template with deal details and uploads the template
       | DEAL_NAME    | EXCHANGE  | MEDIA_TYPE | CURATOR | DEAL_PRICE | PRICING_TYPE | MPC_DEAL_TYPE                     |
-      | Curated_Deal | JW Player | Display    | Client  | 234        | Fixed        | Deals that can run on any adgroup |
-      | Curated_Deal | JW Player | Video      | Client  | 123        | Floor        | Deals that can run on any adgroup |
-      | Curated_Deal | ADX       | Display    | Client  | 321        | Fixed        | Deals that can run on any adgroup |
-      | Curated_Deal | ADX       | Video      | Client  | 111        | Floor        | Deals that can run on any adgroup |
+      | Curated_Deal | JW Player | Display    | Client  |        234 | Fixed        | Deals that can run on any adgroup |
+      | Curated_Deal | JW Player | Video      | Client  |        123 | Floor        | Deals that can run on any adgroup |
+      | Curated_Deal | ADX       | Display    | Client  |        321 | Fixed        | Deals that can run on any adgroup |
+      | Curated_Deal | ADX       | Video      | Client  |        111 | Floor        | Deals that can run on any adgroup |
     Then Verify the imported deal is displayed in the Deals Tab on Admin's Curated Market page with details matching the uploaded template
     And User fetches floor price for the imported deal
     And User enables the Curated Market created
@@ -66,6 +67,7 @@ Feature: Curated Markets - Verify Deal Import, Validation, and Tactic Assignment
     And Verify Curated Market tab is displayed
     And User searches for the created Curated Market
     Then Verify the market id, media type, and floor price displayed in Curated Markets section matches the media type in Admin Setup for the same market
+
     Examples:
       | MARKET_NAME    | ACCOUNTS              | DESCRIPTION                | MARKET_KPI_BENCHMARK |
-      | Curated_Market | automation@pulsepoint | Curated Market Description | 0.5                  |
+      | Curated_Market | automation@pulsepoint | Curated Market Description |                  0.5 |

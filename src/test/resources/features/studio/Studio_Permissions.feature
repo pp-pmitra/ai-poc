@@ -1,5 +1,4 @@
 Feature: Enable Studio permissions for an account,advertiser and external users
-
   1. This Feature verifies the ability to enable Studio permissions for an account and external users.
   2. It includes scenarios for both internal users and external users, ensuring that the Studio permissions can be granted and verified correctly.
   3. It covers logging in, navigating through accounts, advertisers, and users, enabling permissions, and confirming that the external user can see the assigned Studio permissions in the workspace after logging in.
@@ -16,9 +15,10 @@ Feature: Enable Studio permissions for an account,advertiser and external users
     Then User verifies if Studio appears in submenu for "<ACCOUNT_NAME>" account
     When User disables the studio permission for "<ACCOUNT_NAME>" account
     Then User should not be able to see the studio permission for that account
+
     Examples:
       | ACCOUNT_NAME |
-      | 100Plus      |
+      |      100Plus |
 
   @np
   Scenario Outline: Enable Studio permissions for an External User
@@ -34,11 +34,11 @@ Feature: Enable Studio permissions for an account,advertiser and external users
     And User enables the "<STUDIO_PERMISSIONS>" permission for the "<ACCOUNT_NAME>" for an external user
     Given This scenario will be executed in the "Pre-release" environment as a "External User"
     And "Studio" application is logged in successfully with Account "<ACCOUNT_NAME>"
-    And  External user selects the workspace
+    And External user selects the workspace
     Then External user should be able to see the "<STUDIO_PERMISSIONS>" permission in the workspace
+
     Examples:
       | USER_NAME | STUDIO_PERMISSIONS | ACCOUNT_NAME | ADVERTISER_PERMISSIONS | ADVERTISER_NAME |
       | hmtdemo   | MOMENTS            | HMT Demo     | MOMENTS                | Demo W2O        |
       | hmtdemo   | IB HEALTH          | HMT Demo     | IB HEALTH              | Demo W2O        |
       | hmtdemo   | CLAIMS DATA        | HMT Demo     | CLAIMS DATA            | Demo W2O        |
-

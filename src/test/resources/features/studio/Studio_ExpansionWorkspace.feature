@@ -29,6 +29,7 @@ Feature: HCP Audience Workspace in Studio Application
     And User saves the "HCP Audience Expansion" workspace
     Then Verify the "HCP Audience Expansion" Workspace is saved
     Then Verify the workspace is visible in workspace management page
+
     Examples:
       | ADVERTISER | WORKSPACE_NAME | SOURCE_AUDIENCE  | OPTIONS             | EXPANDED_AUDIENCE             |
       | Abbvie     | HCP_Expansion  | Studio Workspace | Explorer_c3f71fa1-a | Expand with Care Team         |
@@ -48,7 +49,7 @@ Feature: HCP Audience Workspace in Studio Application
       | FilterName         | Option                                                                                                                  |
       | NPI Age            | Below 25, 25 to 35, 35 to 45, 45 to 55, 55 to 65, 65 or Above                                                           |
       | NPI Gender         | Female, Male, Unknown                                                                                                   |
-      | Graduation Year    | 1900-2025                                                                                                               |
+      | Graduation Year    |                                                                                                               1900-2025 |
       | Net Worth          | Less than $50٫000, $100٫000 to $249٫999, $250٫000 to $499٫999, $500٫000 or above                                        |
       | Number of Patients | Below 5, 6 to 20, 21 to 50, 51 to 100, 101 to 200, 201 to 300, 301 to 400, 401 to 500, 501 to 1000, 1001 or above       |
       | Patient Age        | Below 25, 25 to 35, 35 to 45, 45 to 55, 55 to 65, 65 or Above                                                           |
@@ -71,6 +72,7 @@ Feature: HCP Audience Workspace in Studio Application
     And User searches the workspace in "<PLATFORM>" and selects it
     And User clicks on the published workspace
     Then User Verify the list is displayed in the LIFE
+
     Examples:
       | ADVERTISER | SOURCE_AUDIENCE  | OPTIONS                  | EXPANDED_AUDIENCE             | LIST_TYPE | PLATFORM                      |
       | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Care Team         | Static    | Life, HCP365,Audience Manager |
@@ -98,6 +100,7 @@ Feature: HCP Audience Workspace in Studio Application
     And "Studio" application is logged in successfully with Account "<ACCOUNT_NAME>"
     When External user searches the workspace name in studio application with "<DRAFT_OPTION>" draft option
     Then External user verifies whether the workspace with "<DRAFT_OPTION>" is visible in workspace management page
+
     Examples:
       | ADVERTISER | SOURCE_AUDIENCE  | OPTIONS                  | EXPANDED_AUDIENCE             | DRAFT_OPTION | WORKSPACE_NAME | ACCOUNT_NAME        |
       | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Care Team         | Private      | HCP_Expansion  | PP engineering test |
@@ -121,6 +124,7 @@ Feature: HCP Audience Workspace in Studio Application
     And User select the "<PLATFORM>" to publish the list
     Then Verify the workspace is visible in workspace management page
     Then Verify the workspace status should be "Published"
+
     Examples:
       | ADVERTISER | SOURCE_AUDIENCE  | OPTIONS                  | EXPANDED_AUDIENCE                                           | LIST_TYPE | PLATFORM                       |
       | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Basic, Exact Diagnosis, Extended, Professions, Specialities | Static    | Life, HCP365, Audience Manager |
@@ -144,6 +148,7 @@ Feature: HCP Audience Workspace in Studio Application
     And Download button is enabled to the user
     And User clicks Download NPI option
     And User selects download format as "<FORMAT>" and clicks Download button
+
     Examples:
       | ADVERTISER | SOURCE_AUDIENCE  | OPTIONS                  | EXPANDED_AUDIENCE             | FORMAT | WORKSPACE_NAME |
       | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Care Team         | CSV    | HCP_Expansion  |
@@ -163,6 +168,7 @@ Feature: HCP Audience Workspace in Studio Application
     And Download button is enabled to the user
     And User clicks Schedule NPI button
     And User enters data and clicks Save button
+
     Examples:
       | ADVERTISER | SOURCE_AUDIENCE  | OPTIONS                  | EXPANDED_AUDIENCE             | WORKSPACE_NAME |
       | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Care Team         | HCP_Expansion  |
@@ -183,6 +189,7 @@ Feature: HCP Audience Workspace in Studio Application
     And User clicks on Download Report
     And User enters the Report Name
     And User selects download format as "<FORMAT>" and clicks Download button
+
     Examples:
       | ADVERTISER | SOURCE_AUDIENCE  | OPTIONS                  | EXPANDED_AUDIENCE             | FORMAT | WORKSPACE_NAME |
       | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Care Team         | CSV    | HCP_Expansion  |
@@ -202,6 +209,7 @@ Feature: HCP Audience Workspace in Studio Application
     And Report button is enabled to the user
     And User clicks on Schedule Report button
     And User enters data and clicks Save button
+
     Examples:
       | ADVERTISER | SOURCE_AUDIENCE  | OPTIONS                  | EXPANDED_AUDIENCE             | WORKSPACE_NAME |
       | Abbvie     | Studio Workspace | Explorer_20260608_201107 | Expand with Care Team         | HCP_Expansion  |
@@ -223,6 +231,7 @@ Feature: HCP Audience Workspace in Studio Application
     #And External User switches the "<ACCOUNT_NAME>" account in Studio application -- committing this step for future changes, if pp engineering test account does not appear in external user account list in studio application
     When External user searches the workspace name in studio application with "<DRAFT_OPTION>" draft option
     Then External user verifies whether the workspace with "<DRAFT_OPTION>" is visible in workspace management page
+
     Examples:
       | ADVERTISER | DRAFT_OPTION | WORKSPACE_NAME | ACCOUNT_NAME        | SOURCE_AUDIENCE  | OPTIONS |
       | Abbvie     | Public       | Expansion      | PP engineering test | Studio Workspace | PB_Test |

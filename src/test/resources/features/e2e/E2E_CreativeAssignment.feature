@@ -40,9 +40,10 @@ Feature: End to End Workflow of Creative Creation and its assignment To Tactic
     Then Verify the newly created creative is displayed in the Creative Library page
     #3
     And Create and verify a tactic with "<LINE_ITEMS>" line items and other details "<ADVERTISER>" "<CP_NAME>" "<CP_TYPE>" "<CP_BUDGET>" "<LINE_NAME>" "<LINE_BUDGET>" "<TACTIC_NAME>" and assign the created creatives to it
+
     Examples:
       | ADVERTISER     | CREATIVE_NAME | ADVERTISER_DSA | FINANCER    | CP_NAME          | CP_TYPE | CP_BUDGET | LINE_NAME    | LINE_BUDGET | TACTIC_NAME    | LINE_ITEMS                                                            |
-      | 01- Advertiser | Creative      | QA_DSA         | QA_Financer | CreativeCampaign | Regular | 20000     | CreativeLine | 500         | CreativeTactic | Display, Audio, Video, Native Display, Native Video, Search Extension |
+      | 01- Advertiser | Creative      | QA_DSA         | QA_Financer | CreativeCampaign | Regular |     20000 | CreativeLine |         500 | CreativeTactic | Display, Audio, Video, Native Display, Native Video, Search Extension |
 
   @e2e
   Scenario Outline: End to End Workflow of Creative Creation using Bulk Upload with all the creative types and Assignment To Tactic
@@ -67,6 +68,7 @@ Feature: End to End Workflow of Creative Creation and its assignment To Tactic
     Then Verify the newly created creative is displayed in the Creative Library page
     #3
     And Create and verify a tactic with "<LINE_ITEMS>" line items and other details "<ADVERTISER>" "<CP_NAME>" "<CP_TYPE>" "<CP_BUDGET>" "<LINE_NAME>" "<LINE_BUDGET>" "<TACTIC_NAME>" and assign the created creatives to it
+
     Examples:
       | ADVERTISER     | ADVERTISER_DSA | FINANCER    | CP_NAME          | CP_TYPE | CP_BUDGET | LINE_NAME    | LINE_BUDGET | TACTIC_NAME    | LINE_ITEMS                     |
-      | 01- Advertiser | QA_DSA         | QA_Financer | CreativeCampaign | Regular | 20000     | CreativeLine | 500         | CreativeTactic | Display, Video, Native Display |
+      | 01- Advertiser | QA_DSA         | QA_Financer | CreativeCampaign | Regular |     20000 | CreativeLine |         500 | CreativeTactic | Display, Video, Native Display |

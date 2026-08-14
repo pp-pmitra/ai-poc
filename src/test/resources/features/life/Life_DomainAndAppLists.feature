@@ -29,6 +29,7 @@ Feature: LIFE Regression - Validate the ability to create and delete Domain and 
     And Verify that the user is able to delete an existing "Domains" name list
     And Verify the deleted list is no longer displayed in the left panel
     And Verify that PulsePoint provided domain list "Automation_DomainList" is denoted with a purple P icon
+
     Examples:
       | SUB_TABS                   | LIST_NAME | DOMAIN_NAMES                      | EDITED_DOMAIN_NAMES           | DOMAIN_NAMES_ACROSS_LINES                                          |
       | Both, Domains, App Bundles | Domain    | brooklyn.com, docs.pulsepoint.com | manhattan.com, pulsepoint.com | brooklyn.com, docs.pulsepoint.com :: manhattan.com, pulsepoint.com |
@@ -53,6 +54,7 @@ Feature: LIFE Regression - Validate the ability to create and delete Domain and 
     And Verify that the user is able to delete the uploaded file "<UPLOAD_FILENAME1>"
     And Verify that the user is able to delete an existing "Domains" name list
     And Verify the deleted list is no longer displayed in the left panel
+
     Examples:
       | SUB_TABS                   | LIST_NAME         | UPLOAD_FILENAME1    | UPLOAD_FILENAME2    |
       | Both, Domains, App Bundles | Domain_FileUpload | DomainNameFile1.csv | DomainNameFile2.csv |
@@ -75,6 +77,7 @@ Feature: LIFE Regression - Validate the ability to create and delete Domain and 
     And Verify that the user is able to delete an existing "AppBundle" name list
     And Verify the deleted list is no longer displayed in the left panel
     And Verify that PulsePoint provided domain list "Automation_AppBundleList" is denoted with a purple P icon
+
     Examples:
       | SUB_TABS                   | LIST_NAME  | APP_BUNDLES                 | EDITED_APP_BUNDLES       |
       | Both, Domains, App Bundles | App_Bundle | cambridge.org, redcross.org | wikipedia.org, mitre.org |
@@ -99,6 +102,7 @@ Feature: LIFE Regression - Validate the ability to create and delete Domain and 
     And Verify that the user is able to delete the uploaded file "<UPLOAD_FILENAME1>"
     And Verify that the user is able to delete an existing "AppBundle" name list
     And Verify the deleted list is no longer displayed in the left panel
+
     Examples:
       | SUB_TABS                   | LIST_NAME            | UPLOAD_FILENAME1   | UPLOAD_FILENAME2   |
       | Both, Domains, App Bundles | AppBundle_FileUpload | AppBundleFile1.csv | AppBundleFile2.csv |

@@ -39,6 +39,7 @@ Feature: E2E workflow for creating a campaign with an external user and approvin
     And User navigates to the created campaign
     Then Verify that the campaign is in "Running" state
     Then Verify that the approval status of the campaign is "Approved"
+
     Examples:
       | ADVERTISER       | CP_NAME       | CP_TYPE | CP_BUDGET | LINE_NAME     | LINE_BUDGET | TACTIC_NAME     | RULE_TYPE          | CREATIVE          |
-      | 1Demo Advertiser | External_User | Regular | 10000     | External_Line | 500         | External_Tactic | Behavioral Segment | External_Creative |
+      | 1Demo Advertiser | External_User | Regular |     10000 | External_Line |         500 | External_Tactic | Behavioral Segment | External_Creative |

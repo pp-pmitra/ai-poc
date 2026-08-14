@@ -21,6 +21,7 @@ Feature: Brand Explorer Workspace creation in Studio
     Then Verify Time Frame is selected as "Last 7 Days" by default in the workspace
     And User saves the "Brand Explorer" workspace
     Then Verify the "Brand Explorer" Workspace is saved
+
     Examples:
       | ADVERTISER         | WORKSPACE_NAME            |
       | TAMTESTING ACCOUNT | Automation_Brand_Explorer |
@@ -42,6 +43,7 @@ Feature: Brand Explorer Workspace creation in Studio
       | Last 180 Days |
       | Last 365 Days |
       | Custom        |
+
     Examples:
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
@@ -56,11 +58,12 @@ Feature: Brand Explorer Workspace creation in Studio
     When User selects the timeframe preset "<TIMEFRAME>"
     Then Verify the chart and table update immediately to reflect "<TIMEFRAME>" data
     And Verify the Day column shows <DAYS> dates in ascending order
+
     Examples:
       | ADVERTISER         | TIMEFRAME    | DAYS |
-      | TAMTESTING ACCOUNT | Last 14 Days | 14   |
-      | TAMTESTING ACCOUNT | Last 30 Days | 30   |
-      | TAMTESTING ACCOUNT | Yesterday    | 1    |
+      | TAMTESTING ACCOUNT | Last 14 Days |   14 |
+      | TAMTESTING ACCOUNT | Last 30 Days |   30 |
+      | TAMTESTING ACCOUNT | Yesterday    |    1 |
 
   @regression
   Scenario Outline: Verify Custom date range picker and inclusive start and end dates in the returned dataset
@@ -75,6 +78,7 @@ Feature: Brand Explorer Workspace creation in Studio
     When User sets a custom date range with start date "<START_DATE>" and end date "<END_DATE>"
     Then Verify "<START_DATE>" is the first date row in the table
     And Verify "<END_DATE>" is the last date row in the table
+
     Examples:
       | ADVERTISER         | START_DATE | END_DATE   |
       | TAMTESTING ACCOUNT | 2026-05-01 | 2026-05-07 |
@@ -91,6 +95,7 @@ Feature: Brand Explorer Workspace creation in Studio
     And User selects the timeframe preset "Custom"
     When User enters a start date "<START_DATE>" that is later than the end date "<END_DATE>"
     Then Verify an error message is displayed indicating the start date cannot be later than the end date
+
     Examples:
       | ADVERTISER         | START_DATE | END_DATE   |
       | TAMTESTING ACCOUNT | 2026-05-07 | 2026-05-01 |
@@ -109,9 +114,10 @@ Feature: Brand Explorer Workspace creation in Studio
     When User navigates back to the workspace list and reopens the saved Brand Explorer workspace
     Then Verify the Time Frame still shows "<TIMEFRAME>" after reopening the workspace
     And Verify the Day column shows <DAYS> dates in ascending order
+
     Examples:
       | ADVERTISER         | WORKSPACE_NAME     | TIMEFRAME    | DAYS |
-      | TAMTESTING ACCOUNT | Automation_Persist | Last 30 Days | 30   |
+      | TAMTESTING ACCOUNT | Automation_Persist | Last 30 Days |   30 |
 
   @regression
   Scenario Outline: Verify saved non-default dimension and metric persist when the workspace is closed and reopened
@@ -127,9 +133,10 @@ Feature: Brand Explorer Workspace creation in Studio
     Then Verify the "Brand Explorer" Workspace is saved
     When User navigates back to the workspace list and reopens the saved Brand Explorer workspace
     Then Verify "<DIMENSION>" and "<METRIC>" persist as table columns after reopening
+
     Examples:
-      | ADVERTISER         | WORKSPACE_NAME       | DIMENSION | DIM_CATEGORY | METRIC           | METRIC_CATEGORY |
-      | TAMTESTING ACCOUNT | Automation_Persist   | Month     | Time Frame   | HCP Active Users | HCP Events      |
+      | ADVERTISER         | WORKSPACE_NAME     | DIMENSION | DIM_CATEGORY | METRIC           | METRIC_CATEGORY |
+      | TAMTESTING ACCOUNT | Automation_Persist | Month     | Time Frame   | HCP Active Users | HCP Events      |
 
   @regression
   Scenario Outline: Verify a Brand Explorer dimension can be selected and removed
@@ -158,6 +165,7 @@ Feature: Brand Explorer Workspace creation in Studio
       | Time Frame               | Day, Day of Week, Hour, Month, Time Range, Timestamp, Week, Weekday or Weekend, Year                                                                                                              |
       | UTM Values               | Third Party CID, UTM Campaign, UTM Content, UTM Medium, UTM Source, UTM Term                                                                                                                      |
       | Visitation               | Attributed Source, File Name, From Domain (domain referrer), From URL (URL Referrer), Page Domain, Page URL, Page URL (Denormalized), Social Provider, Source, Source Type, Video Title           |
+
     Examples:
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
@@ -179,6 +187,7 @@ Feature: Brand Explorer Workspace creation in Studio
       | NPI Events   | Avg. Video Progress, Identified NPIs, NPI Active Users, NPI Avg. Engagement Time (sec), NPI Avg. Engagement Time per Session (sec), NPI Email Clicks, NPI Email Opens, NPI Engaged Sessions per User, NPI Events, NPI File Downloads, NPI First Visits, NPI Form Starts, NPI Form Submissions, NPI Media Clicks, NPI Media CTR, NPI Media Frequency, NPI Media Impressions, NPI Pageviews, NPI Returning Visits, NPI Search Clicks, NPI Social Clicks, NPI Social Impressions, NPI Unique Sessions, NPI Video Completes, NPI Video Starts, NPI Visits |
       | Time Spent   | Time Spent (days), Time Spent (hours), Time Spent (minutes), Time Spent (seconds)                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
       | Total Events | Avg. Video Progress, Total Active Users, Total Avg. Engagement Time (sec), Total Avg. Engagement Time per Session (sec), Total Email Clicks, Total Email Opens, Total Engaged Sessions per User, Total Events, Total File Downloads, Total First Visits, Total Form Starts, Total Form Submissions, Total Media Clicks, Total Media CTR, Total Media Impressions, Total Pageviews, Total Returning Visits, Total Search Clicks, Total Social Clicks, Total Social Impressions, Total Video Completes, Total Video Starts, Total Visits                |
+
     Examples:
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
@@ -198,6 +207,7 @@ Feature: Brand Explorer Workspace creation in Studio
     When User navigates back to the workspace list and reopens the saved Brand Explorer workspace
     And User clicks on the Filters tab
     Then Verify the filter on "<FIELD>" shows value "<VALUE>"
+
     Examples:
       | ADVERTISER         | WORKSPACE_NAME     | CATEGORY                 | FIELD      | VALUE     |
       | TAMTESTING ACCOUNT | Automation_Persist | Healthcare Professionals | Profession | Physician |
@@ -215,6 +225,7 @@ Feature: Brand Explorer Workspace creation in Studio
     And User selects "<FIELD>" from "<CATEGORY>" component panel
     Then Verify "<FIELD>" is visible as a table column
     And Verify the table column "<FIELD>" only shows rows with value "<VALUE>"
+
     Examples:
       | ADVERTISER         | CATEGORY                 | FIELD      | VALUE     |
       | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | Physician |
@@ -232,7 +243,7 @@ Feature: Brand Explorer Workspace creation in Studio
     Then Verify the "Brand Explorer" Workspace is saved
     And Navigate to workspace dashboard
     And User selects the workspace type "Brand Explorer"
-    And User clicks on the More Actions menu for the saved workspace 
+    And User clicks on the More Actions menu for the saved workspace
     And User selects the "Rename" option by clicking More Actions menu
     And Verify user is able to rename the "Brand Explorer" workspace as "<NEW_WORKSPACE_NAME>"
     And User is able to search the workspace after performing operation - "Rename"
@@ -243,7 +254,7 @@ Feature: Brand Explorer Workspace creation in Studio
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
+
     Examples:
       | ADVERTISER         | WORKSPACE_NAME     | NEW_WORKSPACE_NAME  | TIMEFRAME    |
       | TAMTESTING ACCOUNT | Automation_Persist | New_Brand_Explorer_ | Last 30 Days |
-

@@ -31,6 +31,7 @@ Feature: Studio Publish NPI List
     And User select the platform to publish the list
     Then Verify list is published
     And Check the Download icon is highlighted in green color
+
     Examples:
       | WORKSPACE_NAME | ADVERTISER | LIST_TYPE |
       | Explorer       | Abbvie     | Static    |
@@ -61,6 +62,7 @@ Feature: Studio Publish NPI List
     And User searches the workspace in LIFE and selects it
     And User clicks on the published workspace
     And Verify the list should be available for LIFE platform by default
+
     Examples:
       | WORKSPACE_NAME | ADVERTISER | LIST_TYPE |
       | Explorer       | Abbvie     | Static    |

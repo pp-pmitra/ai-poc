@@ -33,6 +33,7 @@ Feature: Create a Destination in Admin and run below report against it.
     Then User selects destination name created, and other details - "<FILE_PATH>", "<FILE_NAME>"
     And User should be able to generate the report
     #Then User downloads the report and verify the data in downloaded report
+
     Examples:
       | FILE_PATH                      | FILE_NAME                  | TACTIC_INITIALS | TEMPLATE NAME | DIMENSIONS                    | METRICS            |
       | /home/NPIAutoImport/Automation | AutoImport_Automation1.csv | Multiple_Flight | Template      | Advertiser Name,Campaign Name | Impressions,Clicks |
@@ -62,6 +63,7 @@ Feature: Create a Destination in Admin and run below report against it.
     Then User selects destination name created, and other details - "<FILE_PATH>", "<FILE_NAME>"
     And User clicks Schedule button to generate the report
     #Then User downloads the report and verify the data in downloaded report
+
     Examples:
       | FILE_PATH                      | FILE_NAME                  | TACTIC_INITIALS | REPORT_NAME    | FREQUENCY_VALUE | TIME_ZONE                       | TEMPLATE NAME | DIMENSIONS                    | METRICS            |
       | /home/NPIAutoImport/Automation | AutoImport_Automation1.csv | Multiple_Flight | ScheduleReport | Daily           | (GMT+05:30) India Standard Time | Template      | Advertiser Name,Campaign Name | Impressions,Clicks |

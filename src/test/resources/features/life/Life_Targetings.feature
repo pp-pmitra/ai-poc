@@ -31,7 +31,7 @@ Feature: LIFE Regression - Targetings
       | DEMOGRAPHICS       | Age,Ethnicity,Gender                                                                                                                                                                                                              |
       | CONTEXTUAL         | Health Pages,IAB Categories,Keywords,Language,Endemics                                                                                                                                                                            |
       | GEOGRAPHY          | Geo Targets,Geo Radius,Postal Codes,Area Codes,Weather Signals                                                                                                                                                                    |
-      | MEDIA SUPPLY       | Brand Safety Profile,Brand Suitability,Browser,Curated Markets,Custom Targeting Bundle,Deal Groups,Device,Domains/Apps,IAS Context Control,Invalid Traffic,Inventory Source,Inventory Type,Operating System,Deals,Viewability      |
+      | MEDIA SUPPLY       | Brand Safety Profile,Brand Suitability,Browser,Curated Markets,Custom Targeting Bundle,Deal Groups,Device,Domains/Apps,IAS Context Control,Invalid Traffic,Inventory Source,Inventory Type,Operating System,Deals,Viewability     |
       | LEGAL TARGETINGS   | Legal Pages,Legal Populations                                                                                                                                                                                                     |
     And User configures targeting rules as below
       | Behavioral Segment       | AutoSegment18577650                                                   |
@@ -44,16 +44,16 @@ Feature: LIFE Regression - Targetings
       | Keywords                 | Custom_Keyword, TestingKeyword, Qwerty123                             |
       | Endemics                 | Endemic                                                               |
       | Geo Targets              | New York, California                                                  |
-      | Postal Codes             | 123456, 10001, 987654                                                 |
+      | Postal Codes             |                                                 123456, 10001, 987654 |
       | Weather Signals          | Below 15F degrees, Outdoor Activity                                   |
-      | Brand Safety Profile     | 51246802                                                              |
+      | Brand Safety Profile     |                                                              51246802 |
       | Brand Suitability        | Unknown Brand Safety, Highly Illicit Do Not Monetize                  |
       | Browser                  | Chrome, EDGE, Opera, Safari                                           |
       | Device                   | Mobile, Tablet, Connected Device                                      |
       | Domains/Apps             | APP Regular, updaedList106043912                                      |
-      | Inventory Source         | Reporttest                                                          |
+      | Inventory Source         | Reporttest                                                            |
       | Operating System         | Windows, macOS, Blackberry                                            |
-      | Viewability              | 50                                                                    |
+      | Viewability              |                                                                    50 |
       | Legal Pages              | Emancipation                                                          |
       | Legal Populations        | Adoption                                                              |
       | NPI Facility Affiliation | NEW AGE DERMATOLOGY CENTER PA (NC)                                    |
@@ -66,8 +66,7 @@ Feature: LIFE Regression - Targetings
       | IAB Categories           | Agriculture                                                           |
       | IAB Categories New       | Communication                                                         |
       | Language                 | English, Spanish                                                      |
-      | Custom Targeting Bundle  | 203397, 203396                                                        |
-#      | IAS Context Control      | Pollution                                                             |
+      | Custom Targeting Bundle  |                                                        203397, 203396 |
       | Invalid Traffic          | Sites/Apps with Insufficient Fraud & IVT Stats, Fraudulent Sites/Apps |
       | Inventory Type           | App, Site                                                             |
       | Health Populations+      | Dental Polishing, Dental Cavity Preparation                           |
@@ -75,8 +74,9 @@ Feature: LIFE Regression - Targetings
       | Bespoke                  | AutoSegment384105361                                                  |
       | Ethnicity                | Asian, Arab                                                           |
       | Gender                   | Male                                                                  |
-      | Age                      | 25-29, 35-39                                                          |
-      | Geo Radius               | 35.5::122.42::400::California                                         |
+      | Age                      |                                                          25-29, 35-39 |
+      | Geo Radius               |                                         35.5::122.42::400::California |
+#      | IAS Context Control      | Pollution                                                             |
     Then Verify the configured targeting rules
     And Verify the count of rules added for the selected targeting rule type on the Tactic Settings page
     When User saves the settings
@@ -87,9 +87,10 @@ Feature: LIFE Regression - Targetings
     Then Verify the newly created campaign details in the campaign list: Campaign name, Line item name and Tactic name
     When User navigates to Targeting template page by clicking the icon from Activation section
     Then User searches and verifies the created targeting template is available on Targeting Templates page
+
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | CREATIVE      |
-      | 01- Advertiser | Test    | Regular | 10000     | Line      | 120         | Tactic      | Display Advanced | Auto_Creative |
+      | 01- Advertiser | Test    | Regular |     10000 | Line      |         120 | Tactic      | Display Advanced | Auto_Creative |
 
   @regression
   Scenario Outline: Verify list of Targeting Rules available under Video Targeting Category and create a campaign by adding selected Targeting Rules
@@ -113,14 +114,14 @@ Feature: LIFE Regression - Targetings
       | Video              |
       | LEGAL TARGETINGS   |
     And Verify target type with respect to category
-      | AUDIENCE ATTRIBUTE | Behavioral Segment,NPI,NPI Facility Affiliation,Retargeting Pixels,HCP by Specialty,Health Populations,OTC Populations,IP Address,Clickers,Converters,Keyword Populations,Practice Staff,Sensitive Areas,Lookalike Audience  |
-      | HEALTH JOURNEY     | Health Populations+,In Condition                                                                                                                                                                                             |
-      | DEMOGRAPHICS       | Age,Ethnicity,Gender                                                                                                                                                                                                         |
-      | CONTEXTUAL         | Health Pages,IAB Categories,IAB Categories New, Keywords,Language,Endemics                                                                                                                                                   |
-      | GEOGRAPHY          | Geo Targets,Geo Radius,Postal Codes,Area Codes,Weather Signals                                                                                                                                                               |
+      | AUDIENCE ATTRIBUTE | Behavioral Segment,NPI,NPI Facility Affiliation,Retargeting Pixels,HCP by Specialty,Health Populations,OTC Populations,IP Address,Clickers,Converters,Keyword Populations,Practice Staff,Sensitive Areas,Lookalike Audience   |
+      | HEALTH JOURNEY     | Health Populations+,In Condition                                                                                                                                                                                              |
+      | DEMOGRAPHICS       | Age,Ethnicity,Gender                                                                                                                                                                                                          |
+      | CONTEXTUAL         | Health Pages,IAB Categories,IAB Categories New, Keywords,Language,Endemics                                                                                                                                                    |
+      | GEOGRAPHY          | Geo Targets,Geo Radius,Postal Codes,Area Codes,Weather Signals                                                                                                                                                                |
       | MEDIA SUPPLY       | Brand Safety Profile,Brand Suitability,Browser,Curated Markets,Custom Targeting Bundle,Deal Groups,Device,Domains/Apps,IAS Context Control,Invalid Traffic,Inventory Source,Inventory Type,Operating System,Deals,Viewability |
-      | Video              | Video Size,Video Placement,Video Skipping                                                                                                                                                                                    |
-      | LEGAL TARGETINGS   | Legal Pages,Legal Populations                                                                                                                                                                                                |
+      | Video              | Video Size,Video Placement,Video Skipping                                                                                                                                                                                     |
+      | LEGAL TARGETINGS   | Legal Pages,Legal Populations                                                                                                                                                                                                 |
     And User configures targeting rules as below
       | Video Size      | Small, Large                          |
       | Video Placement | Interstitial, Accompanying Content    |
@@ -134,9 +135,10 @@ Feature: LIFE Regression - Targetings
     Then Verify the newly created campaign is in running state
     When User navigates to Targeting template page by clicking the icon from Activation section
     Then User searches and verifies the created targeting template is available on Targeting Templates page
+
     Examples:
       | ADVERTISER     | CP_NAME       | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | LINE_ITEMS | TACTIC_NAME | CHANNEL        | CREATIVE      |
-      | 01- Advertiser | External_Auto | Regular | 10000     | Line      | 500         | Video      | Tactic      | Video Advanced | Auto_Creative |
+      | 01- Advertiser | External_Auto | Regular |     10000 | Line      |         500 | Video      | Tactic      | Video Advanced | Auto_Creative |
 
   @regression
   Scenario Outline: Verify list of Targeting Rules available under Native Video Targeting Category and create a campaign by adding selected Targeting Rules
@@ -160,14 +162,14 @@ Feature: LIFE Regression - Targetings
       | Video              |
       | LEGAL TARGETINGS   |
     And Verify target type with respect to category
-      | AUDIENCE ATTRIBUTE | Behavioral Segment,NPI,NPI Facility Affiliation,Retargeting Pixels,HCP by Specialty,Health Populations,OTC Populations,IP Address,Clickers,Converters,Keyword Populations,Practice Staff,Sensitive Areas,Lookalike Audience  |
-      | HEALTH JOURNEY     | Health Populations+,In Condition                                                                                                                                                                                             |
-      | DEMOGRAPHICS       | Age,Ethnicity,Gender                                                                                                                                                                                                         |
-      | CONTEXTUAL         | Health Pages,IAB Categories,IAB Categories New, Keywords,Language,Endemics                                                                                                                                                   |
-      | GEOGRAPHY          | Geo Targets,Geo Radius,Postal Codes,Area Codes,Weather Signals                                                                                                                                                               |
+      | AUDIENCE ATTRIBUTE | Behavioral Segment,NPI,NPI Facility Affiliation,Retargeting Pixels,HCP by Specialty,Health Populations,OTC Populations,IP Address,Clickers,Converters,Keyword Populations,Practice Staff,Sensitive Areas,Lookalike Audience   |
+      | HEALTH JOURNEY     | Health Populations+,In Condition                                                                                                                                                                                              |
+      | DEMOGRAPHICS       | Age,Ethnicity,Gender                                                                                                                                                                                                          |
+      | CONTEXTUAL         | Health Pages,IAB Categories,IAB Categories New, Keywords,Language,Endemics                                                                                                                                                    |
+      | GEOGRAPHY          | Geo Targets,Geo Radius,Postal Codes,Area Codes,Weather Signals                                                                                                                                                                |
       | MEDIA SUPPLY       | Brand Safety Profile,Brand Suitability,Browser,Curated Markets,Custom Targeting Bundle,Deal Groups,Device,Domains/Apps,IAS Context Control,Invalid Traffic,Inventory Source,Inventory Type,Operating System,Deals,Viewability |
-      | Video              | Video Size,Video Placement                                                                                                                                                                                                   |
-      | LEGAL TARGETINGS   | Legal Pages,Legal Populations                                                                                                                                                                                                |
+      | Video              | Video Size,Video Placement                                                                                                                                                                                                    |
+      | LEGAL TARGETINGS   | Legal Pages,Legal Populations                                                                                                                                                                                                 |
     And User configures targeting rules as below
       | Video Size      | Small, Large                               |
       | Video Placement | NoContent/Standalone, Accompanying Content |
@@ -180,9 +182,10 @@ Feature: LIFE Regression - Targetings
     Then Verify the newly created campaign is in running state
     When User navigates to Targeting template page by clicking the icon from Activation section
     Then User searches and verifies the created targeting template is available on Targeting Templates page
+
     Examples:
       | ADVERTISER     | CP_NAME       | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | LINE_ITEMS   | TACTIC_NAME | CREATIVE      |
-      | 01- Advertiser | External_Auto | Regular | 10000     | Line      | 500         | Native Video | Tactic      | Auto_Creative |
+      | 01- Advertiser | External_Auto | Regular |     10000 | Line      |         500 | Native Video | Tactic      | Auto_Creative |
 
   @regression
   Scenario Outline: Verify list of Targeting Rules available under Search Extension Targeting Category and create a campaign by adding selected Targeting Rules
@@ -207,14 +210,14 @@ Feature: LIFE Regression - Targetings
       | Video              |
       | LEGAL TARGETINGS   |
     And Verify target type with respect to category
-      | SEARCH SPECIFIC    | Search Keywords                                                                                                                                                                                                              |
-      | AUDIENCE ATTRIBUTE | Behavioral Segment,NPI,NPI Facility Affiliation,Retargeting Pixels,HCP by Specialty,Health Populations,OTC Populations,IP Address,Clickers,Converters,Keyword Populations,Practice Staff,Sensitive Areas,Lookalike Audience  |
-      | HEALTH JOURNEY     | Health Populations+,In Condition                                                                                                                                                                                             |
-      | DEMOGRAPHICS       | Age,Ethnicity,Gender                                                                                                                                                                                                         |
-      | CONTEXTUAL         | Health Pages,IAB Categories,IAB Categories New, Keywords,Language,Endemics                                                                                                                                                   |
-      | GEOGRAPHY          | Geo Targets,Geo Radius,Postal Codes,Area Codes,Weather Signals                                                                                                                                                               |
+      | SEARCH SPECIFIC    | Search Keywords                                                                                                                                                                                                               |
+      | AUDIENCE ATTRIBUTE | Behavioral Segment,NPI,NPI Facility Affiliation,Retargeting Pixels,HCP by Specialty,Health Populations,OTC Populations,IP Address,Clickers,Converters,Keyword Populations,Practice Staff,Sensitive Areas,Lookalike Audience   |
+      | HEALTH JOURNEY     | Health Populations+,In Condition                                                                                                                                                                                              |
+      | DEMOGRAPHICS       | Age,Ethnicity,Gender                                                                                                                                                                                                          |
+      | CONTEXTUAL         | Health Pages,IAB Categories,IAB Categories New, Keywords,Language,Endemics                                                                                                                                                    |
+      | GEOGRAPHY          | Geo Targets,Geo Radius,Postal Codes,Area Codes,Weather Signals                                                                                                                                                                |
       | MEDIA SUPPLY       | Brand Safety Profile,Brand Suitability,Browser,Curated Markets,Custom Targeting Bundle,Deal Groups,Device,Domains/Apps,IAS Context Control,Invalid Traffic,Inventory Source,Inventory Type,Operating System,Deals,Viewability |
-      | LEGAL TARGETINGS   | Legal Pages,Legal Populations                                                                                                                                                                                                |
+      | LEGAL TARGETINGS   | Legal Pages,Legal Populations                                                                                                                                                                                                 |
     And User configures targeting rules as below
       | Search Keywords | Pandemic, Intestine |
     Then Verify the configured targeting rules
@@ -225,9 +228,10 @@ Feature: LIFE Regression - Targetings
     Then Verify the newly created campaign is in running state
     When User navigates to Targeting template page by clicking the icon from Activation section
     Then User searches and verifies the created targeting template is available on Targeting Templates page
+
     Examples:
       | ADVERTISER     | CP_NAME       | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | LINE_ITEMS       | TACTIC_NAME | CREATIVE      |
-      | 01- Advertiser | External_Auto | Regular | 10000     | Line      | 500         | Search Extension | Tactic      | Auto_Creative |
+      | 01- Advertiser | External_Auto | Regular |     10000 | Line      |         500 | Search Extension | Tactic      | Auto_Creative |
 
   @regression
   Scenario Outline: Verify list of Targeting Rules available under DOOH Targeting Category and create a campaign by adding selected Targeting Rules
@@ -246,13 +250,13 @@ Feature: LIFE Regression - Targetings
       | GEOGRAPHY          |
       | MEDIA SUPPLY       |
     And Verify target type with respect to category
-      | AUDIENCE ATTRIBUTE | IP Address                                                                                           |
-      | GEOGRAPHY          | Geo Targets,Geo Radius,Postal Codes,Area Codes,Venue Type,Weather Signals                            |
+      | AUDIENCE ATTRIBUTE | IP Address                                                                                            |
+      | GEOGRAPHY          | Geo Targets,Geo Radius,Postal Codes,Area Codes,Venue Type,Weather Signals                             |
       | MEDIA SUPPLY       | Audience Multiplier,Curated Markets,Custom Targeting Bundle,Deal Groups,Device,Inventory Source,Deals |
     And User configures targeting rules as below
       | Venue Type              | Transit, Retail, Office Buildings |
-      | Custom Targeting Bundle | 203397, 203396                    |
-      | Audience Multiplier     | 6-500                             |
+      | Custom Targeting Bundle |                    203397, 203396 |
+      | Audience Multiplier     |                             6-500 |
     Then Verify the configured targeting rules
     And Verify the count of rules added for the selected targeting rule type on the Tactic Settings page
     When User saves the settings
@@ -262,9 +266,10 @@ Feature: LIFE Regression - Targetings
     Then Verify the newly created campaign is in running state
     When User navigates to Targeting template page by clicking the icon from Activation section
     Then User searches and verifies the created targeting template is available on Targeting Templates page
+
     Examples:
       | ADVERTISER     | CP_NAME       | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | LINE_ITEMS | TACTIC_NAME | CREATIVE      |
-      | 01- Advertiser | Campaign_DOOH | Regular | 10000     | Line      | 500         | DOOH       | Tactic      | Auto_Creative |
+      | 01- Advertiser | Campaign_DOOH | Regular |     10000 | Line      |         500 | DOOH       | Tactic      | Auto_Creative |
 
   @regression
   Scenario Outline: Verify list of Targeting Rules available under Audio Targeting Category and create a campaign by adding selected Targeting Rules
@@ -290,11 +295,11 @@ Feature: LIFE Regression - Targetings
       | HEALTH JOURNEY     | Health Populations+,Bespoke,In Condition                                                                                                                                                                                    |
       | DEMOGRAPHICS       | Age,Ethnicity,Gender                                                                                                                                                                                                        |
       | GEOGRAPHY          | Geo Targets,Geo Radius,Postal Codes,Area Codes,Weather Signals                                                                                                                                                              |
-      | MEDIA SUPPLY       | Brand Safety Profile,Brand Suitability,Browser,Curated Markets,Custom Targeting Bundle,Deal Groups,Device,Domains/Apps,IAS Context Control,Invalid Traffic,Inventory Source,Inventory Type,Operating System,Deals            |
+      | MEDIA SUPPLY       | Brand Safety Profile,Brand Suitability,Browser,Curated Markets,Custom Targeting Bundle,Deal Groups,Device,Domains/Apps,IAS Context Control,Invalid Traffic,Inventory Source,Inventory Type,Operating System,Deals           |
       | LEGAL TARGETINGS   | Legal Populations                                                                                                                                                                                                           |
     And User configures targeting rules as below
       | Clickers | DomainList_Campaign_20260503_001635, TargetingTemplate_20260503_003625 |
-      | Age      | 18-24, 50-54, 60-64                                     |
+      | Age      |                                                    18-24, 50-54, 60-64 |
     Then Verify the configured targeting rules
     And Verify the count of rules added for the selected targeting rule type on the Tactic Settings page
     When User saves the settings
@@ -304,6 +309,7 @@ Feature: LIFE Regression - Targetings
     Then Verify the newly created campaign is in running state
     When User navigates to Targeting template page by clicking the icon from Activation section
     Then User searches and verifies the created targeting template is available on Targeting Templates page
+
     Examples:
       | ADVERTISER     | CP_NAME        | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | LINE_ITEMS | TACTIC_NAME | CREATIVE      |
-      | 01- Advertiser | Campaign_Audio | Regular | 10000     | Line      | 500         | Audio      | Tactic      | Auto_Creative |
+      | 01- Advertiser | Campaign_Audio | Regular |     10000 | Line      |         500 | Audio      | Tactic      | Auto_Creative |

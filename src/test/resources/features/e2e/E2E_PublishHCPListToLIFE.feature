@@ -26,7 +26,7 @@ Feature: Create and Publish HCP Explorer Workspace in Studio and Verify in LIFE
       | FilterName      | Option                                                        |
       | NPI Age         | Below 25, 25 to 35, 35 to 45, 45 to 55, 55 to 65, 65 or Above |
       | NPI Gender      | Female, Male, Unknown                                         |
-      | Graduation Year | 1900-2025                                                     |
+      | Graduation Year |                                                     1900-2025 |
     And User clicks on Ok and closes the filter popup
     #3
     Then Verify that the applied filters are displayed correctly
@@ -47,6 +47,7 @@ Feature: Create and Publish HCP Explorer Workspace in Studio and Verify in LIFE
     And User searches the workspace created to perform Actions from More menu
     When User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
+
     Examples:
       | ADVERTISER | WORKSPACE_NAME | LIST_TYPE |
       | Abbvie     | Explorer       | Static    |
@@ -80,6 +81,7 @@ Feature: Create and Publish HCP Explorer Workspace in Studio and Verify in LIFE
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
+
     Examples:
       | WORKSPACE_NAME | ADVERTISER | LIST_TYPE | NPI_RETENTION_OPTION |
       | Explorer       | Abbvie     | Live      | indefinitely         |
@@ -108,7 +110,7 @@ Feature: Create and Publish HCP Explorer Workspace in Studio and Verify in LIFE
       | FilterName      | Option                                                        |
       | Patient Age     | Below 25, 25 to 35, 35 to 45, 45 to 55, 55 to 65, 65 or Above |
       | Patient Gender  | Female, Male, Unknown                                         |
-      | Graduation Year | 1900-2025                                                     |
+      | Graduation Year |                                                     1900-2025 |
     And User clicks on Ok and closes the filter popup
     And Fetch and verify that NPI details are refined
     And User hovers over the dashboard filters, selects the region with maximum NPIs and clicks on it
@@ -123,6 +125,7 @@ Feature: Create and Publish HCP Explorer Workspace in Studio and Verify in LIFE
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
+
     Examples:
       | ADVERTISER | WORKSPACE_NAME | AI_PROMPT                                                                                | PRIMARY_FILTERS |
       | Abbvie     | Explorer       | Find doctors within certain age ranges, with specific professions, and narrow by wealth. | Profession      |
