@@ -70,13 +70,15 @@ public class Workspace {
         this.PUBLISHED_NPI = WORKSPACE_FRAME.getByRole(
                 AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Published NPI List"));
         this.STATIC_LIST =
-                WORKSPACE_FRAME.getByRole(AriaRole.RADIO, new FrameLocator.GetByRoleOptions().setName("Static List"));
+                WORKSPACE_FRAME.getByText("Static List",
+                        new FrameLocator.GetByTextOptions().setExact(true));
         this.LIVE_LIST =
-                WORKSPACE_FRAME.getByRole(AriaRole.RADIO, new FrameLocator.GetByRoleOptions().setName("Live List"));
+                WORKSPACE_FRAME.getByText("Live List",
+                        new FrameLocator.GetByTextOptions().setExact(true));
         this.SELECT_HCP =
-                WORKSPACE_FRAME.locator(" //span[contains(text(),'HCP')]/parent::label/preceding-sibling::div//input");
+                WORKSPACE_FRAME.locator("ds-checkbox", new FrameLocator.LocatorOptions().setHasText("HCP365"));
         this.SELECT_LIFE =
-                WORKSPACE_FRAME.locator(" //span[contains(text(),'Life')]/parent::label/preceding-sibling::div//input");
+                WORKSPACE_FRAME.locator("ds-checkbox", new FrameLocator.LocatorOptions().setHasText("Life"));
         this.PUBLISH_BUTTON =
                 WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Publish"));
         this.WORKSPACE_CREATED_ALERT = WORKSPACE_FRAME.locator(
@@ -85,11 +87,11 @@ public class Workspace {
                 "(//div[@role='group']/following-sibling::div//button)[3]"); // no unique identifier is available hence
         // index needs to be provided
         this.WEBHOOK_TOGGLE_BUTTON = WORKSPACE_FRAME.locator("//span[contains(@class,'MuiButtonBase-root')]");
-        this.WEBHOOK_PANEL_TITLE = WORKSPACE_FRAME.locator("//h1[contains(text(),'Webhook')]");
+        this.WEBHOOK_PANEL_TITLE = WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'Webhook')]");
         this.WEBHOOK_CANCEL_BUTTON = WORKSPACE_FRAME.locator("//button[@type='button']/div[contains(text(),'Cancel')]");
         this.URL_TEXTAREA = WORKSPACE_FRAME.locator("//textarea[@name='url']");
         this.BODY_TEXTAREA = WORKSPACE_FRAME.locator("//textarea[@name='body']");
-        this.PARAM = WORKSPACE_FRAME.locator("//ul[contains(@role,'menu')]//p");
+        this.PARAM = WORKSPACE_FRAME.locator("//ul[contains(@role,'menu')]//ds-typography");
         this.WEBHOOK_BUTTONS = WORKSPACE_FRAME.locator("//button[contains(@class,'ButtonItem-sc')]");
         this.WEBHOOK_SUCCESS_ALERT = WORKSPACE_FRAME.locator("//p[contains(text(),'Webhook setup successfully')]");
         this.WEBHOOK_SAVE_BUTTON = WORKSPACE_FRAME.locator("//button[@type='submit']");
@@ -110,8 +112,7 @@ public class Workspace {
                 .contentFrame()
                 .locator(
                         "//h3[contains(text(),'Identified NPIs')]/ancestor::div[contains(@class,'SingleValueVisualization')]//span");
-        this.RETROFIT_CHECKBOX = WORKSPACE_FRAME.locator(
-                "//span[contains(text(),'Retrofit NPIs')]/parent::label/preceding-sibling::div//input");
+        this.RETROFIT_CHECKBOX = WORKSPACE_FRAME.getByRole(AriaRole.CHECKBOX, new FrameLocator.GetByRoleOptions().setName("Retrofit NPIs"));
         this.NPI_ENGAGING_TEXT = WORKSPACE_FRAME.locator("//p[contains(text(),'NPIs engaging on or')]");
         this.HCP_WORKSPACE_FILTER_CHECKBOX = WORKSPACE_FRAME.getByRole(
                 AriaRole.CHECKBOX, new FrameLocator.GetByRoleOptions().setName("HCP Explorer"));
@@ -154,11 +155,17 @@ public class Workspace {
     }
 
     public void hcp() {
-        if (SELECT_HCP.getAttribute("aria-checked").contains("false")) SELECT_HCP.click();
+        String ariaChecked = SELECT_HCP.locator("button").getAttribute("aria-checked");
+        if ("false".equals(ariaChecked)) {
+            SELECT_HCP.click();
+        }
     }
 
     public void life() {
-        if (SELECT_LIFE.getAttribute("aria-checked").contains("false")) SELECT_LIFE.click();
+        String ariaChecked = SELECT_LIFE.locator("button").getAttribute("aria-checked");
+        if ("false".equals(ariaChecked)) {
+            SELECT_LIFE.click();
+        }
     }
 
     public void clickPublish() {
@@ -226,13 +233,13 @@ public class Workspace {
     }
 
     public void addMacros(String textType, String param, List<String> macrosList) {
-        for (String macros : macrosList) {
-            String xpath = String.format(
-                    "//label[text()='%s']/ancestor::div[contains(@class, 'FieldTextArea')]/following-sibling::div//p[contains(text(),'%s')]",
-                    textType, macros);
-            Locator MACROS = WORKSPACE_FRAME.locator(xpath);
-            if (MACROS.innerText().contains(macros)) {
-                MACROS.click();
+        Locator fieldBlock = WORKSPACE_FRAME.locator("label")
+                .filter(new Locator.FilterOptions().setHasText(textType))
+                .locator("xpath=../..");
+        for (String macro : macrosList) {
+            Locator macroChip = fieldBlock.locator("ds-chip").filter(new Locator.FilterOptions().setHasText(macro));
+            if (macroChip.isVisible()) {
+                macroChip.click();
                 for (int j = 0; j < PARAM.count(); j++) {
                     if (PARAM.nth(j).innerText().contains(param)) {
                         PARAM.nth(j).click();
@@ -332,8 +339,10 @@ public class Workspace {
     }
 
     public boolean isRetrofitCheckboxSelected() {
-        if (!RETROFIT_CHECKBOX.getAttribute("aria-checked").contains("true")) RETROFIT_CHECKBOX.click();
-        return RETROFIT_CHECKBOX.getAttribute("aria-checked").contains("true");
+        if ("false".equals(RETROFIT_CHECKBOX.getAttribute("aria-checked"))) {
+            RETROFIT_CHECKBOX.click();
+        }
+        return "true".equals(RETROFIT_CHECKBOX.getAttribute("aria-checked"));
     }
 
     public void clickNPIRetentionOption(String option) {

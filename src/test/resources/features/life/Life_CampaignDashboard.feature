@@ -173,7 +173,7 @@ Feature: LIFE Regression - Check below features available on Campaign Dashboard
     Then Verify that Tactic checkboxes are disabled when the entity checkbox is selected for a Line Item
     Then Verify that bulk actions are enabled when the entity checkbox is selected for a "Line Item"
     And User is able to enable or disable the "Line Item" using the bulk actions and verify the status column is updated accordingly
-    | Disable Line Items |
+      | Disable Line Items |
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          | CREATIVE      |
       | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Behavioral Segment | Auto_Creative |

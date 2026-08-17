@@ -10,6 +10,9 @@ import com.microsoft.playwright.options.BoundingBox;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import utils.CommonUtils;
 import utils.WaitUtility;
 
@@ -30,6 +33,7 @@ public class ExplorerWorkspace {
     private final Locator SAVE_WORKSPACE;
     private final Locator EXPLORER_WORKSPACE_SUCCESS;
     private final FrameLocator WORKSPACE_FRAME;
+    private final FrameLocator DASHBOARD_FRAME;
     private final Locator SAVE_WORKSPACE_NAME;
     private final Locator TO_YEAR;
     private final Locator FROM_YEAR;
@@ -68,31 +72,23 @@ public class ExplorerWorkspace {
         this.page = page;
         this.waitUtility = new WaitUtility(page);
         this.WORKSPACE_FRAME = page.frameLocator("iframe").frameLocator("iframe");
-        this.WORKSPACE_NAME = WORKSPACE_FRAME.locator("//p[text()='Workspace Name']/following-sibling::div//input");
+        this.DASHBOARD_FRAME = WORKSPACE_FRAME.locator("#extension-root iframe").contentFrame();
+        this.WORKSPACE_NAME = WORKSPACE_FRAME.locator("//ds-typography[text()='Workspace Name']/following-sibling::ds-input").locator("input");
         this.SEARCH_ADVERTISER_IN_EDIT_WORKSPACE = WORKSPACE_FRAME.locator("input[id^='listbox-input']");
-        this.DASHBOARD_CONTENT = WORKSPACE_FRAME
-                .locator("#extension-root iframe")
-                .contentFrame()
-                .getByRole(AriaRole.REGION, new FrameLocator.GetByRoleOptions().setName("Dashboard Content"));
-        this.DASHBOARD_ELEMENT = WORKSPACE_FRAME
-                .locator("#extension-root iframe")
-                .contentFrame()
-                .locator("(//p[contains(@class,'TextBase-sc')])[1]");
-        this.DASHBOARD_RELOAD_ICON = WORKSPACE_FRAME
-                .locator("#extension-root iframe")
-                .contentFrame()
-                .locator("//div[contains(text(),'Reload')]");
+        this.DASHBOARD_CONTENT = DASHBOARD_FRAME.getByRole(AriaRole.REGION, new FrameLocator.GetByRoleOptions().setName("Dashboard Content"));
+        this.DASHBOARD_ELEMENT = DASHBOARD_FRAME.locator("(//p[contains(@class,'TextBase-sc')])[1]");
+        this.DASHBOARD_RELOAD_ICON = DASHBOARD_FRAME.locator("//div[contains(text(),'Reload')]");
         this.ADD_FILTER = WORKSPACE_FRAME.locator("//div[contains(text(),'Add Filter')]");
         this.SEARCH_FILTER =
                 WORKSPACE_FRAME.getByRole(AriaRole.TEXTBOX, new FrameLocator.GetByRoleOptions().setName("Search"));
         this.ADVERTISER_SELECTED = WORKSPACE_FRAME.locator(
-                "//div[@data-tour-id='workspace-back-button']/following-sibling::div//p[contains(text(),'Advertiser:')]");
+                "//div[@data-tour-id='workspace-back-button']/following-sibling::div//ds-typography[contains(text(),'Advertiser:')]");
         this.FILTER_OK_BUTTON =
                 WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Ok"));
         this.FILTER_CLOSE_BUTTON =
-                WORKSPACE_FRAME.locator("//h1[contains(text(),'Select Filter')]/following-sibling::button");
+                WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'Select Filter')]/following-sibling::button");
         this.APPLIED_FILTER = WORKSPACE_FRAME.locator(
-                "//div[contains(@data-tour-id,'filters-container')]//button/preceding-sibling::p");
+                "//div[contains(@data-tour-id,'filters-container')]//ds-typography");
         this.APPLIED_FILTER_OPTION = WORKSPACE_FRAME.locator("//div[contains(@class,'style__FilterExpression-sc')]");
         this.SAVE_WORKSPACE = WORKSPACE_FRAME.locator(
                 "//button[contains(@data-tour-id,'save-workspace-button')]//div[contains(text(),'Save')]");
@@ -108,29 +104,21 @@ public class ExplorerWorkspace {
         this.REACHABLE_AUDIENCE =
                 WORKSPACE_FRAME.locator("//input[@type='checkbox' and contains(@class,'PrivateSwitchBase-input')]");
         this.SELECT_DESELECT_ALL = WORKSPACE_FRAME.locator("//div[contains(text(),'Select/Deselect All')]");
-        this.AI_CONFIGURATOR_BTN = WORKSPACE_FRAME.locator("//p[contains(text(),'AI Configurator')]");
+        this.AI_CONFIGURATOR_BTN = WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'AI Configurator')]");
         this.AUDIENCE_DESCRIPTION_TEXTAREA =
                 WORKSPACE_FRAME.locator("//textarea[@placeholder='Describe your Audience']");
         this.BUILD_AUDIENCE_BTN = WORKSPACE_FRAME.locator("//div[text()='Build Audience']");
         this.TRY_ANOTHER_PROMPT_BTN = WORKSPACE_FRAME.locator("//div[text()='Try another prompt']");
         this.FILTER_HEADER_TITLE = WORKSPACE_FRAME.locator("//div[contains(@data-tour-id, 'filters-container')]");
-        this.MAP_TOOL_TIP = WORKSPACE_FRAME
-                .locator("#extension-root iframe")
-                .contentFrame()
+        this.MAP_TOOL_TIP =DASHBOARD_FRAME
                 .locator(
                         "//div[contains(@class,'MapTooltip')]/div/div/div[text()='Identified NPIs']/following-sibling::div");
         this.DELETE_FILTER = WORKSPACE_FRAME.locator("//div[contains(@data-tour-id, 'filters-container')]//button");
-        this.CAMERA_CONTROL_ICON = WORKSPACE_FRAME
-                .locator("#extension-root iframe")
-                .contentFrame()
+        this.CAMERA_CONTROL_ICON = DASHBOARD_FRAME
                 .locator("//button[@title='Map camera controls']");
-        this.ZOOM_OUT = WORKSPACE_FRAME
-                .locator("#extension-root iframe")
-                .contentFrame()
+        this.ZOOM_OUT = DASHBOARD_FRAME
                 .locator("//div[@class='gmnoprint']//button[@title='Zoom out' and contains(@class, 'gm-control-active')]");
-        this.MAP_CONTENT = WORKSPACE_FRAME
-                .locator("#extension-root iframe")
-                .contentFrame()
+        this.MAP_CONTENT = DASHBOARD_FRAME
                 .locator("div[aria-label='Dashboard Content']");
         this.DASHBOARD_FILTER_TITLE = WORKSPACE_FRAME.locator("//p[contains(text(),'Dashboard Filters')]");
         this.MERGED_TEXT = WORKSPACE_FRAME.locator("//p[contains(text(),'Merged with Primary after Save')]");
@@ -141,17 +129,15 @@ public class ExplorerWorkspace {
         this.MOMENTS_WIDGET =
                 WORKSPACE_FRAME.getByText("Contextual", new FrameLocator.GetByTextOptions().setExact(true));
         this.CLAIMS_WIDGET = WORKSPACE_FRAME.getByText("Clinical", new FrameLocator.GetByTextOptions().setExact(true));
-        this.OWNED_AND_OPERATED_SECTION = WORKSPACE_FRAME
-                .locator("#extension-root iframe")
-                .contentFrame()
+        this.OWNED_AND_OPERATED_SECTION = DASHBOARD_FRAME
                 .locator("//span[text()='Owned & Operated']");
         this.WORKSPACE_EDIT_BUTTON = WORKSPACE_FRAME.locator("//button//div[text()='Edit']");
         this.WORKSPACE_HEADER =
                 WORKSPACE_FRAME.locator("//div[@data-tour-id='workspace-back-button']/following-sibling::div//h1");
-        this.ADVERTISER_LIST = WORKSPACE_FRAME.locator("//p[text()='Advertisers']");
+        this.ADVERTISER_LIST = WORKSPACE_FRAME.locator("//ds-typography[text()='Advertisers']");
         this.SEARCH_ADVERTISER = WORKSPACE_FRAME.locator("//input[@placeholder='Search']");
         this.ADVERTISER_BUTTON = WORKSPACE_FRAME.locator("//button[contains(@data-tour-id,'workspace-advertiser')]");
-        this.SPECIALITY_PANEL = WORKSPACE_FRAME.locator("//div[@id='panel-speciality_all']");
+        this.SPECIALITY_PANEL = WORKSPACE_FRAME.locator("//div[@data-tour-id='include-exclude-filter-container']//p/text()");
         this.INCLUDE_EXCLUDE_CHECK = WORKSPACE_FRAME.locator("//button[@data-testid='bi-include-exclude-check']");
         this.ALERT = WORKSPACE_FRAME.locator("//div[contains(@class, 'Toastify')]//div[@role='alert']//p");
     }
@@ -181,8 +167,14 @@ public class ExplorerWorkspace {
         SEARCH_ADVERTISER_IN_EDIT_WORKSPACE.press("Enter");
     }
 
-    public void saveWorkspaceName() {
+    // Brand Explorer doesn't show a confirmation toast on rename, unlike other workspace types.
+    public void saveWorkspaceName(boolean expectsConfirmationAlert) {
         SAVE_WORKSPACE_NAME.click();
+        if (!expectsConfirmationAlert) {
+            return;
+        }
+        waitUtility.waitForLocatorVisible(ALERT);
+        waitUtility.waitForLocatorHidden(ALERT);
     }
 
     public void waitUntilAlertDisappears() {
@@ -203,7 +195,7 @@ public class ExplorerWorkspace {
         SEARCH_FILTER.clear();
         SEARCH_FILTER.fill(filter);
         WORKSPACE_FRAME
-                .locator(String.format("//span[contains(text(),'%s')]", filter))
+                .locator(String.format("//ds-typography[contains(text(),'%s')]", filter))
                 .first()
                 .click();
         switch (filter) {
@@ -221,17 +213,18 @@ public class ExplorerWorkspace {
                     "IAB",
                     "MeSH":
                 if (filter.equals("Specialty")) {
+                    WORKSPACE_FRAME.locator("//div//ds-typography[text()='Specialty']").click();
                     WORKSPACE_FRAME
-                            .locator("//span[contains(text(),'All Specialties')]")
-                            .click();
-                    waitUtility.waitForLocatorVisible(SPECIALITY_PANEL);
+                            .locator("ds-tab")
+                            .filter(new Locator.FilterOptions().setHasText("All Specialties")).click();
+                    waitUtility.waitForLocatorVisible(SPECIALITY_PANEL.last());
                 }
                 for (String option : options) {
                     waitUtility.waitForLocatorVisible(INCLUDE_EXCLUDE_CHECK.last());
                     Locator locator = WORKSPACE_FRAME.locator(String.format(
                             "//p[contains(text(),'%s')]/preceding-sibling::div/button[@data-testid='bi-include-exclude-check']",
                             option.trim()));
-                    TAB_PANEL_SEARCH.fill(option.trim());
+                    tabPanelSearch(filter).fill(option.trim());
                     waitUtility.waitForLocatorVisible(locator.first());
                     page.waitForTimeout(1000);
                     if (SELECT_DESELECT_ALL.isVisible()) SELECT_DESELECT_ALL.click();
@@ -253,9 +246,8 @@ public class ExplorerWorkspace {
                 break;
             case "Site", "Search":
                 for (String option : options) {
-                    WORKSPACE_FRAME
-                            .locator(String.format("//span[contains(text(),'%s')]", option.trim()))
-                            .click();
+                    WORKSPACE_FRAME.locator("ds-checkbox",
+                            new FrameLocator.LocatorOptions().setHasText(option.trim())).click();
                 }
                 break;
             case "Graduation Year":
@@ -341,8 +333,6 @@ public class ExplorerWorkspace {
                             .locator(String.format(
                                     "//h2[@data-title='%s']/parent::div/following-sibling::div//div[contains(@style,'z-index: 3;')]",
                                     visual));
-                    // Scroll each map visual by its own dashboard tile before scanning/clicking, instead of relying on the shared map camera control.
-                    // This fixes the second map scan for NPI Facilities Geography when the tile is not in view.
                     isInView = CommonUtils.scrollElementIntoView(MAP_CONTENT, MAP_TILE, 1000, 100, page);
                     if (!isInView) {
                         continue;
@@ -352,7 +342,6 @@ public class ExplorerWorkspace {
                     } else if (s.contains("NPI ZIP Codes")) {
                         ZOOM_OUT.nth(1).click();
                     }
-
                     BoundingBox box = MAP_TILE.boundingBox();
                     CommonUtils.hoverAndClick(page, box, MAP_TOOL_TIP);
                     break;
@@ -397,8 +386,6 @@ public class ExplorerWorkspace {
                         continue;
                     }
                     if (NPI_PATIENT_ENTITIES.count() > 0) {
-                        // Force-click Highcharts SVG points after verifying they exist and are in view, because
-                        // chart data labels can overlay the point and intercept Playwright's normal click.
                         NPI_PATIENT_ENTITIES.first().click(new Locator.ClickOptions().setForce(true));
                     }
                     break;
@@ -461,6 +448,12 @@ public class ExplorerWorkspace {
         };
     }
 
+    private Locator tabPanelSearch(String filter) {
+        if (filter.equals("Profession")) return TAB_PANEL_SEARCH.first();
+        if (filter.equals("Specialty")) return TAB_PANEL_SEARCH.last();
+        return TAB_PANEL_SEARCH;
+    }
+
     public String isAdvertiserDisabled() {
         return ADVERTISER_SELECTED.evaluate("el => getComputedStyle(el).color").toString();
     }
@@ -476,15 +469,26 @@ public class ExplorerWorkspace {
 
     public void selectRecency(String recency) {
         WORKSPACE_FRAME
-                .locator("//p[normalize-space()='Recency']/following-sibling::div//label[normalize-space()='" + recency
-                        + "']")
-                .click();
+                .locator(String.format("//div[@data-tour-id = 'clinical-recency_filter']//label[text()='%s']",
+                        recency)).click();
     }
 
-    public String fetchRecencyValue(String filterType) {
-        Locator recencyLocator = WORKSPACE_FRAME.locator(String.format(
-                "//p[normalize-space()='%s Recency']/parent::div//following-sibling::div//p", filterType));
-        return recencyLocator.textContent().trim();
+    public String fetchRecencyValue() {
+        waitForDashboardLoad();
+        Locator recencyLocator = WORKSPACE_FRAME.locator(
+                "//div[@data-tour-id='filters-container']//div[@role='img']/following-sibling::p");
+        String text = recencyLocator.last().textContent().trim();
+        // Assertion expects first character as uppercase while after applying filter lowercase is shown on UI
+        Matcher matcher = Pattern.compile(
+                "\\b(\\d+)\\s+(day|days|week|weeks|month|months|year|years)\\b",
+                Pattern.CASE_INSENSITIVE
+        ).matcher(text);
+        if (!matcher.find()) {
+            return "";
+        }
+        String unit = matcher.group(2).toLowerCase();
+        unit = unit.substring(0, 1).toUpperCase() + unit.substring(1);
+        return matcher.group(1) + " " + unit;
     }
 
     public void selectDraftOption(String DraftOption) {

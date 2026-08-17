@@ -146,7 +146,7 @@ Feature: LIFE Regression - Create a Campaign
       | CustomField | NewCustomField | 01- Advertiser | Campaign | Regular | 50000     | Test               |
 
   @regression
-  Scenario Outline: Verify checking Frequency Capping enables "Times per Target" and "Per Target Audience" dropdowns
+  Scenario Outline: Verify by checking Frequency Capping enables "Times per Target" and "Per Target Audience" dropdowns
     Given This scenario will be executed in the "Demo" environment as a "User"
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
     And User clicks on Create Campaign
@@ -167,6 +167,7 @@ Feature: LIFE Regression - Create a Campaign
     When User enters window limit as "<WINDOW_LIMIT>"
     When User selects "week" from Times per Target dropdown and "Per Person" from Per Target Audience dropdown
     When User enters the campaign details as "<ADVERTISER>" "<CP_NAME>" "<CP_TYPE>" "<CP_BUDGET>" and saves the campaign
+    Then Verify campaign details are saved and user is navigated to the line item page
     Examples:
       | ADVERTISER     | CP_NAME  | CP_TYPE | CP_BUDGET | WINDOW_LIMIT |
       | 01- Advertiser | Campaign | Regular | 50000     | 5            |

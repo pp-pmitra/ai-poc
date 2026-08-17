@@ -15,7 +15,7 @@ Feature: Brand Explorer Workspace creation in Studio
     Then User sees the types of workspaces they have permissions for
     And User clicks on "Brand Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And User edits the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "Brand Explorer" workspace name as "<WORKSPACE_NAME>"
     Then Verify that advertiser field is disabled and displayed in "rgba(34, 34, 34, 0.55)" after saving the workspace
     Then Verify Dimension "Day" and Metric "Identified NPIs" are selected by default in the workspace
     Then Verify Time Frame is selected as "Last 7 Days" by default in the workspace
@@ -101,7 +101,7 @@ Feature: Brand Explorer Workspace creation in Studio
     Then User sees the types of workspaces they have permissions for
     And User clicks on "Brand Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And User edits the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "Brand Explorer" workspace name as "<WORKSPACE_NAME>"
     When User clicks the TimeFrame selector
     And User selects the timeframe preset "<TIMEFRAME>"
     And User saves the "Brand Explorer" workspace
@@ -112,6 +112,24 @@ Feature: Brand Explorer Workspace creation in Studio
     Examples:
       | ADVERTISER         | WORKSPACE_NAME     | TIMEFRAME    | DAYS |
       | TAMTESTING ACCOUNT | Automation_Persist | Last 30 Days | 30   |
+
+  @regression
+  Scenario Outline: Verify saved non-default dimension and metric persist when the workspace is closed and reopened
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User edits the "Brand Explorer" workspace name as "<WORKSPACE_NAME>"
+    And User removes the default dimensions and metric
+    And User selects "<DIMENSION>" from "<DIM_CATEGORY>" component panel
+    And User selects "<METRIC>" from "<METRIC_CATEGORY>" component panel
+    And User saves the "Brand Explorer" workspace
+    Then Verify the "Brand Explorer" Workspace is saved
+    When User navigates back to the workspace list and reopens the saved Brand Explorer workspace
+    Then Verify "<DIMENSION>" and "<METRIC>" persist as table columns after reopening
+    Examples:
+      | ADVERTISER         | WORKSPACE_NAME       | DIMENSION | DIM_CATEGORY | METRIC           | METRIC_CATEGORY |
+      | TAMTESTING ACCOUNT | Automation_Persist   | Month     | Time Frame   | HCP Active Users | HCP Events      |
 
   @regression
   Scenario Outline: Verify a Brand Explorer dimension can be selected and removed
@@ -165,3 +183,38 @@ Feature: Brand Explorer Workspace creation in Studio
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
 
+  @regression
+  Scenario Outline: Verify a saved filter persists when the workspace is closed and reopened
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User edits the "Brand Explorer" workspace name as "<WORKSPACE_NAME>"
+    And User clicks on the Filters tab
+    And User adds a filter on "<FIELD>" from "<CATEGORY>" category with value "<VALUE>"
+    Then Verify the filter on "<FIELD>" shows value "<VALUE>"
+    And User saves the "Brand Explorer" workspace
+    Then Verify the "Brand Explorer" Workspace is saved
+    When User navigates back to the workspace list and reopens the saved Brand Explorer workspace
+    And User clicks on the Filters tab
+    Then Verify the filter on "<FIELD>" shows value "<VALUE>"
+    Examples:
+      | ADVERTISER         | WORKSPACE_NAME     | CATEGORY                 | FIELD      | VALUE     |
+      | TAMTESTING ACCOUNT | Automation_Persist | Healthcare Professionals | Profession | Physician |
+
+  @regression
+  Scenario Outline: Verify an applied filter is reflected immediately and correctly narrows the dataset in the table
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User clicks on the Filters tab
+    And User adds a filter on "<FIELD>" from "<CATEGORY>" category with value "<VALUE>"
+    Then Verify the filter on "<FIELD>" shows value "<VALUE>"
+    And User clicks on the Components tab
+    And User selects "<FIELD>" from "<CATEGORY>" component panel
+    Then Verify "<FIELD>" is visible as a table column
+    And Verify the table column "<FIELD>" only shows rows with value "<VALUE>"
+    Examples:
+      | ADVERTISER         | CATEGORY                 | FIELD      | VALUE     |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | Physician |

@@ -9,7 +9,7 @@ import utils.WaitUtility;
 
 public class LineItemDetails {
     private final Page page;
-    private final Locator VERIFY_LINE_ITEM_PAGE;
+    private final Locator LINE_ITEM_PAGE;
     private final Locator LINE_ITEM_NAME;
     private final Locator LINE_ITEM_BUDGET;
     private final Locator ENABLE_LINE_ITEM;
@@ -56,7 +56,7 @@ public class LineItemDetails {
     private final Locator COPY_LINE_ITEM_DIALOG;
     private final Locator COPY_INPUT;
     private final Locator COPY_BUTTON;
-    private final Locator COPY_SUCESS_ALERT;
+    private final Locator COPY_SUCCESS_ALERT;
     private final Locator TEMPLATE_NAME_LABEL;
     private final Locator REMOVAL_CONFIRMATION_DIALOG;
     private final Locator REMOVE_BUTTON;
@@ -93,7 +93,7 @@ public class LineItemDetails {
             endDay = startDay + 5;
         }
         this.page = page;
-        this.VERIFY_LINE_ITEM_PAGE = page.locator("//div[text()='New Line Item']");
+        this.LINE_ITEM_PAGE = page.locator("//div[text()='New Line Item' and @class='left lineitem-name']");
         this.LINE_ITEM_NAME = page.locator("//input[@placeholder='Line Item Name']");
         this.LINE_ITEM_BUDGET = page.locator("//input[contains(@class,'gaFlightBudget')]");
         this.ENABLE_LINE_ITEM =
@@ -147,7 +147,7 @@ public class LineItemDetails {
         this.COPY_LINE_ITEM_DIALOG = page.locator("//div[contains(text(),'Copy Line Item')]");
         this.COPY_INPUT = page.locator("//input[contains(@class, 'copyInput')]");
         this.COPY_BUTTON = page.locator("//button[contains(text(), 'Copy')]");
-        this.COPY_SUCESS_ALERT = page.locator("//div[contains(text(), 'Line Item copied successfully.')]");
+        this.COPY_SUCCESS_ALERT = page.locator("//div[contains(text(), 'Line Item copied successfully.')]");
         this.TEMPLATE_NAME_LABEL = page.locator("//label[text()='Template']");
         this.REMOVAL_CONFIRMATION_DIALOG = page.locator("//div[contains(text(),'Removal Confirmation')]");
         this.REMOVE_BUTTON = page.locator("//span[contains(text(),'Remove')]");
@@ -159,7 +159,7 @@ public class LineItemDetails {
         this.PACING_MODE = page.locator("//sui-select[@placeholder='PacingMode']");
         this.FLAT_CPM = page.locator("//input[@formcontrolname='flatCPM']");
         this.PACING_MODE_INPUT = page.locator("//input[contains(@class,'pacing-mode-input')]");
-        this.PLACEMENT_ID = page.locator("//label[contains(text(),'PlacementId')]/following-sibling::input");
+        this.PLACEMENT_ID = page.locator("//label[span[normalize-space()='PlacementId']]/following-sibling::input");
         this.MANAGEMENT_FEE_LABEL_VALUE = page.locator("//span[contains(@class, 'fee-value')]");
         this.MANAGEMENT_FEE_OVERRIDE = page.locator(
                 "//div[contains(@class,'management-fee')]//span/following-sibling::span//label[contains(text(),'Override')]");
@@ -173,7 +173,7 @@ public class LineItemDetails {
     }
 
     public String verifyLineItemText() {
-        return VERIFY_LINE_ITEM_PAGE.innerText();
+        return LINE_ITEM_PAGE.innerText();
     }
 
     public void enterLineItemName(String lineItemName) {
@@ -471,8 +471,8 @@ public class LineItemDetails {
         waitUtility.waitForLocatorVisible(COPY_LINE_ITEM_DIALOG);
         COPY_INPUT.fill(name);
         COPY_BUTTON.click();
-        String text = COPY_SUCESS_ALERT.innerText().trim();
-        waitUtility.waitForLocatorHidden(COPY_SUCESS_ALERT);
+        String text = COPY_SUCCESS_ALERT.innerText().trim();
+        waitUtility.waitForLocatorHidden(COPY_SUCCESS_ALERT);
         return text;
     }
 

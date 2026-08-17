@@ -342,14 +342,8 @@ public class RunReportPanel {
     }
 
     public String fetchSuccessAlert() {
-        String text;
-        if (SUCCESS_ALERT.isVisible()) {
-            text = SUCCESS_ALERT.innerText().trim();
-            waitUtility.waitForLocatorHidden(SUCCESS_ALERT);
-            return text;
-        } else {
-            text = ALERT_MESSAGE.innerText().trim();
-        }
+        String text = ALERT_MESSAGE.innerText().trim();
+        waitUtility.waitForLocatorHidden(ALERT_MESSAGE);
         return text;
     }
 
@@ -361,6 +355,10 @@ public class RunReportPanel {
     }
 
     public void clickModifyOption(String templateName) {
+        // 1. Safely hide the parent survey element so it doesn't block the screen
+        if (page.locator(".app-survey-cow").first().isVisible()) {
+            page.locator(".app-survey-cow").evaluate("el => el.style.display = 'none'");
+        }
         Locator templateElements = page.locator(String.format(
                 "//div[contains(@class, 'content-section')][.//div[contains(@class, 'report-progress')] and .//div[contains(@class, 'name-section') and contains(text(), '%s')]]//img[contains(@class, 'icon-image')]",
                 templateName));
@@ -807,9 +805,9 @@ public class RunReportPanel {
     public boolean isDestinationTypeAvailable() {
         return DESTINATION_TYPE.isVisible()
                 && !DESTINATION_TYPE
-                        .locator("xpath=//div[@class='text']//span[2]")
-                        .textContent()
-                        .isEmpty();
+                .locator("xpath=//div[@class='text']//span[2]")
+                .textContent()
+                .isEmpty();
     }
 
     public boolean isHostFieldAvailable() {

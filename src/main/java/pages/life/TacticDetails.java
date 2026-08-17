@@ -70,6 +70,7 @@ public class TacticDetails {
     private final Locator CREATIVE_NAME;
     private final Locator TACTIC_CHANNEL;
     private final Locator TACTIC_PRIORITY;
+    private final Locator GLOBAL_TACTIC_TAB;
     private final Locator TACTIC_MEDIA_OPTIMIZATION;
     private final Locator DATA_COST_CPM;
     private final Locator HUMAN_COST_CPM;
@@ -84,6 +85,7 @@ public class TacticDetails {
     private final Locator VALUE_LOCATOR;
     private final Locator PERCENT_TYPE_FEE_INPUT;
     private final Locator DOLLAR_TYPE_FEE_INPUT;
+    private final Locator CANCEL_BUTTON;
     private List<String> showExpressionRawValues;
     private List<String> showExpressionValues;
     Campaigns campaigns = new Campaigns(DriverFactory.getPage());
@@ -100,8 +102,7 @@ public class TacticDetails {
         this.VERIFY_TACTIC_DETAILS_PAGE = page.locator("//div[text()='New Tactic' or text()='New Ad Group']");
         this.TACTIC_NAME = page.locator("//input[@placeholder='Tactic Name' or @placeholder='Ad Group Name']");
         this.SAVE_TACTIC_DETAILS = page.locator("//span[text()='Save']");
-        this.TACTIC_DETAILS_SUCCESS = page.locator(
-                "//div[@aria-label='Success!']/following-sibling::div[@role='alert' and contains(text(),'Tactic')]");
+        this.TACTIC_DETAILS_SUCCESS = page.locator("//div[@aria-label='Success!']/following-sibling::div[@role='alert' and contains(text(),'Tactic')]");
         this.IMPORT_TEMPLATE_ICON = page.locator("//app-icon-lable-link[contains(@text,'Import Template')]/div");
         this.IMPORT_TEMPLATE_DIALOG = page.locator("//div[contains(text(),'Import Template')]");
         this.TEMPLATE_SEARCH_BOX = page.locator("//input[contains(@placeholder,'type in to search...')]");
@@ -127,8 +128,7 @@ public class TacticDetails {
         this.ADD_CUSTOM_FIELD = page.locator("//span[contains(text(),'Add Custom Field')]");
         this.ADD_CUSTOM_FIELD_INPUT = page.locator("//input[@placeholder='Field Name']");
         this.SAVE_CUSTOM_FIELD_BUTTON = page.locator("//button[normalize-space()='Save']");
-        this.FIELD_CREATE_SUCCESS =
-                page.locator("//div[@role='alert' and contains(text(),'Successfully created custom Field')]");
+        this.FIELD_CREATE_SUCCESS = page.locator("//div[@role='alert' and contains(text(),'Successfully created custom Field')]");
         this.CUSTOM_FIELD_TEXT = page.locator("//input[contains(@class,'gaName')]");
         this.DELETE_BUTTON = page.locator("//app-icon-lable-link[contains(@class,'delete-field')]");
         this.CONFIRM_DELETE = page.locator("//span[contains(text(),'Delete Field')]");
@@ -139,8 +139,7 @@ public class TacticDetails {
         this.TACTIC_DELETE_BUTTON = page.getByText("Delete");
         this.TACTIC_REMOVE_BUTTON = page.getByText("Remove");
         this.EXIT_BULK_MODE = page.locator("//button[normalize-space()='Exit Bulk edit mode']");
-        this.ENABLE_TACTIC =
-                page.locator("//div[@class='bulk-icon addBulkOpActive']").first();
+        this.ENABLE_TACTIC = page.locator("//div[@class='bulk-icon addBulkOpActive']").first();
         this.DISABLE_TACTIC = page.locator("//div[contains(text(),'Disable Tactics')]");
         this.BULK_ACTION = page.locator("//span[@class='pointer inlineDiv iconSprite bulkEdit']");
         this.TACTIC_GLOBAL_SEARCH_TEXT = page.locator("//div[contains(text(),'Nothing found...')]");
@@ -148,22 +147,19 @@ public class TacticDetails {
         this.OPEN_GLOBAL_SEARCH = page.locator("//div[@class='iconSprite search-overlay-lens']");
         this.GLOBAL_SEARCH_INPUT_FIELD = page.locator("//input[@id='global_search_input']");
         this.HEADER_COMMENT = page.locator("//div[@class='notes-dashboard left']");
-        this.NAVIGATION_COMMENT =
-                page.locator("//span[@class='notes-dark-icon-empty'] | //span[@class='notes-dark-icon-provided']");
+        this.NAVIGATION_COMMENT = page.locator("//span[@class='notes-dark-icon-empty'] | //span[@class='notes-dark-icon-provided']");
         this.COMMENT_TEXT_BOX = page.locator("//textarea[@id='notesId']");
         this.COMMENT_SUCCESS_ALERT = page.locator("//div[contains(text(),'Notes saved successfully')]");
-        this.TACTIC_COPY_NAME_FIELD = page.locator(
-                "//input[contains(@class, \"multi-line-input-box\")and @placeholder=\"Enter New Tactic Name\"]");
-        this.DUPLICATE_BUTTON =
-                page.locator("//button[contains(@class, \"okButton\") and normalize-space(text())=\"Duplicate\"]");
+        this.TACTIC_COPY_NAME_FIELD = page.locator("//input[contains(@class, \"multi-line-input-box\")and @placeholder=\"Enter New Tactic Name\"]");
+        this.DUPLICATE_BUTTON = page.locator("//button[contains(@class, \"okButton\") and normalize-space(text())=\"Duplicate\"]");
         this.CREATIVE_NAME = page.locator("//td[contains(@class,'semi-bold')]//span[contains(@class,'crt-name')]");
         this.TACTIC_CHANNEL = page.locator("(//div[@id='billingTypeDropdown'])[1]");
         this.TACTIC_PRIORITY = page.locator("//div[contains(@class, 'labeled input')] //input[@id='priority']");
+        this.GLOBAL_TACTIC_TAB = page.locator("//a[contains(text(),'Tactics')]");
         this.TACTIC_MEDIA_OPTIMIZATION = page.locator("(//div[@id='billingTypeDropdown'])[2]");
         this.DATA_COST_CPM = page.locator("(//span[contains(@class, 'cost-override')])[1]");
         this.HUMAN_COST_CPM = page.locator("(//span[contains(@class, 'cost-override')])[2]");
-        this.COPY_SUCCESS_ALERT = page.locator(
-                "//div[@id='toast-container' and contains(., 'Tactic(s)') and contains(., 'copied successfully')]");
+        this.COPY_SUCCESS_ALERT = page.locator("//div[@id='toast-container' and contains(., 'Tactic(s)') and contains(., 'copied successfully')]");
         this.TARGETING_RULE_CONFIRMATION_DIALOG = page.locator("//div[contains(@class,'confirm-modal header-title')]");
         this.CONTINUE_BUTTON = page.locator("//span[text()='Continue']");
         this.CLICK_REFRESH_BUTTON = page.locator("//button[contains(@class,'refresh')]");
@@ -172,10 +168,9 @@ public class TacticDetails {
         this.SHOW_EXPRESSION_BUTTON = page.locator("//span[contains(text(),'Show Expression')]");
         this.VALUE_LOCATOR = page.locator("//span[@class='targetGreen keyword text-target']");
         this.CONNECTION_LOCATOR = page.locator("//span[@class='inlineDiv connector']");
-        this.PERCENT_TYPE_FEE_INPUT = page.locator(
-                "//div[contains(@class,'management-fee-container')]//input[contains(@class,'percent-img')]");
-        this.DOLLAR_TYPE_FEE_INPUT = page.locator(
-                "//div[contains(@class,'management-fee-container')]//input[contains(@class,'doller-img')]");
+        this.PERCENT_TYPE_FEE_INPUT = page.locator("//div[contains(@class,'management-fee-container')]//input[contains(@class,'percent-img')]");
+        this.DOLLAR_TYPE_FEE_INPUT = page.locator("//div[contains(@class,'management-fee-container')]//input[contains(@class,'doller-img')]");
+        this.CANCEL_BUTTON = page.locator("//span[contains(@class,'cancleButton')]");
     }
 
     public void clickNewTactic() {
@@ -183,9 +178,7 @@ public class TacticDetails {
     }
 
     public Locator customFieldValue(String customFieldName) {
-        return page.locator(String.format(
-                "//span[@class='cmp-form-label-text' and text()='%s']/parent::label/following-sibling::input",
-                customFieldName));
+        return page.locator(String.format("//span[@class='cmp-form-label-text' and text()='%s']/parent::label/following-sibling::input", customFieldName));
     }
 
     public List<String> getAllTactics() {
@@ -205,9 +198,7 @@ public class TacticDetails {
     }
 
     public void clearCustomFieldText(String customFieldName) {
-        Locator FIELD_OPTIONS = page.locator(String.format(
-                "//span[@class='cmp-form-label-text' and text()='%s']/parent::label/following-sibling::input",
-                customFieldName));
+        Locator FIELD_OPTIONS = page.locator(String.format("//span[@class='cmp-form-label-text' and text()='%s']/parent::label/following-sibling::input", customFieldName));
         FIELD_OPTIONS.clear();
         SAVE_TACTIC_DETAILS.click();
     }
@@ -218,12 +209,18 @@ public class TacticDetails {
         } else if (entryPoint.contains("navigation")) {
             NAVIGATION_COMMENT.click();
         }
-        String actualComment = COMMENT_TEXT_BOX.inputValue();
+        return COMMENT_TEXT_BOX.inputValue();
+    }
+
+    public void clearComment(){
         COMMENT_TEXT_BOX.clear();
         SAVE_BUTTON.click();
         waitUtility.waitForLocatorHidden(COMMENT_SUCCESS_ALERT.first());
         waitUtility.waitForElementVisible("//span[@class='notes-icon-empty-dashboard']");
-        return actualComment;
+    }
+
+    public void clickCancelButton(){
+        CANCEL_BUTTON.click();
     }
 
     public List<String> getShowExpressionRawValues() {
@@ -256,10 +253,7 @@ public class TacticDetails {
         }
         showExpressionRawValues = new ArrayList<>(values); // preserve raw for connector assertion
         // Keep first occurrence order, remove duplicates, blanks, and logical connectors.
-        showExpressionValues = values.stream()
-                .filter(v -> !v.isBlank() && !v.equalsIgnoreCase("AND") && !v.equalsIgnoreCase("OR"))
-                .distinct()
-                .collect(Collectors.toList());
+        showExpressionValues = values.stream().filter(v -> !v.isBlank() && !v.equalsIgnoreCase("AND") && !v.equalsIgnoreCase("OR")).distinct().collect(Collectors.toList());
     }
 
     public boolean assertShowExpressionConnectorLogic(List<String> rawValues) {
@@ -303,8 +297,7 @@ public class TacticDetails {
 
     public void removeTargetingRule(String ruleType) {
         waitUtility.waitUntilSpinnerHidden();
-        String ruleLocator = String.format(
-                "//span[text()='%s']/parent::label//following-sibling::div//div[contains(@title,'delete')]", ruleType);
+        String ruleLocator = String.format("//span[text()='%s']/parent::label//following-sibling::div//div[contains(@title,'delete')]", ruleType);
         page.locator(ruleLocator).click();
         waitUtility.waitUntilSpinnerHidden();
     }
@@ -368,12 +361,8 @@ public class TacticDetails {
     }
 
     public String deleteCustomField(String customFieldName) {
-        waitUtility.waitForLocatorVisible(
-                page.locator("//app-life-custom-field-setting//label[contains(@class,'form-label')]")
-                        .last());
-        Locator FIELD_OPTIONS = page.locator(String.format(
-                "//span[@class='cmp-form-label-text' and text()='%s']/following-sibling::div//img[@class='three-dots']",
-                customFieldName));
+        waitUtility.waitForLocatorVisible(page.locator("//app-life-custom-field-setting//label[contains(@class,'form-label')]").last());
+        Locator FIELD_OPTIONS = page.locator(String.format("//span[@class='cmp-form-label-text' and text()='%s']/following-sibling::div//img[@class='three-dots']", customFieldName));
         FIELD_OPTIONS.click();
         DELETE_BUTTON.last().click();
         CONFIRM_DELETE.click();
@@ -409,17 +398,7 @@ public class TacticDetails {
         return successMessage;
     }
 
-    public boolean createTacticWithLineItemsAndImport(
-            List<String> lineItemTypeList,
-            String advertiser,
-            String campaignName,
-            String campaignType,
-            String budget,
-            String lineItemName,
-            String lineBudget,
-            String tacticName,
-            List<String> templateNameList,
-            List<Map<String, String>> ruleCountAndValueList) {
+    public boolean createTacticWithLineItemsAndImport(List<String> lineItemTypeList, String advertiser, String campaignName, String campaignType, String budget, String lineItemName, String lineBudget, String tacticName, List<String> templateNameList, List<Map<String, String>> ruleCountAndValueList) {
         List<Map<String, String>> labelCountMapList = new ArrayList<>();
         for (String lineItemType : lineItemTypeList) {
             navigation.clickSubMenu();
@@ -439,16 +418,7 @@ public class TacticDetails {
         return ruleCountAndValueList.equals(labelCountMapList);
     }
 
-    public List<String> createTacticWithLineItemsAndTargetingRules(
-            List<String> lineItemTypeList,
-            String advertiser,
-            String campaignName,
-            String campaignType,
-            String budget,
-            String lineItemName,
-            String lineBudget,
-            String tacticName,
-            Map<String, List<String>> rulesMap) {
+    public List<String> createTacticWithLineItemsAndTargetingRules(List<String> lineItemTypeList, String advertiser, String campaignName, String campaignType, String budget, String lineItemName, String lineBudget, String tacticName, Map<String, List<String>> rulesMap) {
         List<String> templateNameList = new ArrayList<>();
         for (String lineItemType : lineItemTypeList) {
             navigation.clickSubMenu();
@@ -467,11 +437,8 @@ public class TacticDetails {
         return templateNameList;
     }
 
-    public void selectManagementFeeOptionAndEnterData(
-            String managementFeeOption, String percent, String amount, String expectedFeeValue) {
-        String optionXPath = String.format(
-                "//div[contains(@class,'management-fee-contanier')]//div//button[normalize-space(text())='%s']",
-                managementFeeOption);
+    public void selectManagementFeeOptionAndEnterData(String managementFeeOption, String percent, String amount, String expectedFeeValue) {
+        String optionXPath = String.format("//div[contains(@class,'management-fee-contanier')]//div//button[normalize-space(text())='%s']", managementFeeOption);
         page.locator(optionXPath).click();
         switch (managementFeeOption) {
             case "Percentage" -> PERCENT_TYPE_FEE_INPUT.fill(percent);
@@ -531,10 +498,7 @@ public class TacticDetails {
                 IMPORT_TEMPLATE_ICON.click();
                 IMPORT_TEMPLATE_DIALOG.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
                 TEMPLATE_SEARCH_BOX.fill(templateName);
-                page.locator(String.format(
-                                "//div[contains(@class,'item text-truncate') and contains(text(), '%s')]",
-                                templateName))
-                        .click();
+                page.locator(String.format("//div[contains(@class,'item text-truncate') and contains(text(), '%s')]", templateName)).click();
                 IMPORT_BUTTON.click();
                 if (OVERRIDE_DIALOG.isVisible()) REPLACE_BUTTON.click();
                 waitUtility.waitUntilSpinnerHidden();
@@ -561,16 +525,7 @@ public class TacticDetails {
         return templateName;
     }
 
-    public boolean createTacticWithLineItemsAndAssignCreative(
-            String lineItemType,
-            String advertiser,
-            String campaignName,
-            String campaignType,
-            String budget,
-            String lineItemName,
-            String lineBudget,
-            String tacticName,
-            String CreativeName) {
+    public boolean createTacticWithLineItemsAndAssignCreative(String lineItemType, String advertiser, String campaignName, String campaignType, String budget, String lineItemName, String lineBudget, String tacticName, String CreativeName) {
         npiSmartList.clickPulsepointIcon();
         campaigns.campaignDashboard();
 
@@ -595,9 +550,7 @@ public class TacticDetails {
     }
 
     public void bulkEnableTactics(String tacticName) {
-        Locator tacticNameXpath = page.locator(String.format(
-                "//div[@class='tactic-main-details' and text()='%s']/ancestor::div[contains(@class,'tactic-list')]/preceding-sibling::div/sui-checkbox",
-                tacticName));
+        Locator tacticNameXpath = page.locator(String.format("//div[@class='tactic-main-details' and text()='%s']/ancestor::div[contains(@class,'tactic-list')]/preceding-sibling::div/sui-checkbox", tacticName));
         BULK_ACTION.click();
         tacticNameXpath.click();
         ENABLE_TACTIC.click();
@@ -605,9 +558,7 @@ public class TacticDetails {
     }
 
     public void bulkDisableTactics(String tacticName) {
-        Locator tacticNameXpath = page.locator(String.format(
-                "//div[@class='tactic-main-details' and text()='%s']/ancestor::div[contains(@class,'tactic-list')]/preceding-sibling::div/sui-checkbox",
-                tacticName));
+        Locator tacticNameXpath = page.locator(String.format("//div[@class='tactic-main-details' and text()='%s']/ancestor::div[contains(@class,'tactic-list')]/preceding-sibling::div/sui-checkbox", tacticName));
         BULK_ACTION.click();
         tacticNameXpath.click();
         DISABLE_TACTIC.click();
@@ -615,31 +566,25 @@ public class TacticDetails {
     }
 
     public boolean getToggleClass(String tacticName) {
-        Locator TACTIC_TOGGLE_CLASS = page.locator(String.format(
-                "//div[@class='tactic-main-details' and contains(text(), '%s')]/ancestor::div[contains(@class,'item-list-wrapper tactic-list')]//div[contains(@class,'item-list-control-toggle')]",
-                tacticName));
+        Locator TACTIC_TOGGLE_CLASS = page.locator(String.format("//div[@class='tactic-main-details' and contains(text(), '%s')]/ancestor::div[contains(@class,'item-list-wrapper tactic-list')]//div[contains(@class,'item-list-control-toggle')]", tacticName));
         return TACTIC_TOGGLE_CLASS.getAttribute("class").contains("toggle-enabled");
     }
 
     public boolean getToggleIcon(String tacticName) {
-        Locator TACTIC_NAME = page.locator(
-                String.format("//div[@class='tactic-main-details' and contains(text(), '%s')]", tacticName));
+        Locator TACTIC_NAME = page.locator(String.format("//div[@class='tactic-main-details' and contains(text(), '%s')]", tacticName));
         TACTIC_NAME.click();
         Locator TACTIC_TOGGLE = page.locator(("//label[normalize-space()='Enabled']/preceding-sibling::input"));
         return TACTIC_TOGGLE.isChecked();
     }
 
     public boolean getDisabledToggleClass(String tacticName) {
-        Locator TACTIC_TOGGLE_CLASS = page.locator(String.format(
-                "//div[@class='tactic-main-details' and contains(text(), '%s')]/ancestor::div[contains(@class,'item-list-wrapper tactic-list')]//div[contains(@class,'item-list-control-toggle')]",
-                tacticName));
+        Locator TACTIC_TOGGLE_CLASS = page.locator(String.format("//div[@class='tactic-main-details' and contains(text(), '%s')]/ancestor::div[contains(@class,'item-list-wrapper tactic-list')]//div[contains(@class,'item-list-control-toggle')]", tacticName));
         String cls = TACTIC_TOGGLE_CLASS.getAttribute("class");
         return !cls.contains("toggle-enabled");
     }
 
     public boolean getToggleDisabledIcon(String tacticName) {
-        Locator TACTIC_NAME = page.locator(
-                String.format("//div[@class='tactic-main-details' and contains(text(), '%s')]", tacticName));
+        Locator TACTIC_NAME = page.locator(String.format("//div[@class='tactic-main-details' and contains(text(), '%s')]", tacticName));
         TACTIC_NAME.click();
         Locator TACTIC_TOGGLE = page.locator(("//*[@id='actionComponent']/div/div/span/sui-checkbox"));
         String cls = TACTIC_TOGGLE.getAttribute("class");
@@ -647,7 +592,9 @@ public class TacticDetails {
     }
 
     public void globalSearchDeletedTactic(String tacticName) {
+        navigation.refreshPage();
         OPEN_GLOBAL_SEARCH.click();
+        GLOBAL_TACTIC_TAB.click();
         GLOBAL_SEARCH_INPUT_FIELD.fill(tacticName);
         GLOBAL_SEARCH_INPUT_FIELD.press("Enter");
     }
@@ -661,16 +608,14 @@ public class TacticDetails {
     }
 
     public boolean verifyTacticAvailable(String tacticName) {
-        Locator tacticItem =
-                page.locator(String.format("//div[@class='tactic-main-details' and text()='%s']", tacticName));
+        Locator tacticItem = page.locator(String.format("//div[@class='tactic-main-details' and text()='%s']", tacticName));
         tacticItem.scrollIntoViewIfNeeded();
         return tacticItem.isVisible();
     }
 
     public void clickTacticOptions(String option) {
         TACTIC_OPTIONS.click();
-        Locator optionXpath = page.locator(String.format(
-                "//div[contains(@class,'menu-items-popover')]/div/app-icon-lable-link[@title='%s']", option));
+        Locator optionXpath = page.locator(String.format("//div[contains(@class,'menu-items-popover')]/div/app-icon-lable-link[@title='%s']", option));
         waitUtility.waitForLocatorVisible(optionXpath);
         optionXpath.click();
     }
@@ -685,18 +630,14 @@ public class TacticDetails {
     }
 
     public void navigateToTacticDetails(String tacticName) {
-        page.locator(String.format("//div[@class='tactic-main-details' and text()='%s']", tacticName))
-                .click();
+        page.locator(String.format("//div[@class='tactic-main-details' and text()='%s']", tacticName)).click();
     }
 
     public List<String> fetchTacticDetails() {
         List<String> originalTacticDetails = new ArrayList<>();
-        originalTacticDetails.add(
-                TACTIC_CHANNEL.locator("div.text").textContent().trim());
-        originalTacticDetails.add(
-                TACTIC_PRIORITY.evaluate("el => el.value").toString().trim());
-        originalTacticDetails.add(
-                TACTIC_MEDIA_OPTIMIZATION.locator("div.text").textContent().trim());
+        originalTacticDetails.add(TACTIC_CHANNEL.locator("div.text").textContent().trim());
+        originalTacticDetails.add(TACTIC_PRIORITY.evaluate("el => el.value").toString().trim());
+        originalTacticDetails.add(TACTIC_MEDIA_OPTIMIZATION.locator("div.text").textContent().trim());
         page.waitForCondition(() -> {
             String text = DATA_COST_CPM.nth(0).textContent().trim();
             return !text.equals("—") && !text.isEmpty();
@@ -712,21 +653,15 @@ public class TacticDetails {
     }
 
     public void clickNewTacticForLineItem(String name) {
-        String xpath = String.format(
-                "//div[text()='%s']/ancestor::div[contains(@class,'lineitem-list-wrapper')]//app-icon-lable-link[@class='tactic-new-button']//div",
-                name);
+        String xpath = String.format("//div[text()='%s']/ancestor::div[contains(@class,'lineitem-list-wrapper')]//app-icon-lable-link[@class='tactic-new-button']//div", name);
         page.locator(xpath).click();
     }
 
     public boolean isCustomFieldAvailable(String customFieldName) {
-        return page.locator(String.format("//label[contains(text(),'%s')]", customFieldName))
-                .isVisible();
+        return page.locator(String.format("//label[contains(text(),'%s')]", customFieldName)).isVisible();
     }
 
-    public void createLineItemsWithTacticsAndTargetingRules(
-            List<Map<String, String>> rows,
-            String creative,
-            Consumer<Map<String, List<String>>> perTacticVerification) {
+    public void createLineItemsWithTacticsAndTargetingRules(List<Map<String, String>> rows, String creative, Consumer<Map<String, List<String>>> perTacticVerification) {
         String currentLiName = null;
 
         for (int i = 0; i < rows.size(); i++) {
