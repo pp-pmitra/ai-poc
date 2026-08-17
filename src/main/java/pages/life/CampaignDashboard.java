@@ -519,7 +519,7 @@ public class CampaignDashboard {
     }
 
     public void searchCreatedCampaign(String createdCampaign) {
-        waitUtility.waitForLocatorVisible(CAMPAIGN_PAGINATION.last());
+        waitUntilCampaignPaginationAppears();
         ensureCampaignRadioBtnSelected();
         unselectFavoriteCheckboxIfSelected();
         unselectHideFinishedCheckboxIfSelected();
@@ -663,5 +663,9 @@ public class CampaignDashboard {
         waitUtility.waitForLocatorVisible(CAMPAIGN_PAGE_TEXT);
         searchCreatedCampaign(campaignName);
         return NO_CAMPAIGN_AVAILABLE_TEXT.innerText();
+    }
+
+    public void waitUntilCampaignPaginationAppears(){
+        waitUtility.waitForLocatorVisible(CAMPAIGN_PAGINATION.last());
     }
 }

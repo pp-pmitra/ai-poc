@@ -4663,15 +4663,15 @@ public class LifeSteps {
 
     @When("User navigates to Administrative section")
     public void userNavigatesToAdministrativeSection() {
-        logger.info("Verifying: user downloads the Scheduled report and the data in downloaded report");
-        workspaceCreation.closeAIPanel();
+        logger.info("User navigates to Administrative section");
+        campaignDashboard.waitUntilCampaignPaginationAppears();
         navigation.clickSubMenu();
         accounts.clickAdministration();
     }
 
     @And("User navigates to Accounts Tab")
     public void userNavigatesToAccountsTab() {
-        logger.info("User navigates to Administrative section");
+        logger.info("User navigates to Accounts section");
         accounts.selectAccountsTab();
     }
 
@@ -7635,5 +7635,15 @@ public class LifeSteps {
         Assert.assertEquals("Campaign deleted successfully", successMessage);
         String noCampaignFoundError = campaignDashboard.fetchNoCampaignFoundMessage(campaignNameRandom);
         Assert.assertEquals("No campaigns matching filtering criteria found", noCampaignFoundError);
+    }
+
+    @And("User fetches custom field starting with {string}, perform deletion operation on Campaign, Line Items and Tactics levels and verify successful deletion")
+    public void userFetchesCustomFieldCreatedAndPerformDeletionOperation(String prefix) {
+        logger.info("Fetching custom field starting with '{}' and performing deletion operation", prefix);
+        List<String> customFields = accounts.fetchCustomFieldsStartingWith(prefix);
+        for (String field : customFields) {
+            String alertText = accounts.deleteCustomField(field);
+            Assert.assertTrue("Custom field deletion failed", alertText.contains("Successfully deleted the record"));
+        }
     }
 }
