@@ -218,3 +218,32 @@ Feature: Brand Explorer Workspace creation in Studio
     Examples:
       | ADVERTISER         | CATEGORY                 | FIELD      | VALUE     |
       | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | Physician |
+
+  @regression
+  Scenario Outline: Verify user can rename, duplicate, and delete a Brand Explorer workspace
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User edits the "Brand Explorer" workspace name as "<WORKSPACE_NAME>"
+    And User clicks the TimeFrame selector
+    And User selects the timeframe preset "<TIMEFRAME>"
+    And User saves the "Brand Explorer" workspace
+    Then Verify the "Brand Explorer" Workspace is saved
+    And Navigate to workspace dashboard
+    And User selects the workspace type "Brand Explorer"
+    And User clicks on the More Actions menu for the saved workspace 
+    And User selects the "Rename" option by clicking More Actions menu
+    And Verify user is able to rename the "Brand Explorer" workspace as "<NEW_WORKSPACE_NAME>"
+    And User is able to search the workspace after performing operation - "Rename"
+    And User searches the workspace created to perform Actions from More menu
+    And User selects the "Duplicate" option by clicking More Actions menu
+    And Verify user is able to duplicate the "Brand Explorer" workspace
+    And User is able to search the workspace after performing operation - "Duplicate"
+    And User searches the workspace created to perform Actions from More menu
+    And User selects the "Delete" option by clicking More Actions menu
+    And Verify user is able to delete the workspace
+    Examples:
+      | ADVERTISER         | WORKSPACE_NAME     | NEW_WORKSPACE_NAME  | TIMEFRAME    |
+      | TAMTESTING ACCOUNT | Automation_Persist | New_Brand_Explorer_ | Last 30 Days |
+

@@ -2160,6 +2160,7 @@ public class LifeSteps {
     @And("User clicks Creative Library options present under Activation tab")
     public void userClicksCreativeLibraryOptionsPresentUnderActivationTab() {
         logger.info("User clicks Creative Library options present under Activation tab");
+        campaignDashboard.waitUntilCampaignPaginationAppears();
         navigation.clickSubMenu();
         navigation.clickCreativeLibrary();
     }
@@ -7659,6 +7660,20 @@ public class LifeSteps {
         Assert.assertTrue("Advertiser dropdown is not present", bulkCreativeUpload.isAdvertiserDropdownAvailable());
         List<String> advertiser = bulkCreativeUpload.fetchAdvertisers();
         Assert.assertTrue("Advertiser List does not match", advertiser.containsAll(itemList));
+    }
+
+    @When("User deletes the campaign")
+    public void userDeletesTheCampaign() {
+        campaigns.clickCampaignOptions();
+        campaigns.deleteCampaign();
+    }
+
+    @Then("Verify that the campaign is deleted successfully")
+    public void verifyThatTheCampaignIsDeletedSuccessfully() {
+        String successMessage = campaigns.fetchCampaignDeleteSuccessAlert();
+        Assert.assertEquals("Campaign deleted successfully", successMessage);
+        String noCampaignFoundError = campaignDashboard.fetchNoCampaignFoundMessage(campaignNameRandom);
+        Assert.assertEquals("No campaigns matching filtering criteria found", noCampaignFoundError);
     }
 
     @When("User clicks on Frequency Capping checkbox")

@@ -78,6 +78,11 @@ public class Campaigns {
     private final Locator CAMPAIGN_STATUS_APPROVED_BUTTON;
     private final Locator FAVORITE_ONLY_CHECKBOX;
     private final Locator FREQUENCY_CAP_VALIDATION_ERROR;
+    private final Locator CAMPAIGN_PAGINATION_ON_DASHBOARD;
+    private final Locator DELETE_CAMPAIGN_BUTTON;
+    private final Locator DELETE_CAMPAIGN_CONFIRMATION_POPUP;
+    private final Locator DELETE_CAMPAIGN_REMOVE_BUTTON;
+    private final Locator DELETE_CAMPAIGN_SUCCESS_ALERT;
     private final Locator APPLY_FREQUENCY_CAPPING;
     private final Locator PER_TARGET_AUDIENCE_DROPDOWN;
     private final Locator WINDOWS_LIMIT_INPUT;
@@ -176,6 +181,11 @@ public class Campaigns {
                 "//label[contains(text(),'Approval Status')]/following-sibling::div[contains(@class,'display-inlineBlock')]//button[text()='Approved']");
         this.FAVORITE_ONLY_CHECKBOX = page.locator("//sui-checkbox[label[normalize-space()='Favorite Only']]");
         this.FREQUENCY_CAP_VALIDATION_ERROR = page.locator("//p[contains(@class,'ng-star-inserted')]");
+        this.CAMPAIGN_PAGINATION_ON_DASHBOARD = page.locator("//div[@class='paging-desc']");
+        this.DELETE_CAMPAIGN_BUTTON = page.locator("//app-icon-lable-link[@title='Delete']//div[contains(@class,'icolink')]");
+        this.DELETE_CAMPAIGN_CONFIRMATION_POPUP = page.locator("//div[contains(@class,'confirm-modal header') and contains(text(),'Removal Confirmation')]");
+        this.DELETE_CAMPAIGN_REMOVE_BUTTON = page.locator("//div[contains(@class,'approveButtonText')]/span[contains(text(),'Remove')]");
+        this.DELETE_CAMPAIGN_SUCCESS_ALERT = page.locator("//div[@role='alert' and contains(text(),'Campaign deleted successfully')]");
         this.APPLY_FREQUENCY_CAPPING = page.locator("//label[contains(text(),'Apply Frequency Capping')]");
         this.PER_TARGET_AUDIENCE_DROPDOWN = page.locator("//div[contains(@class,'crossDevice-dropdown')]");
         this.WINDOWS_LIMIT_INPUT = page.locator("//input[@formcontrolname='windowLimit']");
@@ -325,7 +335,7 @@ public class Campaigns {
         }
         if (LIFE_TIME_FILTER.getAttribute("class").contains("inactive")) {
             LIFE_TIME_FILTER.click();
-            waitUtility.waitForLocatorVisible(CAMPAIGN_ENTRIES.last());
+            waitUtility.waitForLocatorVisible(CAMPAIGN_PAGINATION_ON_DASHBOARD.last());
         }
     }
 
@@ -659,6 +669,20 @@ public class Campaigns {
         CAMPAIGN_STATUS_APPROVED_BUTTON.click();
         SAVE_CAMPAIGN.click();
         waitUtility.waitUntilSpinnerHidden();
+    }
+
+    public void deleteCampaign() {
+        waitUtility.waitForLocatorVisible(DELETE_CAMPAIGN_BUTTON);
+        DELETE_CAMPAIGN_BUTTON.click();
+        waitUtility.waitForLocatorVisible(DELETE_CAMPAIGN_CONFIRMATION_POPUP);
+        DELETE_CAMPAIGN_REMOVE_BUTTON.click();
+        waitUtility.waitForLocatorVisible(DELETE_CAMPAIGN_SUCCESS_ALERT);
+        waitUtility.waitUntilSpinnerHidden();
+    }
+    public String fetchCampaignDeleteSuccessAlert() {
+        String text = DELETE_CAMPAIGN_SUCCESS_ALERT.innerText().trim();
+        waitUtility.waitForLocatorHidden(DELETE_CAMPAIGN_SUCCESS_ALERT);
+        return text;
     }
 
     public void clickFrequencyCappingCheckbox() {

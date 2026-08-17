@@ -31,8 +31,8 @@ Feature: End to End workflow for all types of Pixel creation and targeting at Ta
     When User saves the settings
     Then Verify settings details are saved and user is navigated to the creatives tab
     Examples:
-      | PIXEL_TYPE        | PIXEL_NAME  | ADVERTISER     | CP_NAME              | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          | CREATIVE         |
-      | Retargeting Pixel | Retargeting | 01- Advertiser | Retargeting_Campaign | Regular | 10000     | New_Line  | 50          | New_Tactic  | Display Advanced | Retargeting Pixels | Retargeting_Auto |
+      | PIXEL_TYPE        | PIXEL_NAME  | ADVERTISER     | CP_NAME              | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          |
+      | Retargeting Pixel | Retargeting | 01- Advertiser | Retargeting_Campaign | Regular | 10000     | New_Line  | 50          | New_Tactic  | Display Advanced | Retargeting Pixels |
 
   @e2e
   Scenario Outline: Create a Smart Pixel and then create a Smart list with that Smart Pixel and target the Smart list in Tactic
