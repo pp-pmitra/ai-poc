@@ -8,8 +8,10 @@ import com.microsoft.playwright.Request;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import factory.DriverFactory;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import utils.CommonUtils;
 import utils.FileActions;
 import utils.WaitUtility;
@@ -34,6 +36,9 @@ public class NPIAutoImportedList {
     private final Locator IMPORT_SETTING_BUTTON;
     private final Locator NPI_LIST_TEXTAREA;
     private final Locator NPI_ATTRIBUTE_GRIDVIEW;
+    private final Locator NPI_TABLE_HEADER;
+    private final Locator NPI_TABLE_BODY_ROW;
+    private final Locator NPI_TABLE_ACTIVE_NEXT_BUTTON;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
     ApiActions apiActions = new ApiActions();
 
@@ -56,6 +61,9 @@ public class NPIAutoImportedList {
         this.IMPORT_SETTING_BUTTON = page.locator("//span[contains(text(),'Import Settings')]");
         this.NPI_LIST_TEXTAREA = page.locator("//textarea[@name='npilist']");
         this.NPI_ATTRIBUTE_GRIDVIEW = page.locator("//div[contains(@class,'npiattrsGridView')]");
+        this.NPI_TABLE_HEADER = page.locator("//table[contains(@class,'dimgray table')]//th");
+        this.NPI_TABLE_BODY_ROW = page.locator("//tbody[contains(@class,'npi-table-body')]//tr");
+        this.NPI_TABLE_ACTIVE_NEXT_BUTTON = page.locator("button.btn:not(.disabledButton):has-text('>')");
     }
 
     public String verifyIfAutoImportPage() {
@@ -161,5 +169,66 @@ public class NPIAutoImportedList {
         waitUtility.waitUntilSpinnerHidden();
         waitUtility.waitForLocatorVisible(TOTAL_NPI_COUNT);
         return NPI_ATTRIBUTE_GRIDVIEW.isVisible() || NPI_LIST_TEXTAREA.isVisible();
+    }
+
+    public List<List<String>> fetchUploadedNPIListDetailsFromUI(){
+        List<List<String>> npiDataFromUI = new ArrayList<>();
+        boolean hasNextPage = true;
+
+        while (hasNextPage) {
+            NPI_TABLE_BODY_ROW.first().waitFor();
+            int rowCount = NPI_TABLE_BODY_ROW.count();
+
+            for (int i = 0; i < rowCount; i++) {
+                Locator cells = NPI_TABLE_BODY_ROW.nth(i).locator("td");
+                List<String> rowValues = new ArrayList<>();
+
+                for (int j = 0; j < cells.count(); j++) {
+                    String cellText = cells.nth(j).innerText().trim();
+                    if ("--".equals(cellText)) {
+                        cellText = "";
+                    }
+                    rowValues.add(cellText);
+                }
+                npiDataFromUI.add(rowValues);
+            }
+
+            if (NPI_TABLE_ACTIVE_NEXT_BUTTON.isVisible() && NPI_TABLE_ACTIVE_NEXT_BUTTON.count() > 0) {
+                String firstRowTextBefore = NPI_TABLE_BODY_ROW.first().innerText();
+                NPI_TABLE_ACTIVE_NEXT_BUTTON.click();
+                page.waitForFunction(
+                        "firstRow => document.querySelector('tr.ng-star-inserted').innerText !== firstRow",
+                        firstRowTextBefore
+                );
+            } else {
+                hasNextPage = false;
+            }
+        }
+        return npiDataFromUI;
+    }
+
+    public List<List<String>> verifyUiDataMatchesCsv(List<List<String>> npiDataFromUI, List<List<String>> npiDataFromCSV) {
+        List<List<String>> unmatchedRows = new ArrayList<>();
+        boolean[] csvRowMatched = new boolean[npiDataFromCSV.size()];
+
+        for (List<String> uiRow : npiDataFromUI) {
+            boolean foundMatchInCsv = false;
+            for (int j = 0; j < npiDataFromCSV.size(); j++) {
+                if (csvRowMatched[j]) {
+                    continue;
+                }
+                List<String> csvRow = npiDataFromCSV.get(j);
+                if (uiRow.equals(csvRow)) {
+                    csvRowMatched[j] = true;
+                    foundMatchInCsv = true;
+                    break;
+                }
+            }
+            // If not matched, add to unmatched list
+            if (!foundMatchInCsv) {
+                unmatchedRows.add(uiRow);
+            }
+        }
+        return unmatchedRows;
     }
 }

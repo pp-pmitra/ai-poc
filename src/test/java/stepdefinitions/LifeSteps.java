@@ -6213,12 +6213,24 @@ public class LifeSteps {
     }
 
     @And("Verify that user is able to download the uploaded {string} list")
-    public void verifyThatUserIsAbleToDownloadTheUploadedFile(String listType) throws IOException {
-        if (listType.equals("NPI")) {
-            logger.info("Verifying: that user is able to download the uploaded {} list", listType);
-            targetFilePath = npiStaticList.clickDownloadIcon();
-        } else {
-            targetFilePath = sharedList.clickDownloadIcon();
+    public void verifyThatUserIsAbleToDownloadTheUploadedFile(String listType) throws Exception {
+        logger.info("Verifying: that user is able to download the uploaded {} list", listType);
+
+        switch(listType){
+            case "NPI":
+                targetFilePath = npiStaticList.clickDownloadIcon();
+                break;
+            case "AutoImported NPI":
+                targetFilePath = npiStaticList.clickDownloadIcon();
+                List<List<String>> npiDataFromUI = npiAutoImportedList.fetchUploadedNPIListDetailsFromUI();
+                List<List<String>> npiDataFromCSV = FileActions.readCsvExcludingFirstColumn(String.valueOf(targetFilePath));
+                Assert.assertEquals("Row count mismatch between UI and downloaded CSV file", npiDataFromUI.size(), npiDataFromCSV.size());
+                List<List<String>> unmatchedRows = npiAutoImportedList.verifyUiDataMatchesCsv(npiDataFromUI, npiDataFromCSV);
+                Assert.assertTrue("The UI rows were NOT found in the downloaded CSV file: " + unmatchedRows, unmatchedRows.isEmpty());
+                break;
+            default:
+                targetFilePath = sharedList.clickDownloadIcon();
+                break;
         }
         Assert.assertTrue(
                 "Downloaded file is not available", CommonUtils.isDownloadedFileAvailable(targetFilePath, "csv"));
