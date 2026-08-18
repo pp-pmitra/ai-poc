@@ -255,7 +255,8 @@ public class BrandExplorerWorkspace {
     }
 
     private Locator chartToggleButton(String label) {
-        return WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName(label)).first();
+        return WORKSPACE_FRAME.getByRole(
+                AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName(label).setExact(true)).first();
     }
 
     public List<String> getMissingComponentCategories(List<String> categories) {
