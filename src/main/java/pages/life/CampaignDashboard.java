@@ -76,6 +76,7 @@ public class CampaignDashboard {
     private final Locator GLOBAL_TACTIC_ICON;
     private final Locator CAMPAIGN_TILE;
     private final Locator CAMPAIGN_PAGINATION;
+    private final Locator CAMPAIGN_EXPAND_ICON;
     private final Locator CAMPAIGN_EXPANDED_ICON;
     private final Locator LINE_ITEM_CHECKBOX;
     private final Locator TACTIC_CHECKBOX;
@@ -164,7 +165,8 @@ public class CampaignDashboard {
         this.GLOBAL_TACTIC_ICON = page.locator("//img[contains(@src,'T.svg')]");
         this.CAMPAIGN_TILE = page.locator("//div[contains(@class,'campaign-tile')]");
         this.CAMPAIGN_PAGINATION = page.locator("//div[@class='paging-desc']");
-        this.CAMPAIGN_EXPANDED_ICON = page.locator("//tr[contains(@class,'cl-campaign-row')]//div[@class='cl-expand-li']//div");
+        this.CAMPAIGN_EXPAND_ICON = page.locator("//tr[contains(@class,'cl-campaign-row')]//div[@class='cl-expand-li']//div");
+        this.CAMPAIGN_EXPANDED_ICON = page.locator("//tr[contains(@class,'cl-campaign-row')]//div[contains(@class,'expanded-thin')]");
         this.LINE_ITEM_CHECKBOX = page.locator("//tr[contains(@class,'cl-li-row')]//sui-checkbox[contains(@class,'checkboxClickableArea')]");
         this.TACTIC_CHECKBOX = page.locator("//tr[contains(@class,'cl-tactic-row')]//sui-checkbox[contains(@class,'checkboxClickableArea')]");
         this.BULK_ACTIONS_DROPDOWN = page.locator("//span[text()='Bulk Actions']");
@@ -605,9 +607,9 @@ public class CampaignDashboard {
      * or an intended permanent change.
      */
     public void navigateToCreatedCampaign(String lineItemName) {
-        if ("false".equals(CAMPAIGN_EXPANDED_ICON.getAttribute("aria-expanded"))) {
-            CAMPAIGN_EXPANDED_ICON.click();
-            waitUtility.waitForLocatorVisible(page.locator("//div[@class='cl-expand-li' and @aria-expanded='true']"));
+        if (CAMPAIGN_EXPAND_ICON.getAttribute("class").contains("collapsed-thin")) {
+            CAMPAIGN_EXPAND_ICON.click();
+            waitUtility.waitForLocatorVisible(CAMPAIGN_EXPANDED_ICON);
         }
 
         page.locator(String.format("//span[contains(text(),'%s')]", lineItemName)).click();
@@ -683,15 +685,15 @@ public class CampaignDashboard {
     }
 
     public void selectLineItemCheckbox() {
-        if(CAMPAIGN_EXPANDED_ICON.first().getAttribute("class").contains("collapsed")){
-            CAMPAIGN_EXPANDED_ICON.first().click();
+        if(CAMPAIGN_EXPAND_ICON.first().getAttribute("class").contains("collapsed")){
+            CAMPAIGN_EXPAND_ICON.first().click();
         }
         LINE_ITEM_CHECKBOX.first().click();
     }
 
     public void selectTacticCheckbox() {
-        if(CAMPAIGN_EXPANDED_ICON.first().getAttribute("class").contains("collapsed")){
-            CAMPAIGN_EXPANDED_ICON.first().click();
+        if(CAMPAIGN_EXPAND_ICON.first().getAttribute("class").contains("collapsed")){
+            CAMPAIGN_EXPAND_ICON.first().click();
             if(EXPAND_CREATED_LINE_ITEM.first().getAttribute("class").contains("collapsed")){
                 EXPAND_CREATED_LINE_ITEM.first().click();
             }
