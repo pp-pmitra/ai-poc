@@ -2146,6 +2146,7 @@ public class LifeSteps {
     @And("User clicks Creative Library options present under Activation tab")
     public void userClicksCreativeLibraryOptionsPresentUnderActivationTab() {
         logger.info("User clicks Creative Library options present under Activation tab");
+        campaignDashboard.waitUntilCampaignPaginationAppears();
         navigation.clickSubMenu();
         navigation.clickCreativeLibrary();
     }

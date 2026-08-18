@@ -252,7 +252,7 @@ public class CreateCreatives {
         this.DURATION_FROM_CREATIVE_TILE = page.locator("//span[contains(text(),'DURATION:')]/following-sibling::span");
         this.CREATIVE_STATUS_FROM_CREATIVE_TILE = page.locator("//div[contains(@class,'status-label')]//span");
         this.CREATED_BY_FROM_CREATIVE_TILE =
-                page.locator("//span[contains(text(),'Created by :')]/following-sibling::span");
+                page.locator("//span[contains(text(),'Created by:')]/following-sibling::span");
         this.SOURCE_FROM_CREATIVE_TILE = page.locator("//span[contains(text(),'Source:')]/following-sibling::span");
         this.LAST_UPDATED_FROM_CREATIVE_TILE =
                 page.locator("//span[contains(text(),'Last updated:')]/following-sibling::span");
@@ -601,8 +601,10 @@ public class CreateCreatives {
                         waitUtility.waitForLocatorVisible(UPLOAD_DELETE_ICON);
                     } else {
                         waitUtility.waitUntilSpinnerHidden();
+                        waitUtility.waitForLocatorVisible(page.locator(String.format("//span[contains(text(),'%s')]", attributeMap.get("FileName"))));
                     }
-                } else if (type.contains("Audio URL") || type.contains("Video URL")) URL.fill(attributeMap.get("URL"));
+                }
+                else if (type.contains("Audio URL") || type.contains("Video URL")) URL.fill(attributeMap.get("URL"));
                 else if (type.contains("VAST URL")) URL.fill(attributeMap.get("VASTURL"));
                 else VAST_XML_TEXTAREA.fill(attributeMap.get("VASTXML"));
                 if (type.contains("Audio URL")
@@ -611,7 +613,7 @@ public class CreateCreatives {
                         || type.contains("VAST XML")) {
                     if (CREATIVE_WIDTH_TYPE.first().isVisible()) {
                         CommonUtils.selectAndClickElement(
-                                CREATIVE_TYPE_ICON, Collections.singletonList(attributeMap.get("Type")));
+                                CREATIVE_WIDTH_TYPE, Collections.singletonList(attributeMap.get("Type")));
                     }
                     DURATION.fill(attributeMap.get("Durations"));
                     if (WIDTH.isVisible() && HEIGHT.isVisible()) {
@@ -627,6 +629,9 @@ public class CreateCreatives {
                 if (SPONSORED_BY.isVisible()) SPONSORED_BY.fill(attributeMap.get("SponsoredBy"));
                 if (PRODUCT_DESCRIPTION.isVisible()) PRODUCT_DESCRIPTION.fill(attributeMap.get("Description"));
                 if (DISPLAY_URL.isVisible()) DISPLAY_URL.fill(attributeMap.get("DisplayURL"));
+                // Adding below two conditions since Duration and URL are getting blanked automatically
+                if(DURATION.isVisible() && DURATION.textContent().isEmpty() && attributeMap.get("Durations")!=null && !attributeMap.get("Durations").isEmpty()) DURATION.fill(attributeMap.get("Durations"));
+                if(URL.isVisible() && URL.textContent().isEmpty() && attributeMap.get("URL")!=null && !attributeMap.get("URL").isEmpty()) URL.fill(attributeMap.get("URL"));
                 break;
 
             case "Search":
