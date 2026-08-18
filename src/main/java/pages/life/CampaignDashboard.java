@@ -597,6 +597,13 @@ public class CampaignDashboard {
      * or an intended permanent change.
      */
     public void navigateToCreatedCampaign(String lineItemName) {
+        Locator expandIcon = page.locator("//div[@class='cl-expand-li']");
+
+        if ("false".equals(expandIcon.getAttribute("aria-expanded"))) {
+            expandIcon.click();
+            waitUtility.waitForLocatorVisible(page.locator("//div[@class='cl-expand-li' and @aria-expanded='true']"));
+        }
+
         page.locator(String.format("//span[contains(text(),'%s')]", lineItemName)).click();
         waitUtility.waitForLocatorVisible(LINE_ITEM_PAGE_TITLE);
         CAMPAIGN_TILE.click();
