@@ -263,3 +263,28 @@ Feature: Brand Explorer Workspace creation in Studio
       | ADVERTISER         | WORKSPACE_NAME     | NEW_WORKSPACE_NAME  | TIMEFRAME    |
       | TAMTESTING ACCOUNT | Automation_Persist | New_Brand_Explorer_ | Last 30 Days |
 
+  @regression
+  Scenario Outline: Verify the chart shows an empty state when only a dimension or only a metric remains
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User removes the default "<COMPONENT>" only
+    Then Verify the chart shows the empty state message
+    And Verify "<REMAINING_COLUMN>" is visible as a table column
+    Examples:
+      | ADVERTISER         | COMPONENT | REMAINING_COLUMN |
+      | TAMTESTING ACCOUNT | dimension | Identified NPIs  |
+      | TAMTESTING ACCOUNT | metric    | Day              |
+
+  @regression
+  Scenario Outline: Verify the chart shows an empty state when both the dimension and metric are removed
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User removes the default dimensions and metric
+    Then Verify the chart shows the empty state message
+    Examples:
+      | ADVERTISER         |
+      | TAMTESTING ACCOUNT |
