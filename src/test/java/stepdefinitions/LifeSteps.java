@@ -920,7 +920,7 @@ public class LifeSteps {
         Assert.assertEquals(expected, reportTemplates.getDimensionsInTemplateListPage());
         Assert.assertEquals(metricName, reportTemplates.getTemplateTypeInTemplateListPage());
         Assert.assertEquals(userType, reportTemplates.getSharedInTemplateListPage());
-        Assert.assertEquals(runReportPanel.fetchLoggedInUsername().split("\\(")[0], reportTemplates.getCreatedByInTemplateListPage());
+        Assert.assertEquals(runReport.fetchLoggedInUsername().split("\\(")[0], reportTemplates.getCreatedByInTemplateListPage());
     }
 
     @And("Verify the details of the created template on Edit Template panel")
