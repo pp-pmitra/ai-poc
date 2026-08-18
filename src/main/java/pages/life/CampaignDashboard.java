@@ -75,6 +75,11 @@ public class CampaignDashboard {
     private final Locator CAMPAIGN_FROM_DASHBOARD;
     private final Locator GLOBAL_TACTIC_ICON;
     private final Locator CAMPAIGN_TILE;
+    private final Locator CAMPAIGN_PAGINATION;
+    private final Locator CAMPAIGN_EXPANDED_ICON;
+    private final Locator LINE_ITEM_CHECKBOX;
+    private final Locator TACTIC_CHECKBOX;
+    private final Locator BULK_ACTIONS_DROPDOWN;
     WaitUtility waitUtility;
     String lineItemClassBeforeClick, lineItemClassAfterClick, tacticClassBeforeClick, tacticClassAfterClick;
 
@@ -95,9 +100,9 @@ public class CampaignDashboard {
         this.COMMENT_ICON = page.locator("span.notesIconProvided");
         this.TOOLTIP_TEXT = page.locator("//span[@class='tooltip-text']");
         this.LINE_ITEM_TOGGLE_BUTTON = page.locator(
-                "//div[contains(@class,'lineitem-data pointer')]//sui-checkbox[contains(@class,'ng-valid')]");
+                "//tr[contains(@class,'cl-li-row')]//sui-checkbox[contains(@class,'cl-enabled-toggle')]");
         this.TACTIC_TOGGLE_BUTTON = page.locator(
-                "//div[contains(@class,'tactic-data pointer')]//sui-checkbox[contains(@class,'ng-valid')]");
+                "//tr[contains(@class,'cl-tactic-row')]//sui-checkbox[contains(@class,'cl-enabled-toggle')]");
         this.LINE_ITEM_NAME = page.locator("//span[contains(@class,'color-black lineitem-name-section')]");
         this.LINE_ITEM_PAGE_TITLE = page.locator("//div[contains(@class,'lineitem-name')]");
         this.CAMPAIGN_PAGE_TITLE = page.locator("//div[contains(@class,'campaign-name')]");
@@ -158,6 +163,11 @@ public class CampaignDashboard {
         this.CAMPAIGN_FROM_DASHBOARD = page.locator("//span[contains(@class,'adv-camp-name')]//span");
         this.GLOBAL_TACTIC_ICON = page.locator("//img[contains(@src,'T.svg')]");
         this.CAMPAIGN_TILE = page.locator("//div[contains(@class,'campaign-tile')]");
+        this.CAMPAIGN_PAGINATION = page.locator("//div[@class='paging-desc']");
+        this.CAMPAIGN_EXPANDED_ICON = page.locator("//tr[contains(@class,'cl-campaign-row')]//div[@class='cl-expand-li']//div");
+        this.LINE_ITEM_CHECKBOX = page.locator("//tr[contains(@class,'cl-li-row')]//sui-checkbox[contains(@class,'checkboxClickableArea')]");
+        this.TACTIC_CHECKBOX = page.locator("//tr[contains(@class,'cl-tactic-row')]//sui-checkbox[contains(@class,'checkboxClickableArea')]");
+        this.BULK_ACTIONS_DROPDOWN = page.locator("//span[text()='Bulk Actions']");
     }
 
     public String isCampaignDashboardVisibleWithTitle(String text) {
@@ -516,8 +526,12 @@ public class CampaignDashboard {
         }
     }
 
+    public void waitUntilCampaignPaginationAppears(){
+        waitUtility.waitForLocatorVisible(CAMPAIGN_PAGINATION.last());
+    }
+
     public void searchCreatedCampaign(String createdCampaign) {
-        waitUtility.waitForLocatorVisible(CAMPAIGN_ENTRIES.last());
+        waitUntilCampaignPaginationAppears();
         ensureCampaignRadioBtnSelected();
         unselectFavoriteCheckboxIfSelected();
         unselectHideFinishedCheckboxIfSelected();
@@ -551,7 +565,7 @@ public class CampaignDashboard {
     }
 
     public String verifyCreatedCampaign(String createdCampaign) {
-        String campaignNameXpath = String.format("//span[contains(text(),'%s')]", createdCampaign);
+        String campaignNameXpath = String.format("//a[contains(text(),'%s')]", createdCampaign);
         waitUtility.waitForLocatorVisible(page.locator(campaignNameXpath).first());
         return page.locator(campaignNameXpath).first().innerText();
     }
@@ -655,5 +669,66 @@ public class CampaignDashboard {
         waitUtility.waitForLocatorVisible(CAMPAIGN_ENTRIES.last());
         CAMPAIGN_FROM_DASHBOARD.first().click();
         waitUtility.waitForLocatorVisible(CAMPAIGN_PAGE_TITLE);
+    }
+
+    public String fetchNoCampaignFoundMessage(String campaignName) {
+        waitUtility.waitForLocatorVisible(CAMPAIGN_PAGE_TEXT);
+        searchCreatedCampaign(campaignName);
+        return NO_CAMPAIGN_AVAILABLE_TEXT.innerText();
+    }
+
+    public void selectLineItemCheckbox() {
+        if(CAMPAIGN_EXPANDED_ICON.first().getAttribute("class").contains("collapsed")){
+            CAMPAIGN_EXPANDED_ICON.first().click();
+        }
+        LINE_ITEM_CHECKBOX.first().click();
+    }
+
+    public void selectTacticCheckbox() {
+        if(CAMPAIGN_EXPANDED_ICON.first().getAttribute("class").contains("collapsed")){
+            CAMPAIGN_EXPANDED_ICON.first().click();
+            if(EXPAND_CREATED_LINE_ITEM.first().getAttribute("class").contains("collapsed")){
+                EXPAND_CREATED_LINE_ITEM.first().click();
+            }
+        }
+        TACTIC_CHECKBOX.first().click();
+    }
+
+    public boolean areTacticCheckboxesDisabled() {
+        if(!TACTIC_CHECKBOX.isVisible()){
+            EXPAND_CREATED_LINE_ITEM.click();
+        }
+        return TACTIC_CHECKBOX.locator("//input").getAttribute("disabled").contains("disabled");
+    }
+
+    public boolean areBulkActionsEnabled() {
+        return BULK_ACTIONS_DROPDOWN.isVisible();
+    }
+
+    public void clickBulkActionDropdown() {
+        BULK_ACTIONS_DROPDOWN.click();
+        waitUtility.waitUntilSpinnerHidden();
+    }
+
+    public void selectBulkAction(String action) {
+        Locator actionOption = BULK_ACTIONS_DROPDOWN.locator(String.format("//following-sibling::div//a[@class='item' and text()='%s']", action));
+        actionOption.click();
+        waitUtility.waitUntilSpinnerHidden();
+    }
+
+    public String fetchStatusToggleState(String actionOn) {
+        if(actionOn.contains("Line Item")){
+            return LINE_ITEM_TOGGLE_BUTTON.getAttribute("class");
+        } else if(actionOn.contains("Tactic")){
+            return TACTIC_TOGGLE_BUTTON.getAttribute("class");
+        }
+        return null;
+    }
+
+    public boolean areLineItemCheckboxesEnabled() {
+        if(!LINE_ITEM_CHECKBOX.isVisible()){
+            LINE_ITEM_EXPAND_ICON.click();
+        }
+        return LINE_ITEM_CHECKBOX.locator("//input").getAttribute("disabled").contains("disabled");
     }
 }

@@ -61,6 +61,9 @@ public class BulkCreativeUpload {
     private final Locator CREATIVE_DROPDOWN_DETAILS_FROM_TABLE;
     private final Locator DOWNLOAD_BULK_UPLOAD_TEMPLATE;
     private final Locator DURATION;
+    private final Locator DSA_REQUIREMENTS_HEADER;
+    private final Locator ADVERTISER_DSA;
+    private final Locator FINANCER;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
     CreateCreatives createCreatives = new CreateCreatives(DriverFactory.getPage());
     Constants constants = new Constants();
@@ -82,7 +85,7 @@ public class BulkCreativeUpload {
                 "//div[@role='alert' and contains(@aria-label,'Atleast one creative should be selected') or contains(@aria-label,'Select Advertiser') or contains(@aria-label,'Landing Page Domain is required') or contains(@aria-label, 'Landing Page Domain is not valid.') or contains(@aria-label,'1 error')]");
         this.SUCCESS_ALERT = page.locator("//div[@aria-label='Success!']/following-sibling::div[@role='alert']");
         this.BULK_UPLOAD_HEADER =
-                page.locator("//div[contains(@class,'main-heading') and (contains(text(),'Bulk Upload'))]");
+                page.locator("//div[contains(@class,'rightPanelHeader2') and (contains(text(),'Bulk Creative Upload'))]");
         this.CREATIVE_TEXT_DETAILS_FROM_TABLE = page.locator("//tbody//span/input");
         this.HEADER_MESSAGE = page.locator("//div[contains(@class,'appr-status-label')]/span");
         this.DROPDOWN_SEARCH = page.locator("//div[@id='campaignLookup' and contains(@class,'loading')]");
@@ -126,6 +129,9 @@ public class BulkCreativeUpload {
         this.CREATIVE_DROPDOWN_DETAILS_FROM_TABLE = page.locator("select.selectBox");
         this.DOWNLOAD_BULK_UPLOAD_TEMPLATE = page.locator("//div[contains(@onclick,'BulkUploadTemplate')]");
         this.DURATION = page.locator("//input[contains(@placeholder,'Duration')]");
+        this.DSA_REQUIREMENTS_HEADER = page.locator("//h3[contains(text(),'DSA Requirements')]");
+        this.ADVERTISER_DSA = page.locator("//input[contains(@placeholder,'Advertiser per DSA')]");
+        this.FINANCER = page.locator("//input[contains(@placeholder,'Financer')]");
     }
 
     public void clickBulkUploadButton() {
@@ -175,6 +181,7 @@ public class BulkCreativeUpload {
     public void selectAdvertiser(String advertiser) {
         ADVERTISER_DROPDOWN.click();
         ADVERTISER_DROPDOWN_VALUE.locator("text=" + advertiser).click();
+        waitUtility.waitUntilSpinnerHidden();
     }
 
     public void selectApprovalStatus(String status) {
@@ -183,12 +190,13 @@ public class BulkCreativeUpload {
     }
 
     public void enterAdvertiserDSA(String advertiserDSA) {
-        waitUtility.waitForElementVisible("//h3[contains(text(),'DSA Requirements')]");
-        createCreatives.ADVERTISER_DSA.fill(advertiserDSA);
+        if(DSA_REQUIREMENTS_HEADER.isVisible())
+            ADVERTISER_DSA.fill(advertiserDSA);
     }
 
     public void enterFinancer(String financer) {
-        createCreatives.FINANCER.fill(financer);
+        if(FINANCER.isVisible())
+            FINANCER.fill(financer);
     }
 
     public void clickPreviewButton() {

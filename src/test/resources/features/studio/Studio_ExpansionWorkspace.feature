@@ -25,7 +25,7 @@ Feature: HCP Audience Workspace in Studio Application
     And User fetches the Total NPI count from the workspace
     And User selects "<EXPANDED_AUDIENCE>"
     Then User verifies the expanded audience count
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Expansion" workspace name as "<WORKSPACE_NAME>"
     And User saves the "HCP Audience Expansion" workspace
     Then Verify the "HCP Audience Expansion" Workspace is saved
     Then Verify the workspace is visible in workspace management page
@@ -59,7 +59,7 @@ Feature: HCP Audience Workspace in Studio Application
       | Medical School     | New York College                                                                                                        |
     And User clicks on Ok and closes the filter popup
     Then Verify that the applied filters are displayed correctly
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Expansion" workspace name as "<WORKSPACE_NAME>"
     And User saves the "HCP Audience Expansion" workspace
     Then Verify the "HCP Audience Expansion" Workspace is saved
     And Download button is enabled to the user
@@ -89,7 +89,7 @@ Feature: HCP Audience Workspace in Studio Application
     Then User selects Source Audience details as "<SOURCE_AUDIENCE>", "<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
     Then User selects Draft option as "<DRAFT_OPTION>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Expansion" workspace name as "<WORKSPACE_NAME>"
     And User saves the "HCP Audience Expansion" workspace
     Then Verify the "HCP Audience Expansion" Workspace is saved
     And Internal User is able to view "<WORKSPACE_NAME>" in workspace management page
@@ -112,7 +112,7 @@ Feature: HCP Audience Workspace in Studio Application
     Then User selects Source Audience details as "<SOURCE_AUDIENCE>", "<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
     Then User verifies the expanded audience count
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Expansion" workspace name as "<WORKSPACE_NAME>"
     And User saves the "HCP Audience Expansion" workspace
     Then Verify the "HCP Audience Expansion" Workspace is saved
     And Download button is enabled to the user
@@ -138,7 +138,7 @@ Feature: HCP Audience Workspace in Studio Application
     And User selects the advertiser "<ADVERTISER>" for HCP Audience Expansion workspace
     And User selects Source Audience details as "<SOURCE_AUDIENCE>", "<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Expansion" workspace name as "<WORKSPACE_NAME>"
     And User saves the "HCP Audience Expansion" workspace
     Then Verify the "HCP Audience Expansion" Workspace is saved
     And Download button is enabled to the user
@@ -157,7 +157,7 @@ Feature: HCP Audience Workspace in Studio Application
     And User selects the advertiser "<ADVERTISER>" for HCP Audience Expansion workspace
     And User selects Source Audience details as "<SOURCE_AUDIENCE>", "<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Expansion" workspace name as "<WORKSPACE_NAME>"
     And User saves the "HCP Audience Expansion" workspace
     Then Verify the "HCP Audience Expansion" Workspace is saved
     And Download button is enabled to the user
@@ -176,7 +176,7 @@ Feature: HCP Audience Workspace in Studio Application
     And User selects the advertiser "<ADVERTISER>" for HCP Audience Expansion workspace
     And User selects Source Audience details as "<SOURCE_AUDIENCE>", "<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Expansion" workspace name as "<WORKSPACE_NAME>"
     And User saves the "HCP Audience Expansion" workspace
     Then Verify the "HCP Audience Expansion" Workspace is saved
     And Report button is enabled to the user
@@ -196,7 +196,7 @@ Feature: HCP Audience Workspace in Studio Application
     And User selects the advertiser "<ADVERTISER>" for HCP Audience Expansion workspace
     And User selects Source Audience details as "<SOURCE_AUDIENCE>", "<OPTIONS>"
     And User selects "<EXPANDED_AUDIENCE>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Expansion" workspace name as "<WORKSPACE_NAME>"
     And User saves the "HCP Audience Expansion" workspace
     Then Verify the "HCP Audience Expansion" Workspace is saved
     And Report button is enabled to the user
@@ -214,7 +214,7 @@ Feature: HCP Audience Workspace in Studio Application
     And User clicks on "HCP Audience Expansion" workspace
     And User selects the advertiser "<ADVERTISER>" for HCP Audience Expansion workspace
     And User selects Source Audience details as "<SOURCE_AUDIENCE>","<OPTIONS>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Expansion" workspace name as "<WORKSPACE_NAME>"
     And User selects the Draft option as "<DRAFT_OPTION>"
     And User saves the "HCP Audience Expansion" workspace
     And Internal user logs out from the application
@@ -225,5 +225,5 @@ Feature: HCP Audience Workspace in Studio Application
     Then External user verifies whether the workspace with "<DRAFT_OPTION>" is visible in workspace management page
     Examples:
       | ADVERTISER | DRAFT_OPTION | WORKSPACE_NAME | ACCOUNT_NAME        | SOURCE_AUDIENCE  | OPTIONS |
-      | Abbvie     | Public       | Expansion      | PP engineering test | Studio Workspace | PB_Test |
-      | Abbvie     | Private      | Expansion      | PP engineering test | Studio Workspace | PB_Test |
+      | Abbvie     | Public       | HCP_Expansion  | PP engineering test | Studio Workspace | PB_Test |
+      | Abbvie     | Private      | HCP_Expansion  | PP engineering test | Studio Workspace | PB_Test |

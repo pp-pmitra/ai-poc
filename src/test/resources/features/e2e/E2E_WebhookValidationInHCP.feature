@@ -25,7 +25,7 @@ Feature: Webhook Creation and Validation in HCP Explorer Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Explorer" workspace name as "<WORKSPACE_NAME>"
     And Verify that advertiser field is disabled and displayed in "rgba(34, 34, 34, 0.55)" after saving the workspace
     #2
     And Verify Webhook panel is disabled before applying filters
@@ -56,8 +56,8 @@ Feature: Webhook Creation and Validation in HCP Explorer Workspace
     When User tries to delete the workspace associated with active webhook from the workspace list
     Then Verify user receives a warning when attempting to delete a workspace with an active webhook
     Examples:
-      | ADVERTISER | WORKSPACE_NAME | PARAM   | INVALID_WEBHOOK_DATA | ERROR_DATA                             |
-      | Abbvie     | Explorer       | Param 4 | Test                 | https:www.google.com, WebhookData.json |
+      | ADVERTISER | WORKSPACE_NAME   | PARAM   | INVALID_WEBHOOK_DATA | ERROR_DATA                             |
+      | Abbvie     | Explorer_Webhook | Param 4 | Test                 | https:www.google.com, WebhookData.json |
 
   @e2e
   Scenario Outline: Create a webhook and verify macros are appended to the POST request URL and body
@@ -66,7 +66,7 @@ Feature: Webhook Creation and Validation in HCP Explorer Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Explorer" workspace name as "<WORKSPACE_NAME>"
     And Verify that advertiser field is disabled and displayed in "rgba(34, 34, 34, 0.55)" after saving the workspace
     #2
     And Verify Webhook panel is disabled before applying filters
@@ -105,5 +105,5 @@ Feature: Webhook Creation and Validation in HCP Explorer Workspace
     When User tries to delete the workspace associated with active webhook from the workspace list
     Then Verify user receives a warning when attempting to delete a workspace with an active webhook
     Examples:
-      | ADVERTISER | WORKSPACE_NAME | PARAM   | BODY             | CONTENT_TYPE | INVALID_WEBHOOK_DATA | ERROR_DATA                             |
-      | Abbvie     | Explorer       | Param 4 | WebhookData.json | JSON         | Test                 | https:www.google.com, WebhookData.json |
+      | ADVERTISER | WORKSPACE_NAME   | PARAM   | BODY             | CONTENT_TYPE | INVALID_WEBHOOK_DATA | ERROR_DATA                             |
+      | Abbvie     | Explorer_Webhook | Param 4 | WebhookData.json | JSON         | Test                 | https:www.google.com, WebhookData.json |

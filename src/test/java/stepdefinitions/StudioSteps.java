@@ -175,7 +175,7 @@ public class StudioSteps {
         navigation.clickPulsePointLogo();
         navigation.refreshPage();
         navigation.clickSubMenu();
-        Assert.assertTrue(navigation.isStudioTitleVisible());
+        Assert.assertTrue("Studio is not available in Mega Menu", navigation.isStudioAvailableInMegaMenu());
     }
 
     @And("User disables the studio permission for {string} account")
@@ -252,7 +252,7 @@ public class StudioSteps {
         explorerWorkspace.waitForDashboardLoad();
         explorerWorkspace.clickEditWorkspace();
         explorerWorkspace.enterWorkspaceName(workspaceName);
-        explorerWorkspace.saveWorkspaceName(true);
+        explorerWorkspace.saveWorkspaceName();
         explorerWorkspace.waitUntilAlertDisappears();
         explorerWorkspace.waitForDashboardLoad();
     }
@@ -353,7 +353,6 @@ public class StudioSteps {
                         "Sent for asynchronous processing, forced by upstream dependencies - need to refresh upstream workspaces first");
         Assert.assertTrue("Unexpected message for " + workspaceType + " workspace: " + actualMessage, isValid);
         workspace.waitTillWorkspaceAlertHide();
-        explorerWorkspace.waitForSpinnerToDisappear();
         workspace.waitTillWorkspaceSaveButtonIsDisabled(workspaceType);
     }
 
@@ -363,7 +362,7 @@ public class StudioSteps {
         workspaceName = editedName + CommonUtils.timeStampCalculation();
         logger.info("Updating workspace name to: {}", workspaceName);
         explorerWorkspace.enterWorkspaceName(workspaceName);
-        explorerWorkspace.saveWorkspaceName(true);
+        explorerWorkspace.saveWorkspaceName();
         explorerWorkspace.waitForDashboardLoad();
     }
 
@@ -381,23 +380,6 @@ public class StudioSteps {
         Assert.assertEquals(textColor, color);
     }
 
-    @Then("verify the file content")
-    public void verify_the_file_content() {
-        logger.info("Reading downloaded CSV file content");
-        fileContent = FileActions.readAllDataAtOnce(ConfigReader.getProperty("csvFilePath"));
-        fileContentData = new ArrayList<>();
-        // To display the data from csv- Separate logic
-        /*for (int i = 1; i < fileContent.size(); i++) {
-           // System.out.println("Row " + i + ": " + String.join(", ", fileContent.get(i)));
-            String data= Arrays.toString(fileContent.get(i));
-            fileContentData.add(data);
-        }*/
-        for (String[] row : fileContent) {
-            fileContentData.add(String.join(", ", row));
-        }
-        logger.info("CSV File Content: {}", fileContentData);
-    }
-
     @When("Studio platform is available")
     public void studio_platform_is_available() {
         logger.info("Checking Studio platform availability");
@@ -408,7 +390,7 @@ public class StudioSteps {
     public void userSearchesTheAndSelectsIt(String workspace) {
         logger.info("Verifying Studio workspace frame is visible");
         workspaceCreation.verifyStudioWorkspaceFrame();
-        logger.info("Searching and opening workspace: {}", workspaceName);
+        logger.info("Searching and opening workspace: {}", workspace);
         workspaceCreation.searchWorkspaceName(workspace);
         workspaceCreation.clickWorkspace(workspace);
         boolean navigated = workspaceCreation.navigateToWorkspace(workspace);
@@ -791,12 +773,10 @@ public class StudioSteps {
     public void verifyUserIsAbleToRenameTheWorkspace(String workspaceType, String newWorkspace) {
         newWorkspaceName = newWorkspace + CommonUtils.timeStampCalculation();
         logger.info("Renaming workspace from {} to {}", workspaceName, newWorkspaceName);
-        boolean expectsConfirmationAlert = !"Brand Explorer".equalsIgnoreCase(workspaceType);
-        String renameMsg = workspaceCreation.renameWorkspaceName(newWorkspaceName, expectsConfirmationAlert);
-        logger.info("Rename workspace message: {}", renameMsg);
-        if (expectsConfirmationAlert) {
-            Assert.assertEquals("Workspace renamed successfully", renameMsg);
-        }
+        String renameMessage = workspaceCreation.renameWorkspaceName(newWorkspaceName);
+        logger.info("Rename workspace message: {}", renameMessage);
+        if(!workspaceType.equalsIgnoreCase("Brand Explorer"))
+            Assert.assertEquals("Workspace renamed successfully", renameMessage);
         workspaceName = newWorkspaceName;
     }
 
@@ -804,12 +784,10 @@ public class StudioSteps {
     public void verifyUserIsAbleToDuplicateTheWorkspace(String workspaceType) {
         logger.info("Duplicating workspace: {}", workspaceName);
         workspaceName = workspaceCreation.fetchDuplicateWorkspaceName();
-        boolean expectsConfirmationAlert = !"Brand Explorer".equalsIgnoreCase(workspaceType);
-        String duplicateMsg = workspaceCreation.clickDuplicateButton(expectsConfirmationAlert);
-        logger.info("Duplicate workspace message: {}", duplicateMsg);
-        if (expectsConfirmationAlert) {
-            Assert.assertEquals("Workspace duplicated successfully", duplicateMsg);
-        }
+        String duplicateMessage = workspaceCreation.clickDuplicateButton();
+        logger.info("Duplicate workspace message: {}", duplicateMessage);
+        if(!workspaceType.equalsIgnoreCase("Brand Explorer"))
+            Assert.assertEquals("Workspace duplicated successfully", duplicateMessage);
     }
 
     @And("User is able to search the workspace after performing operation - {string}")
@@ -843,19 +821,6 @@ public class StudioSteps {
         logger.info("Searching created workspace: {}", workspaceName);
         workspaceCreation.searchWorkspaceName(workspaceName);
         workspaceCreation.selectMoreActionsMenu(workspaceName);
-    }
-
-    @When("User navigates to administration tab")
-    public void user_navigates_to_administration_tab() {
-        logger.info("Navigating to Administration tab");
-        accounts.verifyStudioMenu();
-        accounts.clickAdministration();
-    }
-
-    @When("User clicks on accounts tab")
-    public void user_clicks_on_accounts_tab() {
-        logger.info("Clicking on Accounts tab");
-        accounts.selectAccountsTab();
     }
 
     @Then("Verify that the workspace cannot be deleted and appropriate message is displayed to the user")
@@ -953,10 +918,11 @@ public class StudioSteps {
         accounts.internalUserLogout();
     }
 
-    @And("External user selects the workspace")
+    @And("External user selects the workspace from the dashboard")
     public void externalUserSelectsTheWorkspace() {
         logger.info("External user selects existing workspace");
-        workspace.selectExistingWorkspace();
+        workspaceName = workspaceCreation.fetchWorkspaceNameFromDashboard();
+        workspaceCreation.clickWorkspace(workspaceName);
     }
 
     @Then("External user should be able to see the {string} permission in the workspace")
@@ -1188,15 +1154,13 @@ public class StudioSteps {
     public void userEditsTheWorkspaceNameAs(String workspaceType, String wName) {
         workspaceName = wName + '_' + CommonUtils.timeStampCalculation();
         logger.info("Adding workspace name: {}", workspaceName);
-        brandExplorerWorkspace.waitForDashboardLoad();
+        workspace.waitForDashboardLoad(workspaceType);
         explorerWorkspace.clickEditWorkspace();
         explorerWorkspace.enterWorkspaceName(workspaceName);
-        boolean expectsConfirmationAlert = !"Brand Explorer".equalsIgnoreCase(workspaceType);
-        explorerWorkspace.saveWorkspaceName(expectsConfirmationAlert);
-        if (expectsConfirmationAlert) {
+        if (explorerWorkspace.saveWorkspaceName()) {
             explorerWorkspace.waitUntilAlertDisappears();
         }
-        brandExplorerWorkspace.waitForDashboardLoad();
+        workspace.waitForDashboardLoad(workspaceType);
     }
 
     @Then("Verify Dimension {string} and Metric {string} are selected by default in the workspace")
@@ -1433,7 +1397,7 @@ public class StudioSteps {
 
     @Then("User captures the {string} count")
     public void userCapturesTheCount(String countType) {
-        String countText = dtcExplorerWorkspace.getUniqueConsumerCount().replaceAll("[^0-9]", "");
+        String countText = dtcExplorerWorkspace.getUniqueConsumerCount(countType).replaceAll("[^0-9]", "");
         uniqueConsumersCount = Long.parseLong(countText);
     }
 
@@ -1445,20 +1409,23 @@ public class StudioSteps {
                 uniqueConsumersCount >= expectedValue);
     }
 
-    @And("User clicks on Submit button")
+    @And("User clicks Audience icon and submit the request")
     public void userClicksOnSubmitButton() {
+        dtcExplorerWorkspace.clickAudienceIcon();
         dtcExplorerWorkspace.clickSubmitButton();
     }
 
     @And("User verifies if workspace is saved successfully and the submission is successful")
     public void userVerifiesIfWorkspaceIsSavedSuccessfullyAndTheSubmissionIsSuccessful() {
         logger.info("Verifying workspace save and submission confirmation toasts");
-        dtcExplorerWorkspace.verifyDTCExplorerWorkspaceConfirmationToast();
+        Assert.assertEquals("Workspace saved successfully", dtcExplorerWorkspace.getDTCExplorerWorkspaceSubmissionAlert());
+        Assert.assertEquals("Request submitted successfully", dtcExplorerWorkspace.getDTCExplorerWorkspaceRequestSubmitAlert());
     }
 
     @Then("User verifies the dialog message as {string}")
     public void userVerifiesTheDialogMessageAs(String expectedMessage) {
         logger.info("Verifying dialog message: {}", expectedMessage);
+        dtcExplorerWorkspace.clickAudienceIcon();
         String actualMessage = dtcExplorerWorkspace.getDialogMessage();
         logger.info("Actual dialog message: {}", actualMessage);
         Assert.assertEquals("Dialog message does not match", expectedMessage, actualMessage);

@@ -26,9 +26,12 @@ Feature: LIFE Regression - Create a Campaign
     Then Verify the newly created campaign is in running state
     Then Verify the newly created campaign details in the campaign list: Campaign name, Line item name and Tactic name
     #Then Verify the newly created campaign in the database
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
     Examples:
-      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          | CREATIVE      |
-      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Behavioral Segment | Auto_Creative |
+      | ADVERTISER     | CP_NAME       | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          | CREATIVE      |
+      | 01- Advertiser | QA_Regression | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Behavioral Segment | Auto_Creative |
 
   @regression
   Scenario Outline: Create a Campaign with multiple Targeting Rules added to a Tactic
@@ -56,9 +59,12 @@ Feature: LIFE Regression - Create a Campaign
     And User assigns the existing creative named "<CREATIVE>", enables the tactic and saves the changes
     Then Verify the newly created campaign is in running state
     Then Verify the newly created campaign details in the campaign list: Campaign name, Line item name and Tactic name
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
     Examples:
-      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | CREATIVE           |
-      | 01- Advertiser | Test    | Regular | 10000     | Line      | 120         | Tactic      | Display Advanced | Please_Dont_Delete |
+      | ADVERTISER     | CP_NAME             | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | CREATIVE           |
+      | 01- Advertiser | Multiple_Targetings | Regular | 10000     | Line      | 120         | Tactic      | Display Advanced | Please_Dont_Delete |
 
   @regression
   Scenario Outline: Create a Campaign and add and verify all Targetings under categories :: Audience Attribute, Health Journey,  Demographics, Contextual, Geography, Media Supply, Legal Targetings
@@ -89,8 +95,8 @@ Feature: LIFE Regression - Create a Campaign
       | MEDIA SUPPLY       | Brand Safety Profile,Brand Suitability,Browser,Curated Markets,Custom Targeting Bundle,Deal Groups,Device,Domains/Apps,IAS Context Control,Invalid Traffic,Inventory Source,Inventory Type,Operating System,Deals,Viewability     |
       | LEGAL TARGETINGS   | Legal Pages,Legal Populations                                                                                                                                                                                                     |
     Examples:
-      | ADVERTISER             | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          |
-      | CacheTestAdvertise232n | Test    | Regular | 10000     | Line      | 120         | Tactic      | Display Advanced |
+      | ADVERTISER             | CP_NAME                 | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          |
+      | CacheTestAdvertise232n | Targetings_Verification | Regular | 10000     | Line      | 120         | Tactic      | Display Advanced |
 
   @regression
   Scenario Outline: Verify campaign creation, check field-level validation and default values of the fields
@@ -120,8 +126,8 @@ Feature: LIFE Regression - Create a Campaign
     And User retrieves all the entered data, saves the Campaign and verifies successful creation
     And Verify that the saved Campaign data matches the entered data
     Examples:
-      | ADVERTISER     | CP_NAME  | CP_TYPE | CP_BUDGET | MANAGEMENT_FEE | DRUG_NAME | INVALID_CP_BUDGET | DESCRIPTION     | PERCENT | AMOUNT | CP_CLIENT   |
-      | 01- Advertiser | Campaign | Regular | 50000     | % + CPM        | Glynase   | Test              | Automation test | 35      | 300    | PHM Chicago |
+      | ADVERTISER     | CP_NAME     | CP_TYPE | CP_BUDGET | MANAGEMENT_FEE | DRUG_NAME | INVALID_CP_BUDGET | DESCRIPTION     | PERCENT | AMOUNT | CP_CLIENT   |
+      | 01- Advertiser | QA_Campaign | Regular | 50000     | % + CPM        | Glynase   | Test              | Automation test | 35      | 300    | PHM Chicago |
 
   @regression
   Scenario Outline: Custom field addition, modification, and deletion on the Campaign creation page, and verification of its persistence
@@ -142,8 +148,35 @@ Feature: LIFE Regression - Create a Campaign
     And User deletes the custom field for which campaign is not created and verifies if it is deleted
     And User verifies if the deleted custom field is available on New Campaign creation page
     Examples:
-      | FIELD_NAME  | NEW_FIELD_NAME | ADVERTISER     | CP_NAME  | CP_TYPE | CP_BUDGET | CUSTOM_FIELD_VALUE |
-      | CustomField | NewCustomField | 01- Advertiser | Campaign | Regular | 50000     | Test               |
+      | FIELD_NAME  | NEW_FIELD_NAME | ADVERTISER     | CP_NAME     | CP_TYPE | CP_BUDGET | CUSTOM_FIELD_VALUE |
+      | CustomField | NewCustomField | 01- Advertiser | QA_Campaign | Regular | 50000     | Test               |
+
+  @regression
+  Scenario Outline: Verify by checking Frequency Capping enables "Times per Target" and "Per Target Audience" dropdowns
+    Given This scenario will be executed in the "Demo" environment as a "User"
+    And "Life" application is logged in successfully with Account "automation@pulsepoint"
+    And User clicks on Create Campaign
+    When User clicks on Frequency Capping checkbox
+    Then Verify that Times per Target and Per Target Audience dropdowns are enabled
+    And Verify that the default value of Times per Target is "day"
+    And Verify that Times per Target dropdown has the below options
+      | day     |
+      | hour(s) |
+      | week    |
+      | month   |
+    And Verify that the default value of Per Target Audience is "Per Device"
+    And Verify that Per Target Audience dropdown has the below options
+      | Per Device    |
+      | Per Person    |
+      | Per Household |
+      | Per IP        |
+    When User enters window limit as "<WINDOW_LIMIT>"
+    When User selects "week" from Times per Target dropdown and "Per Person" from Per Target Audience dropdown
+    When User enters the campaign details as "<ADVERTISER>" "<CP_NAME>" "<CP_TYPE>" "<CP_BUDGET>" and saves the campaign
+    Then Verify campaign details are saved and user is navigated to the line item page
+    Examples:
+      | ADVERTISER     | CP_NAME  | CP_TYPE | CP_BUDGET | WINDOW_LIMIT |
+      | 01- Advertiser | Campaign | Regular | 50000     | 5            |
 
   @regression
   Scenario Outline: Create a Campaign with a Tactic & a Line Item for an External user
@@ -167,6 +200,9 @@ Feature: LIFE Regression - Create a Campaign
     Then Verify that the campaign is in "Pending Appr" state
     Then Verify that the approval status of the campaign is "Pending Appr"
     Then Verify the newly created campaign details in the campaign list: Campaign name, Line item name and Tactic name
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
     Examples:
       | ADVERTISER       | CP_NAME       | CP_TYPE | CP_BUDGET | LINE_NAME     | LINE_BUDGET | TACTIC_NAME     | RULE_TYPE          | CREATIVE          |
       | 1Demo Advertiser | External_Auto | Regular | 10000     | External_Line | 500         | External_Tactic | Behavioral Segment | External_Creative |
@@ -189,6 +225,9 @@ Feature: LIFE Regression - Create a Campaign
       | Native Display | ND_Line    | 6000      | ND_Standard_Tactic | Standard         | Retargeting Pixels | Retargeting_20250910_113545, Retargeting_20260117_030813, Retargeting_20260406_175539, Test_232434, Test_20251205_152023, New_Test123               | Clickers           | AutoImportedNPI_Campaign_20260502_235258, CreativeCampaign_20260508_151430, TargetingTemplate_20260506_194240, Auto_20260506_192726, Test_20260525_175528, Campaign_20260524_220810 | Legal Pages              | Emancipation, Adoption, Considering Divorce                                                                                     | Ethnicity            | Asian, Arab                                                                                               | Inventory Type      | App, Site                                                                                      | Geo Targets     | New York, California, Texas, Florida, Illinois, Ohio, Georgia                               |
       | Native Display | ND_Line    | 6000      | ND_EHR_Tactic      | EHR              | Sensitive Areas    | Anxiety, Memory Disorders, Anxiety Disorders                                                                                                        | IAB Categories New | Amusement and Theme Parks, Museums & Galleries, Marriage and Civil Unions, Telecommunications Industry                                                                              | Inventory Type           | App, Site                                                                                                                       | Keywords             | Custom_Keyword_Test, TestingKeyword123, QwertyTest, MedKeywordCheck, MedKeywordCheck2, HealthKeywordTest1 | Legal Populations   | Adoption, Emancipation, Divorce, Separation, Child Custody, Child Support, Considering Divorce | Geo Radius      | 35.5::122.42::400                                                                           |
     Then Verify the newly created campaign details in the campaign list
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
     Examples:
       | CREATIVE      |
       | Auto_Creative |
@@ -227,6 +266,9 @@ Feature: LIFE Regression - Create a Campaign
     And User assigns the existing creative named "<CREATIVE>", enables the tactic and saves the changes
     Then Verify the newly created campaign is in running state
     Then Verify the newly created campaign details in the campaign list: Campaign name, Line item name and Tactic name
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
     Examples:
       | ADVERTISER     | CP_NAME   | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | CREATIVE           |
       | 01- Advertiser | Persisted | Regular | 10000     | Line      | 120         | Tactic      | Display Advanced | Please_Dont_Delete |

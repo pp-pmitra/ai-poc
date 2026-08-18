@@ -1,10 +1,12 @@
 package utils;
 
+import com.opencsv.CSVParser;
 import com.opencsv.CSVReader;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -13,19 +15,24 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class FileActions {
 
-    public static List<String[]> readAllDataAtOnce(String file) {
-        List<String[]> allData = null;
-        try {
-            FileReader filereader = new FileReader(file);
-            CSVReader csvReader = new CSVReader(filereader);
-            allData = csvReader.readAll();
-            /*for (String[] row : allData) {
-                System.out.println(String.join(", ", row));
-            }*/
-        } catch (Exception e) {
-            e.printStackTrace();
+    public static List<List<String>> readCsvExcludingFirstColumn(String csvFilePath) throws Exception {
+        List<List<String>> csvData = new ArrayList<>();
+
+        try (CSVReader reader = new CSVReader(new FileReader(csvFilePath))) {
+            String[] headers = reader.readNext();
+            if (headers == null) {
+                return csvData;
+            }
+            String[] line;
+            while ((line = reader.readNext()) != null) {
+                List<String> rowValues = new ArrayList<>();
+                for (int i = 1; i < line.length; i++) {
+                    rowValues.add(line[i] != null ? line[i].trim() : "");
+                }
+                csvData.add(rowValues);
+            }
         }
-        return allData;
+        return csvData;
     }
 
     public static int fetchColumnCountFromCSV(Path filePath, String columnName) throws IOException {

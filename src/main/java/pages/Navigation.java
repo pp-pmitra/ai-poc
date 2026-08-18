@@ -34,6 +34,7 @@ public class Navigation {
     private final Locator LOGOUT_BUTTON;
     private final Locator CURATED_MARKET;
     private final Locator BUYING_PLATFORM;
+    private final Locator STUDIO_PRIMARY_MENU_TEXT;
     WaitUtility waitUtility;
     CampaignDashboard campaignDashboard;
 
@@ -55,7 +56,8 @@ public class Navigation {
         this.ACCOUNT_NAME = page.locator("//div[@class='accountname']");
         this.ACCOUNT_SEARCH = page.locator("//div[@id='accountSwitcher']/input[@placeholder='Search']");
         this.ACCOUNT_ITEM = page.locator("//div[@id='accountSwitcher']//div[@class='item']");
-        this.STUDIO_TITLE = page.locator("//div[text()='Studio']");
+        this.STUDIO_PRIMARY_MENU_TEXT = page.locator("//div[contains(@class,'primaryMenuText') and text()='Studio']");
+        this.STUDIO_TITLE = page.locator("//div[contains(@class,'breadcrumbWrapper') and text()='Studio']");
         this.TARGETING_TEMPLATE_ICON = page.locator("//div[contains(@class,'targetTemplateIcon')]");
         this.CAMPAIGNS =
                 page.locator("//div[contains(@class,'pull-left primaryMenuText') and contains(text(),'Campaigns')]");
@@ -103,7 +105,6 @@ public class Navigation {
     }
 
     public void navigateToStudio() {
-        PULSEPOINT_LOGO.click();
         waitUtility.waitForLocatorVisible(SUB_MENU);
         SUB_MENU.click();
         STUDIO.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
@@ -111,8 +112,8 @@ public class Navigation {
         waitUtility.waitForLocatorVisible(STUDIO_TITLE);
     }
 
-    public boolean isStudioTitleVisible() {
-        return STUDIO_TITLE.isVisible();
+    public boolean isStudioAvailableInMegaMenu() {
+        return STUDIO_PRIMARY_MENU_TEXT.isVisible();
     }
 
     public String verifyStudioTitle() {
@@ -238,7 +239,7 @@ public class Navigation {
         if (!ACCOUNT_NAME.innerText().contains(account)) {
             ACCOUNT_NAME.click();
             String accountXpath = String.format(
-                    "//li[contains(@class, 'account-item')]//span[contains(@class, 'account-name') and normalize-space(text())='%s']",
+                    "//div[contains(@id, 'accSwitchContainer')]//span[contains(@class, 'account-name') and normalize-space(text())='%s']",
                     account);
             page.locator(accountXpath).click();
             page.waitForLoadState(LoadState.LOAD);
