@@ -25,7 +25,7 @@ Feature: Webhook Creation and Validation in HCP Explorer Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Explorer" workspace name as "<WORKSPACE_NAME>"
     And Verify that advertiser field is disabled and displayed in "rgba(34, 34, 34, 0.55)" after saving the workspace
     #2
     And Verify Webhook panel is disabled before applying filters
@@ -66,7 +66,7 @@ Feature: Webhook Creation and Validation in HCP Explorer Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Explorer" workspace name as "<WORKSPACE_NAME>"
     And Verify that advertiser field is disabled and displayed in "rgba(34, 34, 34, 0.55)" after saving the workspace
     #2
     And Verify Webhook panel is disabled before applying filters

@@ -98,6 +98,7 @@ public class TacticSettings {
     private final Locator CREATIVE_TAB;
     private final Locator PERCENT_TYPE_FEE_INPUT;
     private final Locator DOLLAR_TYPE_FEE_INPUT;
+    private final Locator BID_PANEL;
     public final Set<String> ACTUAL_TARGET_RULE = new HashSet<>();
     public final Set<String> EXPECTED_TARGET_RULE = new HashSet<>();
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
@@ -223,6 +224,8 @@ public class TacticSettings {
                 "//div[contains(@class,'management-fee-container')]//input[contains(@class,'percent-img')]");
         this.DOLLAR_TYPE_FEE_INPUT = page.locator(
                 "//div[contains(@class,'management-fee-container')]//input[contains(@class,'doller-img')]");
+        this.BID_PANEL = page.locator("//div[@class='bidMultiplierCategoryName ng-star-inserted' and contains(text(), 'AUDIENCE ATTRIBUTE')]");
+
     }
 
     public String verifyTacticSettingsText() {
@@ -1038,11 +1041,9 @@ public class TacticSettings {
             String text = BID_MULTIPLIER_CATEGORY_NAME.nth(i).innerText();
             if (text != null) actualCategories.add(text.trim());
         }
-        return new HashSet<>(actualCategories)
-                .containsAll(bidCategoryList.stream()
-                        .filter(Objects::nonNull)
-                        .map(String::trim)
-                        .collect(Collectors.toSet()));
+        return new HashSet<>(actualCategories).containsAll(
+                bidCategoryList.stream().filter(Objects::nonNull).map(String::trim).collect(Collectors.toSet())
+        );
     }
 
     public void clickBidMultipliers() {
@@ -1073,36 +1074,42 @@ public class TacticSettings {
 
     public void selectMultipleBidRuleTypes(String ruleType, List<String> ruleValues, String fillValue) {
 
+        String ruleTypeXpath = String.format(
+                "//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
+        page.locator(ruleTypeXpath).click();
+
         switch (ruleType) {
-            case "Behavioral Segment":
-                String xpath = String.format(
-                        "//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
-                Locator bidRuleType = page.locator(xpath);
-                bidRuleType.click();
-                for (String value : ruleValues) {
-                    String cleanedValue = value.replace("[", "").replace("]", "");
-                    String xpath2 = String.format(
-                            "//div[contains(text(),'%s')]/ancestor::td/preceding-sibling::td//input", cleanedValue);
-                    Locator categoryItems = page.locator(xpath2);
-                    categoryItems.fill(fillValue);
-                }
-                clickRuleTypeOkButton();
+            case "Behavioral Segment", "NPI", "Day of The Week", "Practitioner Type", "Age", "Gender", "Browser",
+                 "Device", "Inventory Source":
+                fillRuleValues("//div[contains(text(),'%s')]/ancestor::td/preceding-sibling::td//input",
+                        ruleValues, fillValue);
                 break;
 
-            case "NPI":
-                String npiXpath = String.format(
-                        "//div[contains(@class,'content ng-star-inserted') and contains(text(),'%s')]", ruleType);
-                Locator npiRuleType = page.locator(npiXpath);
-                npiRuleType.click();
-                for (String value : ruleValues) {
-                    String cleanedValue = value.replace("[", "").replace("]", "");
-                    String npiXpath2 = String.format(
-                            "//div[contains(text(),'%s')]/ancestor::td/preceding-sibling::td//input", cleanedValue);
-                    Locator npiItems = page.locator(npiXpath2);
-                    npiItems.fill(fillValue);
-                }
-                clickRuleTypeOkButton();
+            case "Speciality", "Geo Targets":
+                fillRuleValues("//div[contains(@class,'bmtTreeNodeName') and normalize-space(text())='%s']/preceding-sibling::div//input[@bidmultiplierconverter]",
+                        ruleValues, fillValue);
+                page.waitForTimeout(1000);
                 break;
+
+            case "Operating Systems", "Creative Size":
+                fillRuleValues("//tr[td[@class='name-column' and normalize-space(text())='%s']]/td[contains(@class,'bmtPriceCol')]/input",
+                        ruleValues, fillValue);
+                break;
+
+            case "Domains and Apps":
+                fillRuleValues("//div[contains(@class,'cliptext') and @title='%s']/preceding-sibling::div[contains(@class,'left')]/input",
+                        ruleValues, fillValue);
+                break;
+        }
+
+        clickRuleTypeOkButton();
+    }
+
+    private void fillRuleValues(String xpathTemplate, List<String> ruleValues, String fillValue) {
+        for (String value : ruleValues) {
+            String cleanedValue = value.replace("[", "").replace("]", "");
+            String BidValuexpath = String.format(xpathTemplate, cleanedValue);
+            page.locator(BidValuexpath).fill(fillValue);
         }
     }
 
@@ -1128,7 +1135,7 @@ public class TacticSettings {
     public List<Object> fetchBidRuleOptions() {
         ruleOptions = new ArrayList<>();
         for (int i = 0; i < FETCH_BID_MULTIPLIER_RULE_OPTIONS.count(); i++) {
-            String text = FETCH_TARGET_RULE_OPTIONS.nth(i).innerText();
+            String text = FETCH_BID_MULTIPLIER_RULE_OPTIONS.nth(i).innerText();
             text = text.replaceAll("≥", "").trim();
             ruleOptions.add(text);
         }
@@ -1150,5 +1157,11 @@ public class TacticSettings {
             icon.click();
             expanded++;
         }
+    }
+
+    public void waitForBidPanel() {
+        waitUtility.waitUntilSpinnerHidden();
+        waitUtility.waitForLocatorVisible(BID_PANEL);
+
     }
 }
