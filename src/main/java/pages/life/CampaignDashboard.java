@@ -76,6 +76,7 @@ public class CampaignDashboard {
     private final Locator GLOBAL_TACTIC_ICON;
     private final Locator CAMPAIGN_TILE;
     private final Locator CAMPAIGN_PAGINATION;
+    private final Locator CAMPAIGN_EXPAND_ICON;
     private final Locator CAMPAIGN_EXPANDED_ICON;
     private final Locator LINE_ITEM_CHECKBOX;
     private final Locator TACTIC_CHECKBOX;
@@ -132,7 +133,7 @@ public class CampaignDashboard {
                 page.locator("//div[contains(@class,'display-inline')]/span[contains(text(),'Campaign')]");
         this.CREATIVE_TOOLTIP = page.locator(
                 "//div[contains(@class, 'tactic-data')]//span[contains(@class,'approval-icon creative-red') or contains(@class, 'approval-icon creative')]");
-        this.LIFE_TIME_FILTER = page.locator("//button[@data-title='Lifetime']");
+        this.LIFE_TIME_FILTER = page.locator("//button[@name='FilterOptionType' and normalize-space()='Lifetime']");
         this.CLICK_SETTINGS = page.locator("//i[@class='icon gearIcon']");
         this.SEARCH_CAMPAIGN = page.locator("//input[@placeholder='Search' and contains(@class, 'gaTableSearch')]");
         this.CLICK_CAMPAIGN_SEARCH = page.locator("//div[contains(@class,'gaTableSearchBtn')]");
@@ -164,7 +165,8 @@ public class CampaignDashboard {
         this.GLOBAL_TACTIC_ICON = page.locator("//img[contains(@src,'T.svg')]");
         this.CAMPAIGN_TILE = page.locator("//div[contains(@class,'campaign-tile')]");
         this.CAMPAIGN_PAGINATION = page.locator("//div[@class='paging-desc']");
-        this.CAMPAIGN_EXPANDED_ICON = page.locator("//tr[contains(@class,'cl-campaign-row')]//div[@class='cl-expand-li']//div");
+        this.CAMPAIGN_EXPAND_ICON = page.locator("//tr[contains(@class,'cl-campaign-row')]//div[@class='cl-expand-li']//div");
+        this.CAMPAIGN_EXPANDED_ICON = page.locator("//tr[contains(@class,'cl-campaign-row')]//div[contains(@class,'expanded-thin')]");
         this.LINE_ITEM_CHECKBOX = page.locator("//tr[contains(@class,'cl-li-row')]//sui-checkbox[contains(@class,'checkboxClickableArea')]");
         this.TACTIC_CHECKBOX = page.locator("//tr[contains(@class,'cl-tactic-row')]//sui-checkbox[contains(@class,'checkboxClickableArea')]");
         this.BULK_ACTIONS_DROPDOWN = page.locator("//span[text()='Bulk Actions']");
@@ -605,6 +607,11 @@ public class CampaignDashboard {
      * or an intended permanent change.
      */
     public void navigateToCreatedCampaign(String lineItemName) {
+        if (CAMPAIGN_EXPAND_ICON.getAttribute("class").contains("collapsed-thin")) {
+            CAMPAIGN_EXPAND_ICON.click();
+            waitUtility.waitForLocatorVisible(CAMPAIGN_EXPANDED_ICON);
+        }
+
         page.locator(String.format("//span[contains(text(),'%s')]", lineItemName)).click();
         waitUtility.waitForLocatorVisible(LINE_ITEM_PAGE_TITLE);
         CAMPAIGN_TILE.click();
@@ -678,15 +685,15 @@ public class CampaignDashboard {
     }
 
     public void selectLineItemCheckbox() {
-        if(CAMPAIGN_EXPANDED_ICON.first().getAttribute("class").contains("collapsed")){
-            CAMPAIGN_EXPANDED_ICON.first().click();
+        if(CAMPAIGN_EXPAND_ICON.first().getAttribute("class").contains("collapsed")){
+            CAMPAIGN_EXPAND_ICON.first().click();
         }
         LINE_ITEM_CHECKBOX.first().click();
     }
 
     public void selectTacticCheckbox() {
-        if(CAMPAIGN_EXPANDED_ICON.first().getAttribute("class").contains("collapsed")){
-            CAMPAIGN_EXPANDED_ICON.first().click();
+        if(CAMPAIGN_EXPAND_ICON.first().getAttribute("class").contains("collapsed")){
+            CAMPAIGN_EXPAND_ICON.first().click();
             if(EXPAND_CREATED_LINE_ITEM.first().getAttribute("class").contains("collapsed")){
                 EXPAND_CREATED_LINE_ITEM.first().click();
             }

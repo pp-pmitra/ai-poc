@@ -29,6 +29,7 @@ public class BrandExplorerWorkspace {
     private final Locator FILTERS_TAB;
     private final Locator ADD_FILTER_BUTTON;
     private final Locator COMPONENTS_TAB;
+    private final Locator CHART_EMPTY_STATE;
     WaitUtility waitUtility;
 
     public BrandExplorerWorkspace(Page page) {
@@ -61,6 +62,8 @@ public class BrandExplorerWorkspace {
                                 AriaRole.TAB,
                                 new FrameLocator.GetByRoleOptions().setName("Components").setExact(true)
                             );
+        this.CHART_EMPTY_STATE = WORKSPACE_FRAME.locator(
+                "//ds-typography[normalize-space()='Chart requires at least 1 dimension and 1 metric' or normalize-space()='Choose 1 or more fields to see analytics']");
     }
 
     public void waitForDashboardLoad() {
@@ -321,6 +324,15 @@ public class BrandExplorerWorkspace {
         Locator toggle = chartToggleButton(label);
         waitUtility.waitForLocatorVisible(toggle);
         toggle.click();
+    }
+
+    public boolean isChartEmptyStateDisplayed() {
+        try {
+            waitUtility.waitForLocatorVisible(CHART_EMPTY_STATE);
+            return true;
+        } catch (TimeoutError e) {
+            return false;
+        }
     }
 
     public boolean isComponentVisibleAsTableColumn(String component) {
