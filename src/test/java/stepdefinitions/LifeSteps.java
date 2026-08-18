@@ -7439,6 +7439,7 @@ public class LifeSteps {
         List<String> bidCategoryList = bidCategory.asList(String.class);
         logger.info("Verifying Bid multiplier panel contains the following categories: {}", bidCategoryList);
         for (String category : bidCategoryList) {
+            tacticSettings.waitForBidPanel();
             boolean isPresent = tacticSettings.fetchAndVerifyBidCategoryName(Collections.singletonList(category));
             Assert.assertTrue("Bid multiplier category '" + category + "' not found or not visible on UI", isPresent);
         }
@@ -7502,7 +7503,6 @@ public class LifeSteps {
         List<String> expectedNormalizedBidRuleOptions = normalizeObjectList(keyValues);
         List<String> actualNormalizedBidRuleOptions = normalizeObjectList(tacticSettings.fetchBidRuleOptions());
         Assert.assertEquals("Rule types mismatch", expectedUniqueAndSortedBid, actualUniqueAndSortedBid);
-
         for (String expectedOption : expectedNormalizedBidRuleOptions) {
             boolean matchFound =
                     actualNormalizedBidRuleOptions.stream().anyMatch(actual -> actual.equalsIgnoreCase(expectedOption));

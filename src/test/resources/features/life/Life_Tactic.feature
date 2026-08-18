@@ -224,13 +224,24 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
       | GEOGRAPHY          |
       | MEDIA SUPPLY       |
     And Verify Bid type with respect to category
-      | AUDIENCE ATTRIBUTE | Behavioral Segment,Day of The Week,Speciality,Practitioner Type,NPI              |
-      | DEMOGRAPHICS       | Age,Gender                                                                       |
-      | GEOGRAPHY          | Geo Targets                                                                      |
-      | MEDIA SUPPLY       | Browser,Device,Operating Systems,Inventory Source,Domains and Apps,Creative Size |
+      | AUDIENCE ATTRIBUTE | Behavioral Segment,Day of The Week,Speciality,Practitioner Type,NPI |
+      | DEMOGRAPHICS       | Age,Gender                                                          |
+      | GEOGRAPHY          | Geo Targets                                                         |
+      | MEDIA SUPPLY       | Browser,Device,Operating Systems,Inventory Source,Domains and Apps  |
     And User configures Bid multiplier rules as below with "<BID_VALUE>"
       | Behavioral Segment | 111 > 222 > Patients of HCPs prescribing Ivig and SCIg competitors |
       | NPI                | AutoSmartList954103283                                             |
+      | Day of The Week    | Monday                                                             |
+      | Speciality         | Behavioral Health & Social Service Providers                       |
+      | Practitioner Type  | Nurse Practitioner                                                 |
+      | Age                | 35-39                                                              |
+      | Gender             | Female                                                             |
+      | Geo Targets        | Afghanistan                                                        |
+      | Browser            | Chrome                                                             |
+      | Device             | Mobile                                                             |
+      | Operating Systems  | Linux                                                              |
+      | Inventory Source   | Aug14                                                              |
+      | Domains and Apps   | 1Domain_0617                                                       |
     Then Verify the configured Bid multiplier rules
     When User saves the Bid multiplier settings
     Then Verify settings details are saved and user is navigated to the creatives tab
