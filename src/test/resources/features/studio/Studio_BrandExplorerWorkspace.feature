@@ -22,6 +22,7 @@ Feature: Brand Explorer Workspace creation in Studio
     And User saves the "Brand Explorer" workspace
     Then Verify the "Brand Explorer" Workspace is saved
     And Navigate to workspace dashboard
+    And User selects the workspace type "Brand Explorer"
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace

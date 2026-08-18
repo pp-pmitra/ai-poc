@@ -137,6 +137,24 @@ public class BrandExplorerWorkspace {
         waitUtility.waitForLocatorVisible(SPINNER);
     }
 
+    private boolean isVisible(Locator locator) {
+        try {
+            waitUtility.waitForLocatorVisible(locator);
+            return true;
+        } catch (TimeoutError e) {
+            return false;
+        }
+    }
+
+    private boolean isHidden(Locator locator) {
+        try {
+            waitUtility.waitForLocatorHidden(locator);
+            return true;
+        } catch (TimeoutError e) {
+            return false;
+        }
+    }
+
     public List<String> getTableDates(int days) {
         waitUtility.waitForLocatorVisible(DATE_CELLS.first());
         Set<String> seenDates = new LinkedHashSet<>();
@@ -197,15 +215,7 @@ public class BrandExplorerWorkspace {
     }
 
     public boolean isDateRangeErrorDisplayed() {
-        // in case the error message is not displayed, waitForLocatorVisible will throw a TimeoutError, which we catch
-        // and return false
-        // instead of timing out the test as that would be a regression failure.
-        try {
-            waitUtility.waitForLocatorVisible(DATE_RANGE_ERROR);
-            return true;
-        } catch (TimeoutError e) {
-            return false;
-        }
+        return isVisible(DATE_RANGE_ERROR);
     }
 
     public boolean isStartDateFirstInTable(String startDate) {
@@ -262,9 +272,7 @@ public class BrandExplorerWorkspace {
     public List<String> getMissingComponentCategories(List<String> categories) {
         List<String> missing = new ArrayList<>();
         for (String category : categories) {
-            try {
-                waitUtility.waitForLocatorVisible(categoryTab(category));
-            } catch (TimeoutError e) {
+            if (!isVisible(categoryTab(category))) {
                 missing.add(category);
             }
         }
@@ -298,30 +306,15 @@ public class BrandExplorerWorkspace {
     }
 
     public boolean isChartVisible() {
-        try {
-            waitUtility.waitForLocatorVisible(BRAND_EXPLORER_CHART);
-            return true;
-        } catch (TimeoutError e) {
-            return false;
-        }
+        return isVisible(BRAND_EXPLORER_CHART);
     }
 
     public boolean isChartHidden() {
-        try {
-            waitUtility.waitForLocatorHidden(BRAND_EXPLORER_CHART);
-            return true;
-        } catch (TimeoutError e) {
-            return false;
-        }
+        return isHidden(BRAND_EXPLORER_CHART);
     }
 
     public boolean isTableVisible() {
-        try {
-            waitUtility.waitForLocatorVisible(BRAND_EXPLORER_TABLE);
-            return true;
-        } catch (TimeoutError e) {
-            return false;
-        }
+        return isVisible(BRAND_EXPLORER_TABLE);
     }
 
     public void clickChartToggle(String label) {
@@ -331,12 +324,7 @@ public class BrandExplorerWorkspace {
     }
 
     public boolean isComponentVisibleAsTableColumn(String component) {
-        try {
-            waitUtility.waitForLocatorVisible(tableColumnHeader(component));
-            return true;
-        } catch (TimeoutError e) {
-            return false;
-        }
+        return isVisible(tableColumnHeader(component));
     }
 
     public void removeTableColumnFromHeader(String columnName) {
@@ -369,21 +357,9 @@ public class BrandExplorerWorkspace {
         components.forEach(component -> categoryCheckbox(category, component).check());
         waitForSpinnerToAppear();
         waitForSpinnerToDisappear();
-        for (String component : components) {
-            try {
-                waitUtility.waitForLocatorVisible(tableColumnHeader(component));
-            } catch (TimeoutError e) {
-                failures.add(component + ": did not appear as a table column after being selected");
-            }
-        }
+        addMissingSelectedColumns(components, failures);
         components.forEach(component -> categoryCheckbox(category, component).uncheck());
-        for (String component : components) {
-            try {
-                waitUtility.waitForLocatorHidden(tableColumnHeader(component));
-            } catch (TimeoutError e) {
-                failures.add(component + ": was not removed from the table after being deselected");
-            }
-        }
+        addRemainingDeselectedColumns(components, failures);
         return failures;
     }
 
@@ -392,22 +368,26 @@ public class BrandExplorerWorkspace {
         components.forEach(component -> componentCheckbox(component).check());
         waitForSpinnerToAppear();
         waitForSpinnerToDisappear();
+        addMissingSelectedColumns(components, failures);
+        components.forEach(component -> componentCheckbox(component).uncheck());
+        addRemainingDeselectedColumns(components, failures);
+        return failures;
+    }
+
+    private void addMissingSelectedColumns(List<String> components, List<String> failures) {
         for (String component : components) {
-            try {
-                waitUtility.waitForLocatorVisible(tableColumnHeader(component));
-            } catch (TimeoutError e) {
+            if (!isVisible(tableColumnHeader(component))) {
                 failures.add(component + ": did not appear as a table column after being selected");
             }
         }
-        components.forEach(component -> componentCheckbox(component).uncheck());
+    }
+
+    private void addRemainingDeselectedColumns(List<String> components, List<String> failures) {
         for (String component : components) {
-            try {
-                waitUtility.waitForLocatorHidden(tableColumnHeader(component));
-            } catch (TimeoutError e) {
+            if (!isHidden(tableColumnHeader(component))) {
                 failures.add(component + ": was not removed from the table after being deselected");
             }
         }
-        return failures;
     }
 
     public void clickFiltersTab() {
