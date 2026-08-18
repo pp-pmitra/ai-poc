@@ -76,6 +76,7 @@ public class CampaignDashboard {
     private final Locator GLOBAL_TACTIC_ICON;
     private final Locator CAMPAIGN_TILE;
     private final Locator CAMPAIGN_PAGINATION;
+    private final Locator CAMPAIGN_EXPAND_ICON;
     WaitUtility waitUtility;
     String lineItemClassBeforeClick, lineItemClassAfterClick, tacticClassBeforeClick, tacticClassAfterClick;
 
@@ -160,6 +161,7 @@ public class CampaignDashboard {
         this.GLOBAL_TACTIC_ICON = page.locator("//img[contains(@src,'T.svg')]");
         this.CAMPAIGN_TILE = page.locator("//div[contains(@class,'campaign-tile')]");
         this.CAMPAIGN_PAGINATION = page.locator("//div[@class='paging-desc']");
+        this.CAMPAIGN_EXPAND_ICON = page.locator("//div[@class='cl-expand-li']");
     }
 
     public String isCampaignDashboardVisibleWithTitle(String text) {
@@ -597,10 +599,8 @@ public class CampaignDashboard {
      * or an intended permanent change.
      */
     public void navigateToCreatedCampaign(String lineItemName) {
-        Locator expandIcon = page.locator("//div[@class='cl-expand-li']");
-
-        if ("false".equals(expandIcon.getAttribute("aria-expanded"))) {
-            expandIcon.click();
+        if ("false".equals(CAMPAIGN_EXPAND_ICON.getAttribute("aria-expanded"))) {
+            CAMPAIGN_EXPAND_ICON.click();
             waitUtility.waitForLocatorVisible(page.locator("//div[@class='cl-expand-li' and @aria-expanded='true']"));
         }
 
