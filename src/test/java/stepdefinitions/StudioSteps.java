@@ -381,23 +381,6 @@ public class StudioSteps {
         Assert.assertEquals(textColor, color);
     }
 
-    @Then("verify the file content")
-    public void verify_the_file_content() {
-        logger.info("Reading downloaded CSV file content");
-        fileContent = FileActions.readAllDataAtOnce(ConfigReader.getProperty("csvFilePath"));
-        fileContentData = new ArrayList<>();
-        // To display the data from csv- Separate logic
-        /*for (int i = 1; i < fileContent.size(); i++) {
-           // System.out.println("Row " + i + ": " + String.join(", ", fileContent.get(i)));
-            String data= Arrays.toString(fileContent.get(i));
-            fileContentData.add(data);
-        }*/
-        for (String[] row : fileContent) {
-            fileContentData.add(String.join(", ", row));
-        }
-        logger.info("CSV File Content: {}", fileContentData);
-    }
-
     @When("Studio platform is available")
     public void studio_platform_is_available() {
         logger.info("Checking Studio platform availability");
