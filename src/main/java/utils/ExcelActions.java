@@ -33,15 +33,4 @@ public class ExcelActions {
 
         return actualHeaders;
     }
-
-    public static int countCsvRecords(String filePath) throws IOException, CsvValidationException {
-        int rowCount = 0;
-        try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
-            reader.readNext();
-            while (reader.readNext() != null) {
-                rowCount++;
-            }
-        }
-        return rowCount;
-    }
 }

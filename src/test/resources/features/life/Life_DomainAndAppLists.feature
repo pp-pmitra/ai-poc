@@ -100,5 +100,7 @@ Feature: LIFE Regression - Validate the ability to create and delete Domain and 
     And Verify that the user is able to delete an existing "AppBundle" name list
     And Verify the deleted list is no longer displayed in the left panel
     Examples:
-      | SUB_TABS                   | LIST_NAME            | UPLOAD_FILENAME1   | UPLOAD_FILENAME2   |
-      | Both, Domains, App Bundles | AppBundle_FileUpload | AppBundleFile1.csv | AppBundleFile2.csv |
+      | SUB_TABS                   | LIST_NAME            | UPLOAD_FILENAME1    | UPLOAD_FILENAME2    |
+      | Both, Domains, App Bundles | AppBundle_FileUpload | AppBundleFile1.csv  | AppBundleFile2.csv  |
+      | Both, Domains, App Bundles | AppBundle_FileUpload | AppBundleFile1.txt  | AppBundleFile2.txt  |
+      | Both, Domains, App Bundles | AppBundle_FileUpload | AppBundleFile1.xlsx | AppBundleFile2.xlsx |
