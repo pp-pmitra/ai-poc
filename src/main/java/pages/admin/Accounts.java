@@ -2,7 +2,6 @@ package pages.admin;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
-import com.microsoft.playwright.ElementHandle;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
@@ -146,7 +145,7 @@ public class Accounts {
         this.USER_SIGNAL_TAB = page.locator("//button[normalize-space(.)='Signal']");
         this.USER_PERMISSIONS_SAVE_BUTTON = page.locator("//button[@class='ui primary button okButton']");
         this.USER_PROFILE_ICON = page.locator("//div[@class='accountname']");
-        this.LOGOUT_BUTTON = page.locator("//span[text()='Sign Out']");
+        this.LOGOUT_BUTTON = page.locator("//div[text()='Sign Out'] | //span[text()='Sign Out']");
         this.MOMENTS_CHECKBOX = page.locator("//*[@id='44_0' and not(contains(@class, 'checked'))]");
         this.IBHEALTH_CHECKBOX = page.locator("//*[@id='45_0' and not(contains(@class, 'checked'))]");
         this.CLAIMSDATA_CHECKBOX = page.locator("//*[@id='43_0' and not(contains(@class, 'checked'))]");
@@ -179,7 +178,6 @@ public class Accounts {
         this.CAMPAIGN_LINK_FROM_CUSTOM_FIELD_POPUP = page.locator("//a[contains(@class, 'bullet_list')]");
         this.CUSTOM_FIELD_REMOVAL_POPUP = page.locator("//div[contains(@class,'confirm-modal header')]");
         this.CUSTOM_DESTINATION_ROW = page.locator("//div[@class='customDestination-row']");
-
     }
 
     public void clickAdministration() {

@@ -150,3 +150,57 @@ Feature: LIFE Regression - Check below features available on Campaign Dashboard
       | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Behavioral Segment | Approved     |
       | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Behavioral Segment | Pending Appr |
       | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Behavioral Segment | Denied       |
+
+  @regression
+  Scenario Outline: Verify that bulk actions are enabled when the entity checkbox is selected for a Line Item
+    Given This scenario will be executed in the "Demo" environment as a "User"
+    And "Life" application is logged in successfully with Account "automation@pulsepoint"
+    And Verify Campaign Dashboard is displayed with title "Campaigns"
+    And User clicks on Create Campaign
+    When User enters the campaign details as "<ADVERTISER>" "<CP_NAME>" "<CP_TYPE>" "<CP_BUDGET>" and saves the campaign
+    Then Verify campaign details are saved and user is navigated to the line item page
+    When User enters the line item details as "<LINE_NAME>" "<LINE_BUDGET>", enables the line item and saves the changes
+    Then Verify line item details are saved and user is navigated to the tactic page
+    When User enters the tactic details as "<TACTIC_NAME>" and saves the tactic
+    Then Verify tactic details are saved and user is navigated to the settings tab
+    When User selects the "<CHANNEL>" as channel
+    And User selects "<RULE_TYPE>" as rule type and configures the targeting rules, and saves the settings
+    Then Verify settings details are saved and user is navigated to the creatives tab
+    And User assigns the existing creative named "<CREATIVE>", enables the tactic and saves the changes
+    Then Verify the newly created campaign is in running state
+    Then Verify the newly created campaign details in the campaign list: Campaign name, Line item name and Tactic name
+    When User selects the checkbox for a "Line Item"
+    Then Verify that Tactic checkboxes are disabled when the entity checkbox is selected for a Line Item
+    Then Verify that bulk actions are enabled when the entity checkbox is selected for a "Line Item"
+    And User is able to enable or disable the "Line Item" using the bulk actions and verify the status column is updated accordingly
+      | Disable Line Items |
+    Examples:
+      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          | CREATIVE      |
+      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Behavioral Segment | Auto_Creative |
+
+  @regression
+  Scenario Outline: Verify that bulk actions are enabled when the entity checkbox is selected for a Tactic
+    Given This scenario will be executed in the "Demo" environment as a "User"
+    And "Life" application is logged in successfully with Account "automation@pulsepoint"
+    And Verify Campaign Dashboard is displayed with title "Campaigns"
+    And User clicks on Create Campaign
+    When User enters the campaign details as "<ADVERTISER>" "<CP_NAME>" "<CP_TYPE>" "<CP_BUDGET>" and saves the campaign
+    Then Verify campaign details are saved and user is navigated to the line item page
+    When User enters the line item details as "<LINE_NAME>" "<LINE_BUDGET>", enables the line item and saves the changes
+    Then Verify line item details are saved and user is navigated to the tactic page
+    When User enters the tactic details as "<TACTIC_NAME>" and saves the tactic
+    Then Verify tactic details are saved and user is navigated to the settings tab
+    When User selects the "<CHANNEL>" as channel
+    And User selects "<RULE_TYPE>" as rule type and configures the targeting rules, and saves the settings
+    Then Verify settings details are saved and user is navigated to the creatives tab
+    And User assigns the existing creative named "<CREATIVE>", enables the tactic and saves the changes
+    Then Verify the newly created campaign is in running state
+    Then Verify the newly created campaign details in the campaign list: Campaign name, Line item name and Tactic name
+    When User selects the checkbox for a "Tactic"
+    Then Verify that Line Item checkboxes are disabled when the entity checkbox is selected for a Tactic
+    Then Verify that bulk actions are enabled when the entity checkbox is selected for a "Tactic"
+    And User is able to enable or disable the "Tactic" using the bulk actions and verify the status column is updated accordingly
+      | Disable Tactics |
+    Examples:
+      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          | CREATIVE      |
+      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Behavioral Segment | Auto_Creative |

@@ -86,6 +86,9 @@ public class Campaigns {
     private final Locator CAMPAIGN_PANEL_NAME;
     private final Locator CAMPAIGN_UPDATED_POPUP;
     private final Locator REFRESH_BUTTON;
+    private final Locator APPLY_FREQUENCY_CAPPING;
+    private final Locator PER_TARGET_AUDIENCE_DROPDOWN;
+    private final Locator WINDOWS_LIMIT_INPUT;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
     TacticSettings tacticSettings = new TacticSettings(DriverFactory.getPage());
 
@@ -189,6 +192,9 @@ public class Campaigns {
         this.CAMPAIGN_PANEL_NAME = page.locator("//div[@class='item-details']//div[contains(@class,'campaign-title')]");
         this.CAMPAIGN_UPDATED_POPUP = page.locator("//div[contains(@class, 'confirm-modal ') and contains(text(),'Campaign updated')]");
         this.REFRESH_BUTTON = page.locator("//div[contains(@class, 'approveButtonText')]/span[contains(text(),'Refresh')]");
+        this.APPLY_FREQUENCY_CAPPING = page.locator("//label[contains(text(),'Apply Frequency Capping')]");
+        this.PER_TARGET_AUDIENCE_DROPDOWN = page.locator("//div[contains(@class,'crossDevice-dropdown')]");
+        this.WINDOWS_LIMIT_INPUT = page.locator("//input[@formcontrolname='windowLimit']");
     }
 
     public void createCampaign() {
@@ -684,6 +690,52 @@ public class Campaigns {
         String text = DELETE_CAMPAIGN_SUCCESS_ALERT.innerText().trim();
         waitUtility.waitForLocatorHidden(DELETE_CAMPAIGN_SUCCESS_ALERT);
         return text;
+    }
+
+    public void clickFrequencyCappingCheckbox() {
+        APPLY_FREQUENCY_CAPPING.click();
+    }
+
+    public boolean isTimesPerTargetDropdownEnabled() {
+        return TIMES_PER_DROPDOWN.isVisible();
+    }
+
+    public boolean isPerTargetAudienceDropdownEnabled() {
+        return PER_TARGET_AUDIENCE_DROPDOWN.isVisible();
+    }
+
+    public String getTimesPerTargetDropdownValue() {
+        return TIMES_PER_DROPDOWN.locator("//div[@class='text']").textContent().trim();
+    }
+
+    public List<String> getTimesPerTargetDropdownOptions() {
+        TIMES_PER_DROPDOWN.click();
+        return TIMES_PER_DROPDOWN.locator("//div[@class='item']").allTextContents();
+    }
+
+    public String getPerTargetAudienceDropdownValue() {
+        return PER_TARGET_AUDIENCE_DROPDOWN.locator("//div[@class='text']").textContent().trim();
+    }
+
+    public List<String> getPerTargetAudienceDropdownOptions() {
+        PER_TARGET_AUDIENCE_DROPDOWN.click();
+        return PER_TARGET_AUDIENCE_DROPDOWN.locator("//div[@class='item']").allTextContents();
+    }
+
+    public void enterWindowLimit(String windowLimit) {
+        WINDOWS_LIMIT_INPUT.fill(windowLimit);
+    }
+
+    public void selectTimesPerTarget(String timesPerTarget) {
+        TIMES_PER_DROPDOWN.click();
+        Locator timesPerTargetOption = TIMES_PER_DROPDOWN.locator(String.format("//div[@class='item' and text()='%s']", timesPerTarget));
+        timesPerTargetOption.click();
+    }
+
+    public void selectPerTargetAudience(String perTargetAudience) {
+        PER_TARGET_AUDIENCE_DROPDOWN.click();
+        Locator perTargetAudienceOption = PER_TARGET_AUDIENCE_DROPDOWN.locator(String.format("//div[@class='item' and text()='%s']", perTargetAudience));
+        perTargetAudienceOption.click();
     }
 
     public void clearCustomFieldFromCampaign(String fieldName) {

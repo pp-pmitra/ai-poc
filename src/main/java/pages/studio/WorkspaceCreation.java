@@ -49,15 +49,19 @@ public class WorkspaceCreation {
     private final Locator DELETE_WORKSPACE_ERROR_TEXT;
     private final Locator WORKSPACE_TYPE_LIST;
     private final Locator WORKSPACE_ADVERTISER_DROPDOWN;
+    private final Locator WORKSPACE_ADVERTISER_VALUE;
     private final Locator WORKSPACE_TYPE;
     private final Locator WORKSPACE_CREATED_BY_DROPDOWN;
+    private final Locator WORKSPACE_CREATED_BY_VALUE;
     private final Locator DROPDOWN_LIST_ITEMS;
     private final Locator GET_WORKSPACE_NAME_FROM_DASHBOARD;
     private final Locator BACK_ARROW;
     private final Locator AI_PANEL;
     private final Locator AI_PANEL_CLOSE_BUTTON;
     private final Locator ABSENT_WORKSPACE;
-    private final Locator RENAME_WORKSPACE_OUTER_AREA;
+    private final Locator WORKSPACE_TYPE_CHECKBOX;
+    private final Locator RENAME_WORKSPACE_TEXTBOX;
+    private final Locator LOADER;
     WaitUtility waitUtility;
     int counter = 0;
 
@@ -111,19 +115,25 @@ public class WorkspaceCreation {
         this.WORKSPACE_TYPE_LIST = WORKSPACE_FRAME.locator("//div[starts-with(@data-tour-id,'create-workspace-')]//ds-typography[1]");
         this.WORKSPACE_ADVERTISER_DROPDOWN =
                 WORKSPACE_FRAME.locator("//div[@data-tour-id='workspaces-advertiser-filter']//input");
+        this.WORKSPACE_ADVERTISER_VALUE =
+                WORKSPACE_FRAME.locator("//div[@data-tour-id='workspaces-advertiser-filter']//p");
         this.WORKSPACE_TYPE = WORKSPACE_FRAME.locator(
                 "//div[@data-tour-id='workspaces-types-filter']//div[@role='img']//following-sibling::ds-typography");
         this.WORKSPACE_CREATED_BY_DROPDOWN =
                 WORKSPACE_FRAME.locator("//div[@data-tour-id='workspaces-created-by-filter']//input");
-        this.DROPDOWN_LIST_ITEMS = WORKSPACE_FRAME.locator("//div[@role='dialog']//li//span");
+        this.WORKSPACE_CREATED_BY_VALUE =
+                WORKSPACE_FRAME.locator("//div[@data-tour-id='workspaces-created-by-filter']//p");
+        this.DROPDOWN_LIST_ITEMS = WORKSPACE_FRAME.locator("//div[@role='option']//p");
         this.GET_WORKSPACE_NAME_FROM_DASHBOARD =
-                WORKSPACE_FRAME.locator("//td[@role='gridcell' and contains(@id,'workspace_name')]//span");
+                WORKSPACE_FRAME.locator("//td[@role='gridcell' and contains(@id,'workspace_name')]//ds-typography");
         this.BACK_ARROW = WORKSPACE_FRAME.locator("//button[@color='textPrimary']");
         this.AI_PANEL = page.locator("//div[@class='ai-assistant-panel open']");
         this.AI_PANEL_CLOSE_BUTTON =
                 page.locator("//button[@aria-label='Close AI Assistant' and @class='ai-icon-btn']");
         this.ABSENT_WORKSPACE = WORKSPACE_FRAME.locator("//p[text()='Nothing Found...']");
-        this.RENAME_WORKSPACE_OUTER_AREA = WORKSPACE_FRAME.locator("//h3[text()='Rename Workspace']/parent::header/following-sibling::div");
+        this.WORKSPACE_TYPE_CHECKBOX = WORKSPACE_FRAME.locator("//div[@data-tour-id='workspaces-types-filter']//ds-checkbox");
+        this.RENAME_WORKSPACE_TEXTBOX = WORKSPACE_FRAME.locator("div:has(h3:has-text('Rename Workspace')) ds-input input");
+        this.LOADER = WORKSPACE_FRAME.locator("//div[@data-testid='loading-spinner']");
     }
 
     public String studioDashboard() {
@@ -173,6 +183,7 @@ public class WorkspaceCreation {
     public String isWorkspaceCreationAlertDisplayed() {
         String text = WORKSPACE_CREATED_ALERT.innerText();
         waitUtility.waitForLocatorHidden(WORKSPACE_CREATED_ALERT);
+        if (LOADER.isVisible()) waitUtility.waitForLocatorHidden(LOADER.first());
         return text;
     }
 
@@ -222,10 +233,12 @@ public class WorkspaceCreation {
     }
 
     public void clickMoreActionsMenu(String workspaceName) {
-        Locator workspaceMoreActionsButton = WORKSPACE_FRAME
-                .locator(String.format("//ds-typography[contains(text(),'%s')]/parent::div/following-sibling::button[@data-tour-id='workspace-menu-button']", workspaceName));
-        waitUtility.waitForLocatorVisible(workspaceMoreActionsButton);
-        workspaceMoreActionsButton.click();
+        waitUtility.waitForLocatorVisible(
+                WORKSPACE_FRAME.locator(String.format("//ds-typography[contains(text(),'%s')]", workspaceName)));
+        WORKSPACE_FRAME
+                .locator(String.format("//td[contains(@id,'%s')]//button", workspaceName))
+                .first()
+                .click();
     }
 
     public void deleteWorkspace() {
@@ -269,16 +282,19 @@ public class WorkspaceCreation {
         return text;
     }
 
-    public String renameWorkspaceName(String newWorkspace, boolean expectsConfirmationAlert) {
-        RENAME_WORKSPACE_OUTER_AREA.locator("ds-input input").fill(newWorkspace);
-        if (!UPDATE_BUTTON.isEnabled()) page.waitForTimeout(2000);
+    public String renameWorkspaceName(String newWorkspace) {
+        RENAME_WORKSPACE_TEXTBOX.fill(newWorkspace);
+        page.waitForCondition(UPDATE_BUTTON.locator("xpath=/parent::button")::isEnabled);
         UPDATE_BUTTON.click();
-        String text = "";
-        if (expectsConfirmationAlert) {
-            text = RENAME_WORKSPACE_ALERT.innerText();
+        try {
+            waitUtility.waitForLocatorVisible(RENAME_WORKSPACE_ALERT);
+            String text = RENAME_WORKSPACE_ALERT.innerText().trim();
             waitUtility.waitForLocatorHidden(RENAME_WORKSPACE_ALERT);
+            return text;
+        } catch (Exception e) {
+            waitUtility.waitForLocatorHidden(LOADER);
+            return "";
         }
-        return text;
     }
 
     public boolean searchWorkspaceName(String workspaceName) {
@@ -304,14 +320,17 @@ public class WorkspaceCreation {
         return DUPLICATE_WORKSPACE_NAME.innerText();
     }
 
-    public String clickDuplicateButton(boolean expectsConfirmationAlert) {
+    public String clickDuplicateButton() {
         DUPLICATE_BUTTON_FROM_POPUP.click();
-        String text = "";
-        if (expectsConfirmationAlert) {
-            text = DUPLICATE_WORKSPACE_ALERT.innerText();
+        try {
+            waitUtility.waitForLocatorVisible(DUPLICATE_WORKSPACE_ALERT);
+            String text = DUPLICATE_WORKSPACE_ALERT.innerText().trim();
             waitUtility.waitForLocatorHidden(DUPLICATE_WORKSPACE_ALERT);
+            return text;
+        } catch (Exception e) {
+            waitUtility.waitForLocatorHidden(LOADER);
+            return "";
         }
-        return text;
     }
 
     public void clickWorkspace(String workspaceName) {
@@ -323,7 +342,7 @@ public class WorkspaceCreation {
     public boolean navigateToWorkspace(String workspace) {
         DASHBOARD_RELOAD_ICON.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         return WORKSPACE_FRAME
-                .locator(String.format("//h1[contains(text(),'%s')]", workspace))
+                .locator(String.format("//ds-typography[contains(text(),'%s')]", workspace))
                 .isVisible();
     }
 
@@ -351,7 +370,7 @@ public class WorkspaceCreation {
         waitForStudioWorkspacePage(WORKSPACE_TYPE);
         waitUtility.waitForLocatorVisible(WORKSPACE_TYPE.last());
         CommonUtils.selectAndClickElement(WORKSPACE_TYPE, Collections.singletonList(workspaceType));
-        waitUtility.waitForLocatorVisible(PAGINATION.getByText("1 of"));
+        waitUtility.waitForLocatorVisible(PAGINATION.first());
     }
 
     public void filterByWorkspaceTypeAndOpen(String workspaceType, String workspaceName) {
@@ -364,17 +383,18 @@ public class WorkspaceCreation {
     }
 
     public void selectWorkspaceAdvertiser(String advertiser) {
-        WORKSPACE_ADVERTISER_DROPDOWN.click();
-        waitUtility.waitForLocatorVisible(DROPDOWN_LIST_ITEMS.locator("text = " + advertiser));
-        DROPDOWN_LIST_ITEMS.locator("text=" + advertiser).click();
-        page.keyboard().press("Escape");
-        waitUtility.waitForLocatorVisible(PAGINATION.first());
+        selectDropdownOption(WORKSPACE_ADVERTISER_DROPDOWN, advertiser);
     }
 
     public void selectWorkspaceCreatedBy(String createdBy) {
-        WORKSPACE_CREATED_BY_DROPDOWN.click();
-        waitUtility.waitForLocatorVisible(DROPDOWN_LIST_ITEMS.locator("text = " + createdBy));
-        DROPDOWN_LIST_ITEMS.locator("text=" + createdBy).click();
+        selectDropdownOption(WORKSPACE_CREATED_BY_DROPDOWN, createdBy);
+    }
+
+    private void selectDropdownOption(Locator dropdownLocator, String optionText) {
+        dropdownLocator.click();
+        Locator optionItem = DROPDOWN_LIST_ITEMS.locator("text=" + optionText);
+        waitUtility.waitForLocatorVisible(optionItem);
+        optionItem.click();
         page.keyboard().press("Escape");
         waitUtility.waitForLocatorVisible(PAGINATION.first());
     }
@@ -405,21 +425,31 @@ public class WorkspaceCreation {
     }
 
     public String getSelectedWorkspaceType() {
-        Locator locator = WORKSPACE_TYPE.locator("xpath=/ancestor::label/preceding-sibling::div//input");
-        for (int i = 0; i < WORKSPACE_TYPE.count(); i++) {
-            if (locator.nth(i).getAttribute("aria-checked").equals("true")) {
-                return WORKSPACE_TYPE.nth(i).innerText();
+        int count = WORKSPACE_TYPE_CHECKBOX.count();
+        for (int i = 0; i < count; i++) {
+            Locator checkbox = WORKSPACE_TYPE_CHECKBOX.nth(i);
+            Locator button = checkbox.locator("button[role='checkbox']");
+            if ("true".equals(button.getAttribute("aria-checked"))) {
+                return checkbox.locator("ds-typography").innerText().trim();
             }
         }
         return "";
     }
 
     public String getSelectedWorkspaceAdvertiser() {
-        return WORKSPACE_ADVERTISER_DROPDOWN.getAttribute("value").trim();
+        return getTextIfVisible(WORKSPACE_ADVERTISER_VALUE);
     }
 
     public String getSelectedWorkspaceCreatedBy() {
-        return WORKSPACE_CREATED_BY_DROPDOWN.getAttribute("value").trim();
+        return getTextIfVisible(WORKSPACE_CREATED_BY_VALUE);
+    }
+
+    private String getTextIfVisible(Locator locator) {
+        if (locator.isVisible()) {
+            String text = locator.textContent();
+            return text != null ? text.trim() : "";
+        }
+        return "";
     }
 
     public String getSearchedWorkspaceName() {

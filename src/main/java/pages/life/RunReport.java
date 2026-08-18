@@ -108,7 +108,7 @@ public class RunReport {
                 page.locator("//sui-multi-select[@placeholder='Select Advertiser']//sui-multi-select-label");
         this.DROPDOWN_LIST = page.locator("//div[contains(@class,'menu transition visible')]");
         this.SELECTED_VALUES_FROM_DROPDOWN = page.locator(
-                "//div[contains(@class,'menu transition visible')]//div[contains(@class,'item active filtered')]");
+                "//div[@id='tacticLookup']/a");
         this.DROPDOWN_LOADER = page.locator("//div[contains(@class,'loading')]");
         this.FILTER_REPORT_CHECKBOX_LABEL =
                 page.locator("//sui-checkbox[contains(@class,'advancedSettingsCheck')]//label");

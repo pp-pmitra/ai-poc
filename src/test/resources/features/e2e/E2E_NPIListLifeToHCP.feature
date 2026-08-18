@@ -54,6 +54,10 @@ Feature: End to End Workflow of NPI Lists.
     # 7 & 8
     When User clicks on Response and enter the details and creates smart list "<SMART_LIST_NAME>" "<DAYS>" and saves
     Then Verify data is saved successfully
+    And User clicks PulsePoint icon to navigate back to Life
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
     Examples:
       | ADVERTISER   | LIST_NAME  | DRUG_NAME | CP_NAME        | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | SMART_ACTION_NAME | SMART_LIST_NAME | DAYS |
       | Z_Automation | Smart List | Glynase   | Life_To_HCP365 | Regular | 2000      | Line      | 500         | TACTIC      | Display Advanced | SMART_ACTION      | SMART_LIST      | 5    |
@@ -97,6 +101,10 @@ Feature: End to End Workflow of NPI Lists.
     # 6
     When User clicks on Action and enters the details and saves
     Then Verify data is saved successfully
+    And User clicks PulsePoint icon to navigate back to Life
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
     Examples:
       | ADVERTISER   | LIST_NAME  | CP_NAME        | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | SMART_ACTION_NAME | NPI_NUMBER |
       | Z_Automation | STATIC_NPI | Life_To_HCP365 | Regular | 2000      | Line      | 500         | TACTIC      | Display Advanced | SMART_ACTION      | 1234567890 |

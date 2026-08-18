@@ -523,11 +523,11 @@ public class LifeSteps {
         Assert.assertFalse(tacticDetails.customFieldValue(customFieldName).inputValue().isEmpty());
     }
 
-    @Then("User deletes the custom field and verify its removed from new tactic")
-    public void user_deletes_the_custom_field_and_verify_its_removed_from_new_tactic() {
-        logger.info("Deleting custom field: {}", customFieldName);
+    @Then("User deletes the custom field and verify its removed from new {string}")
+    public void user_deletes_the_custom_field_and_verify_its_removed_from_new(String pageType) {
+        logger.info("Deleting custom field: {} from {}", customFieldName, pageType);
         Assert.assertTrue(
-                "Unable to delete Custom field",
+                "Unable to delete Custom field from " + pageType,
                 tacticDetails.deleteCustomField(customFieldName).contains("Successfully deleted the Field"));
         Assert.assertFalse("Custom Field is available", tacticDetails.isCustomFieldAvailable(customFieldName));
     }
@@ -877,8 +877,8 @@ public class LifeSteps {
     @Then("Verify the selected dimensions and metrics under the Template Structure section")
     public void verify_the_selected_dimensions_and_metrics_under_the_template_structure_section() {
         logger.info("Verifying selected dimensions and metrics in Template Structure");
-        Assert.assertEquals(nameList, reportTemplates.verifySelectedDimensions());
-        Assert.assertEquals(itemList, reportTemplates.verifySelectedMetrics());
+        Assert.assertEquals(nameList, reportTemplates.fetchSelectedDimensions());
+        Assert.assertEquals(itemList, reportTemplates.fetchSelectedMetrics());
     }
 
     @When("User saves the new template")
@@ -891,7 +891,7 @@ public class LifeSteps {
     public void verify_new_template_is_saved_and_displayed_in_the_template_list() {
         logger.info("Verifying template {} is saved and displayed in list", templateNameRandom);
         String successMessage = reportTemplates.reportTemplateSuccess();
-        assert successMessage.contains("Template created successfully");
+        Assert.assertTrue("No success message is displayed", successMessage.contains("Template created successfully"));
         reportTemplates.searchCreatedReportTemplate(templateNameRandom);
         Assert.assertEquals(templateNameRandom, reportTemplates.verifyCreatedReportTemplate(templateNameRandom));
         Assert.assertEquals(1, reportTemplates.searchResultRowCount());
@@ -911,12 +911,26 @@ public class LifeSteps {
                 reportTemplates.checkActionIconsForTemplate(templateNameRandom, deleteIcon));
     }
 
-    @And("Verify the details of the created template")
-    public void verifyTheDetailsOfTheCreatedTemplate() {
-        logger.info("Verifying details of the created template: {}", templateNameRandom);
+    @And("Verify details of the created template on Template Listing page")
+    public void verifyDetailsOfTheCreatedTemplateOnTemplateListingPage() {
+        logger.info("Verifying details of the created template on Template Listing page: {}", templateNameRandom);
+        List<String> expected = new ArrayList<>(nameList);
+        expected.addAll(itemList);
+        Assert.assertEquals(templateNameRandom, reportTemplates.getTemplateNameInTemplateListPage());
+        Assert.assertEquals(expected, reportTemplates.getDimensionsInTemplateListPage());
+        Assert.assertEquals(metricName, reportTemplates.getTemplateTypeInTemplateListPage());
+        Assert.assertEquals(userType, reportTemplates.getSharedInTemplateListPage());
+        Assert.assertEquals(runReportPanel.fetchLoggedInUsername().split("\\(")[0], reportTemplates.getCreatedByInTemplateListPage());
+    }
+
+    @And("Verify the details of the created template on Edit Template panel")
+    public void verifyTheDetailsOfTheCreatedTemplateOnEditTemplatePanel() {
+        logger.info("Verifying details of the created template on Edit Template panel: {}", templateNameRandom);
         reportTemplates.clickTemplate(templateNameRandom);
-        Assert.assertEquals(nameList, reportTemplates.verifySelectedDimensions());
-        Assert.assertEquals(itemList, reportTemplates.verifySelectedMetrics());
+        Assert.assertEquals(nameList, reportTemplates.fetchSelectedDimensions());
+        Assert.assertEquals(itemList, reportTemplates.fetchSelectedMetrics());
+        Assert.assertEquals(metricName, reportTemplates.getTemplateTypeInEditTemplatePanel());
+        Assert.assertEquals(userType, reportTemplates.getSharedInEditTemplatePanel());
     }
 
     @And("Verify the delete button is disabled on the Create New Template panel")
@@ -2146,6 +2160,7 @@ public class LifeSteps {
     @And("User clicks Creative Library options present under Activation tab")
     public void userClicksCreativeLibraryOptionsPresentUnderActivationTab() {
         logger.info("User clicks Creative Library options present under Activation tab");
+        campaignDashboard.waitUntilCampaignPaginationAppears();
         navigation.clickSubMenu();
         navigation.clickCreativeLibrary();
     }
@@ -3017,14 +3032,17 @@ public class LifeSteps {
     @And(
             "Verify the Uploaded Files section displays the entries count, includes download and delete icons after the file {string} is uploaded")
     public void
-    verifyUploadedFilesSectionDisplaysEntriesIncludedInTheFileTimestampDownloadAndDeleteIconsOnceTheFileIsUploaded(
-            String fileName) throws IOException {
+            verifyUploadedFilesSectionDisplaysEntriesIncludedInTheFileTimestampDownloadAndDeleteIconsOnceTheFileIsUploaded(
+                    String fileName) throws IOException {
         logger.info(
                 "Verify the Uploaded Files section displays the entries count, includes download and delete icons after the file {} is uploaded",
                 fileName);
+        int expectedCount = 0;
         String fetchedFileName = sharedList.fetchFileNameFromUploadedFilesSection(fileName);
         Assert.assertEquals(fileName, fetchedFileName);
-        int expectedCount = FileActions.fetchRowCountExcludeHeaderFromCSVAndTxt(fileName);
+        if (fileName.contains(".xlsx")) expectedCount = FileActions.fetchRowCountFromExcel(fileName);
+        else if (fileName.contains(".csv") || fileName.contains(".txt"))
+            expectedCount = FileActions.fetchRowCountExcludeHeaderFromCSVAndTxt(fileName);
         int actualCount = sharedList.fetchDomainCountFromUploadedFilesSection(fileName);
         Assert.assertEquals(expectedCount, actualCount);
         boolean isDownloadVisible = sharedList.isDownloadIconVisible(fileName);
@@ -3086,7 +3104,10 @@ public class LifeSteps {
         sharedList.uploadDomainFile(fileName);
         String fetchedFileName = sharedList.fetchFileNameFromUploadedFilesSection(fileName);
         Assert.assertEquals(fileName, fetchedFileName);
-        int expectedCount = FileActions.fetchRowCountExcludeHeaderFromCSVAndTxt(fileName);
+        int expectedCount = 0;
+        if (fileName.contains(".xlsx")) expectedCount = FileActions.fetchRowCountFromExcel(fileName);
+        else if (fileName.contains(".csv") || fileName.contains(".txt"))
+            expectedCount = FileActions.fetchRowCountExcludeHeaderFromCSVAndTxt(fileName);
         int actualCount = sharedList.fetchDomainCountFromUploadedFilesSection(fileName);
         Assert.assertEquals(expectedCount, actualCount);
         Assert.assertTrue("No Download icon is available", sharedList.isDownloadIconVisible(fileName));
@@ -3129,13 +3150,19 @@ public class LifeSteps {
             "Verify that user is able to download the uploaded file {string}, {string} and fetches the count of the downloaded files")
     public void verifyThatUserIsAbleToDownloadTheUploadedFile(String fileName1, String fileName2) throws IOException {
         logger.info("Verify that user is able to download the uploaded file {}, {}", fileName1, fileName2);
+        String expectedExtension1 = fileName1.substring(fileName1.lastIndexOf(".") + 1);
         Path filePath1 = sharedList.downloadFile(fileName1);
-        Assert.assertTrue("Downloaded file is not available", CommonUtils.isDownloadedFileAvailable(filePath1, "csv"));
-        file1RecordCount = FileActions.fetchRowCountFromCSV(filePath1);
+        Assert.assertTrue("Downloaded file is not available", CommonUtils.isDownloadedFileAvailable(filePath1, expectedExtension1));
+        if (fileName1.contains(".xlsx")) file1RecordCount = FileActions.fetchRowCountFromExcel(fileName1);
+        else if (fileName1.contains(".csv") || fileName1.contains(".txt"))
+            file1RecordCount = FileActions.fetchRowCountExcludeHeaderFromCSVAndTxt(fileName1);
 
+        String expectedExtension2 = fileName2.substring(fileName2.lastIndexOf(".") + 1);
         Path filePath2 = sharedList.downloadFile(fileName2);
-        Assert.assertTrue("Downloaded file is not available", CommonUtils.isDownloadedFileAvailable(filePath2, "csv"));
-        file2RecordCount = FileActions.fetchRowCountFromCSV(filePath2);
+        Assert.assertTrue("Downloaded file is not available", CommonUtils.isDownloadedFileAvailable(filePath2, expectedExtension2));
+        if (fileName2.contains(".xlsx")) file2RecordCount = FileActions.fetchRowCountFromExcel(fileName2);
+        else if (fileName2.contains(".csv") || fileName2.contains(".txt"))
+            file2RecordCount = FileActions.fetchRowCountExcludeHeaderFromCSVAndTxt(fileName2);
     }
 
     @And(
@@ -6218,12 +6245,24 @@ public class LifeSteps {
     }
 
     @And("Verify that user is able to download the uploaded {string} list")
-    public void verifyThatUserIsAbleToDownloadTheUploadedFile(String listType) throws IOException {
-        if (listType.equals("NPI")) {
-            logger.info("Verifying: that user is able to download the uploaded {} list", listType);
-            targetFilePath = npiStaticList.clickDownloadIcon();
-        } else {
-            targetFilePath = sharedList.clickDownloadIcon();
+    public void verifyThatUserIsAbleToDownloadTheUploadedFile(String listType) throws Exception {
+        logger.info("Verifying: that user is able to download the uploaded {} list", listType);
+
+        switch(listType){
+            case "NPI":
+                targetFilePath = npiStaticList.clickDownloadIcon();
+                break;
+            case "AutoImported NPI":
+                targetFilePath = npiStaticList.clickDownloadIcon();
+                List<List<String>> npiDataFromUI = npiAutoImportedList.fetchUploadedNPIListDetailsFromUI();
+                List<List<String>> npiDataFromCSV = FileActions.readCsvExcludingFirstColumn(String.valueOf(targetFilePath));
+                Assert.assertEquals("Row count mismatch between UI and downloaded CSV file", npiDataFromUI.size(), npiDataFromCSV.size());
+                List<List<String>> unmatchedRows = npiAutoImportedList.verifyUiDataMatchesCsv(npiDataFromUI, npiDataFromCSV);
+                Assert.assertTrue("The UI rows were NOT found in the downloaded CSV file: " + unmatchedRows, unmatchedRows.isEmpty());
+                break;
+            default:
+                targetFilePath = sharedList.clickDownloadIcon();
+                break;
         }
         Assert.assertTrue(
                 "Downloaded file is not available", CommonUtils.isDownloadedFileAvailable(targetFilePath, "csv"));
@@ -7400,6 +7439,7 @@ public class LifeSteps {
         List<String> bidCategoryList = bidCategory.asList(String.class);
         logger.info("Verifying Bid multiplier panel contains the following categories: {}", bidCategoryList);
         for (String category : bidCategoryList) {
+            tacticSettings.waitForBidPanel();
             boolean isPresent = tacticSettings.fetchAndVerifyBidCategoryName(Collections.singletonList(category));
             Assert.assertTrue("Bid multiplier category '" + category + "' not found or not visible on UI", isPresent);
         }
@@ -7463,7 +7503,6 @@ public class LifeSteps {
         List<String> expectedNormalizedBidRuleOptions = normalizeObjectList(keyValues);
         List<String> actualNormalizedBidRuleOptions = normalizeObjectList(tacticSettings.fetchBidRuleOptions());
         Assert.assertEquals("Rule types mismatch", expectedUniqueAndSortedBid, actualUniqueAndSortedBid);
-
         for (String expectedOption : expectedNormalizedBidRuleOptions) {
             boolean matchFound =
                     actualNormalizedBidRuleOptions.stream().anyMatch(actual -> actual.equalsIgnoreCase(expectedOption));
@@ -7633,8 +7672,201 @@ public class LifeSteps {
     public void verifyThatTheCampaignIsDeletedSuccessfully() {
         String successMessage = campaigns.fetchCampaignDeleteSuccessAlert();
         Assert.assertEquals("Campaign deleted successfully", successMessage);
+        campaignDashboard.clickLifetimeFilter();
         String noCampaignFoundError = campaignDashboard.fetchNoCampaignFoundMessage(campaignNameRandom);
         Assert.assertEquals("No campaigns matching filtering criteria found", noCampaignFoundError);
+    }
+
+    @When("User clicks on Frequency Capping checkbox")
+    public void userClicksOnFrequencyCappingCheckbox() {
+        logger.info("User clicks on Frequency Capping checkbox");
+        campaigns.clickFrequencyCappingCheckbox();
+    }
+
+    @Then("Verify that Times per Target and Per Target Audience dropdowns are enabled")
+    public void verifyThatTimesPerTargetAndPerTargetAudienceDropdownsAreEnabled() {
+        logger.info("Verifying that Times per Target and Per Target Audience dropdowns are enabled");
+        Assert.assertTrue(
+                "Times per Target dropdown is not enabled", campaigns.isTimesPerTargetDropdownEnabled());
+        Assert.assertTrue(
+                "Per Target Audience dropdown is not enabled", campaigns.isPerTargetAudienceDropdownEnabled());
+    }
+
+    @And("Verify that the default value of Times per Target is {string}")
+    public void verifyThatTheDefaultValueOfTimesPerTargetIs(String timesPerTargetDefaultValue) {
+        logger.info("Verifying that the default value of Times per Target is: {}", timesPerTargetDefaultValue);
+        String actualDefaultValue = campaigns.getTimesPerTargetDropdownValue();
+        Assert.assertEquals(
+                "Default value of Times per Target dropdown does not match", timesPerTargetDefaultValue, actualDefaultValue);
+    }
+
+    @And("Verify that Times per Target dropdown has the below options")
+    public void verifyThatTimesPerTargetDropdownHasTheBelowOptions(DataTable expectedOptions) {
+        logger.info("Verifying that Times per Target dropdown has the expected options");
+        List<String> expectedOptionList = expectedOptions.asList(String.class);
+        List<String> actualOptionList = campaigns.getTimesPerTargetDropdownOptions();
+        Assert.assertEquals(
+                "Times per Target dropdown options do not match", expectedOptionList, actualOptionList);
+    }
+
+    @And("Verify that the default value of Per Target Audience is {string}")
+    public void verifyThatTheDefaultValueOfPerTargetAudienceIs(String perTargetAudienceDefaultValue) {
+        logger.info("Verifying that the default value of Per Target Audience is: {}", perTargetAudienceDefaultValue);
+        String actualDefaultValue = campaigns.getPerTargetAudienceDropdownValue();
+        Assert.assertEquals(
+                "Default value of Per Target Audience dropdown does not match",
+                perTargetAudienceDefaultValue,
+                actualDefaultValue);
+    }
+
+    @And("Verify that Per Target Audience dropdown has the below options")
+    public void verifyThatPerTargetAudienceDropdownHasTheBelowOptions(DataTable expectedOptions) {
+        logger.info("Verifying that Per Target Audience dropdown has the expected options");
+        List<String> expectedOptionList = expectedOptions.asList(String.class);
+        List<String> actualOptionList = campaigns.getPerTargetAudienceDropdownOptions();
+        Assert.assertEquals(
+                "Per Target Audience dropdown options do not match", expectedOptionList, actualOptionList);
+    }
+
+    @When("User enters window limit as {string}")
+    public void userEntersWindowLimitAs(String windowLimit) {
+        logger.info("User enters window limit as: {}", windowLimit);
+        campaigns.enterWindowLimit(windowLimit);
+    }
+
+    @When("User selects {string} from Times per Target dropdown and {string} from Per Target Audience dropdown")
+    public void userSelectsFromTimesPerTargetDropdownAndFromPerTargetAudienceDropdown(String timesPerTarget, String perTargetAudience) {
+        logger.info(
+                "User selects '{}' from Times per Target dropdown and '{}' from Per Target Audience dropdown",
+                timesPerTarget,
+                perTargetAudience);
+        campaigns.selectTimesPerTarget(timesPerTarget);
+        Assert.assertEquals("Times per Target dropdown value does not match", campaigns.getTimesPerTargetDropdownValue(), timesPerTarget);
+        campaigns.selectPerTargetAudience(perTargetAudience);
+        Assert.assertEquals("Per Target Audience dropdown value does not match", campaigns.getPerTargetAudienceDropdownValue(), perTargetAudience);
+    }
+
+    @And("User makes the template {string}")
+    public void userMakesTheTemplate(String sharedType) {
+        logger.info("User makes the template as: {}", sharedType);
+        if(sharedType.contains("Shared")) {
+            userType = "Shared";
+            reportTemplates.clickSharedCheckbox();
+        } else {
+            userType = "Private";
+        }
+    }
+
+    @And("User selects the template type as {string} on the Create New Template panel")
+    public void userSelectsTheTemplateTypeAsOnTheCreateNewTemplatePanel(String templateType) {
+        logger.info("User selects the template type as: {}", templateType);
+        reportTemplates.selectTemplateType(templateType);
+        metricName = templateType;
+    }
+
+    @And("User copies the existing template from the template list")
+    public void userCopiesTheExistingTemplateFromTheTemplateList() {
+        logger.info("User copies the existing template from the template list");
+        reportTemplates.copyExistingTemplate();
+    }
+
+    @Then("Verify the copied template is displayed in the template list")
+    public void verifyTheCopiedTemplateIsDisplayedInTheTemplateList() {
+        reportTemplates.searchCreatedReportTemplate(newPixelName);
+        Assert.assertEquals(newPixelName, reportTemplates.verifyCreatedReportTemplate(newPixelName));
+        Assert.assertEquals(1, reportTemplates.searchResultRowCount());
+    }
+
+    @And("User enters details in the copied template as {string} {string}")
+    public void userEntersDetailsInTheCopiedTemplateAs(String dimensions, String metrics) {
+        logger.info("User enters details in the copied template as Dimensions: '{}' and Metrics: '{}'", dimensions, metrics);
+        nameList.clear();
+        nameList.addAll(Arrays.stream(dimensions.split("\\s*,\\s*")).filter(s -> !s.isBlank()).toList());
+        itemList.clear();
+        itemList.addAll(Arrays.stream(metrics.split("\\s*,\\s*")).filter(s -> !s.isBlank()).toList());
+        for (String dimension : nameList) {
+            if (!dimension.isEmpty()) {
+                reportTemplates.selectDimensionAndMetric(dimension);
+            }
+        }
+        reportTemplates.clickMetricsTab();
+        for (String metric : itemList) {
+            if (!metric.isEmpty()) {
+                reportTemplates.selectDimensionAndMetric(metric);
+            }
+        }
+    }
+
+    @And("User saves the copied template with updated details")
+    public void userSavesTheCopiedTemplateWithUpdatedDetails() {
+        logger.info("Saving the copied template with updated details");
+        newPixelName = reportTemplates.fetchTemplateNameFromEditTemplatePanel();
+        reportTemplates.saveReportTemplate();
+        Assert.assertTrue("No success message is displayed", reportTemplates.reportTemplateSuccess().contains("Template created successfully"));
+    }
+
+    @And("User fetches the details of the copied template on Edit Template panel")
+    public void userFetchesTheDetailsOfTheCopiedTemplateOnEditTemplatePanel() {
+        logger.info("Fetching the details of the copied template on Edit Template panel");
+        capturedDetails = reportTemplates.fetchTemplateDetailsFromEditTemplatePanel();
+    }
+
+    @And("Verify the data persistence of the copied template on Edit Template panel")
+    public void verifyTheDataPersistenceOfTheCopiedTemplateOnEditTemplatePanel() {
+        logger.info("Verifying the data persistence of the copied template on Edit Template panel");
+        reportTemplates.searchCreatedReportTemplate(newPixelName);
+        reportTemplates.clickTemplate(newPixelName);
+        List<String> fetchedDetails = reportTemplates.fetchTemplateDetailsFromEditTemplatePanel();
+        Assert.assertEquals("Template details do not match", capturedDetails, fetchedDetails);
+    }
+
+    @And("User clicks Run Report icon for the existing template from the template list")
+    public void userClicksRunReportIconForTheExistingTemplateFromTheTemplateList() {
+        logger.info("User clicks Run Report icon for the existing template from the template list");
+        reportTemplates.clickRunReportIconForTemplate();
+    }
+
+    @When("User selects the checkbox for a {string}")
+    public void userSelectsTheCheckboxForA(String checkboxType) {
+        logger.info("User selects the checkbox for a: {}", checkboxType);
+        if(checkboxType.contains("Line Item")) {
+            campaignDashboard.selectLineItemCheckbox();
+        }else{
+            campaignDashboard.selectTacticCheckbox();
+        }
+    }
+
+    @Then("Verify that Tactic checkboxes are disabled when the entity checkbox is selected for a Line Item")
+    public void verifyThatTacticCheckboxesAreDisabledWhenTheEntityCheckboxIsSelectedForALineItem() {
+        logger.info("Verifying that Tactic checkboxes are disabled when the entity checkbox is selected for a Line Item");
+        Assert.assertTrue("Tactic checkboxes are not disabled when Line Item checkbox is selected", campaignDashboard.areTacticCheckboxesDisabled());
+    }
+
+    @Then("Verify that bulk actions are enabled when the entity checkbox is selected for a {string}")
+    public void verifyThatBulkActionsAreEnabledWhenTheEntityCheckboxIsSelectedForA(String entryType) {
+        logger.info("Verifying that bulk actions are enabled when the entity checkbox is selected for a: {}", entryType);
+        Assert.assertTrue("Bulk actions are not enabled when " + entryType + " checkbox is selected", campaignDashboard.areBulkActionsEnabled());
+    }
+
+    @And("User is able to enable or disable the {string} using the bulk actions and verify the status column is updated accordingly")
+    public void userIsAbleToEnableOrDisableTheUsingTheBulkActions(String actionOn, DataTable bulkActions) {
+        logger.info("User is able to enable or disable the {} using the bulk actions", actionOn);
+        List<String> actions = bulkActions.asList(String.class);
+        String toggleStateBeforeBulkAction = campaignDashboard.fetchStatusToggleState(actionOn);
+        campaignDashboard.clickBulkActionDropdown();
+        for (String action : actions) {
+            campaignDashboard.selectBulkAction(action);
+        }
+        String toggleStateAfterBulkAction = campaignDashboard.fetchStatusToggleState(actionOn);
+        if(toggleStateBeforeBulkAction.equals(toggleStateAfterBulkAction)) {
+            Assert.fail("Status toggle state did not change after performing bulk action on " + actionOn);
+        }
+    }
+
+    @Then("Verify that Line Item checkboxes are disabled when the entity checkbox is selected for a Tactic")
+    public void verifyThatLineItemCheckboxesAreDisabledWhenTheEntityCheckboxIsSelectedForATactic() {
+        logger.info("Verifying that Line Item checkboxes are disabled when the entity checkbox is selected for a Tactic");
+        Assert.assertTrue("Line Item checkboxes are not disabled when Tactic checkbox is selected", campaignDashboard.areLineItemCheckboxesEnabled());
     }
 
     @And("User fetches custom field starting with {string}, perform deletion operation on Campaign, Line Items and Tactics levels and verify successful deletion")

@@ -21,9 +21,13 @@ Feature: Brand Explorer Workspace creation in Studio
     Then Verify Time Frame is selected as "Last 7 Days" by default in the workspace
     And User saves the "Brand Explorer" workspace
     Then Verify the "Brand Explorer" Workspace is saved
+    And Navigate to workspace dashboard
+    And User searches the workspace created to perform Actions from More menu
+    And User selects the "Delete" option by clicking More Actions menu
+    And Verify user is able to delete the workspace
     Examples:
-      | ADVERTISER         | WORKSPACE_NAME            |
-      | TAMTESTING ACCOUNT | Automation_Brand_Explorer |
+      | ADVERTISER         | WORKSPACE_NAME |
+      | TAMTESTING ACCOUNT | Brand_Explorer |
 
   @regression
   Scenario Outline: Verify all 9 preset timeframe options are present and correctly labeled
@@ -63,7 +67,7 @@ Feature: Brand Explorer Workspace creation in Studio
       | TAMTESTING ACCOUNT | Yesterday    | 1    |
 
   @regression
-  Scenario Outline: Verify Custom date range picker and inclusive start and end dates in the returned dataset
+  Scenario Outline: Verify Custom date range picker and inclusive start "<START_DATE>" and end "<END_DATE>" dates in the returned dataset
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "Brand Explorer" workspace
@@ -109,9 +113,13 @@ Feature: Brand Explorer Workspace creation in Studio
     When User navigates back to the workspace list and reopens the saved Brand Explorer workspace
     Then Verify the Time Frame still shows "<TIMEFRAME>" after reopening the workspace
     And Verify the Day column shows <DAYS> dates in ascending order
+    And Navigate to workspace dashboard
+    And User searches the workspace created to perform Actions from More menu
+    And User selects the "Delete" option by clicking More Actions menu
+    And Verify user is able to delete the workspace
     Examples:
-      | ADVERTISER         | WORKSPACE_NAME     | TIMEFRAME    | DAYS |
-      | TAMTESTING ACCOUNT | Automation_Persist | Last 30 Days | 30   |
+      | ADVERTISER         | WORKSPACE_NAME | TIMEFRAME    | DAYS |
+      | TAMTESTING ACCOUNT | Brand_Explorer | Last 30 Days | 30   |
 
   @regression
   Scenario Outline: Verify saved non-default dimension and metric persist when the workspace is closed and reopened
@@ -127,9 +135,13 @@ Feature: Brand Explorer Workspace creation in Studio
     Then Verify the "Brand Explorer" Workspace is saved
     When User navigates back to the workspace list and reopens the saved Brand Explorer workspace
     Then Verify "<DIMENSION>" and "<METRIC>" persist as table columns after reopening
+    And Navigate to workspace dashboard
+    And User searches the workspace created to perform Actions from More menu
+    And User selects the "Delete" option by clicking More Actions menu
+    And Verify user is able to delete the workspace
     Examples:
-      | ADVERTISER         | WORKSPACE_NAME       | DIMENSION | DIM_CATEGORY | METRIC           | METRIC_CATEGORY |
-      | TAMTESTING ACCOUNT | Automation_Persist   | Month     | Time Frame   | HCP Active Users | HCP Events      |
+      | ADVERTISER         | WORKSPACE_NAME | DIMENSION | DIM_CATEGORY | METRIC           | METRIC_CATEGORY |
+      | TAMTESTING ACCOUNT | Brand_Explorer | Month     | Time Frame   | HCP Active Users | HCP Events      |
 
   @regression
   Scenario Outline: Verify a Brand Explorer dimension can be selected and removed
@@ -198,9 +210,13 @@ Feature: Brand Explorer Workspace creation in Studio
     When User navigates back to the workspace list and reopens the saved Brand Explorer workspace
     And User clicks on the Filters tab
     Then Verify the filter on "<FIELD>" shows value "<VALUE>"
+    And Navigate to workspace dashboard
+    And User searches the workspace created to perform Actions from More menu
+    And User selects the "Delete" option by clicking More Actions menu
+    And Verify user is able to delete the workspace
     Examples:
-      | ADVERTISER         | WORKSPACE_NAME     | CATEGORY                 | FIELD      | VALUE     |
-      | TAMTESTING ACCOUNT | Automation_Persist | Healthcare Professionals | Profession | Physician |
+      | ADVERTISER         | WORKSPACE_NAME | CATEGORY                 | FIELD      | VALUE     |
+      | TAMTESTING ACCOUNT | Brand_Explorer | Healthcare Professionals | Profession | Physician |
 
   @regression
   Scenario Outline: Verify an applied filter is reflected immediately and correctly narrows the dataset in the table
@@ -247,3 +263,28 @@ Feature: Brand Explorer Workspace creation in Studio
       | ADVERTISER         | WORKSPACE_NAME     | NEW_WORKSPACE_NAME  | TIMEFRAME    |
       | TAMTESTING ACCOUNT | Automation_Persist | New_Brand_Explorer_ | Last 30 Days |
 
+  @regression
+  Scenario Outline: Verify the chart shows an empty state when only a dimension or only a metric remains
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User removes the default "<COMPONENT>" only
+    Then Verify the chart shows the empty state message
+    And Verify "<REMAINING_COLUMN>" is visible as a table column
+    Examples:
+      | ADVERTISER         | COMPONENT | REMAINING_COLUMN |
+      | TAMTESTING ACCOUNT | dimension | Identified NPIs  |
+      | TAMTESTING ACCOUNT | metric    | Day              |
+
+  @regression
+  Scenario Outline: Verify the chart shows an empty state when both the dimension and metric are removed
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User removes the default dimensions and metric
+    Then Verify the chart shows the empty state message
+    Examples:
+      | ADVERTISER         |
+      | TAMTESTING ACCOUNT |

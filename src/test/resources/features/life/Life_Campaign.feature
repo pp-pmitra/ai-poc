@@ -152,6 +152,33 @@ Feature: LIFE Regression - Create a Campaign
       | CustomField | Custom_Field   | 01- Advertiser | QA_Campaign | Regular | 50000     | Test               |
 
   @regression
+  Scenario Outline: Verify by checking Frequency Capping enables "Times per Target" and "Per Target Audience" dropdowns
+    Given This scenario will be executed in the "Demo" environment as a "User"
+    And "Life" application is logged in successfully with Account "automation@pulsepoint"
+    And User clicks on Create Campaign
+    When User clicks on Frequency Capping checkbox
+    Then Verify that Times per Target and Per Target Audience dropdowns are enabled
+    And Verify that the default value of Times per Target is "day"
+    And Verify that Times per Target dropdown has the below options
+      | day     |
+      | hour(s) |
+      | week    |
+      | month   |
+    And Verify that the default value of Per Target Audience is "Per Device"
+    And Verify that Per Target Audience dropdown has the below options
+      | Per Device    |
+      | Per Person    |
+      | Per Household |
+      | Per IP        |
+    When User enters window limit as "<WINDOW_LIMIT>"
+    When User selects "week" from Times per Target dropdown and "Per Person" from Per Target Audience dropdown
+    When User enters the campaign details as "<ADVERTISER>" "<CP_NAME>" "<CP_TYPE>" "<CP_BUDGET>" and saves the campaign
+    Then Verify campaign details are saved and user is navigated to the line item page
+    Examples:
+      | ADVERTISER     | CP_NAME  | CP_TYPE | CP_BUDGET | WINDOW_LIMIT |
+      | 01- Advertiser | Campaign | Regular | 50000     | 5            |
+
+  @regression
   Scenario Outline: Create a Campaign with a Tactic & a Line Item for an External user
     Given This scenario will be executed in the "Demo" environment as a "External User"
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
