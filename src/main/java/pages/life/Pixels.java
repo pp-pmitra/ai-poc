@@ -2,6 +2,7 @@ package pages.life;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.PlaywrightException;
 import factory.DriverFactory;
 import java.util.List;
 import utils.WaitUtility;
@@ -29,6 +30,7 @@ public class Pixels {
     private final Locator NO_RESULTS_FOUND;
     private final Locator PIXEL_LIST;
     private final Locator EDIT_ICON;
+    private final Locator CLEAR_SEARCH_ICON;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
 
     public Pixels(Page page) {
@@ -46,7 +48,7 @@ public class Pixels {
         this.RETARGETING_TAB = page.locator("//button[text()='Retargeting']");
         this.SMART_TAB = page.locator("//button[text()='Smart']");
         this.CONVERSION_TAB = page.locator("//button[text()='Conversion']");
-        this.ADVERTISER_DROPDOWN = page.locator("//app-multi-select[@placeholder='All Advertisers']");
+        this.ADVERTISER_DROPDOWN = page.locator("//app-multi-select[@placeholder='Any Advertiser']");
         this.UPDATE_SUCCESS = page.locator(
                 "//div[@role='alert' and (text()='Pixel updated successfully' or text()='Saved successfully')]");
         this.REMOVE_PIXEL_ICON = page.locator("//app-icon-lable-link[@icon='20-delete.svg']");
@@ -59,6 +61,7 @@ public class Pixels {
         this.PIXEL_LIST =
                 page.locator("//div[contains(@class,'pixel-list-wrapper')]//div[contains(@class,'main-details')]");
         this.EDIT_ICON = page.locator("//img[@alt='edit' and contains(@class,'header-edit-icon')]");
+        this.CLEAR_SEARCH_ICON = page.locator("//div[@id='searchPixel']/div[contains(@class,'clear-search-close')]");
     }
 
     public void clickPixelsMenuItem() {
@@ -100,6 +103,17 @@ public class Pixels {
         }
     }
 
+    public void selectPixelTab(String pixelTab) {
+        if (pixelTab.startsWith("Retargeting")) {
+            RETARGETING_TAB.click();
+        } else if (pixelTab.startsWith("Smart")) {
+            SMART_TAB.click();
+            waitUtility.waitUntilSpinnerHidden();
+        } else if (pixelTab.startsWith("Conversion")) {
+            CONVERSION_TAB.click();
+        }
+    }
+
     public void savePixel() {
         waitUtility.waitForLocatorVisible(SAVE_BUTTON);
         SAVE_BUTTON.click();
@@ -114,6 +128,11 @@ public class Pixels {
 
     public void searchSavedPixel(String pixelName) {
         waitUtility.waitUntilSpinnerHidden();
+
+        if (CLEAR_SEARCH_ICON.isVisible()) {
+            CLEAR_SEARCH_ICON.click();
+        }
+
         SEARCH_BOX.fill(pixelName);
         SEARCH_BOX.press("Enter");
     }
@@ -153,8 +172,19 @@ public class Pixels {
     }
 
     public void removePixel() {
-        waitUtility.waitForLocatorDetached(UPDATE_SUCCESS);
+        if (UPDATE_SUCCESS.isVisible()) {
+            waitUtility.waitForLocatorDetached(UPDATE_SUCCESS);
+        }
+
+        waitUtility.waitForLocatorVisible(REMOVE_PIXEL_ICON);
         REMOVE_PIXEL_ICON.click();
+        try {
+            waitUtility.waitForLocatorVisible(REMOVE_PIXEL_BUTTON, 5000);
+        } catch (PlaywrightException e) {
+            // Sometimes the first click doesn't register, so click again.
+            REMOVE_PIXEL_ICON.click();
+            waitUtility.waitForLocatorVisible(REMOVE_PIXEL_BUTTON);
+        }
         REMOVE_PIXEL_BUTTON.click();
     }
 

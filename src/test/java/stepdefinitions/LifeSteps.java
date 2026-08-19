@@ -1195,6 +1195,7 @@ public class LifeSteps {
     @And("Verify Campaign Dashboard is displayed with title {string}")
     public void verifyCampaignDashboardIsDisplayedWithTitle(String title) {
         logger.info("Verifying Campaign Dashboard is displayed with title: {}", title);
+        campaignDashboard.waitUntilCampaignPaginationAppears();
         Assert.assertEquals(title, campaignDashboard.isCampaignDashboardVisibleWithTitle(title));
     }
 
@@ -2160,7 +2161,6 @@ public class LifeSteps {
     @And("User clicks Creative Library options present under Activation tab")
     public void userClicksCreativeLibraryOptionsPresentUnderActivationTab() {
         logger.info("User clicks Creative Library options present under Activation tab");
-        campaignDashboard.waitUntilCampaignPaginationAppears();
         navigation.clickSubMenu();
         navigation.clickCreativeLibrary();
     }
@@ -3288,6 +3288,12 @@ public class LifeSteps {
     public void userSelectsThePixelType(String pixelType) {
         logger.info("Selecting Pixel type: {}", pixelType);
         pixels.selectPixelType(pixelType);
+    }
+
+    @And("User selects the {string} tab")
+    public void userSelectsThePixelTab(String pixelType) {
+        logger.info("Selecting Pixel tab: {}", pixelType);
+        pixels.selectPixelTab(pixelType);
     }
 
     @And("User enters the pixel details as {string} {string}")
@@ -4957,7 +4963,8 @@ public class LifeSteps {
     @Then("Verify the removed pixel should not be displayed in the pixel list")
     public void verifyRemovedPixelNotDisplayedInPixelList() {
         logger.info("Verify the removed pixel should not be displayed in the pixel list");
-        pixels.searchSavedPixel(pixelNameEdited);
+        String pixelToSearch = (pixelNameEdited != null) ? pixelNameEdited : newPixelName;
+        pixels.searchSavedPixel(pixelToSearch);
         String noResultText = pixels.verifyDeletedPixel().toUpperCase();
         Assert.assertTrue(noResultText.equals("NOTHING FOUND...") || noResultText.equals("NOTHING FOUND"));
     }
@@ -7867,5 +7874,12 @@ public class LifeSteps {
     public void verifyThatLineItemCheckboxesAreDisabledWhenTheEntityCheckboxIsSelectedForATactic() {
         logger.info("Verifying that Line Item checkboxes are disabled when the entity checkbox is selected for a Tactic");
         Assert.assertTrue("Line Item checkboxes are not disabled when Tactic checkbox is selected", campaignDashboard.areLineItemCheckboxesEnabled());
+    }
+
+    @And("User searches and opens the pixel")
+    public void userSearchesAndOpensThePixel() {
+        logger.info("User searches and opens the pixel");
+        pixels.searchSavedPixel(newPixelName);
+        pixels.openSearchedPixel(newPixelName);
     }
 }
