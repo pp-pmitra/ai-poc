@@ -1522,4 +1522,18 @@ public class StudioSteps {
                 "Chart did not show the 'requires at least 1 dimension and 1 metric' empty state",
                 brandExplorerWorkspace.isChartEmptyStateDisplayed());
     }
+
+    @When("User clicks Clear All in the Brand Explorer component panel")
+    public void userClicksClearAllInTheBrandExplorerComponentPanel() {
+        logger.info("Clicking Clear All in the Brand Explorer component panel");
+        brandExplorerWorkspace.clickClearAllComponents();
+    }
+
+    @Then("Verify no Brand Explorer components are selected")
+    public void verifyNoBrandExplorerComponentsAreSelected() {
+        logger.info("Verifying no Brand Explorer components are selected");
+        Assert.assertTrue(
+                "Brand Explorer still shows selected components",
+                brandExplorerWorkspace.areNoComponentsSelected());
+    }
 }

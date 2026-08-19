@@ -333,3 +333,21 @@ Feature: Brand Explorer Workspace creation in Studio
     Examples:
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
+
+  @regression
+  Scenario Outline: Verify Clear All resets Brand Explorer components and chart recovers after defaults are reselected
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    When User clicks Clear All in the Brand Explorer component panel
+    Then Verify no Brand Explorer components are selected
+    And Verify the chart shows the empty state message
+    When User selects "Day" from "Time Frame" component panel
+    And User selects "Identified NPIs" from "NPI Events" component panel
+    Then Verify Dimension "Day" and Metric "Identified NPIs" are selected by default in the workspace
+    And Verify the Brand Explorer chart is visible
+    And Verify the Brand Explorer table is visible
+    Examples:
+      | ADVERTISER         |
+      | TAMTESTING ACCOUNT |
