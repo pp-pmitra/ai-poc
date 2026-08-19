@@ -9,7 +9,7 @@ Feature: Brand Explorer Workspace creation in Studio
     And User clicks PulsePoint icon to navigate back to Life
     And User navigates to Studio application
 
-  @e2e
+  @e2e @regression
   Scenario Outline: Create and save Brand Explorer workspace with default selections
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -240,7 +240,7 @@ Feature: Brand Explorer Workspace creation in Studio
       | ADVERTISER         | CATEGORY                 | FIELD      |
       | TAMTESTING ACCOUNT | Healthcare Professionals | Profession |
 
-  @regression
+  @regression @filters
   Scenario Outline: Verify a saved filter persists when the workspace is closed and reopened
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -263,7 +263,7 @@ Feature: Brand Explorer Workspace creation in Studio
       | ADVERTISER         | WORKSPACE_NAME | CATEGORY                 | FIELD      | VALUE     |
       | TAMTESTING ACCOUNT | Brand_Explorer | Healthcare Professionals | Profession | Physician |
 
-  @regression
+  @regression @filters
   Scenario Outline: Verify an applied filter is reflected immediately and correctly narrows the dataset in the table
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -333,3 +333,77 @@ Feature: Brand Explorer Workspace creation in Studio
     Examples:
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
+
+  @regression @filters
+  Scenario Outline: Verify categorical filter operators that use a value list can be applied
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User clicks on the Filters tab
+    And User adds a filter on "<FIELD>" from "<CATEGORY>" category with operator "<OPERATOR>" and value "<VALUE>"
+    Then Verify the filter on "<FIELD>" shows value "<VALUE>"
+    And User clicks on the Components tab
+    And User selects "<FIELD>" from "<CATEGORY>" component panel
+    Then Verify "<FIELD>" is visible as a table column
+    And Verify the table column "<FIELD>" is filtered by operator "<OPERATOR>" and value "<VALUE>"
+    Examples:
+      | ADVERTISER         | CATEGORY                 | FIELD      | OPERATOR | VALUE     |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | is       | Physician |
+
+  @regression @filters
+  Scenario Outline: Verify filter operators that use a free-text value can be applied
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User clicks on the Filters tab
+    And User adds a text filter on "<FIELD>" from "<CATEGORY>" category with operator "<OPERATOR>" and value "<VALUE>"
+    Then Verify the text filter on "<FIELD>" with operator "<OPERATOR>" shows value "<VALUE>"
+    And User clicks on the Components tab
+    And User selects "<FIELD>" from "<CATEGORY>" component panel
+    Then Verify "<FIELD>" is visible as a table column
+    And Verify the table column "<FIELD>" is filtered by operator "<OPERATOR>" and value "<VALUE>"
+    Examples:
+      | ADVERTISER         | CATEGORY                 | FIELD            | OPERATOR            | VALUE |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession       | contains            | Phys  |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession       | starts with         | Phys  |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession       | ends with           | ian   |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession       | doesn't contain     | Nurse |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession       | doesn't start with  | Nurse |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession       | doesn't end with    | Nurse |
+
+  @regression
+  Scenario Outline: Verify the is between numeric operator applies an inclusive range filter
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User clicks on the Filters tab
+    And User adds a range filter on "<FIELD>" from "<CATEGORY>" category with operator "is between" and values "<FROM>" and "<TO>"
+    Then Verify the filter on "<FIELD>" shows operator "is between"
+    And Verify "<FIELD>" is visible as a table column
+    And Verify the table column "<FIELD>" is filtered between values "<FROM>" and "<TO>"
+    Examples:
+      | ADVERTISER         | CATEGORY   | FIELD           | FROM | TO |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | 0    | 3  |
+
+  @regression
+  Scenario Outline: Verify numeric filter operators that use a typed value can be applied
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User clicks on the Filters tab
+    And User adds a text filter on "<FIELD>" from "<CATEGORY>" category with operator "<OPERATOR>" and value "<VALUE>"
+    Then Verify the text filter on "<FIELD>" with operator "<OPERATOR>" shows value "<VALUE>"
+    And Verify "<FIELD>" is visible as a table column
+    And Verify the table column "<FIELD>" is filtered by operator "<OPERATOR>" and value "<VALUE>"
+    Examples:
+      | ADVERTISER         | CATEGORY   | FIELD           | OPERATOR | VALUE |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | =        | 1     |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | >        | 0     |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | >=       | 1     |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | <        | 2     |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | <=       | 1     |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | !=       | 1     |
