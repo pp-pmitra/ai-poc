@@ -3278,10 +3278,10 @@ public class LifeSteps {
     public void verifyCreateNewPixelPanelAndTypesOfPixel() {
         logger.info("User clicks on Add Pixel button");
         Assert.assertEquals(
-                "CREATE NEW PIXEL", pixels.verifyCreateNewPixelLabel().toUpperCase());
-        Assert.assertEquals("RETARGETING PIXEL", pixels.verifyRetargetingPixel().toUpperCase());
-        Assert.assertEquals("SMART PIXEL", pixels.verifySmartPixel().toUpperCase());
-        Assert.assertEquals("CONVERSION PIXEL", pixels.verifyConversionPixel().toUpperCase());
+                "CREATE NEW PIXEL", pixels.getCreateNewPixelLabel().toUpperCase());
+        Assert.assertEquals("RETARGETING PIXEL", pixels.getRetargetingPixelLabel().toUpperCase());
+        Assert.assertEquals("SMART PIXEL", pixels.getSmartPixelLabel().toUpperCase());
+        Assert.assertEquals("CONVERSION PIXEL", pixels.getConversionPixelLabel().toUpperCase());
     }
 
     @And("User selects the {string} type")
@@ -3337,10 +3337,10 @@ public class LifeSteps {
             "Verify the pixel is saved successfully, search for it by name, and confirm it is displayed in the pixel list")
     public void verifyPixelIsSavedSuccessfullyAndDisplayedInPixelList() {
         logger.info("User saves the pixel");
-        String saveSuccessMessage = pixels.verifySaveSuccess();
+        String saveSuccessMessage = pixels.getSaveSuccessMessage();
         Assert.assertTrue("Unable to save pixel", saveSuccessMessage.contains("Success!"));
         pixels.searchSavedPixel(newPixelName);
-        String foundPixel = pixels.verifyCreatedPixel(newPixelName);
+        String foundPixel = pixels.getCreatedPixel(newPixelName);
         Assert.assertEquals(newPixelName, foundPixel);
     }
 
@@ -3349,12 +3349,12 @@ public class LifeSteps {
     public void verifySmartPixelIsSavedSuccessfullyAndDisplayedInPixelList() {
         logger.info(
                 "Verifying: the pixel is saved successfully, search for it by name, and confirm it is displayed in the pixel list");
-        String saveSuccessMessage = pixels.verifySaveSuccess();
+        String saveSuccessMessage = pixels.getSaveSuccessMessage();
         Assert.assertTrue("Unable to save Smart Pixel", saveSuccessMessage.contains("Success!"));
         newPixelName = smartPixel.getPixelNameFromHeader();
         logger.info("Fetched Smart Pixel name from header: {}", newPixelName);
         pixels.searchSavedPixel(newPixelName);
-        String foundPixel = pixels.verifyCreatedPixel(newPixelName);
+        String foundPixel = pixels.getCreatedPixel(newPixelName);
         Assert.assertEquals(newPixelName, foundPixel);
     }
 
@@ -4786,16 +4786,16 @@ public class LifeSteps {
     @Then("Verify the tabs displayed on the Pixels page")
     public void verifyTabsDisplayedOnPixelsPage() {
         logger.info("User removes all the filters applied on the Dashboard");
-        Assert.assertEquals("RETARGETING", pixels.verifyRetargetingTab().toUpperCase());
-        Assert.assertEquals("SMART", pixels.verifySmartTab().toUpperCase());
-        Assert.assertEquals("CONVERSION", pixels.verifyConversionTab().toUpperCase());
+        Assert.assertEquals("RETARGETING", pixels.getRetargetingTabLabel().toUpperCase());
+        Assert.assertEquals("SMART", pixels.getSmartTabLabel().toUpperCase());
+        Assert.assertEquals("CONVERSION", pixels.getConversionTabLabel().toUpperCase());
     }
 
     @Then("Verify the Advertiser dropdown and search box are displayed on the Pixels page")
     public void verifyAdvertiserDropdownAndSearchBoxDisplayed() {
         logger.info("Verifying: the tabs displayed on the Pixels page");
-        Assert.assertTrue("Advertiser Dropdown is not visible", pixels.verifyAdvertiserDropdown());
-        Assert.assertTrue("Search Box is not visible", pixels.verifySearchBox());
+        Assert.assertTrue("Advertiser Dropdown is not visible", pixels.isAdvertiserDropdownVisible());
+        Assert.assertTrue("Search Box is not visible", pixels.isSearchBoxVisible());
     }
 
     @When("User tries to save the Retargeting pixel without entering any details, an error message should be displayed")
@@ -4834,13 +4834,13 @@ public class LifeSteps {
         if (pixelType.equals("Retargeting Pixel") || pixelType.equals("Conversion Pixel")) {
             logger.info("Verifying: the {} gets updated successfully", pixelType);
             Assert.assertEquals(
-                    "PIXEL UPDATED SUCCESSFULLY", pixels.verifyUpdateSuccess().toUpperCase());
+                    "PIXEL UPDATED SUCCESSFULLY", pixels.getUpdateSuccessMessage().toUpperCase());
         } else if (pixelType.equals("Smart Pixel")) {
             Assert.assertEquals(
-                    "SAVED SUCCESSFULLY", pixels.verifyUpdateSuccess().toUpperCase());
+                    "SAVED SUCCESSFULLY", pixels.getUpdateSuccessMessage().toUpperCase());
         }
         pixels.searchSavedPixel(pixelNameEdited);
-        Assert.assertEquals(pixelNameEdited, pixels.verifyCreatedPixel(pixelNameEdited));
+        Assert.assertEquals(pixelNameEdited, pixels.getCreatedPixel(pixelNameEdited));
     }
 
     @When("User removes the created pixel")
@@ -4965,7 +4965,7 @@ public class LifeSteps {
         logger.info("Verify the removed pixel should not be displayed in the pixel list");
         String pixelToSearch = (pixelNameEdited != null) ? pixelNameEdited : newPixelName;
         pixels.searchSavedPixel(pixelToSearch);
-        String noResultText = pixels.verifyDeletedPixel().toUpperCase();
+        String noResultText = pixels.getDeletedPixelMessage().toUpperCase();
         Assert.assertTrue(noResultText.equals("NOTHING FOUND...") || noResultText.equals("NOTHING FOUND"));
     }
 
@@ -4973,7 +4973,7 @@ public class LifeSteps {
     public void verifyDeactivatedPixelNotDisplayedInPixelList() {
         logger.info("Verifying: the removed pixel should not be displayed in the pixel list");
         pixels.searchSavedPixel(pixelNameEdited);
-        String noResultText = pixels.verifyDeletedPixel().toUpperCase();
+        String noResultText = pixels.getDeletedPixelMessage().toUpperCase();
         Assert.assertTrue(noResultText.equals("NOTHING FOUND...") || noResultText.equals("NOTHING FOUND"));
     }
 
