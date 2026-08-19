@@ -639,15 +639,15 @@ public class LineItemDetails {
 
     public void clearCustomFieldFromLineItem(String fieldName) {
         waitUtility.waitUntilSpinnerHidden();
-        if(LINE_ITEM_PANEL_NAME.last().isVisible()){
-            for(int i =0; i< LINE_ITEM_PANEL_NAME.count(); i++) {
+        if (LINE_ITEM_PANEL_NAME.last().isVisible()) {
+            for (int i = 0; i < LINE_ITEM_PANEL_NAME.count(); i++) {
                 LINE_ITEM_PANEL_NAME.nth(i).click();
                 waitUtility.waitForLocatorVisible(LINE_ITEM_OVERVIEW_TAB);
                 waitUtility.waitForLocatorVisible(LINE_ITEM_DETAILS_TAB);
                 LINE_ITEM_DETAILS_TAB.click();
                 Locator customFieldInput = page.locator(String.format("//span[@class='cmp-form-label-text' and contains(text(),'%s')]/parent::label[contains(@class,'cmp-form-label')]//following-sibling::input", fieldName));
                 waitUtility.waitForLocatorVisible(customFieldInput.last());
-                for(int j=0; j<customFieldInput.count(); j++) {
+                for (int j = 0; j < customFieldInput.count(); j++) {
                     if (customFieldInput.nth(j).isVisible()) {
                         customFieldInput.nth(j).clear();
                     }

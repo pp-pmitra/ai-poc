@@ -7882,7 +7882,7 @@ public class LifeSteps {
     @And("User expands each Custom Destination created, performs delete operation on the entries created by {string} and verify successful deletion")
     public void userExpandsEachCustomDestinationCreatedAndFetchesEntriesWithUsername(String username) {
         logger.info("Expanding each Custom Destination created and fetching entries with username '{}'", username);
-        List<String> deletedEntries = accounts.expandCustomDefinitionRow(username);
+        List<String> deletedEntries = accounts.deleteCustomDefinitionRow(username);
         for (String entry : deletedEntries) {
             Assert.assertTrue("Custom destination deletion failed", accounts.isDeletedEntryAvailable(entry));
         }

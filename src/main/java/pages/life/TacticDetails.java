@@ -731,7 +731,7 @@ public class TacticDetails {
         waitUtility.waitForLocatorVisible(CUSTOM_FIELD);
     }
 
-    public void clearCustomFieldFromTactic(String fieldName){
+    public void clearCustomFieldFromTactic(String fieldName) {
         waitUtility.waitUntilSpinnerHidden();
         if (TACTIC_PANEL_NAME.last().isVisible()) {
             for (int j = 0; j < TACTIC_PANEL_NAME.count(); j++) {

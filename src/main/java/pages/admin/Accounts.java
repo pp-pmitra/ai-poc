@@ -86,7 +86,6 @@ public class Accounts {
     private final Locator CAMPAIGN_LINK_FROM_CUSTOM_FIELD_POPUP;
     private final Locator CUSTOM_FIELD_REMOVAL_POPUP;
     private final Locator CUSTOM_DESTINATION_ROW;
-
     WaitUtility waitUtility;
 
     public Accounts(Page page) {
@@ -563,7 +562,7 @@ public class Accounts {
         return ALERT.textContent().trim();
     }
 
-    public List<String> expandCustomDefinitionRow(String username) {
+    public List<String> deleteCustomDefinitionRow(String username) {
         List<String> deletedEntries = new ArrayList<>();
         waitUtility.waitForLocatorVisible(CUSTOM_DESTINATION_ROW.last());
         int totalCount = CUSTOM_DESTINATION_ROW.count();
@@ -582,10 +581,10 @@ public class Accounts {
                 String currentUsername = userInput.inputValue().trim();
                 if (currentUsername.equalsIgnoreCase(username)) {
                     deletedEntries.add(destinationName.inputValue().trim());
-                   deleteIcon.click();
+                    deleteIcon.click();
                 }
-
-            } catch (com.microsoft.playwright.TimeoutError e) { }
+            } catch (com.microsoft.playwright.TimeoutError e) {
+            }
         }
         saveAccountsAdvertiserTab();
         return deletedEntries;
