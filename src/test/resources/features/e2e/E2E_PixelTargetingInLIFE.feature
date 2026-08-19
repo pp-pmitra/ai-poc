@@ -5,14 +5,16 @@ Feature: End to End workflow for all types of Pixel creation and targeting at Ta
   3. Creation of Conversion Pixel.
   4. Targeting the created Pixel at Tactic level.
 
-  @e2e
-  Scenario Outline: Create a Retargeting Pixel and target in 'Retargeting Pixel' targeting at Tactic level
+  Background:
     Given This scenario will be executed in the "Demo" environment as a "User"
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
     And Verify Campaign Dashboard is displayed with title "Campaigns"
     And User navigates to Pixels page
-    When User clicks on Add Pixel button
-    Then Verify the Create New Pixel panel and types of Pixel
+    And User clicks on Add Pixel button
+    And Verify the Create New Pixel panel and types of Pixel
+
+  @e2e
+  Scenario Outline: Create a Retargeting Pixel and target in 'Retargeting Pixel' targeting at Tactic level
     And User selects the "<PIXEL_TYPE>" type
     And User enters the pixel details as "<PIXEL_NAME>" "<ADVERTISER>"
     And User saves the pixel
@@ -47,12 +49,6 @@ Feature: End to End workflow for all types of Pixel creation and targeting at Ta
 
   @e2e
   Scenario Outline: Create a Smart Pixel and then create a Smart list with that Smart Pixel and target the Smart list in Tactic
-    Given This scenario will be executed in the "Demo" environment as a "User"
-    And "Life" application is logged in successfully with Account "automation@pulsepoint"
-    And Verify Campaign Dashboard is displayed with title "Campaigns"
-    And User navigates to Pixels page
-    When User clicks on Add Pixel button
-    Then Verify the Create New Pixel panel and types of Pixel
     And User selects the "<PIXEL_TYPE>" type
     And User selects the "<ADVERTISER>" and the associated campaign
     And User saves the pixel
@@ -87,12 +83,6 @@ Feature: End to End workflow for all types of Pixel creation and targeting at Ta
 
   @e2e
   Scenario Outline: Create a Conversion Pixel and target in 'Converters' targeting at Tactic level
-    Given This scenario will be executed in the "Demo" environment as a "User"
-    And "Life" application is logged in successfully with Account "automation@pulsepoint"
-    And Verify Campaign Dashboard is displayed with title "Campaigns"
-    And User navigates to Pixels page
-    When User clicks on Add Pixel button
-    Then Verify the Create New Pixel panel and types of Pixel
     And User selects the "<PIXEL_TYPE>" type
     And User enters the pixel details as "<PIXEL_NAME>" "<ADVERTISER>" "<SCOPE>" "<TYPE>"
     And User saves the pixel
