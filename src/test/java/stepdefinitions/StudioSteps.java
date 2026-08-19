@@ -1343,6 +1343,15 @@ public class StudioSteps {
 
     @Then("Verify each {string} under below categories can be selected and removed")
     public void verifyEachComponentUnderCategoriesCanBeSelectedAndRemoved(String componentType, DataTable dataTable) {
+        if ("segment".equalsIgnoreCase(componentType)) {
+            List<String> components = dataTable.asList(String.class);
+            logger.info("Verifying standalone {}s can be selected and removed: {}", componentType, components);
+            List<String> failures = brandExplorerWorkspace.verifyStandaloneComponentsSelectAndRemove(components);
+            logger.info("Standalone {} select/remove failures: {}", componentType, failures);
+            Assert.assertTrue(componentType + " select/remove verification failed: " + failures, failures.isEmpty());
+            return;
+        }
+
         for (List<String> row : dataTable.asLists(String.class)) {
             String category = row.get(0).trim();
             List<String> components =
@@ -1354,6 +1363,30 @@ public class StudioSteps {
                     "Select/remove verification failed for category '" + category + "': " + failures,
                     failures.isEmpty());
         }
+    }
+
+    @Then("Verify the Brand Explorer chart is visible")
+    public void verifyTheBrandExplorerChartIsVisible() {
+        logger.info("Verifying Brand Explorer chart is visible");
+        Assert.assertTrue("Brand Explorer chart is not visible", brandExplorerWorkspace.isChartVisible());
+    }
+
+    @Then("Verify the Brand Explorer chart is hidden")
+    public void verifyTheBrandExplorerChartIsHidden() {
+        logger.info("Verifying Brand Explorer chart is hidden");
+        Assert.assertTrue("Brand Explorer chart is not hidden", brandExplorerWorkspace.isChartHidden());
+    }
+
+    @Then("Verify the Brand Explorer table is visible")
+    public void verifyTheBrandExplorerTableIsVisible() {
+        logger.info("Verifying Brand Explorer table is visible");
+        Assert.assertTrue("Brand Explorer table is not visible", brandExplorerWorkspace.isTableVisible());
+    }
+
+    @When("User clicks the {string} chart toggle")
+    public void userClicksTheChartToggle(String label) {
+        logger.info("Clicking Brand Explorer chart toggle: {}", label);
+        brandExplorerWorkspace.clickChartToggle(label);
     }
 
     @And("User selects Source Audience details as {string},{string}")
@@ -1427,6 +1460,20 @@ public class StudioSteps {
                 brandExplorerWorkspace.isComponentVisibleAsTableColumn(component));
     }
 
+    @Then("Verify {string} is not visible as a table column")
+    public void verifyComponentIsNotVisibleAsATableColumn(String component) {
+        logger.info("Verifying '{}' is not visible as a table column", component);
+        Assert.assertFalse(
+                "Component '" + component + "' is still visible as a table column",
+                brandExplorerWorkspace.isComponentVisibleAsTableColumn(component));
+    }
+
+    @When("User removes {string} from the table header")
+    public void userRemovesColumnFromTheTableHeader(String columnName) {
+        logger.info("Removing '{}' from the table header", columnName);
+        brandExplorerWorkspace.removeTableColumnFromHeader(columnName);
+    }
+
     @Then("Verify the table column {string} only shows rows with value {string}")
     public void verifyTheTableColumnOnlyShowsRowsWithValue(String field, String value) {
         List<String> columnValues = brandExplorerWorkspace.getTableColumnValues(field);
@@ -1457,5 +1504,22 @@ public class StudioSteps {
     public void userClicksOnTheMoreActionsMenuForTheSavedWorkspace() {
         logger.info("Clicking on the More Actions menu for the saved workspace: {}", workspaceName);
         workspaceCreation.clickMoreActionsMenu(workspaceName);
+    }
+
+    @And("User removes the default {string} only")
+    public void userRemovesTheDefaultComponentOnly(String componentType) {
+        logger.info("Removing default {} only", componentType);
+        if ("dimension".equalsIgnoreCase(componentType)) {
+            brandExplorerWorkspace.deselectComponent("Time Frame", "Day");
+        } else {
+            brandExplorerWorkspace.deselectComponent("NPI Events", "Identified NPIs");
+        }
+    }
+
+    @Then("Verify the chart shows the empty state message")
+    public void verifyTheChartShowsTheEmptyStateMessage() {
+        Assert.assertTrue(
+                "Chart did not show the 'requires at least 1 dimension and 1 metric' empty state",
+                brandExplorerWorkspace.isChartEmptyStateDisplayed());
     }
 }
