@@ -81,7 +81,7 @@ public class Accounts {
     private final Locator NPI_TARGETING_GROSS_CPM;
     private final Locator LIFE_SETTINGS_PANEL_CANCEL_BUTTON;
     private final Locator CUSTOM_FIELD_DELETION_POP_UP;
-    private final Locator CUSTOM_FIELD_CANNOT_DELETE_POP_UP;
+    private final Locator CUSTOM_FIELD_CANNOT_DELETE_POPUP;
     private final Locator CUSTOM_FIELD_DELETE_BUTTON;
     private final Locator CAMPAIGN_LINK_FROM_CUSTOM_FIELD_POPUP;
     private final Locator CUSTOM_FIELD_REMOVAL_POPUP;
@@ -172,7 +172,7 @@ public class Accounts {
         this.PULSEPOINT_DATA_FEE = page.locator("//input[@name='ppDataMargin']");
         this.NPI_TARGETING_GROSS_CPM = page.locator("//input[@name='NPITargeting']");
         this.CUSTOM_FIELD_DELETION_POP_UP = page.locator("//div[contains(text(),'Delete Custom Field Settings')]");
-        this.CUSTOM_FIELD_CANNOT_DELETE_POP_UP = page.locator("//div[contains(text(),'Custom Field Can’t Be Removed')]");
+        this.CUSTOM_FIELD_CANNOT_DELETE_POPUP = page.locator("//div[contains(text(),'Custom Field Can’t Be Removed')]");
         this.CUSTOM_FIELD_DELETE_BUTTON = page.locator("//div[contains(@class,'approveButtonText')]//span[contains(text(),'Delete')]");
         this.CAMPAIGN_LINK_FROM_CUSTOM_FIELD_POPUP = page.locator("//a[contains(@class, 'bullet_list')]");
         this.CUSTOM_FIELD_REMOVAL_POPUP = page.locator("//div[contains(@class,'confirm-modal header')]");
@@ -537,8 +537,8 @@ public class Accounts {
         deleteIcon.click();
         waitUtility.waitUntilSpinnerHidden();
         waitUtility.waitForLocatorVisible(CUSTOM_FIELD_REMOVAL_POPUP);
-        if (CUSTOM_FIELD_CANNOT_DELETE_POP_UP.isVisible()) {
-            waitUtility.waitForLocatorVisible(CUSTOM_FIELD_CANNOT_DELETE_POP_UP);
+        if (CUSTOM_FIELD_CANNOT_DELETE_POPUP.isVisible()) {
+            waitUtility.waitForLocatorVisible(CUSTOM_FIELD_CANNOT_DELETE_POPUP);
             for (int i = 0; i < CAMPAIGN_LINK_FROM_CUSTOM_FIELD_POPUP.count(); i++) {
                 Locator currentLink = CAMPAIGN_LINK_FROM_CUSTOM_FIELD_POPUP.nth(i);
                 Page originalTab = DriverFactory.getPage();
