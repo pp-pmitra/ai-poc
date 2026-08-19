@@ -4804,10 +4804,10 @@ public class LifeSteps {
         String pixelNameTemp = "Temporary Pixel Name";
         retargetingPixel.enterPixelName(pixelNameTemp);
         pixels.savePixel();
-        Assert.assertEquals("Advertiser is required", retargetingPixel.advertiserError());
+        Assert.assertEquals("Advertiser is required", retargetingPixel.getAdvertiserError());
         retargetingPixel.clearPixelName();
         pixels.savePixel();
-        Assert.assertEquals("Pixel Name is required", retargetingPixel.pixelNameError());
+        Assert.assertEquals("Pixel Name is required", retargetingPixel.getPixelNameError());
     }
 
     @And("User selects the {string} pixel")
@@ -4906,14 +4906,14 @@ public class LifeSteps {
     public void verifySmartListReflectedInAssociatedTab() {
         logger.info("Verify the selected Smart List should be reflected in the Associated Smartlists tab");
         smartPixel.clickAssociatedSmartListsTab();
-        Assert.assertEquals(npiName, smartPixel.verifyAssociatedSmartList(npiName));
+        Assert.assertEquals(npiName, smartPixel.getAssociatedSmartList(npiName));
     }
 
     @And("User navigates to the Pixel Codes tab")
     public void userNavigatesToPixelCodesTab() {
         logger.info("Verifying: the selected Smart List should be reflected in the Associated Smartlists tab");
         smartPixel.clickPixelCodesTab();
-        Assert.assertTrue(smartPixel.verifyPixelCodesTabIsSelected());
+        Assert.assertTrue(smartPixel.isPixelCodesTabSelected());
     }
 
     @Then("Verify user should not be able to deactivate the Smart Pixel if any Smart list is associated with it")
@@ -4922,7 +4922,7 @@ public class LifeSteps {
         pixels.clickEditIcon();
         smartPixel.clickDeactivatePixelIcon();
         Assert.assertEquals(
-                "PIXEL CAN'T BE DEACTIVATED", smartPixel.verifyDeactivateError().toUpperCase());
+                "PIXEL CAN'T BE DEACTIVATED", smartPixel.getDeactivateError().toUpperCase());
     }
 
     @When("User deactivates the created pixel")
@@ -4937,7 +4937,7 @@ public class LifeSteps {
         logger.info("Verify the pixel gets deactivated successfully");
         Assert.assertTrue(
                 "Deactivate success message is not displayed",
-                smartPixel.deactivateSuccess().contains("Pixel Deactivated successfully"));
+                smartPixel.getDeactivateSuccessMessage().contains("Pixel Deactivated successfully"));
     }
 
     @When("User tries to save the Conversion pixel without entering any details, an error message should be displayed")
@@ -4947,15 +4947,15 @@ public class LifeSteps {
         logger.info("Using temporary pixel name: {}", pixelNameTemp);
         conversionPixel.enterPixelName(pixelNameTemp);
         pixels.savePixel();
-        Assert.assertEquals("Advertiser is required", conversionPixel.advertiserError());
+        Assert.assertEquals("Advertiser is required", conversionPixel.getAdvertiserError());
         conversionPixel.clearPixelName();
         pixels.savePixel();
-        Assert.assertEquals("Pixel Name is required", conversionPixel.pixelNameError());
+        Assert.assertEquals("Pixel Name is required", conversionPixel.getPixelNameError());
         conversionPixel.enterPixelName(pixelNameTemp);
         // Temporary hardcoded selection of advertiser to validate mandatory fields
         conversionPixel.selectAdvertiser("01- Advertiser");
         pixels.savePixel();
-        Assert.assertEquals("Conversion Type is required", conversionPixel.pixelTypeOptionError());
+        Assert.assertEquals("Conversion Type is required", conversionPixel.getPixelTypeOptionError());
         logger.info("Cancelling Conversion Pixel creation");
         pixels.clickCancelButton();
     }
