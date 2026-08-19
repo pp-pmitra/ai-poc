@@ -9,7 +9,7 @@ Feature: Brand Explorer Workspace creation in Studio
     And User clicks PulsePoint icon to navigate back to Life
     And User navigates to Studio application
 
-  @e2e @regression
+  @e2e 
   Scenario Outline: Create and save Brand Explorer workspace with default selections
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -240,7 +240,7 @@ Feature: Brand Explorer Workspace creation in Studio
       | ADVERTISER         | CATEGORY                 | FIELD      |
       | TAMTESTING ACCOUNT | Healthcare Professionals | Profession |
 
-  @regression @filters
+  @regression 
   Scenario Outline: Verify a saved filter persists when the workspace is closed and reopened
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -263,7 +263,7 @@ Feature: Brand Explorer Workspace creation in Studio
       | ADVERTISER         | WORKSPACE_NAME | CATEGORY                 | FIELD      | VALUE     |
       | TAMTESTING ACCOUNT | Brand_Explorer | Healthcare Professionals | Profession | Physician |
 
-  @regression @filters
+  @regression 
   Scenario Outline: Verify an applied filter is reflected immediately and correctly narrows the dataset in the table
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -334,7 +334,7 @@ Feature: Brand Explorer Workspace creation in Studio
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
 
-  @regression @filters
+  @regression 
   Scenario Outline: Verify categorical filter operators that use a value list can be applied
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -351,7 +351,7 @@ Feature: Brand Explorer Workspace creation in Studio
       | ADVERTISER         | CATEGORY                 | FIELD      | OPERATOR | VALUE     |
       | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | is       | Physician |
 
-  @regression @filters
+  @regression 
   Scenario Outline: Verify filter operators that use a free-text value can be applied
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
