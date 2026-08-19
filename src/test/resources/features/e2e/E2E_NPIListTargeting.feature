@@ -7,6 +7,7 @@ Feature: End to End workflow for NPI Lists - Attributed and Auto-Imported creati
     #1
     Given This scenario will be executed in the "Demo" environment as a "User"
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
+    And Verify Campaign Dashboard is displayed with title "Campaigns"
     #2
     And User navigates to NPI Lists page
     When User clicks on Create New List
