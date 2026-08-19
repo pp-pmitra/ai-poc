@@ -469,7 +469,7 @@ public class BrandExplorerWorkspace {
     }
 
     private void enterFilterValue(String field, String value, boolean selectDropdownOption) {
-        Locator input = filterFieldCard(field).locator("input:not([readonly])");
+        Locator input = filterFieldCard(field).locator("xpath=.//input[@placeholder]");
         waitUtility.waitForLocatorVisible(input);
         input.click();
         input.fill(value);
