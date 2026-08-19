@@ -30,6 +30,7 @@ public class BrandExplorerWorkspace {
     private final Locator ADD_FILTER_BUTTON;
     private final Locator COMPONENTS_TAB;
     private final Locator CHART_EMPTY_STATE;
+    private final Locator WORKSPACE_LEFT_RAIL;
     WaitUtility waitUtility;
 
     public BrandExplorerWorkspace(Page page) {
@@ -64,6 +65,7 @@ public class BrandExplorerWorkspace {
                             );
         this.CHART_EMPTY_STATE = WORKSPACE_FRAME.locator(
                 "//ds-typography[normalize-space()='Chart requires at least 1 dimension and 1 metric' or normalize-space()='Choose 1 or more fields to see analytics']");
+        this.WORKSPACE_LEFT_RAIL = WORKSPACE_FRAME.locator("//div[@data-tour-id='workspace-left-rail']");
     }
 
     public void waitForDashboardLoad() {
@@ -72,17 +74,22 @@ public class BrandExplorerWorkspace {
     }
 
     public String getDefaultDimensions(String defaultDimension) {
-        Locator locator = WORKSPACE_FRAME.locator(String.format(
-                "//table//thead//th[@aria-selected='true' and normalize-space()='%s']", defaultDimension));
+        return getSelectedTableHeader(defaultDimension);
+    }
+
+    public String getDefaultMetrics(String defaultMetric) {
+        return getSelectedTableHeader(defaultMetric);
+    }
+
+    private String getSelectedTableHeader(String headerName) {
+        Locator locator = selectedTableColumnHeader(headerName);
         waitUtility.waitForLocatorVisible(locator);
         return locator.innerText().trim();
     }
 
-    public String getDefaultMetrics(String defaultMetric) {
-        Locator locator = WORKSPACE_FRAME.locator(
-                String.format("//table//thead//th[@aria-selected='true' and normalize-space()='%s']", defaultMetric));
-        waitUtility.waitForLocatorVisible(locator);
-        return locator.innerText().trim();
+    private Locator selectedTableColumnHeader(String headerName) {
+        return WORKSPACE_FRAME.locator(
+                String.format("//table//thead//th[@aria-selected='true' and normalize-space()='%s']", headerName));
     }
 
     public String getDefaultTimeFrame() {
@@ -295,9 +302,12 @@ public class BrandExplorerWorkspace {
         expandCategory(category);
         Locator checkbox = categoryCheckbox(category, component);
         waitUtility.waitForLocatorVisible(checkbox);
-        checkbox.check();
-        waitForSpinnerToAppear();
-        waitForSpinnerToDisappear();
+        if (!checkbox.isChecked()) {
+            checkbox.check();
+            waitForSpinnerToAppear();
+            waitForSpinnerToDisappear();
+        }
+        waitUtility.waitForLocatorVisible(tableColumnHeader(component));
         clickColumnHeader(component);
     }
 
@@ -435,27 +445,94 @@ public class BrandExplorerWorkspace {
                 .first();
     }
 
-    // Options have no accessible checkbox name, so match by OPTION role/text instead; must click the
-    // exact option since Enter would select every option still matching the typed search text.
+    private Locator filterOperatorTrigger(String field) {
+        return filterFieldCard(field).locator("xpath=.//button[@aria-expanded='false']");
+    }
+
+    public void selectFilterOperator(String field, String operator) {
+        Locator trigger = filterOperatorTrigger(field);
+        waitUtility.waitForLocatorVisible(trigger);
+        trigger.click();
+        Locator option = WORKSPACE_FRAME.getByRole(
+                AriaRole.MENUITEM, new FrameLocator.GetByRoleOptions().setName(operator).setExact(true));
+        waitUtility.waitForLocatorVisible(option);
+        option.click();
+        waitForSpinnerToDisappear();
+    }
+
     public void enterFilterValue(String field, String value) {
-        Locator input = filterFieldCard(field).locator("input:not([readonly])").first();
+        enterFilterValue(field, value, true);
+    }
+
+    public void enterFilterTextValue(String field, String value) {
+        enterFilterValue(field, value, false);
+    }
+
+    private void enterFilterValue(String field, String value, boolean selectDropdownOption) {
+        Locator input = filterFieldCard(field).locator("input:not([readonly])");
         waitUtility.waitForLocatorVisible(input);
         input.click();
         input.fill(value);
-        Locator option = WORKSPACE_FRAME.getByRole(
-                AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName(value).setExact(true));
-        waitUtility.waitForLocatorVisible(option.first());
-        option.first().click();
-        page.keyboard().press("Escape");
+        if(selectDropdownOption) {
+            Locator option = WORKSPACE_FRAME.getByRole(
+                    AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName(value).setExact(true));
+            waitUtility.waitForLocatorVisible(option);
+            option.click();
+        }
+        WORKSPACE_LEFT_RAIL.click(); // Click outside the input to trigger the filter update
+        waitForSpinnerToAppear();
         waitForSpinnerToDisappear();
+    }
+
+    public void enterRangeFilterValues(String field, String from, String to) {
+        Locator inputs = filterFieldCard(field).locator("input:not([readonly])");
+        Locator startInput = inputs.nth(0);
+        Locator endInput = inputs.nth(1);
+        waitUtility.waitForLocatorVisible(startInput);
+        startInput.fill(from);
+        endInput.fill(to);
+        WORKSPACE_LEFT_RAIL.click(); // Click outside the input to trigger the filter update
+        waitForSpinnerToAppear();
+        waitForSpinnerToDisappear();
+    }
+
+    public String getFilterCardSummary(String field) {
+        return getFilterCardSummary(field, null);
+    }
+
+    public String getExpectedTypedFilterDisplayValue(String operator, String value) {
+        return switch (operator.toLowerCase()) {
+            case "contains" -> "%" + value + "%";
+            case "doesn't contain" -> "-%" + value + "%";
+            case "starts with" -> value + "%";
+            case "doesn't start with" -> "-" + value + "%";
+            case "ends with" -> "%" + value;
+            case "doesn't end with" -> "-%" + value;
+            default -> value;
+        };
+    }
+
+    public String getAppliedTypedFilterSummary(String field, String operator, String value) {
+        String expectedDisplayValue = getExpectedTypedFilterDisplayValue(operator, value);
+        Locator chipText = WORKSPACE_FRAME.locator("ds-typography.truncate")
+                .filter(new Locator.FilterOptions().setHasText(field))
+                .filter(new Locator.FilterOptions().setHasText(expectedDisplayValue));
+        waitUtility.waitForLocatorVisible(chipText);
+        return chipText.innerText().replaceAll("\\s+", " ").trim();
     }
 
     // The applied value renders asynchronously, so wait for its text node rather than a generic loading signal.
     public String getAppliedFilterSummary(String field, String expectedValue) {
+        return getFilterCardSummary(field, expectedValue);
+    }
+
+    private String getFilterCardSummary(String field, String expectedValue) {
         Locator card = filterFieldCard(field);
         waitUtility.waitForLocatorVisible(card);
-        waitUtility.waitForLocatorVisible(
-                card.getByText(expectedValue, new Locator.GetByTextOptions().setExact(true)).first());
+        if (expectedValue != null) {
+            waitUtility.waitForLocatorVisible(
+                    card.getByText(expectedValue, new Locator.GetByTextOptions().setExact(true)).first());
+        }
         return card.innerText().replaceAll("\\s+", " ").trim();
     }
 
