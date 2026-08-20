@@ -7868,4 +7868,26 @@ public class LifeSteps {
         logger.info("Verifying that Line Item checkboxes are disabled when the entity checkbox is selected for a Tactic");
         Assert.assertTrue("Line Item checkboxes are not disabled when Tactic checkbox is selected", campaignDashboard.areLineItemCheckboxesEnabled());
     }
+
+    @And("User searches the report")
+    public void userSearchesTheReport() {
+        logger.info("User searches the report");
+        runReportPanel.searchReportName(templateNameRandom);
+    }
+
+    @When("User deletes the report")
+    public void userDeletesTheReport() {
+        logger.info("User deletes the report");
+        runReportPanel.clickReportOptions();
+        runReportPanel.deleteReport();
+    }
+
+    @Then("Verify that the report is deleted successfully")
+    public void verifyThatTheReportIsDeletedSuccessfully() {
+        logger.info("Verifying that the report is deleted successfully");
+        String successMessage = runReportPanel.fetchReportDeleteSuccessAlert();
+        Assert.assertEquals("Report deleted successfully.", successMessage);
+        String noReportFoundError = runReportPanel.fetchNoReportFoundMessage(templateNameRandom);
+        Assert.assertEquals("No Generated Reports", noReportFoundError);
+    }
 }
