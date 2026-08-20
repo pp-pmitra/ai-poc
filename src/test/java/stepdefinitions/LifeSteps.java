@@ -7869,25 +7869,40 @@ public class LifeSteps {
         Assert.assertTrue("Line Item checkboxes are not disabled when Tactic checkbox is selected", campaignDashboard.areLineItemCheckboxesEnabled());
     }
 
-    @And("User searches the report")
-    public void userSearchesTheReport() {
-        logger.info("User searches the report");
-        runReportPanel.searchReportName(templateNameRandom);
+    @And("User searches the {string} report")
+    public void userSearchesTheReport(String reportType) {
+        logger.info("User searches the {} report", reportType);
+        if (reportType.equals("Generated")) {
+            runReportPanel.searchReportName(templateNameRandom);
+        } else if (reportType.equals("Scheduled")) {
+            scheduleReport.searchReport(templateNameRandom);
+        }
     }
 
-    @When("User deletes the report")
-    public void userDeletesTheReport() {
-        logger.info("User deletes the report");
-        runReportPanel.clickReportOptions();
-        runReportPanel.deleteReport();
+    @When("User deletes the {string} report")
+    public void userDeletesTheReport(String reportType) {
+        logger.info("User deletes the {} report", reportType);
+        if (reportType.equals("Generated")) {
+            runReportPanel.clickReportOptions();
+            runReportPanel.deleteReport();
+        } else if (reportType.equals("Scheduled")) {
+            scheduleReport.deleteReport();
+        }
     }
 
-    @Then("Verify that the report is deleted successfully")
-    public void verifyThatTheReportIsDeletedSuccessfully() {
-        logger.info("Verifying that the report is deleted successfully");
-        String successMessage = runReportPanel.fetchReportDeleteSuccessAlert();
-        Assert.assertEquals("Report deleted successfully.", successMessage);
-        String noReportFoundError = runReportPanel.fetchNoReportFoundMessage(templateNameRandom);
-        Assert.assertEquals("No Generated Reports", noReportFoundError);
+    @Then("Verify that the {string} report is deleted successfully")
+    public void verifyThatTheReportIsDeletedSuccessfully(String reportType) {
+        logger.info("Verifying that the {} report is deleted successfully", reportType);
+        if (reportType.equals("Generated")) {
+            String successMessage = runReportPanel.fetchReportDeleteSuccessAlert();
+            Assert.assertEquals("Report deleted successfully.", successMessage);
+            String noReportFoundError = runReportPanel.fetchNoReportFoundMessage(templateNameRandom);
+            Assert.assertEquals("No Generated Reports", noReportFoundError);
+        } else if (reportType.equals("Scheduled")) {
+            String successMessage = scheduleReport.fetchReportDeleteSuccessAlert();
+            Assert.assertEquals("Schedule deleted succesfully", successMessage);
+            String noReportFoundError = scheduleReport.fetchNoReportFoundMessage(templateNameRandom);
+            Assert.assertEquals("Nothing Found", noReportFoundError);
+        }
     }
 }
