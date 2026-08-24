@@ -7905,4 +7905,10 @@ public class LifeSteps {
             Assert.assertEquals("Nothing Found", noReportFoundError);
         }
     }
+
+    @And("User navigates to generated reports tab")
+    public void userNavigatesToGeneratedReports() {
+        logger.info("Navigating to Generated Report tab");
+        reportTemplates.clickGeneratedReportsTab();
+    }
 }
