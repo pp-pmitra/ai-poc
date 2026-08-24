@@ -40,6 +40,10 @@ Feature: End to End Workflow of Report Generation.
     Then User navigates to generate report field and verifies the report name by campaign name
     # 4 & 5
     Then User downloads the report and verify the data in downloaded report
+    And User navigates to generated reports tab
+    And User searches the "Generated" report
+    When User deletes the "Generated" report
+    Then Verify that the "Generated" report is deleted successfully
     And User clicks PulsePoint icon to navigate back to Life
     When User navigates to the created campaign
     And User deletes the campaign

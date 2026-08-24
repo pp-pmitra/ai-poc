@@ -7882,4 +7882,47 @@ public class LifeSteps {
         pixels.searchSavedPixel(newPixelName);
         pixels.openSearchedPixel(newPixelName);
     }
+
+    @And("User searches the {string} report")
+    public void userSearchesTheReport(String reportType) {
+        logger.info("User searches the {} report", reportType);
+        if (reportType.equals("Generated")) {
+            runReportPanel.searchReportName(templateNameRandom);
+        } else if (reportType.equals("Scheduled")) {
+            scheduleReport.searchReport(templateNameRandom);
+        }
+    }
+
+    @When("User deletes the {string} report")
+    public void userDeletesTheReport(String reportType) {
+        logger.info("User deletes the {} report", reportType);
+        if (reportType.equals("Generated")) {
+            runReportPanel.clickReportOptions();
+            runReportPanel.deleteReport();
+        } else if (reportType.equals("Scheduled")) {
+            scheduleReport.deleteReport();
+        }
+    }
+
+    @Then("Verify that the {string} report is deleted successfully")
+    public void verifyThatTheReportIsDeletedSuccessfully(String reportType) {
+        logger.info("Verifying that the {} report is deleted successfully", reportType);
+        if (reportType.equals("Generated")) {
+            String successMessage = runReportPanel.fetchReportDeleteSuccessAlert();
+            Assert.assertEquals("Report deleted successfully.", successMessage);
+            String noReportFoundError = runReportPanel.fetchNoReportFoundMessage(templateNameRandom);
+            Assert.assertEquals("No Generated Reports", noReportFoundError);
+        } else if (reportType.equals("Scheduled")) {
+            String successMessage = scheduleReport.fetchReportDeleteSuccessAlert();
+            Assert.assertEquals("Schedule deleted succesfully", successMessage);
+            String noReportFoundError = scheduleReport.fetchNoReportFoundMessage(templateNameRandom);
+            Assert.assertEquals("Nothing Found", noReportFoundError);
+        }
+    }
+
+    @And("User navigates to generated reports tab")
+    public void userNavigatesToGeneratedReports() {
+        logger.info("Navigating to Generated Report tab");
+        reportTemplates.clickGeneratedReportsTab();
+    }
 }
