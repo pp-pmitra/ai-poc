@@ -5,6 +5,7 @@ Feature: Create a Destination in Admin and run below report against it.
   Background:
     Given This scenario will be executed in the "Demo" environment as a "User"
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
+    And Verify Campaign Dashboard is displayed with title "Campaigns"
     When User navigates to Administrative section
     And User navigates to Accounts Tab
     And User searches the account "automation@pulsepoint" and selects the account
