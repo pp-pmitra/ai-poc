@@ -5,13 +5,16 @@ Feature: End to End workflow for all types of Pixel creation and targeting at Ta
   3. Creation of Conversion Pixel.
   4. Targeting the created Pixel at Tactic level.
 
-  @e2e
-  Scenario Outline: Create a Retargeting Pixel and target in 'Retargeting Pixel' targeting at Tactic level
+  Background:
     Given This scenario will be executed in the "Demo" environment as a "User"
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
+    And Verify Campaign Dashboard is displayed with title "Campaigns"
     And User navigates to Pixels page
-    When User clicks on Add Pixel button
-    Then Verify the Create New Pixel panel and types of Pixel
+    And User clicks on Add Pixel button
+    And Verify the Create New Pixel panel and types of Pixel
+
+  @e2e
+  Scenario Outline: Create a Retargeting Pixel and target in 'Retargeting Pixel' targeting at Tactic level
     And User selects the "<PIXEL_TYPE>" type
     And User enters the pixel details as "<PIXEL_NAME>" "<ADVERTISER>"
     And User saves the pixel
@@ -34,17 +37,18 @@ Feature: End to End workflow for all types of Pixel creation and targeting at Ta
     When User navigates to the created campaign
     And User deletes the campaign
     Then Verify that the campaign is deleted successfully
+    And User navigates to Pixels page
+    And User selects the "<PIXEL_TYPE>" tab
+    And User searches and opens the pixel
+    When User removes the created pixel
+    Then Verify the pixel gets removed successfully
+    Then Verify the removed pixel should not be displayed in the pixel list
     Examples:
       | PIXEL_TYPE        | PIXEL_NAME  | ADVERTISER     | CP_NAME              | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          |
       | Retargeting Pixel | Retargeting | 01- Advertiser | Retargeting_Campaign | Regular | 10000     | New_Line  | 50          | New_Tactic  | Display Advanced | Retargeting Pixels |
 
   @e2e
   Scenario Outline: Create a Smart Pixel and then create a Smart list with that Smart Pixel and target the Smart list in Tactic
-    Given This scenario will be executed in the "Demo" environment as a "User"
-    And "Life" application is logged in successfully with Account "automation@pulsepoint"
-    And User navigates to Pixels page
-    When User clicks on Add Pixel button
-    Then Verify the Create New Pixel panel and types of Pixel
     And User selects the "<PIXEL_TYPE>" type
     And User selects the "<ADVERTISER>" and the associated campaign
     And User saves the pixel
@@ -75,15 +79,10 @@ Feature: End to End workflow for all types of Pixel creation and targeting at Ta
     Then Verify that the campaign is deleted successfully
     Examples:
       | PIXEL_TYPE  | ADVERTISER       | LIST_NAME   | CP_NAME        | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE |
-      | Smart Pixel | 1Demo Advertiser | Smart_Pixel | Smart_Campaign | Regular | 12500     | Auto_Line | 70          | Auto_Tactic | Display Advanced | NPI       |
+      | Smart Pixel | 1Demo Advertiser | Smart_Pixel | Smart_Campaign | Regular | 12500     | New_Line  | 70          | New_Tactic  | Display Advanced | NPI       |
 
   @e2e
   Scenario Outline: Create a Conversion Pixel and target in 'Converters' targeting at Tactic level
-    Given This scenario will be executed in the "Demo" environment as a "User"
-    And "Life" application is logged in successfully with Account "automation@pulsepoint"
-    And User navigates to Pixels page
-    When User clicks on Add Pixel button
-    Then Verify the Create New Pixel panel and types of Pixel
     And User selects the "<PIXEL_TYPE>" type
     And User enters the pixel details as "<PIXEL_NAME>" "<ADVERTISER>" "<SCOPE>" "<TYPE>"
     And User saves the pixel
@@ -106,6 +105,12 @@ Feature: End to End workflow for all types of Pixel creation and targeting at Ta
     When User navigates to the created campaign
     And User deletes the campaign
     Then Verify that the campaign is deleted successfully
+    And User navigates to Pixels page
+    And User selects the "<PIXEL_TYPE>" tab
+    And User searches and opens the pixel
+    When User removes the created pixel
+    Then Verify the pixel gets removed successfully
+    Then Verify the removed pixel should not be displayed in the pixel list
     Examples:
       | PIXEL_TYPE       | PIXEL_NAME | ADVERTISER       | SCOPE  | TYPE     | CP_NAME             | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE  |
       | Conversion Pixel | Conversion | 1Demo Advertiser | Device | Download | Conversion_Campaign | Regular | 1000      | New_Line  | 20          | New_Tactic  | Display Advanced | Converters |
