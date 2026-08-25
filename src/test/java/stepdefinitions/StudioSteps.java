@@ -1536,11 +1536,11 @@ public class StudioSteps {
         brandExplorerWorkspace.enterFilterValue(field, value);
     }
 
-    @And("User adds a text filter on {string} from {string} category with operator {string} and value {string}")
-    public void userAddsATextFilterOnFieldFromCategoryWithOperatorAndValue(
+    @And("User adds a typed filter on {string} from {string} category with operator {string} and value {string}")
+    public void userAddsATypedFilterOnFieldFromCategoryWithOperatorAndValue(
             String field, String category, String operator, String value) {
         logger.info(
-                "Adding text filter on '{}' from '{}' category with operator '{}' and value '{}'",
+                "Adding typed filter on '{}' from '{}' category with operator '{}' and value '{}'",
                 field, category, operator, value);
         brandExplorerWorkspace.clickAddFilter();
         brandExplorerWorkspace.selectFilterField(category, field);
@@ -1608,13 +1608,13 @@ public class StudioSteps {
                 columnValues.stream().allMatch(columnValue -> matchesFilterOperator(columnValue, operator, value)));
     }
 
-    @Then("Verify the text filter on {string} with operator {string} shows value {string}")
-    public void verifyTheTextFilterOnFieldWithOperatorShowsValue(String field, String operator, String value) {
+    @Then("Verify the typed filter on {string} with operator {string} shows value {string}")
+    public void verifyTheTypedFilterOnFieldWithOperatorShowsValue(String field, String operator, String value) {
         String cardSummary = brandExplorerWorkspace.getFilterCardSummary(field);
         String appliedSummary = brandExplorerWorkspace.getAppliedTypedFilterSummary(field, operator, value);
         String expectedDisplayValue = brandExplorerWorkspace.getExpectedTypedFilterDisplayValue(operator, value);
-        logger.info("Text filter card summary for '{}': {}", field, cardSummary);
-        logger.info("Applied text filter summary for '{}': {}", field, appliedSummary);
+        logger.info("Typed filter card summary for '{}': {}", field, cardSummary);
+        logger.info("Applied typed filter summary for '{}': {}", field, appliedSummary);
         Assert.assertTrue(
                 "Filter card '" + cardSummary + "' does not contain expected operator '" + operator + "'",
                 cardSummary.toLowerCase().contains(operator.toLowerCase()));
