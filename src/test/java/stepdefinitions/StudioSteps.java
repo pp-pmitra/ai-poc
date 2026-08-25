@@ -1535,6 +1535,8 @@ public class StudioSteps {
         Assert.assertTrue(
                 "Brand Explorer still shows selected components",
                 brandExplorerWorkspace.areNoComponentsSelected());
+    }
+    
     @And("User adds a filter on {string} from {string} category with operator {string} and value {string}")
     public void userAddsAFilterOnFieldFromCategoryWithOperatorAndValue(
             String field, String category, String operator, String value) {
