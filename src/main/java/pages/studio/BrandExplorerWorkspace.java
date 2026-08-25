@@ -30,6 +30,8 @@ public class BrandExplorerWorkspace {
     private final Locator ADD_FILTER_BUTTON;
     private final Locator COMPONENTS_TAB;
     private final Locator CHART_EMPTY_STATE;
+    private final Locator CLEAR_ALL_BUTTON;
+    private final Locator NO_COMPONENTS_SELECTED_TAB;
     private final Locator WORKSPACE_LEFT_RAIL;
     WaitUtility waitUtility;
 
@@ -65,6 +67,14 @@ public class BrandExplorerWorkspace {
                             );
         this.CHART_EMPTY_STATE = WORKSPACE_FRAME.locator(
                 "//ds-typography[normalize-space()='Chart requires at least 1 dimension and 1 metric' or normalize-space()='Choose 1 or more fields to see analytics']");
+        this.CLEAR_ALL_BUTTON = WORKSPACE_FRAME.getByRole(
+                AriaRole.BUTTON,
+                new FrameLocator.GetByRoleOptions().setName("Clear All").setExact(true)
+        );
+        this.NO_COMPONENTS_SELECTED_TAB = WORKSPACE_FRAME.getByRole(
+                AriaRole.TAB,
+                new FrameLocator.GetByRoleOptions().setName("Selected (0)").setExact(true)
+        );
         this.WORKSPACE_LEFT_RAIL = WORKSPACE_FRAME.locator("//div[@data-tour-id='workspace-left-rail']");
     }
 
@@ -328,6 +338,16 @@ public class BrandExplorerWorkspace {
 
     public boolean isTableVisible() {
         return isVisible(BRAND_EXPLORER_TABLE);
+    }
+
+    public void clickClearAllComponents() {
+        waitUtility.waitForLocatorVisible(CLEAR_ALL_BUTTON);
+        CLEAR_ALL_BUTTON.click();
+        waitUtility.waitForLocatorVisible(NO_COMPONENTS_SELECTED_TAB);
+    }
+
+    public boolean areNoComponentsSelected() {
+        return isVisible(NO_COMPONENTS_SELECTED_TAB);
     }
 
     public void clickChartToggle(String label) {

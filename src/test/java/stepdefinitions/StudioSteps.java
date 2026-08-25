@@ -1523,6 +1523,18 @@ public class StudioSteps {
                 brandExplorerWorkspace.isChartEmptyStateDisplayed());
     }
 
+    @When("User clicks Clear All in the Brand Explorer component panel")
+    public void userClicksClearAllInTheBrandExplorerComponentPanel() {
+        logger.info("Clicking Clear All in the Brand Explorer component panel");
+        brandExplorerWorkspace.clickClearAllComponents();
+    }
+
+    @Then("Verify no Brand Explorer components are selected")
+    public void verifyNoBrandExplorerComponentsAreSelected() {
+        logger.info("Verifying no Brand Explorer components are selected");
+        Assert.assertTrue(
+                "Brand Explorer still shows selected components",
+                brandExplorerWorkspace.areNoComponentsSelected());
     @And("User adds a filter on {string} from {string} category with operator {string} and value {string}")
     public void userAddsAFilterOnFieldFromCategoryWithOperatorAndValue(
             String field, String category, String operator, String value) {
