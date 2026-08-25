@@ -351,6 +351,7 @@ Feature: Brand Explorer Workspace creation in Studio
     Examples:
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
+      
   @regression 
   Scenario Outline: Verify categorical filter operators that use a value list can be applied
     When User clicks on Create New Workspace
