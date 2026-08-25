@@ -1664,4 +1664,10 @@ public class StudioSteps {
                         + columnValues,
                 columnValues.stream().allMatch(value -> isNumericValueBetween(value, fromValue, toValue)));
     }
+
+    @And("User deselects {string} from the table")
+    public void userDeselectsFromTheTable(String columnName) {
+        logger.info("User deselects from the table: {}", columnName);
+        brandExplorerWorkspace.clickColumnHeader(columnName);
+    }
 }

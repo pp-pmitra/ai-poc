@@ -351,6 +351,23 @@ Feature: Brand Explorer Workspace creation in Studio
     Examples:
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
+
+  @regression
+  Scenario Outline: Verify Brand Explorer chart refreshes after replacing the default dimension and metric
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User deselects "Day" from the table
+    And User deselects "Identified NPIs" from the table
+    When User selects "<DIMENSION>" from "<DIMENSION_CATEGORY>" component panel
+    And User selects "<METRIC>" from "<METRIC_CATEGORY>" component panel
+    Then Verify "<DIMENSION>" is visible as a table column
+    And Verify "<METRIC>" is visible as a table column
+    And Verify the Brand Explorer chart is visible
+    Examples:
+      | ADVERTISER         | DIMENSION | DIMENSION_CATEGORY | METRIC           | METRIC_CATEGORY |
+      | TAMTESTING ACCOUNT | Month     | Time Frame         | HCP Active Users | HCP Events      |
       
   @regression 
   Scenario Outline: Verify categorical filter operators that use a value list can be applied
