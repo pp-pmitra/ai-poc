@@ -1,0 +1,14 @@
+{
+  "name": "pulsepoint-qa",
+  "owner": {
+    "name": "PulsePoint QA Automation"
+  },
+  "description": "Internal Claude Code skills for the PulsePoint qa-automation (BDD/Cucumber/Playwright/Java) framework.",
+  "plugins": [
+    {
+      "name": "qa-automation-skills",
+      "source": "./plugins/qa-automation-skills",
+      "description": "Code-development skills: drive @todo Cucumber scenarios to done via reuse-gate + live browser exploration."
+    }
+  ]
+}
