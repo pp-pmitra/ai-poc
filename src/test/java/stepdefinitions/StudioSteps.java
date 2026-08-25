@@ -1535,5 +1535,131 @@ public class StudioSteps {
         Assert.assertTrue(
                 "Brand Explorer still shows selected components",
                 brandExplorerWorkspace.areNoComponentsSelected());
+    @And("User adds a filter on {string} from {string} category with operator {string} and value {string}")
+    public void userAddsAFilterOnFieldFromCategoryWithOperatorAndValue(
+            String field, String category, String operator, String value) {
+        logger.info(
+                "Adding filter on '{}' from '{}' category with operator '{}' and value '{}'",
+                field, category, operator, value);
+        brandExplorerWorkspace.clickAddFilter();
+        brandExplorerWorkspace.selectFilterField(category, field);
+        brandExplorerWorkspace.closeFilterDialog();
+        brandExplorerWorkspace.selectFilterOperator(field, operator);
+        brandExplorerWorkspace.enterFilterValue(field, value);
+    }
+
+    @And("User adds a typed filter on {string} from {string} category with operator {string} and value {string}")
+    public void userAddsATypedFilterOnFieldFromCategoryWithOperatorAndValue(
+            String field, String category, String operator, String value) {
+        logger.info(
+                "Adding typed filter on '{}' from '{}' category with operator '{}' and value '{}'",
+                field, category, operator, value);
+        brandExplorerWorkspace.clickAddFilter();
+        brandExplorerWorkspace.selectFilterField(category, field);
+        brandExplorerWorkspace.closeFilterDialog();
+        brandExplorerWorkspace.selectFilterOperator(field, operator);
+        brandExplorerWorkspace.enterFilterTextValue(field, value);
+    }
+
+    @And("User adds a range filter on {string} from {string} category with operator {string} and values {string} and {string}")
+    public void userAddsARangeFilterOnFieldFromCategoryWithOperatorAndValues(
+            String field, String category, String operator, String from, String to) {
+        logger.info(
+                "Adding range filter on '{}' from '{}' category with operator '{}' and values '{}' and '{}'",
+                field, category, operator, from, to);
+        brandExplorerWorkspace.clickAddFilter();
+        brandExplorerWorkspace.selectFilterField(category, field);
+        brandExplorerWorkspace.closeFilterDialog();
+        brandExplorerWorkspace.selectFilterOperator(field, operator);
+        brandExplorerWorkspace.enterRangeFilterValues(field, from, to);
+    }
+
+    private double parseNumericValue(String value) {
+        String numericValue = value.replaceAll("[^0-9.-]", "");
+        if (numericValue.isEmpty()) {
+            Assert.fail("Expected numeric value but found: " + value);
+        }
+        return Double.parseDouble(numericValue);
+    }
+
+    private boolean matchesFilterOperator(String columnValue, String operator, String expectedValue) {
+        String actual = columnValue.trim();
+        String expected = expectedValue.trim();
+        String actualLower = actual.toLowerCase();
+        String expectedLower = expected.toLowerCase();
+        return switch (operator.toLowerCase()) {
+            case "is" -> actual.equalsIgnoreCase(expected);
+            case "is not" -> !actual.equalsIgnoreCase(expected);
+            case "contains" -> actualLower.contains(expectedLower);
+            case "doesn't contain" -> !actualLower.contains(expectedLower);
+            case "starts with" -> actualLower.startsWith(expectedLower);
+            case "doesn't start with" -> !actualLower.startsWith(expectedLower);
+            case "ends with" -> actualLower.endsWith(expectedLower);
+            case "doesn't end with" -> !actualLower.endsWith(expectedLower);
+            case "=" -> parseNumericValue(actual) == parseNumericValue(expected);
+            case "!=" -> parseNumericValue(actual) != parseNumericValue(expected);
+            case ">" -> parseNumericValue(actual) > parseNumericValue(expected);
+            case ">=" -> parseNumericValue(actual) >= parseNumericValue(expected);
+            case "<" -> parseNumericValue(actual) < parseNumericValue(expected);
+            case "<=" -> parseNumericValue(actual) <= parseNumericValue(expected);
+            default -> {
+                Assert.fail("Unsupported operator for table value validation: " + operator);
+                yield false;
+            }
+        };
+    }
+
+    @Then("Verify the table column {string} is filtered by operator {string} and value {string}")
+    public void verifyTheTableColumnIsFilteredByOperatorAndValue(String field, String operator, String value) {
+        List<String> columnValues = brandExplorerWorkspace.getTableColumnValues(field);
+        logger.info("Values in table column '{}' after '{}' filter '{}': {}", field, operator, value, columnValues);
+        Assert.assertFalse("No rows found in table column: " + field, columnValues.isEmpty());
+        Assert.assertTrue(
+                "Table column '" + field + "' is not filtered by operator '" + operator + "' and value '"
+                        + value + "': " + columnValues,
+                columnValues.stream().allMatch(columnValue -> matchesFilterOperator(columnValue, operator, value)));
+    }
+
+    @Then("Verify the typed filter on {string} with operator {string} shows value {string}")
+    public void verifyTheTypedFilterOnFieldWithOperatorShowsValue(String field, String operator, String value) {
+        String cardSummary = brandExplorerWorkspace.getFilterCardSummary(field);
+        String appliedSummary = brandExplorerWorkspace.getAppliedTypedFilterSummary(field, operator, value);
+        String expectedDisplayValue = brandExplorerWorkspace.getExpectedTypedFilterDisplayValue(operator, value);
+        logger.info("Typed filter card summary for '{}': {}", field, cardSummary);
+        logger.info("Applied typed filter summary for '{}': {}", field, appliedSummary);
+        Assert.assertTrue(
+                "Filter card '" + cardSummary + "' does not contain expected operator '" + operator + "'",
+                cardSummary.toLowerCase().contains(operator.toLowerCase()));
+        Assert.assertTrue(
+                "Applied filter summary '" + appliedSummary + "' does not contain expected value '"
+                        + expectedDisplayValue + "'",
+                appliedSummary.contains(expectedDisplayValue));
+    }
+
+    @Then("Verify the filter on {string} shows operator {string}")
+    public void verifyTheFilterOnFieldShowsOperator(String field, String operator) {
+        String summary = brandExplorerWorkspace.getFilterCardSummary(field);
+        logger.info("Filter summary for '{}': {}", field, summary);
+        Assert.assertTrue(
+                "Filter summary '" + summary + "' does not contain expected operator '" + operator + "'",
+                summary.toLowerCase().contains(operator.toLowerCase()));
+    }
+
+    private boolean isNumericValueBetween(String value, double from, double to) {
+        double actual = parseNumericValue(value);
+        return actual >= from && actual <= to;
+    }
+
+    @And("Verify the table column {string} is filtered between values {string} and {string}")
+    public void verifyTheTableColumnIsFilteredBetweenValues(String field, String from, String to) {
+        double fromValue = Double.parseDouble(from);
+        double toValue = Double.parseDouble(to);
+        List<String> columnValues = brandExplorerWorkspace.getTableColumnValues(field);
+        logger.info("Values in table column '{}' after range filter '{}'-'{}': {}", field, from, to, columnValues);
+        Assert.assertFalse("No rows found in table column: " + field, columnValues.isEmpty());
+        Assert.assertTrue(
+                "Table column '" + field + "' contains values outside range " + from + " to " + to + ": "
+                        + columnValues,
+                columnValues.stream().allMatch(value -> isNumericValueBetween(value, fromValue, toValue)));
     }
 }

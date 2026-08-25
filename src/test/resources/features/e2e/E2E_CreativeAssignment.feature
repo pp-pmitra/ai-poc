@@ -16,6 +16,7 @@ Feature: End to End Workflow of Creative Creation and its assignment To Tactic
     # 1
     Given This scenario will be executed in the "Demo" environment as a "User"
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
+    And Verify Campaign Dashboard is displayed with title "Campaigns"
     And User clicks Creative Library options present under Activation tab
     Then Verify Creative Library page is displayed
     And Verify data persistence when user creates and saves "Display" creative using details "<ADVERTISER>" as Advertiser, "<CREATIVE_NAME>" as Creative Name, "<ADVERTISER_DSA>", "<FINANCER>" and below Creative attributes
@@ -49,6 +50,7 @@ Feature: End to End Workflow of Creative Creation and its assignment To Tactic
     # 1
     Given This scenario will be executed in the "Demo" environment as a "User"
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
+    And Verify Campaign Dashboard is displayed with title "Campaigns"
     And User clicks Creative Library options present under Activation tab
     Then Verify Creative Library page is displayed
     And Verify data persistence when user creates and saves "Display" Bulk upload creative using details "<ADVERTISER>" as Advertiser, "<ADVERTISER_DSA>", "<FINANCER>" and below Creative attributes

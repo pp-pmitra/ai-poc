@@ -427,4 +427,8 @@ public class ReportTemplates {
     public void clickRunReportIconForTemplate() {
         RUN_REPORT_ICON.click();
     }
+
+    public void clickGeneratedReportsTab() {
+        GENERATED_REPORTS_TAB.click();
+    }
 }
