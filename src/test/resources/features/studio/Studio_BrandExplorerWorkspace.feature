@@ -358,20 +358,20 @@ Feature: Brand Explorer Workspace creation in Studio
     And User clicks on "Brand Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
     And User clicks on the Filters tab
-    And User adds a text filter on "<FIELD>" from "<CATEGORY>" category with operator "<OPERATOR>" and value "<VALUE>"
-    Then Verify the text filter on "<FIELD>" with operator "<OPERATOR>" shows value "<VALUE>"
+    And User adds a typed filter on "<FIELD>" from "<CATEGORY>" category with operator "<OPERATOR>" and value "<VALUE>"
+    Then Verify the typed filter on "<FIELD>" with operator "<OPERATOR>" shows value "<VALUE>"
     And User clicks on the Components tab
     And User selects "<FIELD>" from "<CATEGORY>" component panel
     Then Verify "<FIELD>" is visible as a table column
     And Verify the table column "<FIELD>" is filtered by operator "<OPERATOR>" and value "<VALUE>"
     Examples:
-      | ADVERTISER         | CATEGORY                 | FIELD            | OPERATOR            | VALUE |
-      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession       | contains            | Phys  |
-      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession       | starts with         | Phys  |
-      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession       | ends with           | ian   |
-      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession       | doesn't contain     | Nurse |
-      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession       | doesn't start with  | Nurse |
-      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession       | doesn't end with    | Nurse |
+      | ADVERTISER         | CATEGORY                 | FIELD      | OPERATOR           | VALUE |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | contains           | Phys  |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | starts with        | Phys  |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | ends with          | ian   |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | doesn't contain    | Nurse |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | doesn't start with | Nurse |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | doesn't end with   | Nurse |
 
   @regression
   Scenario Outline: Verify the is between numeric operator applies an inclusive range filter
@@ -395,8 +395,8 @@ Feature: Brand Explorer Workspace creation in Studio
     And User clicks on "Brand Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
     And User clicks on the Filters tab
-    And User adds a text filter on "<FIELD>" from "<CATEGORY>" category with operator "<OPERATOR>" and value "<VALUE>"
-    Then Verify the text filter on "<FIELD>" with operator "<OPERATOR>" shows value "<VALUE>"
+    And User adds a typed filter on "<FIELD>" from "<CATEGORY>" category with operator "<OPERATOR>" and value "<VALUE>"
+    Then Verify the typed filter on "<FIELD>" with operator "<OPERATOR>" shows value "<VALUE>"
     And Verify "<FIELD>" is visible as a table column
     And Verify the table column "<FIELD>" is filtered by operator "<OPERATOR>" and value "<VALUE>"
     Examples:
