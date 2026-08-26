@@ -569,4 +569,13 @@ public class BrandExplorerWorkspace {
         waitUtility.waitForLocatorVisible(cells.first());
         return cells.allInnerTexts().stream().map(String::trim).collect(Collectors.toList());
     }
+
+    public boolean deselectComponent(String component) {
+        Locator tableColumn = tableColumnHeader(component).locator("xpath=.//ancestor::th");
+        waitUtility.waitForLocatorVisible(tableColumn);
+        if (tableColumn.getAttribute("aria-selected").equals("true")) {
+            tableColumn.click();
+        }
+        return tableColumn.getAttribute("aria-selected").equals("false");
+    }
 }

@@ -1666,8 +1666,8 @@ public class StudioSteps {
     }
 
     @And("User deselects {string} from the table")
-    public void userDeselectsFromTheTable(String columnName) {
-        logger.info("User deselects from the table: {}", columnName);
-        brandExplorerWorkspace.clickColumnHeader(columnName);
+    public void userDeselectsFromTheTable(String component) {
+        logger.info("User deselects from the table: {}", component);
+        Assert.assertTrue("Failed to deselect component: " + component, brandExplorerWorkspace.deselectComponent(component));
     }
 }
