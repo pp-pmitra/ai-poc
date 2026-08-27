@@ -1195,6 +1195,7 @@ public class LifeSteps {
     @And("Verify Campaign Dashboard is displayed with title {string}")
     public void verifyCampaignDashboardIsDisplayedWithTitle(String title) {
         logger.info("Verifying Campaign Dashboard is displayed with title: {}", title);
+        campaignDashboard.waitUntilCampaignPaginationAppears();
         Assert.assertEquals(title, campaignDashboard.isCampaignDashboardVisibleWithTitle(title));
     }
 
@@ -1674,7 +1675,6 @@ public class LifeSteps {
     @Then("Verify list gets updated successfully")
     public void verify_list_gets_updated_successfully() {
         logger.info("Verifying list is updated successfully: {}", npiNameEdited);
-        npiStaticList.clickBackToNPILists();
         npiLists.searchList(npiNameEdited);
         npiLists.openSearchedList(npiNameEdited);
     }
@@ -5950,8 +5950,7 @@ public class LifeSteps {
             String option = row.get("PopulationOption") != null
                     ? row.get("PopulationOption").trim()
                     : "";
-            String details =
-                    row.get("OptionDetails") != null ? row.get("OptionDetails").trim() : "";
+            String details = row.get("OptionDetails") != null ? row.get("OptionDetails").trim() : "";
             npiSmartList.selectSmartNPIListType(option);
             Map<String, String> attributeMap = Arrays.stream(details.split(","))
                     .map(String::trim)
@@ -6617,6 +6616,7 @@ public class LifeSteps {
     @And("User navigates to the created campaign")
     public void userNavigatesToTheCreatedCampaign() {
         logger.info("Navigating to the created campaign '{}'", campaignNameRandom);
+        campaignDashboard.clickLifetimeFilter();
         campaignDashboard.searchCreatedCampaign(campaignNameRandom);
         campaignDashboard.navigateToCreatedCampaign(lineItemNameRandom);
     }
@@ -7867,5 +7867,13 @@ public class LifeSteps {
     public void verifyThatLineItemCheckboxesAreDisabledWhenTheEntityCheckboxIsSelectedForATactic() {
         logger.info("Verifying that Line Item checkboxes are disabled when the entity checkbox is selected for a Tactic");
         Assert.assertTrue("Line Item checkboxes are not disabled when Tactic checkbox is selected", campaignDashboard.areLineItemCheckboxesEnabled());
+    }
+
+    @And("User searches for the created NPI list")
+    public void userSearchesForTheCreatedNPIList() {
+        logger.info("Searching for the created NPI list: {}", npiName);
+        npiLists.searchList(npiName);
+        npiLists.openSearchedList(npiName);
+        npiNameEdited = npiName;
     }
 }

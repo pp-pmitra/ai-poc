@@ -97,6 +97,7 @@ public class NPISmartList {
     private final Locator EDIT_ICON;
     private final Locator DECILE_SLIDER;
     private final Locator BROWSE_PRESCRIBED_DRUG_FILE;
+    private final Locator NPI_LOADER;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
 
     public NPISmartList(Page page) {
@@ -224,6 +225,7 @@ public class NPISmartList {
                 "//div[contains(@class, 'decileSelectorContainer')]//span[@role='slider' and @aria-label='ngx-slider-max']");
         this.BROWSE_PRESCRIBED_DRUG_FILE = page.locator(
                 "//app-clinical-population[@headername='Prescribed Drug']//div[contains(@class, 'editOrFileSwitch')]//i[@class='icon-20-csv']");
+        this.NPI_LOADER = page.locator("//div[@class='loader']");
     }
 
     public void clickSmartPixelDropDownValue(String smartPixelDropdownValue) {
@@ -289,7 +291,11 @@ public class NPISmartList {
     }
 
     public void selectSmartNPIListType(String smartListType) {
-        waitUtility.waitForElementVisible("//div[@class='loader']");
+        try {
+           waitUtility.waitForLocatorVisible(NPI_LOADER);
+        } catch (com.microsoft.playwright.TimeoutError e) {
+            // Loader didn't appear within 2s, safe to proceed
+        }
         SMART_LIST_POPULATION_OPTIONS.locator("text = " + smartListType).scrollIntoViewIfNeeded();
         SMART_LIST_POPULATION_OPTIONS.locator("text = " + smartListType).click();
         waitUtility.waitUntilSpinnerHidden();
