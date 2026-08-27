@@ -9,7 +9,7 @@ Feature: Brand Explorer Workspace creation in Studio
     And User clicks PulsePoint icon to navigate back to Life
     And User navigates to Studio application
 
-  @e2e
+  @e2e 
   Scenario Outline: Create and save Brand Explorer workspace with default selections
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -22,6 +22,7 @@ Feature: Brand Explorer Workspace creation in Studio
     And User saves the "Brand Explorer" workspace
     Then Verify the "Brand Explorer" Workspace is saved
     And Navigate to workspace dashboard
+    And User selects the workspace type "Brand Explorer"
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
@@ -196,6 +197,50 @@ Feature: Brand Explorer Workspace creation in Studio
       | TAMTESTING ACCOUNT |
 
   @regression
+  Scenario Outline: Verify Brand Explorer segments can be selected and removed
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User removes the default dimensions and metric
+    Then Verify each "segment" under below categories can be selected and removed
+      | NPI List Name                 |
+      | NPI List Name - separate rows |
+    Examples:
+      | ADVERTISER         |
+      | TAMTESTING ACCOUNT |
+
+  @regression
+  Scenario Outline: Verify Brand Explorer chart can be hidden and shown
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    Then Verify the Brand Explorer chart is visible
+    When User clicks the "Hide Chart" chart toggle
+    Then Verify the Brand Explorer chart is hidden
+    And Verify the Brand Explorer table is visible
+    When User clicks the "Show Chart" chart toggle
+    Then Verify the Brand Explorer chart is visible
+    Examples:
+      | ADVERTISER         |
+      | TAMTESTING ACCOUNT |
+
+  @regression
+  Scenario Outline: Verify a Brand Explorer table column can be removed from the table header
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User selects "<FIELD>" from "<CATEGORY>" component panel
+    Then Verify "<FIELD>" is visible as a table column
+    When User removes "<FIELD>" from the table header
+    Then Verify "<FIELD>" is not visible as a table column
+    Examples:
+      | ADVERTISER         | CATEGORY                 | FIELD      |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession |
+
+  @regression 
   Scenario Outline: Verify a saved filter persists when the workspace is closed and reopened
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -218,7 +263,7 @@ Feature: Brand Explorer Workspace creation in Studio
       | ADVERTISER         | WORKSPACE_NAME | CATEGORY                 | FIELD      | VALUE     |
       | TAMTESTING ACCOUNT | Brand_Explorer | Healthcare Professionals | Profession | Physician |
 
-  @regression
+  @regression 
   Scenario Outline: Verify an applied filter is reflected immediately and correctly narrows the dataset in the table
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -288,3 +333,97 @@ Feature: Brand Explorer Workspace creation in Studio
     Examples:
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
+
+  @regression
+  Scenario Outline: Verify Clear All resets Brand Explorer components and chart recovers after defaults are reselected
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    When User clicks Clear All in the Brand Explorer component panel
+    Then Verify no Brand Explorer components are selected
+    And Verify the chart shows the empty state message
+    When User selects "Day" from "Time Frame" component panel
+    And User selects "Identified NPIs" from "NPI Events" component panel
+    Then Verify Dimension "Day" and Metric "Identified NPIs" are selected by default in the workspace
+    And Verify the Brand Explorer chart is visible
+    And Verify the Brand Explorer table is visible
+    Examples:
+      | ADVERTISER         |
+      | TAMTESTING ACCOUNT |
+      
+  @regression 
+  Scenario Outline: Verify categorical filter operators that use a value list can be applied
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User clicks on the Filters tab
+    And User adds a filter on "<FIELD>" from "<CATEGORY>" category with operator "<OPERATOR>" and value "<VALUE>"
+    Then Verify the filter on "<FIELD>" shows value "<VALUE>"
+    And User clicks on the Components tab
+    And User selects "<FIELD>" from "<CATEGORY>" component panel
+    Then Verify "<FIELD>" is visible as a table column
+    And Verify the table column "<FIELD>" is filtered by operator "<OPERATOR>" and value "<VALUE>"
+    Examples:
+      | ADVERTISER         | CATEGORY                 | FIELD      | OPERATOR | VALUE     |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | is       | Physician |
+
+  @regression 
+  Scenario Outline: Verify filter operators that use a free-text value can be applied
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User clicks on the Filters tab
+    And User adds a typed filter on "<FIELD>" from "<CATEGORY>" category with operator "<OPERATOR>" and value "<VALUE>"
+    Then Verify the typed filter on "<FIELD>" with operator "<OPERATOR>" shows value "<VALUE>"
+    And User clicks on the Components tab
+    And User selects "<FIELD>" from "<CATEGORY>" component panel
+    Then Verify "<FIELD>" is visible as a table column
+    And Verify the table column "<FIELD>" is filtered by operator "<OPERATOR>" and value "<VALUE>"
+    Examples:
+      | ADVERTISER         | CATEGORY                 | FIELD      | OPERATOR           | VALUE |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | contains           | Phys  |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | starts with        | Phys  |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | ends with          | ian   |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | doesn't contain    | Nurse |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | doesn't start with | Nurse |
+      | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | doesn't end with   | Nurse |
+
+  @regression
+  Scenario Outline: Verify the is between numeric operator applies an inclusive range filter
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User clicks on the Filters tab
+    And User adds a range filter on "<FIELD>" from "<CATEGORY>" category with operator "is between" and values "<FROM>" and "<TO>"
+    Then Verify the filter on "<FIELD>" shows operator "is between"
+    And Verify "<FIELD>" is visible as a table column
+    And Verify the table column "<FIELD>" is filtered between values "<FROM>" and "<TO>"
+    Examples:
+      | ADVERTISER         | CATEGORY   | FIELD           | FROM | TO |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | 0    | 3  |
+
+  @regression
+  Scenario Outline: Verify numeric filter operators that use a typed value can be applied
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Brand Explorer" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And User clicks on the Filters tab
+    And User adds a typed filter on "<FIELD>" from "<CATEGORY>" category with operator "<OPERATOR>" and value "<VALUE>"
+    Then Verify the typed filter on "<FIELD>" with operator "<OPERATOR>" shows value "<VALUE>"
+    And Verify "<FIELD>" is visible as a table column
+    And Verify the table column "<FIELD>" is filtered by operator "<OPERATOR>" and value "<VALUE>"
+    Examples:
+      | ADVERTISER         | CATEGORY   | FIELD           | OPERATOR | VALUE |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | =        | 1     |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | >        | 0     |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | >=       | 1     |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | <        | 2     |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | <=       | 1     |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | !=       | 1     |
+    
+    

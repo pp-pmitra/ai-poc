@@ -75,7 +75,7 @@ public class SmartPixel {
         PIXEL_CODES_TAB.click();
     }
 
-    public String verifyAssociatedSmartList(String listName) {
+    public String getAssociatedSmartList(String listName) {
         String smartListNameXpath = String.format("//div[contains(text(),'%s')]", listName);
         waitUtility.waitForLocatorVisible(page.locator(smartListNameXpath));
         return page.locator(smartListNameXpath).innerText();
@@ -85,12 +85,12 @@ public class SmartPixel {
         PIXEL_NAME.fill(pixelName);
     }
 
-    public Boolean verifyPixelCodesTabIsSelected() {
+    public Boolean isPixelCodesTabSelected() {
         String classAttribute = PIXEL_CODES_TAB.getAttribute("class");
         return classAttribute.contains("selectedTab");
     }
 
-    public String verifyDeactivateError() {
+    public String getDeactivateError() {
         return DEACTIVATE_ERROR.innerText();
     }
 
@@ -104,7 +104,7 @@ public class SmartPixel {
         DEACTIVATE_PIXEL_BUTTON.click();
     }
 
-    public String deactivateSuccess() {
+    public String getDeactivateSuccessMessage() {
         String text = DEACTIVATE_SUCCESS.innerText();
         waitUtility.waitUntilSpinnerHidden();
         return text;

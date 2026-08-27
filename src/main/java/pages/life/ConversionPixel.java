@@ -59,19 +59,19 @@ public class ConversionPixel {
         PIXEL_NAME.clear();
     }
 
-    public String pixelNameError() {
+    public String getPixelNameError() {
         String pixelNameError = PIXEL_NAME_ERROR.innerText().trim();
         waitUtility.waitForLocatorDetached(PIXEL_NAME_ERROR);
         return pixelNameError;
     }
 
-    public String advertiserError() {
+    public String getAdvertiserError() {
         String advertiserError = ADVERTISER_NAME_ERROR.innerText().trim();
         waitUtility.waitForLocatorDetached(ADVERTISER_NAME_ERROR);
         return advertiserError;
     }
 
-    public String pixelTypeOptionError() {
+    public String getPixelTypeOptionError() {
         String pixelTypeOptionError = PIXEL_TYPE_OPTION_ERROR.innerText().trim();
         waitUtility.waitForLocatorDetached(PIXEL_TYPE_OPTION_ERROR);
         return pixelTypeOptionError;

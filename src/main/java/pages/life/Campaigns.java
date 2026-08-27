@@ -679,6 +679,7 @@ public class Campaigns {
         waitUtility.waitForLocatorVisible(DELETE_CAMPAIGN_SUCCESS_ALERT);
         waitUtility.waitUntilSpinnerHidden();
     }
+
     public String fetchCampaignDeleteSuccessAlert() {
         String text = DELETE_CAMPAIGN_SUCCESS_ALERT.innerText().trim();
         waitUtility.waitForLocatorHidden(DELETE_CAMPAIGN_SUCCESS_ALERT);
