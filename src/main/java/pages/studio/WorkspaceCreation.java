@@ -93,7 +93,7 @@ public class WorkspaceCreation {
         this.RENAME_WORKSPACE_POPUP = WORKSPACE_FRAME.locator("//h3[contains(text(),'Rename Workspace')]");
         this.UPDATE_BUTTON = WORKSPACE_FRAME.locator("//div[contains(text(),'Update')]");
         this.RENAME_WORKSPACE_ALERT = WORKSPACE_FRAME.locator("//p[contains(text(),'Workspace renamed successfully')]");
-        this.SEARCH_WORKSPACE = WORKSPACE_FRAME.locator("//input[contains(@placeholder,'Search')]");
+        this.SEARCH_WORKSPACE = WORKSPACE_FRAME.locator("input[placeholder='Search']");
         this.DUPLICATE_BUTTON = WORKSPACE_FRAME.locator("//div[contains(text(),'Duplicate')]");
         this.DUPLICATE_WORKSPACE_POPUP = WORKSPACE_FRAME.locator("//h3[contains(text(),'Duplicate Workspace')]");
         this.DUPLICATE_BUTTON_FROM_POPUP = WORKSPACE_FRAME.locator(
