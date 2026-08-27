@@ -271,7 +271,7 @@ Feature: LIFE Regression - Run Report fields verification and report generation
       | AutoTemplate20 | 01- Advertiser | CreativeCampaign  | CreativeLine       | CreativeTactic  | Creative          | (GMT+05:30) India Standard Time | Run_Destination_ | SFTP             | ma2-qa-automation01 | 22   | /home/NPIAutoImport/Automation |
 
   @regression
-  Scenario Outline: Deletion of Custom Fields from the Admin Account for Campaign, Line Items and Tactics
+  Scenario Outline: Deletion of Custom Destination Row from the Admin Account
     When User navigates to Administrative section
     And User navigates to Accounts Tab
     And User searches the account "automation@pulsepoint" and selects the account
