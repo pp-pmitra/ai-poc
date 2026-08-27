@@ -83,6 +83,9 @@ public class Campaigns {
     private final Locator DELETE_CAMPAIGN_CONFIRMATION_POPUP;
     private final Locator DELETE_CAMPAIGN_REMOVE_BUTTON;
     private final Locator DELETE_CAMPAIGN_SUCCESS_ALERT;
+    private final Locator CAMPAIGN_PANEL_NAME;
+    private final Locator CAMPAIGN_UPDATED_POPUP;
+    private final Locator REFRESH_BUTTON;
     private final Locator APPLY_FREQUENCY_CAPPING;
     private final Locator PER_TARGET_AUDIENCE_DROPDOWN;
     private final Locator WINDOWS_LIMIT_INPUT;
@@ -186,6 +189,9 @@ public class Campaigns {
         this.DELETE_CAMPAIGN_CONFIRMATION_POPUP = page.locator("//div[contains(@class,'confirm-modal header') and contains(text(),'Removal Confirmation')]");
         this.DELETE_CAMPAIGN_REMOVE_BUTTON = page.locator("//div[contains(@class,'approveButtonText')]/span[contains(text(),'Remove')]");
         this.DELETE_CAMPAIGN_SUCCESS_ALERT = page.locator("//div[@role='alert' and contains(text(),'Campaign deleted successfully')]");
+        this.CAMPAIGN_PANEL_NAME = page.locator("//div[@class='item-details']//div[contains(@class,'campaign-title')]");
+        this.CAMPAIGN_UPDATED_POPUP = page.locator("//div[contains(@class, 'confirm-modal ') and contains(text(),'Campaign updated')]");
+        this.REFRESH_BUTTON = page.locator("//div[contains(@class, 'approveButtonText')]/span[contains(text(),'Refresh')]");
         this.APPLY_FREQUENCY_CAPPING = page.locator("//label[contains(text(),'Apply Frequency Capping')]");
         this.PER_TARGET_AUDIENCE_DROPDOWN = page.locator("//div[contains(@class,'crossDevice-dropdown')]");
         this.WINDOWS_LIMIT_INPUT = page.locator("//input[@formcontrolname='windowLimit']");
@@ -730,5 +736,31 @@ public class Campaigns {
         PER_TARGET_AUDIENCE_DROPDOWN.click();
         Locator perTargetAudienceOption = PER_TARGET_AUDIENCE_DROPDOWN.locator(String.format("//div[@class='item' and text()='%s']", perTargetAudience));
         perTargetAudienceOption.click();
+    }
+
+    public void clearCustomFieldFromCampaign(String fieldName) {
+        waitUtility.waitUntilSpinnerHidden();
+        waitUtility.waitForLocatorVisible(CAMPAIGN_PANEL_NAME);
+        if (!CAMPAIGN_DETAILS_TAB.getAttribute("class").contains("active")) {
+            CAMPAIGN_DETAILS_TAB.click();
+        }
+        waitUtility.waitForLocatorVisible(CAMPAIGN_DETAILS_TAB);
+        if (CAMPAIGN_UPDATED_POPUP.isVisible()) {
+            REFRESH_BUTTON.click();
+            waitUtility.waitUntilSpinnerHidden();
+        }
+        Locator customFieldInput = page.locator(String.format("//span[@class='cmp-form-label-text' and contains(text(),'%s')]/parent::label[contains(@class,'cmp-form-label')]//following-sibling::input", fieldName));
+        waitUtility.waitForLocatorVisible(customFieldInput.last());
+        for (int j = 0; j < customFieldInput.count(); j++) {
+            if (customFieldInput.nth(j).isVisible()) {
+                customFieldInput.nth(j).clear();
+            }
+        }
+        if (SAVE_CAMPAIGN.isVisible()) {
+            SAVE_CAMPAIGN.click();
+            waitUtility.waitForLocatorHidden(CAMPAIGN_SUCCESS);
+        }
+        LineItemDetails lineItemDetails = new LineItemDetails(page);
+        lineItemDetails.clearCustomFieldFromLineItem(fieldName);
     }
 }
