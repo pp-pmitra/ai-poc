@@ -28,6 +28,7 @@ public class NPILists {
     private final Locator DOWNLOAD_ICON;
     private final Locator NPI_BACK_BUTTON;
     private final Locator BULLET_LIST_FROM_NPI_DELETE_POPUP;
+    private final Locator NPI_LIST_HEADER;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
 
     public NPILists(Page page) {
@@ -51,6 +52,7 @@ public class NPILists {
         this.DOWNLOAD_ICON = page.locator("//span[contains(@class,'image download')]");
         this.NPI_BACK_BUTTON = page.locator("//div[contains(@class,'npi-back-button')]");
         this.BULLET_LIST_FROM_NPI_DELETE_POPUP = page.locator("//a[contains(@class, 'bullet_list')]");
+        this.NPI_LIST_HEADER = page.locator("//div[contains(@class,'npi-header-left')]");
     }
 
     public void clickNPILists() {
@@ -162,7 +164,7 @@ public class NPILists {
             newTab.close();
             DriverFactory.threadLocalDriver.set(originalTab);
             originalTab.bringToFront();
-            waitUtility.waitForElementVisible("//div[contains(@class,'npi-header-left')]");
+            waitUtility.waitForLocatorVisible(NPI_LIST_HEADER);
         }
     }
 }
