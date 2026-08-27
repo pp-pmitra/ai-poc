@@ -88,6 +88,13 @@ public class RunReport {
     private final Locator DESTINATION_DROPDOWN;
     private final Locator FILE_NAME_HELP_TEXT;
     private final Locator RE_RUN_ACCESS_BUTTON;
+    private final Locator GENERATED_REPORT_OPTIONS;
+    private final Locator DELETE_REPORT_BUTTON;
+    private final Locator DELETE_REPORT_CONFIRMATION_POPUP;
+    private final Locator DELETE_REPORT_REMOVE_BUTTON;
+    private final Locator DELETE_REPORT_SUCCESS_ALERT;
+    private final Locator NO_REPORT_AVAILABLE_TEXT;
+    private final Locator CLEAR_SEARCH_ICON;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
 
     public RunReport(Page page) {
@@ -128,7 +135,7 @@ public class RunReport {
         this.FETCHED_LINE_ITEM_NAME = page.locator("//input[@name='lineItemLookupInp']/following-sibling::a");
         this.FETCHED_TACTIC_NAME = page.locator("//input[@name='tacticLookupInp']/following-sibling::a");
         this.FETCHED_CREATIVE_NAME = page.locator("//input[@name='creativesLookupInp']/following-sibling::a");
-        this.SEARCH_REPORT = page.locator("input.form-control.ng-untouched.ng-pristine.ng-valid");
+        this.SEARCH_REPORT = page.locator("//div[contains(@class,'search-field')]/input[@placeholder='Search']");
         this.SEARCH_BUTTON = page.locator("div.iconSprite.search1");
         this.START_DATE = page.locator("//input[@formcontrolname='startDate']");
         this.END_DATE = page.locator("//input[@formcontrolname='endDate']");
@@ -190,6 +197,13 @@ public class RunReport {
         this.DESTINATION_DROPDOWN = page.locator("//div[contains(text(),'Destination')]/following-sibling::sui-select");
         this.FILE_NAME_HELP_TEXT = page.locator("//span[@class='custom-destination-example-texr']//span");
         this.RE_RUN_ACCESS_BUTTON = page.locator("//span[contains(text(),'Re-run Access')]");
+        this.GENERATED_REPORT_OPTIONS = page.locator("//img[@title='options' and contains(@class,'actions')]");
+        this.DELETE_REPORT_BUTTON = page.locator("//a[contains(@class,'item')]//span[@class='text' and text()='Delete']");
+        this.DELETE_REPORT_CONFIRMATION_POPUP = page.locator("//div[contains(@class,'confirm-modal header') and contains(text(),'Removal Confirmation')]");
+        this.DELETE_REPORT_REMOVE_BUTTON = page.locator("//div[contains(@class,'approveButtonText')]/span[contains(text(),'Remove')]");
+        this.DELETE_REPORT_SUCCESS_ALERT = page.locator("//div[@role='alert' and contains(text(),'Report deleted successfully')]");
+        this.NO_REPORT_AVAILABLE_TEXT = page.locator("//div[contains(text(), 'No Generated Reports')]");
+        this.CLEAR_SEARCH_ICON = page.locator("//div[contains(@class,'clear-search-close')]");
     }
 
     public boolean isRunReportPanelOpened() {
@@ -845,5 +859,39 @@ public class RunReport {
     public String fetchFileNameHelpText() {
         FILE_NAME_HELP_TEXT.first().scrollIntoViewIfNeeded();
         return FILE_NAME_HELP_TEXT.first().textContent().trim();
+    }
+
+    public void clickReportOptions() {
+        waitUtility.waitUntilSpinnerHidden();
+        waitUtility.waitForLocatorVisible(GENERATED_REPORT_OPTIONS);
+        GENERATED_REPORT_OPTIONS.click();
+    }
+
+    public void deleteReport() {
+        waitUtility.waitForLocatorVisible(DELETE_REPORT_BUTTON);
+        DELETE_REPORT_BUTTON.click();
+        waitUtility.waitForLocatorVisible(DELETE_REPORT_CONFIRMATION_POPUP);
+        DELETE_REPORT_REMOVE_BUTTON.click();
+        waitUtility.waitForLocatorVisible(DELETE_REPORT_SUCCESS_ALERT);
+        waitUtility.waitUntilSpinnerHidden();
+    }
+
+    public String fetchReportDeleteSuccessAlert() {
+        String text = DELETE_REPORT_SUCCESS_ALERT.innerText().trim();
+        waitUtility.waitForLocatorHidden(DELETE_REPORT_SUCCESS_ALERT);
+        return text;
+    }
+
+    public String fetchNoReportFoundMessage(String reportName) {
+        clearSearchField();
+        searchReportName(reportName);
+        return NO_REPORT_AVAILABLE_TEXT.innerText();
+    }
+
+    public void clearSearchField() {
+        if (CLEAR_SEARCH_ICON.isVisible()) {
+            CLEAR_SEARCH_ICON.click();
+            waitUtility.waitUntilPreLoaderHidden();
+        }
     }
 }

@@ -137,7 +137,7 @@ public class ExplorerWorkspace {
         this.WORKSPACE_HEADER =
                 WORKSPACE_FRAME.locator("//div[@data-tour-id='workspace-back-button']/following-sibling::div//ds-typography[@role='heading']");
         this.ADVERTISER_LIST = WORKSPACE_FRAME.locator("//ds-typography[text()='Advertisers']");
-        this.SEARCH_ADVERTISER = WORKSPACE_FRAME.locator("//input[@placeholder='Search']");
+        this.SEARCH_ADVERTISER = WORKSPACE_FRAME.locator("input[placeholder='Search']");
         this.ADVERTISER_BUTTON = WORKSPACE_FRAME.locator("//button[contains(@data-tour-id,'workspace-advertiser')]");
         this.SPECIALITY_PANEL = WORKSPACE_FRAME.locator("//div[@data-testid='bi-include-exclude']/following-sibling::p/text()");
         this.INCLUDE_EXCLUDE_CHECK = WORKSPACE_FRAME.locator("//button[@data-testid='bi-include-exclude-check']");

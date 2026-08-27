@@ -54,6 +54,12 @@ public class ScheduleReport {
     private final Locator THREE_DOT_MENU;
     private final Locator DATE_TIME_FORMAT_OPTIONS;
     private final Locator REPORT_SECOND_ROW;
+    private final Locator DELETE_REPORT_ICON;
+    private final Locator DELETE_REPORT_CONFIRMATION_POPUP;
+    private final Locator DELETE_REPORT_REMOVE_BUTTON;
+    private final Locator DELETE_REPORT_SUCCESS_ALERT;
+    private final Locator NO_REPORT_AVAILABLE_TEXT;
+    private final Locator CLEAR_SEARCH_ICON;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
     RunReport runReport = new RunReport(DriverFactory.getPage());
 
@@ -107,6 +113,12 @@ public class ScheduleReport {
         this.THREE_DOT_MENU = page.locator("//div[@class='variableTooltip']");
         this.DATE_TIME_FORMAT_OPTIONS = page.locator("//span[@class='variable-text']");
         this.REPORT_SECOND_ROW = page.locator("//tr[contains(@class,'fixedrow ng-star-inserted')][2]");
+        this.DELETE_REPORT_ICON = page.locator("//span[@title='Delete']/img[contains(@src,'delete')]");
+        this.DELETE_REPORT_CONFIRMATION_POPUP = page.locator("//div[contains(@class,'confirm-modal header') and contains(text(),'Removal Confirmation')]");
+        this.DELETE_REPORT_REMOVE_BUTTON = page.locator("//div[contains(@class,'approveButtonText')]/span[contains(text(),'Remove')]");
+        this.DELETE_REPORT_SUCCESS_ALERT = page.locator("//div[@role='alert' and contains(text(),'Schedule deleted succesfully')]");
+        this.NO_REPORT_AVAILABLE_TEXT = page.locator("//div[contains(text(), 'Nothing Found')]");
+        this.CLEAR_SEARCH_ICON = page.locator("//div[contains(@class,'clear-search-close')]");
     }
 
     public void clickScheduleReportButton() {
@@ -508,5 +520,38 @@ public class ScheduleReport {
 
     public String fetchDestinationOptions() {
         return DESTINATION_DROPDOWN.locator("xpath=//span[2]").textContent();
+    }
+
+    public void deleteReport() {
+        waitUtility.waitForLocatorVisible(DELETE_REPORT_ICON);
+        DELETE_REPORT_ICON.click();
+        waitUtility.waitForLocatorVisible(DELETE_REPORT_CONFIRMATION_POPUP);
+        DELETE_REPORT_REMOVE_BUTTON.click();
+        waitUtility.waitForLocatorVisible(DELETE_REPORT_SUCCESS_ALERT);
+        waitUtility.waitUntilSpinnerHidden();
+    }
+
+    public String fetchReportDeleteSuccessAlert() {
+        String text = DELETE_REPORT_SUCCESS_ALERT.innerText().trim();
+        waitUtility.waitForLocatorHidden(DELETE_REPORT_SUCCESS_ALERT);
+        return text;
+    }
+
+    public void searchScheduledReport(String templateName) {
+        SEARCH_TEXTBOX.fill(templateName);
+        SEARCH_ICON.click();
+    }
+
+    public String fetchNoReportFoundMessage(String templateName) {
+        clearSearchField();
+        searchScheduledReport(templateName);
+        return NO_REPORT_AVAILABLE_TEXT.innerText();
+    }
+
+    public void clearSearchField() {
+        if (CLEAR_SEARCH_ICON.isVisible()) {
+            CLEAR_SEARCH_ICON.click();
+            waitUtility.waitUntilPreLoaderHidden();
+        }
     }
 }

@@ -1343,6 +1343,15 @@ public class StudioSteps {
 
     @Then("Verify each {string} under below categories can be selected and removed")
     public void verifyEachComponentUnderCategoriesCanBeSelectedAndRemoved(String componentType, DataTable dataTable) {
+        if ("segment".equalsIgnoreCase(componentType)) {
+            List<String> components = dataTable.asList(String.class);
+            logger.info("Verifying standalone {}s can be selected and removed: {}", componentType, components);
+            List<String> failures = brandExplorerWorkspace.verifyStandaloneComponentsSelectAndRemove(components);
+            logger.info("Standalone {} select/remove failures: {}", componentType, failures);
+            Assert.assertTrue(componentType + " select/remove verification failed: " + failures, failures.isEmpty());
+            return;
+        }
+
         for (List<String> row : dataTable.asLists(String.class)) {
             String category = row.get(0).trim();
             List<String> components =
@@ -1354,6 +1363,30 @@ public class StudioSteps {
                     "Select/remove verification failed for category '" + category + "': " + failures,
                     failures.isEmpty());
         }
+    }
+
+    @Then("Verify the Brand Explorer chart is visible")
+    public void verifyTheBrandExplorerChartIsVisible() {
+        logger.info("Verifying Brand Explorer chart is visible");
+        Assert.assertTrue("Brand Explorer chart is not visible", brandExplorerWorkspace.isChartVisible());
+    }
+
+    @Then("Verify the Brand Explorer chart is hidden")
+    public void verifyTheBrandExplorerChartIsHidden() {
+        logger.info("Verifying Brand Explorer chart is hidden");
+        Assert.assertTrue("Brand Explorer chart is not hidden", brandExplorerWorkspace.isChartHidden());
+    }
+
+    @Then("Verify the Brand Explorer table is visible")
+    public void verifyTheBrandExplorerTableIsVisible() {
+        logger.info("Verifying Brand Explorer table is visible");
+        Assert.assertTrue("Brand Explorer table is not visible", brandExplorerWorkspace.isTableVisible());
+    }
+
+    @When("User clicks the {string} chart toggle")
+    public void userClicksTheChartToggle(String label) {
+        logger.info("Clicking Brand Explorer chart toggle: {}", label);
+        brandExplorerWorkspace.clickChartToggle(label);
     }
 
     @And("User selects Source Audience details as {string},{string}")
@@ -1427,6 +1460,20 @@ public class StudioSteps {
                 brandExplorerWorkspace.isComponentVisibleAsTableColumn(component));
     }
 
+    @Then("Verify {string} is not visible as a table column")
+    public void verifyComponentIsNotVisibleAsATableColumn(String component) {
+        logger.info("Verifying '{}' is not visible as a table column", component);
+        Assert.assertFalse(
+                "Component '" + component + "' is still visible as a table column",
+                brandExplorerWorkspace.isComponentVisibleAsTableColumn(component));
+    }
+
+    @When("User removes {string} from the table header")
+    public void userRemovesColumnFromTheTableHeader(String columnName) {
+        logger.info("Removing '{}' from the table header", columnName);
+        brandExplorerWorkspace.removeTableColumnFromHeader(columnName);
+    }
+
     @Then("Verify the table column {string} only shows rows with value {string}")
     public void verifyTheTableColumnOnlyShowsRowsWithValue(String field, String value) {
         List<String> columnValues = brandExplorerWorkspace.getTableColumnValues(field);
@@ -1457,5 +1504,170 @@ public class StudioSteps {
     public void userClicksOnTheMoreActionsMenuForTheSavedWorkspace() {
         logger.info("Clicking on the More Actions menu for the saved workspace: {}", workspaceName);
         workspaceCreation.clickMoreActionsMenu(workspaceName);
+    }
+
+    @And("User removes the default {string} only")
+    public void userRemovesTheDefaultComponentOnly(String componentType) {
+        logger.info("Removing default {} only", componentType);
+        if ("dimension".equalsIgnoreCase(componentType)) {
+            brandExplorerWorkspace.deselectComponent("Time Frame", "Day");
+        } else {
+            brandExplorerWorkspace.deselectComponent("NPI Events", "Identified NPIs");
+        }
+    }
+
+    @Then("Verify the chart shows the empty state message")
+    public void verifyTheChartShowsTheEmptyStateMessage() {
+        Assert.assertTrue(
+                "Chart did not show the 'requires at least 1 dimension and 1 metric' empty state",
+                brandExplorerWorkspace.isChartEmptyStateDisplayed());
+    }
+
+    @When("User clicks Clear All in the Brand Explorer component panel")
+    public void userClicksClearAllInTheBrandExplorerComponentPanel() {
+        logger.info("Clicking Clear All in the Brand Explorer component panel");
+        brandExplorerWorkspace.clickClearAllComponents();
+    }
+
+    @Then("Verify no Brand Explorer components are selected")
+    public void verifyNoBrandExplorerComponentsAreSelected() {
+        logger.info("Verifying no Brand Explorer components are selected");
+        Assert.assertTrue(
+                "Brand Explorer still shows selected components",
+                brandExplorerWorkspace.areNoComponentsSelected());
+    }
+    
+    @And("User adds a filter on {string} from {string} category with operator {string} and value {string}")
+    public void userAddsAFilterOnFieldFromCategoryWithOperatorAndValue(
+            String field, String category, String operator, String value) {
+        logger.info(
+                "Adding filter on '{}' from '{}' category with operator '{}' and value '{}'",
+                field, category, operator, value);
+        brandExplorerWorkspace.clickAddFilter();
+        brandExplorerWorkspace.selectFilterField(category, field);
+        brandExplorerWorkspace.closeFilterDialog();
+        brandExplorerWorkspace.selectFilterOperator(field, operator);
+        brandExplorerWorkspace.enterFilterValue(field, value);
+    }
+
+    @And("User adds a typed filter on {string} from {string} category with operator {string} and value {string}")
+    public void userAddsATypedFilterOnFieldFromCategoryWithOperatorAndValue(
+            String field, String category, String operator, String value) {
+        logger.info(
+                "Adding typed filter on '{}' from '{}' category with operator '{}' and value '{}'",
+                field, category, operator, value);
+        brandExplorerWorkspace.clickAddFilter();
+        brandExplorerWorkspace.selectFilterField(category, field);
+        brandExplorerWorkspace.closeFilterDialog();
+        brandExplorerWorkspace.selectFilterOperator(field, operator);
+        brandExplorerWorkspace.enterFilterTextValue(field, value);
+    }
+
+    @And("User adds a range filter on {string} from {string} category with operator {string} and values {string} and {string}")
+    public void userAddsARangeFilterOnFieldFromCategoryWithOperatorAndValues(
+            String field, String category, String operator, String from, String to) {
+        logger.info(
+                "Adding range filter on '{}' from '{}' category with operator '{}' and values '{}' and '{}'",
+                field, category, operator, from, to);
+        brandExplorerWorkspace.clickAddFilter();
+        brandExplorerWorkspace.selectFilterField(category, field);
+        brandExplorerWorkspace.closeFilterDialog();
+        brandExplorerWorkspace.selectFilterOperator(field, operator);
+        brandExplorerWorkspace.enterRangeFilterValues(field, from, to);
+    }
+
+    private double parseNumericValue(String value) {
+        String numericValue = value.replaceAll("[^0-9.-]", "");
+        if (numericValue.isEmpty()) {
+            Assert.fail("Expected numeric value but found: " + value);
+        }
+        return Double.parseDouble(numericValue);
+    }
+
+    private boolean matchesFilterOperator(String columnValue, String operator, String expectedValue) {
+        String actual = columnValue.trim();
+        String expected = expectedValue.trim();
+        String actualLower = actual.toLowerCase();
+        String expectedLower = expected.toLowerCase();
+        return switch (operator.toLowerCase()) {
+            case "is" -> actual.equalsIgnoreCase(expected);
+            case "is not" -> !actual.equalsIgnoreCase(expected);
+            case "contains" -> actualLower.contains(expectedLower);
+            case "doesn't contain" -> !actualLower.contains(expectedLower);
+            case "starts with" -> actualLower.startsWith(expectedLower);
+            case "doesn't start with" -> !actualLower.startsWith(expectedLower);
+            case "ends with" -> actualLower.endsWith(expectedLower);
+            case "doesn't end with" -> !actualLower.endsWith(expectedLower);
+            case "=" -> parseNumericValue(actual) == parseNumericValue(expected);
+            case "!=" -> parseNumericValue(actual) != parseNumericValue(expected);
+            case ">" -> parseNumericValue(actual) > parseNumericValue(expected);
+            case ">=" -> parseNumericValue(actual) >= parseNumericValue(expected);
+            case "<" -> parseNumericValue(actual) < parseNumericValue(expected);
+            case "<=" -> parseNumericValue(actual) <= parseNumericValue(expected);
+            default -> {
+                Assert.fail("Unsupported operator for table value validation: " + operator);
+                yield false;
+            }
+        };
+    }
+
+    @Then("Verify the table column {string} is filtered by operator {string} and value {string}")
+    public void verifyTheTableColumnIsFilteredByOperatorAndValue(String field, String operator, String value) {
+        List<String> columnValues = brandExplorerWorkspace.getTableColumnValues(field);
+        logger.info("Values in table column '{}' after '{}' filter '{}': {}", field, operator, value, columnValues);
+        Assert.assertFalse("No rows found in table column: " + field, columnValues.isEmpty());
+        Assert.assertTrue(
+                "Table column '" + field + "' is not filtered by operator '" + operator + "' and value '"
+                        + value + "': " + columnValues,
+                columnValues.stream().allMatch(columnValue -> matchesFilterOperator(columnValue, operator, value)));
+    }
+
+    @Then("Verify the typed filter on {string} with operator {string} shows value {string}")
+    public void verifyTheTypedFilterOnFieldWithOperatorShowsValue(String field, String operator, String value) {
+        String cardSummary = brandExplorerWorkspace.getFilterCardSummary(field);
+        String appliedSummary = brandExplorerWorkspace.getAppliedTypedFilterSummary(field, operator, value);
+        String expectedDisplayValue = brandExplorerWorkspace.getExpectedTypedFilterDisplayValue(operator, value);
+        logger.info("Typed filter card summary for '{}': {}", field, cardSummary);
+        logger.info("Applied typed filter summary for '{}': {}", field, appliedSummary);
+        Assert.assertTrue(
+                "Filter card '" + cardSummary + "' does not contain expected operator '" + operator + "'",
+                cardSummary.toLowerCase().contains(operator.toLowerCase()));
+        Assert.assertTrue(
+                "Applied filter summary '" + appliedSummary + "' does not contain expected value '"
+                        + expectedDisplayValue + "'",
+                appliedSummary.contains(expectedDisplayValue));
+    }
+
+    @Then("Verify the filter on {string} shows operator {string}")
+    public void verifyTheFilterOnFieldShowsOperator(String field, String operator) {
+        String summary = brandExplorerWorkspace.getFilterCardSummary(field);
+        logger.info("Filter summary for '{}': {}", field, summary);
+        Assert.assertTrue(
+                "Filter summary '" + summary + "' does not contain expected operator '" + operator + "'",
+                summary.toLowerCase().contains(operator.toLowerCase()));
+    }
+
+    private boolean isNumericValueBetween(String value, double from, double to) {
+        double actual = parseNumericValue(value);
+        return actual >= from && actual <= to;
+    }
+
+    @And("Verify the table column {string} is filtered between values {string} and {string}")
+    public void verifyTheTableColumnIsFilteredBetweenValues(String field, String from, String to) {
+        double fromValue = Double.parseDouble(from);
+        double toValue = Double.parseDouble(to);
+        List<String> columnValues = brandExplorerWorkspace.getTableColumnValues(field);
+        logger.info("Values in table column '{}' after range filter '{}'-'{}': {}", field, from, to, columnValues);
+        Assert.assertFalse("No rows found in table column: " + field, columnValues.isEmpty());
+        Assert.assertTrue(
+                "Table column '" + field + "' contains values outside range " + from + " to " + to + ": "
+                        + columnValues,
+                columnValues.stream().allMatch(value -> isNumericValueBetween(value, fromValue, toValue)));
+    }
+
+    @And("User deselects {string} from the table")
+    public void userDeselectsFromTheTable(String component) {
+        logger.info("User deselects from the table: {}", component);
+        Assert.assertTrue("Failed to deselect component: " + component, brandExplorerWorkspace.deselectComponent(component));
     }
 }
