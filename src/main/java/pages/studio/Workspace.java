@@ -89,8 +89,8 @@ public class Workspace {
         this.WEBHOOK_ICON = WORKSPACE_FRAME.locator(
                 "(//div[@role='group']/following-sibling::div//button)[3]"); // no unique identifier is available hence
         // index needs to be provided
-        this.WEBHOOK_TOGGLE_BUTTON = WORKSPACE_FRAME.locator("//span[contains(@class,'MuiButtonBase-root')]");
-        this.WEBHOOK_PANEL_TITLE = WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'Webhook')]");
+        this.WEBHOOK_TOGGLE_BUTTON = WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'Webhook')]/parent::div/following-sibling::div//span[contains(@class,'MuiButtonBase-root')]");
+        this.WEBHOOK_PANEL_TITLE = WORKSPACE_FRAME.locator("//div[@role='dialog']//ds-typography[contains(text(),'Webhook') and @role='heading']");
         this.WEBHOOK_CANCEL_BUTTON = WORKSPACE_FRAME.locator("//button[@type='button']/div[contains(text(),'Cancel')]");
         this.URL_TEXTAREA = WORKSPACE_FRAME.locator("//textarea[@name='url']");
         this.BODY_TEXTAREA = WORKSPACE_FRAME.locator("//textarea[@name='body']");

@@ -6625,6 +6625,7 @@ public class LifeSteps {
     @And("User navigates to the created campaign")
     public void userNavigatesToTheCreatedCampaign() {
         logger.info("Navigating to the created campaign '{}'", campaignNameRandom);
+        campaignDashboard.clickLifetimeFilter();
         campaignDashboard.searchCreatedCampaign(campaignNameRandom);
         campaignDashboard.navigateToCreatedCampaign(lineItemNameRandom);
     }
@@ -7894,6 +7895,14 @@ public class LifeSteps {
         for (String entry : deletedEntries) {
             Assert.assertTrue("Custom destination deletion failed", accounts.isDeletedEntryAvailable(entry));
         }
+    }
+
+    @And("User searches for the created NPI list")
+    public void userSearchesForTheCreatedNPIList() {
+        logger.info("Searching for the created NPI list: {}", npiName);
+        npiLists.searchList(npiName);
+        npiLists.openSearchedList(npiName);
+        npiNameEdited = npiName;
     }
 
     @And("User searches and opens the pixel")

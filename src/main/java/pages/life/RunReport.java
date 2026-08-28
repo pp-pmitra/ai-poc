@@ -96,6 +96,7 @@ public class RunReport {
     private final Locator NO_REPORT_AVAILABLE_TEXT;
     private final Locator CLEAR_SEARCH_ICON;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
+    private String[] cachedDates;
 
     public RunReport(Page page) {
         this.page = page;
@@ -441,9 +442,9 @@ public class RunReport {
     }
 
     public boolean selectStartAndEndDate() {
-        String[] dates = CommonUtils.generateStartAndEndDates();
-        boolean startSelected = selectDate(START_DATE, dates[0]);
-        boolean endSelected = selectDate(END_DATE, dates[1]);
+        cachedDates = CommonUtils.generateStartAndEndDates();
+        boolean startSelected = selectDate(START_DATE, cachedDates[0]);
+        boolean endSelected = selectDate(END_DATE, cachedDates[1]);
         return startSelected && endSelected;
     }
 
