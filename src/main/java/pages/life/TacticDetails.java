@@ -86,6 +86,7 @@ public class TacticDetails {
     private final Locator PERCENT_TYPE_FEE_INPUT;
     private final Locator DOLLAR_TYPE_FEE_INPUT;
     private final Locator CANCEL_BUTTON;
+    private final Locator TACTIC_PANEL_NAME;
     private List<String> showExpressionRawValues;
     private List<String> showExpressionValues;
     Campaigns campaigns = new Campaigns(DriverFactory.getPage());
@@ -171,6 +172,7 @@ public class TacticDetails {
         this.PERCENT_TYPE_FEE_INPUT = page.locator("//div[contains(@class,'management-fee-container')]//input[contains(@class,'percent-img')]");
         this.DOLLAR_TYPE_FEE_INPUT = page.locator("//div[contains(@class,'management-fee-container')]//input[contains(@class,'doller-img')]");
         this.CANCEL_BUTTON = page.locator("//span[contains(@class,'cancleButton')]");
+        this.TACTIC_PANEL_NAME = page.locator("//div[@class='tactic item-details']/div[@class='tactic-main-details']");
     }
 
     public void clickNewTactic() {
@@ -727,5 +729,30 @@ public class TacticDetails {
     public void addNewTactic() {
         NEW_TACTIC_BUTTON.click();
         waitUtility.waitForLocatorVisible(CUSTOM_FIELD);
+    }
+
+    public void clearCustomFieldFromTactic(String fieldName) {
+        waitUtility.waitUntilSpinnerHidden();
+        if (TACTIC_PANEL_NAME.last().isVisible()) {
+            for (int j = 0; j < TACTIC_PANEL_NAME.count(); j++) {
+                TACTIC_PANEL_NAME.nth(j).click();
+                waitUtility.waitUntilSpinnerHidden();
+                waitUtility.waitForLocatorVisible(TACTIC_DETAILS_TAB);
+                if (TACTIC_DETAILS_TAB.isVisible()) {
+                    TACTIC_DETAILS_TAB.click();
+                    waitUtility.waitUntilSpinnerHidden();
+                    Locator customFieldInput = page.locator(String.format("//span[@class='cmp-form-label-text' and contains(text(),'%s')]/parent::label[contains(@class,'cmp-form-label')]//following-sibling::input", fieldName));
+                    for (int i = 0; i < customFieldInput.count(); i++) {
+                        if (customFieldInput.nth(i).isVisible()) {
+                            customFieldInput.nth(i).clear();
+                        }
+                    }
+                    if (SAVE_TACTIC_DETAILS.isVisible()) {
+                        SAVE_TACTIC_DETAILS.click();
+                        waitUtility.waitForLocatorHidden(TACTIC_DETAILS_SUCCESS);
+                    }
+                }
+            }
+        }
     }
 }

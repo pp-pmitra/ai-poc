@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import utils.CommonUtils;
 import utils.WaitUtility;
 
-public class RunReportPanel {
+public class RunReport {
     private final Page page;
     private final Locator RUN_REPORT_PANEL_HEADER;
     private final Locator TEMPLATE_DROPDOWN;
@@ -98,7 +98,7 @@ public class RunReportPanel {
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
     private String[] cachedDates;
 
-    public RunReportPanel(Page page) {
+    public RunReport(Page page) {
         this.page = page;
         this.RUN_REPORT_PANEL_HEADER = page.locator("//div[contains(text(),'Run Report')]");
         this.TEMPLATE_DROPDOWN = page.locator("//input[@placeholder='Select Template']");

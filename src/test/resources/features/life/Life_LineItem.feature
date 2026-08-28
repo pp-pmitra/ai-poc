@@ -137,5 +137,5 @@ Feature: LIFE Regression - Line Item Management
     Then Verify the custom field created in line item details page is available for all line items under the campaign
     Then User deletes the custom field and verify its removed from new "line item"
     Examples:
-      | LINE_ITEM  | CUSTOM_NAME     | LINE_BUDGET |
-      | Line_Item_ | Custom_Field_ID | 50          |
+      | LINE_ITEM  | CUSTOM_NAME  | LINE_BUDGET |
+      | Line_Item_ | Custom_Field | 50          |

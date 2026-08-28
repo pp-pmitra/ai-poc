@@ -47,8 +47,8 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Then User clears the custom field text
     Then User deletes the custom field and verify its removed from new "tactic"
     Examples:
-      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | CUSTOM_NAME | TACTIC_SEARCH |
-      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Custom ID   | Tactic        |
+      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | CUSTOM_NAME  | TACTIC_SEARCH |
+      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Custom_Field | Tactic        |
 
   @regression
   Scenario Outline: Verify Base bid price and Max bid price populates correctly for a tactic
@@ -148,8 +148,8 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Then User gets error of limit exceeded "<ON_LI_LEVEL>"
 
     Examples:
-      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | FREQUENCY_VALUE_1 | FREQUENCY_VALUE_2 | FREQUENCY_VALUE_3 | EXCEEDED_FREQUENCY_VALUE | TIMES_PER_1 | TIMES_PER_2 | TIMES_PER_3 | SCOPE_1       | SCOPE_2    | SCOPE_3       | ON_CAMPAIGN_LEVEL | ON_LI_LEVEL        | ON_TACTIC_LEVEL |
-      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | 10                | 15                | 20                | 999                      | hour(s)     | month       | day         | Per Person    | Per Person | Per Household | on Campaign Level | on Line Item Level | on tactic level |
+      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | FREQUENCY_VALUE_1 | FREQUENCY_VALUE_2 | FREQUENCY_VALUE_3 | EXCEEDED_FREQUENCY_VALUE | TIMES_PER_1 | TIMES_PER_2 | TIMES_PER_3 | SCOPE_1    | SCOPE_2    | SCOPE_3       | ON_CAMPAIGN_LEVEL | ON_LI_LEVEL        | ON_TACTIC_LEVEL |
+      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | 10                | 15                | 20                | 999                      | hour(s)     | month       | day         | Per Person | Per Person | Per Household | on Campaign Level | on Line Item Level | on tactic level |
 
   @regression
   Scenario Outline: Add and Verify Comment/notes on New Tactic from Header and Navigation

@@ -61,7 +61,7 @@ public class ScheduleReport {
     private final Locator NO_REPORT_AVAILABLE_TEXT;
     private final Locator CLEAR_SEARCH_ICON;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
-    RunReportPanel runReportPanel = new RunReportPanel(DriverFactory.getPage());
+    RunReport runReport = new RunReport(DriverFactory.getPage());
     private String[] cachedDates;
 
     public ScheduleReport(Page page) {
@@ -156,14 +156,14 @@ public class ScheduleReport {
 
     public boolean selectScheduleStartDate() {
         cachedDates = CommonUtils.generateStartAndEndDates();
-        return runReportPanel.selectDate(SCHEDULE_START_DATE, cachedDates[0]);
+        return runReport.selectDate(SCHEDULE_START_DATE, cachedDates[0]);
     }
 
     public boolean selectScheduleEndDate() {
         if (cachedDates == null) {
             cachedDates = CommonUtils.generateStartAndEndDates();
         }
-        return runReportPanel.selectDate(SCHEDULE_END_DATE, cachedDates[1]);
+        return runReport.selectDate(SCHEDULE_END_DATE, cachedDates[1]);
     }
 
     private boolean selectDate(Locator input, int day) {
@@ -349,12 +349,12 @@ public class ScheduleReport {
 
     public boolean selectStartDate() {
         String[] dates = CommonUtils.generateStartAndEndDates();
-        return runReportPanel.selectDate(START_DATE, dates[0]);
+        return runReport.selectDate(START_DATE, dates[0]);
     }
 
     public boolean selectEndDate() {
         String[] dates = CommonUtils.generateStartAndEndDates();
-        return runReportPanel.selectDate(END_DATE, dates[1]);
+        return runReport.selectDate(END_DATE, dates[1]);
     }
 
     public void clickScheduleButton() {
