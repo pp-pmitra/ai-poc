@@ -66,10 +66,10 @@ public class ScheduleReport {
 
     public ScheduleReport(Page page) {
         this.page = page;
-        this.SCHEDULE_REPORT_BUTTON = page.locator("//button[text()='Schedule Report']");
+        this.SCHEDULE_REPORT_BUTTON = page.locator("//app-ds-button-wrapper[@label='Schedule Report']");
         this.SCHEDULE_REPORT_PANEL_HEADER = page.locator("//div[contains(text(),'Schedule Report')]");
         this.REPORT_NAME = page.locator("//input[@formcontrolname='scheduleReportName']");
-        this.FREQUENCY_BUTTON = page.locator("//button[@name='frequencyOptionType']");
+        this.FREQUENCY_BUTTON = page.locator("app-ds-tab-switch-wrapper button[role='tab']");
         this.SCHEDULE_START_DATE = page.locator("//input[@id='scheduleStartDate']");
         this.SCHEDULE_END_DATE = page.locator("//input[@id='scheduleEndDate']");
         this.CALENDAR_VIEW = page.locator("sui-calendar-date-view");
@@ -101,7 +101,7 @@ public class ScheduleReport {
         this.END_DATE = page.locator("//input[@placeholder='End Date']");
         this.SCHEDULE_START_TIME = page.locator("//input[@formcontrolname='scheduleDataStartTime']");
         this.SCHEDULE_END_TIME = page.locator("//input[@formcontrolname='scheduleDataEndTime']");
-        this.SCHEDULE_BUTTON = page.locator("//button[contains(@class, 'okButton') and contains(text(),'Schedule')]");
+        this.SCHEDULE_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Schedule").setExact(true));
         this.SUCCESS_ALERT = page.locator("//div[@aria-label='Success!']");
         this.SEARCH_TEXTBOX = page.locator("//input[contains(@class,'gaTableSearch')]");
         this.SEARCH_ICON = page.locator("//div[contains(@class,'gaTableSearchBtn')]");

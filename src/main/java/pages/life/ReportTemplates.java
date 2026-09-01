@@ -76,7 +76,7 @@ public class ReportTemplates {
                 "//a[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'generated reports')]");
         this.SCHEDULING_TAB = page.locator(
                 "//a[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'scheduling')]");
-        this.NEW_TEMPLATE = page.locator("//button[normalize-space(text())='New Template']");
+        this.NEW_TEMPLATE = page.locator("//app-ds-button-wrapper[@label='New Template']");
         this.REPORT_DIMENSIONS = page.locator("//div[normalize-space(text())='Dimensions']");
         this.REPORT_METRICS = page.locator("//div[normalize-space(text())='Metrics']");
         this.TEMPLATE_NAME = page.locator("//input[contains(@class,'template-name')]");
@@ -86,7 +86,7 @@ public class ReportTemplates {
         this.SELECT_METRIC = page.locator("//label[text()='Impressions']");
         this.VERIFY_DIMENSION = page.locator("//sortable-item[contains(@class,'diemension')]//label");
         this.VERIFY_METRIC = page.locator("//sortable-item[contains(@class,'metric')]//label");
-        this.SAVE_TEMPLATE = page.locator("//button[normalize-space(text())='Save']");
+        this.SAVE_TEMPLATE = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Save"));
         this.TEMPLATE_SUCCESS =
                 page.locator("//div[@role='alert' and contains(text(),'Template created successfully')]");
         this.SEARCH_TEMPLATE = page.locator("//input[contains(@class,'gaTableSearch') and @placeholder='Search']");
