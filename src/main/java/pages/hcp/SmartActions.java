@@ -73,7 +73,8 @@ public class SmartActions {
         this.SMART_LIST_NAME = page.locator("//input[@formcontrolname='smartListName']");
         this.DAYS = page.locator("//input[@formcontrolname='noOfDays']");
         this.SMART_ACTIONS_DELETE_ICON = page.locator("//app-icon-lable-link[@icon='20-delete.svg']");
-        this.SMART_ACTION_REMOVAL_CONFIRMATION_POPUP = page.locator("//h1[@class='mat-dialog-title' and text()='Warning: Smart Action Removal']");
+        this.SMART_ACTION_REMOVAL_CONFIRMATION_POPUP =
+                page.locator("//h1[contains(@class,'mat-mdc-dialog-title') and text()='Warning: Smart Action Removal']");
         this.REMOVE_BUTTON = page.locator("//button[contains(@class,'btn')]//span[text()='Remove']");
     }
 
@@ -164,6 +165,7 @@ public class SmartActions {
                 response -> response.status() == 200,
                 REMOVE_BUTTON::click
         );
+        waitUtility.waitForLocatorHidden(SMART_ACTION_REMOVAL_CONFIRMATION_POPUP);
         waitUtility.waitUntilSpinnerHidden();
     }
 }
