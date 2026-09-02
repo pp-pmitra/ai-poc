@@ -387,15 +387,6 @@ public class Campaigns {
         return fetchDefaultValue(BUDGET_STATUS);
     }
 
-//    public String fetchDefaultValue(Locator locator) {
-//        for (int i = 0; i < locator.count(); i++) {
-//            if (locator.nth(i).getAttribute("class") != null
-//                    && locator.nth(i).getAttribute("class").contains("active"))
-//                return locator.nth(i).textContent().trim();
-//        }
-//        return "";
-//    }
-
     public String fetchDefaultValue(Locator locator) {
         for (int i = 0; i < locator.count(); i++) {
             if (locator.nth(i).getAttribute("aria-selected") != null)

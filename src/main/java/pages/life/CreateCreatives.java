@@ -570,7 +570,6 @@ public class CreateCreatives {
     public void fillAttributes(String type, Map<String, String> attributeMap) {
         switch (type) {
             case "Html", "Html5", "Image":
-                //page.locator(String.format("//button[text()='%s']", type)).click();
                 page.locator(String.format("button[role='tab']:text-is('%s')", type)).click();
                 if (type.equals("Html5")) {
                     CommonUtils.uploadFile(page, 0, imageTextLocator, attributeMap.get("ArchiveFile"));
@@ -592,7 +591,6 @@ public class CreateCreatives {
                 break;
 
             case "Upload", "Audio URL", "VAST URL", "VAST XML", "Video URL":
-                //page.locator(String.format("//button[text()='%s']", type)).click();
                 page.locator(String.format("button[role='tab']:text-is('%s')", type)).click();
                 if (type.contains("Upload")) {
                     CommonUtils.uploadFile(page, 0, imageTextLocator, attributeMap.get("FileName"));
@@ -750,12 +748,6 @@ public class CreateCreatives {
                 .trim());
         if (CREATIVE_NAME.isVisible())
             creativeDetails.add(CREATIVE_NAME.inputValue().trim());
-//        for (int i = 0; i < APPROVAL_STATUS_BUTTON.count(); i++) {
-//            if (APPROVAL_STATUS_BUTTON.nth(i).getAttribute("class").contains("active")) {
-//                creativeDetails.add(APPROVAL_STATUS_BUTTON.nth(i).textContent().trim());
-//                break;
-//            }
-//        }
         for (int i = 0; i < APPROVAL_STATUS_BUTTON.count(); i++) {
             Locator tab = APPROVAL_STATUS_BUTTON.nth(i);
             if (tab.getAttribute("aria-selected") != null) {
