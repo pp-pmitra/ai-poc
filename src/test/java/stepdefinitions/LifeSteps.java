@@ -1160,7 +1160,7 @@ public class LifeSteps {
         reportTemplates.enterDetailsToRunReport(templateNameRandom, tacticNameRandom);
     }
 
-    @Then("User verifies the selected campaign,line item, tactic and runs report by clicking on Run button")
+    @Then("User verifies the selected campaign, line item, tactic and runs report by clicking on Run button")
     public void user_verifies_the_selected_details() {
         logger.info("Verifying autopopulated campaign and line item, then running report");
         Assert.assertEquals(campaignNameRandom, reportTemplates.verifyAutopopulatedCampaign(campaignNameRandom));
