@@ -2,6 +2,7 @@ package pages.life;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import factory.DriverFactory;
 import utils.WaitUtility;
@@ -31,12 +32,12 @@ public class TacticCreatives {
         this.page = page;
         this.VERIFY_TACTIC_CREATIVES_PAGE = page.locator("//div[text()='Creative(s)']");
         this.SEARCH_CREATIVE = page.locator("//input[contains(@class, 'gaTableSearch')]");
-        this.CLICK_SEARCH = page.locator("//div[contains(@class,'gaTableSearchBtn')]");
+        this.CLICK_SEARCH = page.locator("//app-ds-button-wrapper[contains(@class,'gaTableSearchBtn')]");
         this.ASSIGN_CREATIVE_OK_BUTTON =
-                page.locator("//button[@class='ui primary button okButton' and normalize-space(text())='Ok']");
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Ok").setExact(true));
         this.ENABLE_CREATIVE =
                 page.locator("//sui-checkbox[@class='toggle ui checkbox ng-untouched ng-pristine ng-valid']");
-        this.SAVE_TACTIC_CREATIVES = page.locator("//span[text()='Save']");
+        this.SAVE_TACTIC_CREATIVES = page.locator("//app-ds-button-wrapper[@label='Save']");
         this.TACTIC_CREATIVE_SUCCESS = page.locator("//div[@aria-label='Success!']");
         this.NAVIGATE_TO_CAMPAIGN_DASHBOARD = page.locator("//div[contains(@class,'campaign-tile')]");
         this.CAMPAIGN_STATUS = page.locator("//span[contains(@class,'status-label')]/span");

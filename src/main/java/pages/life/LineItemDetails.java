@@ -100,7 +100,7 @@ public class LineItemDetails {
         this.LINE_ITEM_BUDGET = page.locator("//input[contains(@class,'gaFlightBudget')]");
         this.ENABLE_LINE_ITEM =
                 page.locator("//sui-checkbox[@class='toggle ui checkbox ng-untouched ng-pristine ng-valid']");
-        this.SAVE_LINE_ITEM = page.locator("//span[text()='Save']");
+        this.SAVE_LINE_ITEM = page.locator("//app-ds-button-wrapper[@label='Save']");
         this.LINE_ITEM_SUCCESS = page.locator(
                 "//div[@aria-label='Success!']/following-sibling::div[@role='alert' and contains(text(),'Lineitem')]");
         this.LINE_ITEM_TYPE_DROPDOWN = page.locator("//div[contains(@class,'lineItemType')]");

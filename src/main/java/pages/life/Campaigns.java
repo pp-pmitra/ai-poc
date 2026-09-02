@@ -94,14 +94,16 @@ public class Campaigns {
 
     public Campaigns(Page page) {
         this.page = page;
-        this.CREATE_CAMPAIGN = page.locator("//button[text()='Create a Campaign']");
+        this.CREATE_CAMPAIGN = page.locator("//app-ds-button-wrapper[@label='Create a Campaign']");
         this.VERIFY_CAMPAIGN_PAGE = page.locator("//div[text()='Create New Campaign']");
         this.SEARCH_ADVERTISER = page.locator("//label[text()='Advertiser']/following-sibling::div//input");
         this.SELECT_ADVERTISER = page.getByText("");
         this.CAMPAIGN_NAME = page.locator("//input[@placeholder='Campaign Name']");
-        this.CAMPAIGN_TYPE = page.locator("//label[contains(text(),'Campaign Type')]/following-sibling::div//button");
+        this.CAMPAIGN_TYPE = page.locator("div.form-group")
+                .filter(new Locator.FilterOptions().setHas(page.locator("label:has-text('Campaign Type')")))
+                .locator("button[role='tab']");
         this.BUDGET = page.locator("//input[@id='budgetcap']");
-        this.SAVE_CAMPAIGN = page.locator("//span[text()='Save']");
+        this.SAVE_CAMPAIGN = page.locator("//app-ds-button-wrapper[@label='Save']");
         this.CAMPAIGN_SUCCESS = page.locator(
                 "//div[@aria-label='Success!']/following-sibling::div[@role='alert' and contains(text(),'Campaign')]");
         this.CAMPAIGN_DASHBOARD = page.locator("//span[@class='breadCrumbRoot']");
@@ -385,10 +387,18 @@ public class Campaigns {
         return fetchDefaultValue(BUDGET_STATUS);
     }
 
+//    public String fetchDefaultValue(Locator locator) {
+//        for (int i = 0; i < locator.count(); i++) {
+//            if (locator.nth(i).getAttribute("class") != null
+//                    && locator.nth(i).getAttribute("class").contains("active"))
+//                return locator.nth(i).textContent().trim();
+//        }
+//        return "";
+//    }
+
     public String fetchDefaultValue(Locator locator) {
         for (int i = 0; i < locator.count(); i++) {
-            if (locator.nth(i).getAttribute("class") != null
-                    && locator.nth(i).getAttribute("class").contains("active"))
+            if (locator.nth(i).getAttribute("aria-selected") != null)
                 return locator.nth(i).textContent().trim();
         }
         return "";
