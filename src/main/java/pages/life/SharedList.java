@@ -49,7 +49,7 @@ public class SharedList {
         this.LIST_NAME = page.locator("//input[@placeholder='List Name']");
         this.LIST_TEXTAREA = page.locator(
                 "//textarea[@placeholder='Domains (one domain per line)' or @placeholder='AppBundles (one appbundle per line)' or @placeholder='Keywords (one keyword per line)' or @placeholder='IPAddresses (one ipAddress per line)']");
-        this.SAVE_BUTTON = page.locator("//button[contains(text(),'Save')]");
+        this.SAVE_BUTTON = page.locator("//app-ds-button-wrapper[@label='Save']");
         this.LIST_ERROR_MESSAGE_ALERT = page.locator("//div[@aria-label='List Name is required']");
         this.ERROR_MESSAGE_ALERT = page.locator(
                 "//div[@aria-label='Domain name is required' or @aria-label='AppBundle name is required' or @aria-label='Keyword is required' or @aria-label='IPAddress is required']");

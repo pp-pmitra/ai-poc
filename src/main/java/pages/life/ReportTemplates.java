@@ -41,7 +41,6 @@ public class ReportTemplates {
     private final Locator RUN_REPORT_BUTTON;
     private final Locator REPORT_DOWNLOAD_OPTION;
     private final Locator TEMPLATE_COLUMNS;
-    private final Locator SEARCH_ICON;
     private final Locator REPORT_PANEL;
     private final Locator SEARCH_REPORT;
     private final Locator SEARCH_BUTTON;
@@ -76,7 +75,7 @@ public class ReportTemplates {
                 "//a[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'generated reports')]");
         this.SCHEDULING_TAB = page.locator(
                 "//a[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'scheduling')]");
-        this.NEW_TEMPLATE = page.locator("//button[normalize-space(text())='New Template']");
+        this.NEW_TEMPLATE = page.locator("//app-ds-button-wrapper[@label='New Template']");
         this.REPORT_DIMENSIONS = page.locator("//div[normalize-space(text())='Dimensions']");
         this.REPORT_METRICS = page.locator("//div[normalize-space(text())='Metrics']");
         this.TEMPLATE_NAME = page.locator("//input[contains(@class,'template-name')]");
@@ -86,17 +85,16 @@ public class ReportTemplates {
         this.SELECT_METRIC = page.locator("//label[text()='Impressions']");
         this.VERIFY_DIMENSION = page.locator("//sortable-item[contains(@class,'diemension')]//label");
         this.VERIFY_METRIC = page.locator("//sortable-item[contains(@class,'metric')]//label");
-        this.SAVE_TEMPLATE = page.locator("//button[normalize-space(text())='Save']");
+        this.SAVE_TEMPLATE = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Save"));
         this.TEMPLATE_SUCCESS =
                 page.locator("//div[@role='alert' and contains(text(),'Template created successfully')]");
         this.SEARCH_TEMPLATE = page.locator("//input[contains(@class,'gaTableSearch') and @placeholder='Search']");
-        this.CLICK_TEMPLATE_SEARCH = page.locator("//div[contains(@class,'gaTableSearchBtn')]");
+        this.CLICK_TEMPLATE_SEARCH = page.locator("//app-ds-button-wrapper[contains(@class,'gaTableSearchBtn')]");
         this.SELECT_TEMPLATE = page.locator("//input[@placeholder='Select Template']");
         this.TACTIC_DROPDOWN = page.locator("//input[@placeholder='Enter or Paste Tactics']");
-        this.SELECT_LIFETIME = page.locator("//button[normalize-space()='Lifetime']");
+        this.SELECT_LIFETIME = page.getByRole(AriaRole.TAB, new Page.GetByRoleOptions().setName("Lifetime"));
         this.TEMPLATE_COLUMNS =
                 page.locator("//tr[contains(@class, 'highlighted') and contains(@class, 'loadedall')]//td[1]/div");
-        this.SEARCH_ICON = page.locator(".search-field > .ui");
         this.RUN_REPORT_BUTTON = page.getByRole(
                 AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Run").setExact(true));
         this.REPORT_DOWNLOAD_OPTION = page.locator("//img[@title='options']");
@@ -264,7 +262,7 @@ public class ReportTemplates {
         waitUtility.waitForLocatorVisible(TEMPLATE_PAGINATION);
         waitUtility.waitUntilPreLoaderHidden();
         SEARCH_TEMPLATE.fill(templateNameRandom);
-        SEARCH_ICON.click(new Locator.ClickOptions().setForce(true));
+        CLICK_TEMPLATE_SEARCH.click(new Locator.ClickOptions().setForce(true));
         waitUtility.waitForElementVisible(String.format("//div[contains(text(), '%s')]", templateNameRandom), 5000);
         List<String> expectedHeaders = Arrays.stream(
                         TEMPLATE_COLUMNS.innerText().split("\\s*,\\s*"))

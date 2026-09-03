@@ -2,6 +2,7 @@ package pages.life;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.LoadState;
 import factory.DriverFactory;
 import java.math.BigDecimal;
@@ -114,9 +115,9 @@ public class TacticSettings {
         this.SELECT_RULE_TYPE = page.locator("(//a[@classname='target-tooltip'])[1]");
         this.SELECT_OPTION = page.locator("(//div[contains(@class,'include-default')])[1]");
         this.RULE_TYPE_OK_BUTTON =
-                page.locator("//button[@class='ui primary button okButton' and normalize-space(text())='Ok']");
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Ok").setExact(true));
         this.RULE_TYPE_CLOSE = page.locator("//div[contains(@class,'close_icon')]");
-        this.SAVE_TACTIC_SETTINGS = page.locator("//span[text()='Save']");
+        this.SAVE_TACTIC_SETTINGS = page.locator("//app-ds-button-wrapper[@label='Save']");
         this.TACTIC_SETTINGS_SUCCESS = page.locator("//div[@aria-label='Success!']");
         this.SEARCH_RULE_OPTION =
                 page.locator("//input[contains(@placeholder,'Search') and contains(@class,'panel-search')]");

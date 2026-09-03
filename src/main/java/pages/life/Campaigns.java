@@ -94,18 +94,20 @@ public class Campaigns {
 
     public Campaigns(Page page) {
         this.page = page;
-        this.CREATE_CAMPAIGN = page.locator("//button[text()='Create a Campaign']");
+        this.CREATE_CAMPAIGN = page.locator("//app-ds-button-wrapper[@label='Create a Campaign']");
         this.VERIFY_CAMPAIGN_PAGE = page.locator("//div[text()='Create New Campaign']");
         this.SEARCH_ADVERTISER = page.locator("//label[text()='Advertiser']/following-sibling::div//input");
         this.SELECT_ADVERTISER = page.getByText("");
         this.CAMPAIGN_NAME = page.locator("//input[@placeholder='Campaign Name']");
-        this.CAMPAIGN_TYPE = page.locator("//label[contains(text(),'Campaign Type')]/following-sibling::div//button");
+        this.CAMPAIGN_TYPE = page.locator("div.form-group")
+                .filter(new Locator.FilterOptions().setHas(page.locator("label:has-text('Campaign Type')")))
+                .locator("button[role='tab']");
         this.BUDGET = page.locator("//input[@id='budgetcap']");
-        this.SAVE_CAMPAIGN = page.locator("//span[text()='Save']");
+        this.SAVE_CAMPAIGN = page.locator("//app-ds-button-wrapper[@label='Save']");
         this.CAMPAIGN_SUCCESS = page.locator(
                 "//div[@aria-label='Success!']/following-sibling::div[@role='alert' and contains(text(),'Campaign')]");
         this.CAMPAIGN_DASHBOARD = page.locator("//span[@class='breadCrumbRoot']");
-        this.LIFE_TIME_FILTER = page.locator("//button[normalize-space()='Lifetime']");
+        this.LIFE_TIME_FILTER = page.locator("button[role='tab']:text-is('Lifetime')");
         this.CAMPAIGN_ENTRIES = page.locator("//tr[contains(@class,'cl-li-row')]");
         this.ADVERTISER_DROPDOWN_VALUES = page.locator(
                 "//input[@placeholder='Select Advertiser']/following-sibling::div[@class='menu transition visible']//div");
@@ -180,8 +182,7 @@ public class Campaigns {
         this.BUDGET_STATUS_EXTERNAL =
                 page.locator("//label[contains(text(),'Budget Status')]/following-sibling::div//span");
         this.CAMPAIGN_APPROVAL_STATUS = page.locator("//label[contains(text(),'Approval Status')]");
-        this.CAMPAIGN_STATUS_APPROVED_BUTTON = page.locator(
-                "//label[contains(text(),'Approval Status')]/following-sibling::div[contains(@class,'display-inlineBlock')]//button[text()='Approved']");
+        this.CAMPAIGN_STATUS_APPROVED_BUTTON = page.locator("button[role='tab']:text-is('Approved')");
         this.FAVORITE_ONLY_CHECKBOX = page.locator("//sui-checkbox[label[normalize-space()='Favorite Only']]");
         this.FREQUENCY_CAP_VALIDATION_ERROR = page.locator("//p[contains(@class,'ng-star-inserted')]");
         this.CAMPAIGN_PAGINATION_ON_DASHBOARD = page.locator("//div[@class='paging-desc']");
@@ -339,7 +340,7 @@ public class Campaigns {
         if (FAVORITE_ONLY_CHECKBOX.getAttribute("class").contains("checked")) {
             FAVORITE_ONLY_CHECKBOX.click();
         }
-        if (LIFE_TIME_FILTER.getAttribute("class").contains("inactive")) {
+        if (LIFE_TIME_FILTER.getAttribute("aria-selected") == null) {
             LIFE_TIME_FILTER.click();
             waitUtility.waitForLocatorVisible(CAMPAIGN_PAGINATION_ON_DASHBOARD.last());
         }
@@ -387,8 +388,7 @@ public class Campaigns {
 
     public String fetchDefaultValue(Locator locator) {
         for (int i = 0; i < locator.count(); i++) {
-            if (locator.nth(i).getAttribute("class") != null
-                    && locator.nth(i).getAttribute("class").contains("active"))
+            if (locator.nth(i).getAttribute("aria-selected") != null)
                 return locator.nth(i).textContent().trim();
         }
         return "";

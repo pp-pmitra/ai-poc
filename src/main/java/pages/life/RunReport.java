@@ -4,6 +4,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.SelectOption;
 import factory.DriverFactory;
 import java.util.ArrayList;
@@ -124,7 +125,7 @@ public class RunReport {
                 page.locator("//label[@class='advanceSettings' and contains(text(),'Show Advanced Settings')]");
         this.REPORT_PERIOD_BUTTONS =
                 page.locator("//label[contains(text(),'Report Period')]/following-sibling::div//button");
-        this.RUN_BUTTON = page.locator("//button[contains(@class, 'okButton') and contains(text(),'Run')]");
+        this.RUN_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Run").setExact(true));
         this.SUCCESS_ALERT = page.locator("//div[@aria-label='Success!']");
         this.REPORT_MODIFY_OPTION = page.locator(
                 "//div[@class='icon report-progress']/ancestor::div[@class='left icon-section']/following-sibling::div//img/following-sibling::div//span[contains(text(),'Modify and Re-run')]");

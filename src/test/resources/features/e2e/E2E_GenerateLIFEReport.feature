@@ -36,7 +36,7 @@ Feature: End to End Workflow of Report Generation.
     # 3
     And User navigates to run report from mega menu of the life application
     Then User selects the report template created tactic and other fields for running the report
-    Then User verifies the selected campaign,line item, tactic and runs report by clicking on Run button
+    Then User verifies the selected campaign, line item, tactic and runs report by clicking on Run button
     Then User navigates to generate report field and verifies the report name by campaign name
     # 4 & 5
     Then User downloads the report and verify the data in downloaded report

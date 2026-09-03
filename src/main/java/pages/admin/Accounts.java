@@ -136,7 +136,7 @@ public class Accounts {
         this.TEST_CONNECTION_LINK = page.locator("//span[text()='Test Connection' or text()='Test Access']");
         this.CONNECTION_CONFIRMATION_TEXT = page.locator(
                 "//app-icon-lable-link[@text='Connection confirmed']/div | //span[contains(text(),'Access test successful')]");
-        this.OK_BUTTON = page.locator("//button[contains(@class, 'okButton') or contains(text(),'Save')]");
+        this.OK_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Save"));
         this.ACCOUNT_ADVERTISER_TAB = page.locator("//a[@routerlink='advertisers']");
         this.GLOBAL_SIGNALS_TAB = page.locator("//button[@class='signal']");
         this.ADVERTISER_PERMISSION_SAVE_BUTTON = page.locator("//button[@class='ui primary button okButton']");
