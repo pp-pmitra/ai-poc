@@ -3,6 +3,7 @@ package pages.life;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.PlaywrightException;
+import com.microsoft.playwright.options.AriaRole;
 import factory.DriverFactory;
 import java.util.List;
 import utils.WaitUtility;
@@ -52,7 +53,7 @@ public class Pixels {
         this.UPDATE_SUCCESS = page.locator(
                 "//div[@role='alert' and (text()='Pixel updated successfully' or text()='Saved successfully')]");
         this.REMOVE_PIXEL_ICON = page.locator("//app-icon-lable-link[@icon='20-delete.svg']");
-        this.REMOVE_PIXEL_BUTTON = page.locator("//span[text()='Remove']");
+        this.REMOVE_PIXEL_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Remove"));
         this.REMOVE_SUCCESS = page.locator("//div[@role='alert' and text()='Pixel deleted successfully']");
         this.CANCEL_BUTTON = page.locator(
                 "//button[contains(@class,'cancel secondary button') and normalize-space(text())='Cancel']");
