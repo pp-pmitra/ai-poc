@@ -154,7 +154,35 @@ Feature: LIFE Regression - Create a Campaign
 
     Examples:
       | FIELD_NAME  | NEW_FIELD_NAME | ADVERTISER     | CP_NAME     | CP_TYPE | CP_BUDGET | CUSTOM_FIELD_VALUE |
-      | CustomField | NewCustomField | 01- Advertiser | QA_Campaign | Regular |     50000 | Test               |
+      | CustomField | Custom_Field   | 01- Advertiser | QA_Campaign | Regular |     50000 | Test               |
+
+  @regression
+  Scenario Outline: Verify by checking Frequency Capping enables "Times per Target" and "Per Target Audience" dropdowns
+    Given This scenario will be executed in the "Demo" environment as a "User"
+    And "Life" application is logged in successfully with Account "automation@pulsepoint"
+    And User clicks on Create Campaign
+    When User clicks on Frequency Capping checkbox
+    Then Verify that Times per Target and Per Target Audience dropdowns are enabled
+    And Verify that the default value of Times per Target is "day"
+    And Verify that Times per Target dropdown has the below options
+      | day     |
+      | hour(s) |
+      | week    |
+      | month   |
+    And Verify that the default value of Per Target Audience is "Per Device"
+    And Verify that Per Target Audience dropdown has the below options
+      | Per Device    |
+      | Per Person    |
+      | Per Household |
+      | Per IP        |
+    When User enters window limit as "<WINDOW_LIMIT>"
+    When User selects "week" from Times per Target dropdown and "Per Person" from Per Target Audience dropdown
+    When User enters the campaign details as "<ADVERTISER>" "<CP_NAME>" "<CP_TYPE>" "<CP_BUDGET>" and saves the campaign
+    Then Verify campaign details are saved and user is navigated to the line item page
+
+    Examples:
+      | ADVERTISER     | CP_NAME  | CP_TYPE | CP_BUDGET | WINDOW_LIMIT |
+      | 01- Advertiser | Campaign | Regular |     50000 |            5 |
 
   @regression
   Scenario Outline: Create a Campaign with a Tactic & a Line Item for an External user
@@ -253,11 +281,14 @@ Feature: LIFE Regression - Create a Campaign
     Examples:
       | ADVERTISER     | CP_NAME   | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | CREATIVE           |
       | 01- Advertiser | Persisted | Regular |     10000 | Line      |         120 | Tactic      | Display Advanced | Please_Dont_Delete |
-#  @regression
-#  Scenario Outline: API Sample Test
-#    Given I call "<apiName>" with parameters "<param1>" & "<param2>"
-#    Then Verify response have "<statusCode>" & "<expected1>" & "<expected2>"
-#    Examples:
-#      | apiName | param1 | param2 | statusCode | expected1 | expected2 |
-#      | GET     | 1      | 2      | 404        | 1         | 2         |
-#      | POST    | 1      | 2      | 404        | 1         | 2         |
+
+  @regression
+  Scenario: Deletion of Custom Fields from the Admin Account for Campaign, Line Items and Tactics
+    Given This scenario will be executed in the "Demo" environment as a "User"
+    And "Life" application is logged in successfully with Account "automation@pulsepoint"
+    And Verify Campaign Dashboard is displayed with title "Campaigns"
+    When User navigates to Administrative section
+    And User navigates to Accounts Tab
+    And User searches the account "automation@pulsepoint" and selects the account
+    And User navigates to Reporting tab
+    And User fetches custom field starting with "Custom_Field", perform deletion operation on Campaign, Line Items and Tactics levels and verify successful deletion

@@ -6,6 +6,7 @@ import com.microsoft.playwright.options.WaitForSelectorState;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import factory.DriverFactory;
 import utils.CommonUtils;
 import utils.WaitUtility;
 
@@ -54,6 +55,8 @@ public class Workspace {
     private final Locator NPI_PUBLISH_ALERT;
     private final Locator SAVE_WORKSPACE;
     WaitUtility waitUtility;
+    BrandExplorerWorkspace brandExplorerWorkspace = new BrandExplorerWorkspace(DriverFactory.getPage());
+    ExplorerWorkspace explorerWorkspace = new ExplorerWorkspace(DriverFactory.getPage());
 
     public Workspace(Page page) {
         this.page = page;
@@ -86,8 +89,8 @@ public class Workspace {
         this.WEBHOOK_ICON = WORKSPACE_FRAME.locator(
                 "(//div[@role='group']/following-sibling::div//button)[3]"); // no unique identifier is available hence
         // index needs to be provided
-        this.WEBHOOK_TOGGLE_BUTTON = WORKSPACE_FRAME.locator("//span[contains(@class,'MuiButtonBase-root')]");
-        this.WEBHOOK_PANEL_TITLE = WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'Webhook')]");
+        this.WEBHOOK_TOGGLE_BUTTON = WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'Webhook')]/parent::div/following-sibling::div//span[contains(@class,'MuiButtonBase-root')]");
+        this.WEBHOOK_PANEL_TITLE = WORKSPACE_FRAME.locator("//div[@role='dialog']//ds-typography[contains(text(),'Webhook') and @role='heading']");
         this.WEBHOOK_CANCEL_BUTTON = WORKSPACE_FRAME.locator("//button[@type='button']/div[contains(text(),'Cancel')]");
         this.URL_TEXTAREA = WORKSPACE_FRAME.locator("//textarea[@name='url']");
         this.BODY_TEXTAREA = WORKSPACE_FRAME.locator("//textarea[@name='body']");
@@ -111,7 +114,7 @@ public class Workspace {
                 .locator("#extension-root iframe")
                 .contentFrame()
                 .locator(
-                        "//h3[contains(text(),'Identified NPIs')]/ancestor::div[contains(@class,'SingleValueVisualization')]//span");
+                        "//h3[contains(text(),'Identified NPIs')]/ancestor::div[contains(@class,'kpi-visualization')]//span");
         this.RETROFIT_CHECKBOX = WORKSPACE_FRAME.getByRole(AriaRole.CHECKBOX, new FrameLocator.GetByRoleOptions().setName("Retrofit NPIs"));
         this.NPI_ENGAGING_TEXT = WORKSPACE_FRAME.locator("//p[contains(text(),'NPIs engaging on or')]");
         this.HCP_WORKSPACE_FILTER_CHECKBOX = WORKSPACE_FRAME.getByRole(
@@ -183,7 +186,7 @@ public class Workspace {
     public void waitTillWorkspaceSaveButtonIsDisabled(String workspaceType) {
         // Make workspace save verification type-aware so HCP Explorer can rely on the successful save toast
         // while other workspace types continue waiting for the Save button to become disabled.
-        if ("HCP Explorer".equalsIgnoreCase(workspaceType)) {
+        if (!"Brand Explorer".equalsIgnoreCase(workspaceType)) {
             return;
         }
         page.waitForCondition(SAVE_WORKSPACE::isDisabled);
@@ -310,9 +313,7 @@ public class Workspace {
     }
 
     public void selectFileExtension(String fileExtension) {
-        WORKSPACE_FRAME
-                .locator(String.format("//input/following-sibling::label[contains(text(),'%s')]", fileExtension))
-                .click();
+        WORKSPACE_FRAME.locator("ds-radio").filter(new Locator.FilterOptions().setHasText(fileExtension)).click();;
     }
 
     public Path clickDownloadButton() throws IOException {
@@ -364,17 +365,6 @@ public class Workspace {
         return NPI_ENGAGING_TEXT.innerText().trim();
     }
 
-    public void selectExistingWorkspace() {
-        waitUtility.waitForLocatorVisible(HCP_WORKSPACE_FILTER_CHECKBOX);
-        HCP_WORKSPACE_FILTER_CHECKBOX.click();
-        ADVERTISER_SELECTOR_DROPDOWN.click();
-        Locator advertiser =
-                WORKSPACE_FRAME.getByRole(AriaRole.OPTION, new FrameLocator.GetByRoleOptions().setName("Demo W2O"));
-        advertiser.click();
-        waitUtility.waitForLocatorVisible(EXISTING_WORKSPACE);
-        EXISTING_WORKSPACE.click();
-    }
-
     public String fetchNPIListPublishAlertDisplayed() {
         try {
             String text = NPI_PUBLISH_ALERT.innerText();
@@ -382,6 +372,14 @@ public class Workspace {
             return text;
         } catch (PlaywrightException e) {
             return "";
+        }
+    }
+
+    public void waitForDashboardLoad(String workspaceType) {
+        if (workspaceType.contains("Brand Explorer")) {
+            brandExplorerWorkspace.waitForDashboardLoad();
+        } else {
+            explorerWorkspace.waitForDashboardLoad();
         }
     }
 }

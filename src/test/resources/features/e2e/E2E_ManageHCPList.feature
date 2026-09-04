@@ -18,7 +18,7 @@ Feature: E2E Workflow for Targeting a Studio HCP Explorer List in LIFE at the Ta
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Explorer" workspace name as "<WORKSPACE_NAME>"
     And User applies the filter and selects option
       | FilterName | Option   |
       | NPI Age    | 35 to 45 |
@@ -51,6 +51,10 @@ Feature: E2E Workflow for Targeting a Studio HCP Explorer List in LIFE at the Ta
     And User searches the created workspace
     When User selects the "Delete" option by clicking More Actions menu
     Then Verify that the workspace cannot be deleted and appropriate message is displayed to the user
+    And User clicks PulsePoint icon to navigate back to Life
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
 
     Examples:
       | ADVERTISER | WORKSPACE_NAME | LIST_TYPE | CP_NAME     | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE |

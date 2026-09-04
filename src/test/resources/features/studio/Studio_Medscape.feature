@@ -42,7 +42,7 @@ Feature: Medscape List Match + Consent Workspace in Studio Application
     Then User selects values in each fields as "<SOURCE_NPI_LIST>", "<BUSINESS>", "<BUSINESS_VERTICAL>", "<PRODUCT>", "<PHARMA>", "<BRAND>" and "<STATE_EXCLUSION>"
     And User clicks "Select Columns with Required Attributes" & deselects NPI
     And User maps fields as "<CUSTOMER_ID_FIELD>","<VALUE>" "<NPI_ID>", "<ZIP_FIELD>" and "<ZIP_VALUE>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "Medscape List Match + Consent" workspace name as "<WORKSPACE_NAME>"
     And User saves the "Medscape List Match + Consent" workspace
     And Verify the "Medscape List Match + Consent" Workspace is saved
     And Verify the Publish button is disabled
@@ -67,7 +67,7 @@ Feature: Medscape List Match + Consent Workspace in Studio Application
     And Verify for valid Deliverable ID, suggestion is displayed below Pharma & brand
     And User clicks "Select Columns with Required Attributes" & deselects NPI
     And User maps fields as "<CUSTOMER_ID_FIELD>","<VALUE>" "<NPI_ID>", "<ZIP_FIELD>" and "<ZIP_VALUE>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "Medscape List Match + Consent" workspace name as "<WORKSPACE_NAME>"
     And User saves the "Medscape List Match + Consent" workspace
     And Verify the "Medscape List Match + Consent" Workspace is saved
     And Verify system navigate on "Explore" tab from "Mapping" tab
@@ -95,7 +95,7 @@ Feature: Medscape List Match + Consent Workspace in Studio Application
     Then User selects values in each fields as "<SOURCE_NPI_LIST>","<DELIVERABLE_ID>", "<BUSINESS>", "<BUSINESS_VERTICAL>", "<PRODUCT>", "<PHARMA>", "<BRAND>" and "<STATE_EXCLUSION>"
     And And User clicks "Select Columns with Required Attributes" & deselects NPI
     And User maps fields as "<CUSTOMER_ID_FIELD>","<VALUE>" "<NPI_ID>", "<ZIP_FIELD>" and "<ZIP_VALUE>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "Medscape List Match + Consent" workspace name as "<WORKSPACE_NAME>"
     And User saves the "Medscape List Match + Consent" workspace
     And Verify the "Medscape List Match + Consent" Workspace is saved
     And Verify the values displayed on Explore tab

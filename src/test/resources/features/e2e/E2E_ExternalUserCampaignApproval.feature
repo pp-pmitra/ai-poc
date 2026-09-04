@@ -8,6 +8,7 @@ Feature: E2E workflow for creating a campaign with an external user and approvin
     Given This scenario will be executed in the "Demo" environment as a "External User"
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
     And Verify Campaign Dashboard is displayed with title "Campaigns"
+    And User clicks Lifetime filter
     And User clicks on Create Campaign
     When User enters the campaign details as "<ADVERTISER>" "<CP_NAME>" "<CP_TYPE>" "<CP_BUDGET>"
     Then Verify that the campaign budget status is "Pending Appr" and is greyed out
@@ -36,9 +37,12 @@ Feature: E2E workflow for creating a campaign with an external user and approvin
     Given This scenario will be executed in the "Demo" environment as a "External User"
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
     And Verify Campaign Dashboard is displayed with title "Campaigns"
+    And User clicks Lifetime filter
     And User navigates to the created campaign
     Then Verify that the campaign is in "Running" state
     Then Verify that the approval status of the campaign is "Approved"
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
 
     Examples:
       | ADVERTISER       | CP_NAME       | CP_TYPE | CP_BUDGET | LINE_NAME     | LINE_BUDGET | TACTIC_NAME     | RULE_TYPE          | CREATIVE          |

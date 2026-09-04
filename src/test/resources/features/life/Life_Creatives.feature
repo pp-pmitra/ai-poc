@@ -110,7 +110,7 @@ Feature: LIFE Regression - Create a Creative Library and verify filters, sort, s
   Scenario Outline: Create new Creative Library entries for multiple Creative Types
     And User clicks Creative Library options present under Activation tab
     Then Verify Creative Library page is displayed
-      # Display
+    # Display
     When Verify data persistence when user creates and saves "Display" creative using details "<ADVERTISER>" as Advertiser, "<CREATIVE_NAME>" as Creative Name, "<ADVERTISER_DSA>", "<FINANCER>" and below Creative attributes
       | CreativeType | CreativeAttributes                                                                                                      |
       | Html         | HTMLCode:<html>Auto_Creative</html>, Size:1024x576, DomainLanding:pulsepoint.com                                        |
@@ -119,7 +119,7 @@ Feature: LIFE Regression - Create a Creative Library and verify filters, sort, s
     # Audio
     And Verify data persistence when user creates and saves "Audio" creative using details "<ADVERTISER>" as Advertiser, "<CREATIVE_NAME>" as Creative Name, "<ADVERTISER_DSA>", "<FINANCER>" and below Creative attributes
       | CreativeType | CreativeAttributes                                                                             |
-      | Upload       | FileName:Creative_Audio.mp3, AdvertiserDomain:pulsepoint.com, IAB:Profane                      |
+      | Upload       | FileName:Creative_Audio.mp3, Durations:60, AdvertiserDomain:pulsepoint.com, IAB:Profane        |
       | Audio URL    | URL:https://www.pulsepoint.com, Durations:60, AdvertiserDomain:pulsepoint.com, IAB:Profane     |
       | VAST URL     | VASTURL:https://www.pulsepoint.com, Durations:60, AdvertiserDomain:pulsepoint.com, IAB:Profane |
       | VAST XML     | VASTXML:https://www.pulsepoint.com, Durations:60, AdvertiserDomain:pulsepoint.com, IAB:Profane |

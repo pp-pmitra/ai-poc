@@ -20,7 +20,7 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Explorer" workspace name as "<WORKSPACE_NAME>"
     And Verify that advertiser field is disabled and displayed in "rgba(34, 34, 34, 0.55)" after saving the workspace
     And User applies the filter and selects option
       | FilterName           | Option                                                                                                                  |
@@ -50,10 +50,14 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     Then Verify that the applied filters are displayed correctly
     And User saves the "HCP Explorer" workspace
     Then Verify the "HCP Explorer" Workspace is saved
+    And Navigate to workspace dashboard
+    And User searches the workspace created to perform Actions from More menu
+    And User selects the "Delete" option by clicking More Actions menu
+    And Verify user is able to delete the workspace
 
     Examples:
       | ADVERTISER | WORKSPACE_NAME |
-      | Abbvie     | Explorer       |
+      | Abbvie     | HCP_Explorer   |
 
   @regression
   Scenario Outline: Create and save HCP Explorer workspace by building audience using AI Configurator - <AI_PROMPT>
@@ -61,28 +65,26 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Explorer" workspace name as "<WORKSPACE_NAME>"
     And Verify that advertiser field is disabled and displayed in "rgba(34, 34, 34, 0.55)" after saving the workspace
     And User clicks on AI Configurator and build audience using the AIPrompt "<AI_PROMPT>"
     Then Verify the filter is applied correctly "<PRIMARY_FILTERS>"
-#    And User saves the workspace
-#    Then Verify the HCP Explorer Workspace is saved
 
     Examples:
       | ADVERTISER | WORKSPACE_NAME | AI_PROMPT                                                                                                                                    | PRIMARY_FILTERS                                  |
-      | Abbvie     | Explorer       | Select Cardiovascular Professionals who are reachable in California state and also exclude net worth Less than $50٫000                       | Net Worth, Specialty Filter, State               |
-      | Abbvie     | Explorer       | Filter doctors by their gender, how long they've been practicing, and then narrow down patients by their age groups.                         | Clinical Recency, NPI Gender, Years Practiced    |
-      | Abbvie     | Explorer       | Look for doctors who graduated within a specific time frame, are located in certain states, and then focus on patient gender.                | Graduation Year, Profession, State               |
-      | Abbvie     | Explorer       | Find doctors within certain age ranges, with specific professions, and narrow by wealth.                                                     | NPI Age, Net Worth, Profession                   |
-      | Abbvie     | Explorer       | Search for doctors from specific medical schools with third-level specialties and certain patient counts.                                    | Clinical Recency, Number of Patients, Profession |
-      | Abbvie     | Explorer       | Focus on patients of specific age groups and genders.                                                                                        | Patient Age, Patient Gender                      |
-      | Abbvie     | Explorer       | Filter doctors by their gender and age, then look for those who graduated from particular medical schools.                                   | NPI Age, NPI Gender, Profession                  |
-      | Abbvie     | Explorer       | Doctors with specific experience, states, wealth level, and patient count.                                                                   | Clinical Recency, Profession, Years Practiced    |
-      | Abbvie     | Explorer       | Select cardiovascular specialist who are graduated before 2004 in New York or California                                                     | Graduation Year, Specialty Filter, State         |
-      | Abbvie     | Explorer       | Decide if you want to reach a broader audience, then focus on patients of specific age groups and genders.                                   | Clinical Recency, Patient Age, Patient Gender    |
-      | Abbvie     | Explorer       | Create a mix of NPIs by choosing profession and specialties in heart and brain surgery.                                                      | Profession, Specialty Filter                     |
-      | Abbvie     | Explorer       | Find doctors based on their years of experience, the states they work in, their wealth level, and how many patients they typically see.      | Clinical Recency, Profession, Years Practiced    |
-      | Abbvie     | Explorer       | Pick the types of NPI lists you want, look for doctors who graduated during a specific period, and then target certain hospitals or clinics. | Graduation Year, Profession                      |
+      | Abbvie     | HCP_Explorer   | Select Cardiovascular Professionals who are reachable in California state and also exclude net worth Less than $50٫000                       | Net Worth, Specialty Filter, State               |
+      | Abbvie     | HCP_Explorer   | Filter doctors by their gender, how long they've been practicing, and then narrow down patients by their age groups.                         | Clinical Recency, NPI Gender, Years Practiced    |
+      | Abbvie     | HCP_Explorer   | Look for doctors who graduated within a specific time frame, are located in certain states, and then focus on patient gender.                | Graduation Year, Profession, State               |
+      | Abbvie     | HCP_Explorer   | Find doctors within certain age ranges, with specific professions, and narrow by wealth.                                                     | NPI Age, Net Worth, Profession                   |
+      | Abbvie     | HCP_Explorer   | Search for doctors from specific medical schools with third-level specialties and certain patient counts.                                    | Clinical Recency, Number of Patients, Profession |
+      | Abbvie     | HCP_Explorer   | Focus on patients of specific age groups and genders.                                                                                        | Patient Age, Patient Gender                      |
+      | Abbvie     | HCP_Explorer   | Filter doctors by their gender and age, then look for those who graduated from particular medical schools.                                   | NPI Age, NPI Gender, Profession                  |
+      | Abbvie     | HCP_Explorer   | Doctors with specific experience, states, wealth level, and patient count.                                                                   | Clinical Recency, Profession, Years Practiced    |
+      | Abbvie     | HCP_Explorer   | Select cardiovascular specialist who are graduated before 2004 in New York or California                                                     | Graduation Year, Specialty Filter, State         |
+      | Abbvie     | HCP_Explorer   | Decide if you want to reach a broader audience, then focus on patients of specific age groups and genders.                                   | Clinical Recency, Patient Age, Patient Gender    |
+      | Abbvie     | HCP_Explorer   | Create a mix of NPIs by choosing profession and specialties in heart and brain surgery.                                                      | Profession, Specialty Filter                     |
+      | Abbvie     | HCP_Explorer   | Find doctors based on their years of experience, the states they work in, their wealth level, and how many patients they typically see.      | Clinical Recency, Profession, Years Practiced    |
+      | Abbvie     | HCP_Explorer   | Pick the types of NPI lists you want, look for doctors who graduated during a specific period, and then target certain hospitals or clinics. | Graduation Year, Profession                      |
 
   @regression
   Scenario Outline: Create and save HCP Explorer workspace by applying filters one by one and validating NPI details are refined
@@ -90,7 +92,7 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Explorer" workspace name as "<WORKSPACE_NAME>"
     And Verify that advertiser field is disabled and displayed in "rgba(34, 34, 34, 0.55)" after saving the workspace
     And User applies the following filters one by one and checks that NPI details are refined after each filter:
       | FilterName         | Option                                                                                                                  |
@@ -106,13 +108,17 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
       | State              | New                                                                                                                     |
       | Profession         | Physician                                                                                                               |
       | Specialty          | Foot & Ankle Surgery, Internal Medicine                                                                                 |
-      | NPI List Name      | Large file test                                                                                                         |
       | Medical School     | New York College                                                                                                        |
       #| Reachable Audience | Yes                                                                                                                     |
+      #| NPI List Name      | Large file test                                                                                                         |
+    And Navigate to workspace dashboard
+    And User searches the workspace created to perform Actions from More menu
+    And User selects the "Delete" option by clicking More Actions menu
+    And Verify user is able to delete the workspace
 
     Examples:
       | ADVERTISER | WORKSPACE_NAME |
-      | Abbvie     | Explorer       |
+      | Abbvie     | HCP_Explorer   |
 
   @regression
   Scenario Outline: Create and save HCP Explorer workspace using NPI Cross Filters
@@ -120,7 +126,7 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Explorer" workspace name as "<WORKSPACE_NAME>"
     And Verify that advertiser field is disabled and displayed in "rgba(34, 34, 34, 0.55)" after saving the workspace
     And User applies the filter and selects option
       | FilterName | Option                                                        |
@@ -152,10 +158,14 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     Then Verify the "HCP Explorer" Workspace is saved
     And Verify dashboard filters are merged with Primary filters
     And Fetch and verify that NPI details are refined
+    And Navigate to workspace dashboard
+    And User searches the workspace created to perform Actions from More menu
+    And User selects the "Delete" option by clicking More Actions menu
+    And Verify user is able to delete the workspace
 
     Examples:
       | ADVERTISER | WORKSPACE_NAME |
-      | Abbvie     | Explorer       |
+      | Abbvie     | HCP_Explorer   |
 
   @regression
   Scenario Outline: Manage operations on Workspace - Rename, Duplication, and Delete on HCP Explorer workspace
@@ -163,7 +173,7 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Explorer" workspace name as "<WORKSPACE_NAME>"
     And Verify that advertiser field is disabled and displayed in "rgba(34, 34, 34, 0.55)" after saving the workspace
     And User applies the filter and selects option
       | FilterName | Option                |
@@ -192,7 +202,7 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
 
     Examples:
       | ADVERTISER | WORKSPACE_NAME | NEW_WORKSPACE_NAME | WORKSPACE_NAME_EDIT |
-      | Abbvie     | Explorer       | New_Explorer_      | Edit_Explorer       |
+      | Abbvie     | HCP_Explorer   | New_HCP_Explorer_  | Edit_HCP_Explorer   |
 
   @regression
   Scenario Outline: Validate Clinical and Contextual Recency filters in HCP Explorer workspace
@@ -200,7 +210,7 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Explorer" workspace name as "<WORKSPACE_NAME>"
     And Verify that advertiser field is disabled and displayed in "rgba(34, 34, 34, 0.55)" after saving the workspace
     And User applies "Clinical" filter, selects filter options as below and verifies the clinical recency filter is updated correctly
       | FilterName           | Option                                                  | Recency  |
@@ -214,10 +224,14 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
       | MeSH       | Anatomy              |  1 Week |
     And User saves the "HCP Explorer" workspace
     Then Verify the "HCP Explorer" Workspace is saved
+    And Navigate to workspace dashboard
+    And User searches the workspace created to perform Actions from More menu
+    And User selects the "Delete" option by clicking More Actions menu
+    And Verify user is able to delete the workspace
 
     Examples:
       | ADVERTISER | WORKSPACE_NAME |
-      | Abbvie     | Explorer       |
+      | Abbvie     | HCP_Explorer   |
 
   @regression
   Scenario Outline: Validate the persistence of applied filters (Workspace Type, Advertiser, Created By, Workspace Name) on the Studio Workspace Details page
@@ -238,7 +252,7 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     When User clicks on Create New Workspace
     And User clicks on "HCP Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Explorer" workspace name as "<WORKSPACE_NAME>"
     Then User applies the filter and selects option
       | FilterName | Option                                                        |
       | NPI Age    | Below 25, 25 to 35, 35 to 45, 45 to 55, 55 to 65, 65 or Above |
@@ -255,5 +269,5 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
 
     Examples:
       | ADVERTISER | DRAFT_OPTION | WORKSPACE_NAME | ACCOUNT_NAME        |
-      | Abbvie     | Public       | Explorer       | PP engineering test |
-      | Abbvie     | Private      | Explorer       | PP engineering test |
+      | Abbvie     | Public       | HCP_Explorer   | PP engineering test |
+      | Abbvie     | Private      | HCP_Explorer   | PP engineering test |

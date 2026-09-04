@@ -4,6 +4,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.SelectOption;
 import factory.DriverFactory;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.regex.Pattern;
 import utils.CommonUtils;
 import utils.WaitUtility;
 
-public class RunReportPanel {
+public class RunReport {
     private final Page page;
     private final Locator RUN_REPORT_PANEL_HEADER;
     private final Locator TEMPLATE_DROPDOWN;
@@ -88,9 +89,17 @@ public class RunReportPanel {
     private final Locator DESTINATION_DROPDOWN;
     private final Locator FILE_NAME_HELP_TEXT;
     private final Locator RE_RUN_ACCESS_BUTTON;
+    private final Locator GENERATED_REPORT_OPTIONS;
+    private final Locator DELETE_REPORT_BUTTON;
+    private final Locator DELETE_REPORT_CONFIRMATION_POPUP;
+    private final Locator DELETE_REPORT_REMOVE_BUTTON;
+    private final Locator DELETE_REPORT_SUCCESS_ALERT;
+    private final Locator NO_REPORT_AVAILABLE_TEXT;
+    private final Locator CLEAR_SEARCH_ICON;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
+    private String[] cachedDates;
 
-    public RunReportPanel(Page page) {
+    public RunReport(Page page) {
         this.page = page;
         this.RUN_REPORT_PANEL_HEADER = page.locator("//div[contains(text(),'Run Report')]");
         this.TEMPLATE_DROPDOWN = page.locator("//input[@placeholder='Select Template']");
@@ -108,7 +117,7 @@ public class RunReportPanel {
                 page.locator("//sui-multi-select[@placeholder='Select Advertiser']//sui-multi-select-label");
         this.DROPDOWN_LIST = page.locator("//div[contains(@class,'menu transition visible')]");
         this.SELECTED_VALUES_FROM_DROPDOWN = page.locator(
-                "//div[contains(@class,'menu transition visible')]//div[contains(@class,'item active filtered')]");
+                "//div[@id='tacticLookup']/a");
         this.DROPDOWN_LOADER = page.locator("//div[contains(@class,'loading')]");
         this.FILTER_REPORT_CHECKBOX_LABEL =
                 page.locator("//sui-checkbox[contains(@class,'advancedSettingsCheck')]//label");
@@ -116,7 +125,7 @@ public class RunReportPanel {
                 page.locator("//label[@class='advanceSettings' and contains(text(),'Show Advanced Settings')]");
         this.REPORT_PERIOD_BUTTONS =
                 page.locator("//label[contains(text(),'Report Period')]/following-sibling::div//button");
-        this.RUN_BUTTON = page.locator("//button[contains(@class, 'okButton') and contains(text(),'Run')]");
+        this.RUN_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Run").setExact(true));
         this.SUCCESS_ALERT = page.locator("//div[@aria-label='Success!']");
         this.REPORT_MODIFY_OPTION = page.locator(
                 "//div[@class='icon report-progress']/ancestor::div[@class='left icon-section']/following-sibling::div//img/following-sibling::div//span[contains(text(),'Modify and Re-run')]");
@@ -128,7 +137,7 @@ public class RunReportPanel {
         this.FETCHED_LINE_ITEM_NAME = page.locator("//input[@name='lineItemLookupInp']/following-sibling::a");
         this.FETCHED_TACTIC_NAME = page.locator("//input[@name='tacticLookupInp']/following-sibling::a");
         this.FETCHED_CREATIVE_NAME = page.locator("//input[@name='creativesLookupInp']/following-sibling::a");
-        this.SEARCH_REPORT = page.locator("input.form-control.ng-untouched.ng-pristine.ng-valid");
+        this.SEARCH_REPORT = page.locator("//div[contains(@class,'search-field')]/input[@placeholder='Search']");
         this.SEARCH_BUTTON = page.locator("div.iconSprite.search1");
         this.START_DATE = page.locator("//input[@formcontrolname='startDate']");
         this.END_DATE = page.locator("//input[@formcontrolname='endDate']");
@@ -190,6 +199,13 @@ public class RunReportPanel {
         this.DESTINATION_DROPDOWN = page.locator("//div[contains(text(),'Destination')]/following-sibling::sui-select");
         this.FILE_NAME_HELP_TEXT = page.locator("//span[@class='custom-destination-example-texr']//span");
         this.RE_RUN_ACCESS_BUTTON = page.locator("//span[contains(text(),'Re-run Access')]");
+        this.GENERATED_REPORT_OPTIONS = page.locator("//img[@title='options' and contains(@class,'actions')]");
+        this.DELETE_REPORT_BUTTON = page.locator("//a[contains(@class,'item')]//span[@class='text' and text()='Delete']");
+        this.DELETE_REPORT_CONFIRMATION_POPUP = page.locator("//div[contains(@class,'confirm-modal header') and contains(text(),'Removal Confirmation')]");
+        this.DELETE_REPORT_REMOVE_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Remove"));
+        this.DELETE_REPORT_SUCCESS_ALERT = page.locator("//div[@role='alert' and contains(text(),'Report deleted successfully')]");
+        this.NO_REPORT_AVAILABLE_TEXT = page.locator("//div[contains(text(), 'No Generated Reports')]");
+        this.CLEAR_SEARCH_ICON = page.locator("//div[contains(@class,'clear-search-close')]");
     }
 
     public boolean isRunReportPanelOpened() {
@@ -427,9 +443,9 @@ public class RunReportPanel {
     }
 
     public boolean selectStartAndEndDate() {
-        String[] dates = CommonUtils.generateStartAndEndDates();
-        boolean startSelected = selectDate(START_DATE, dates[0]);
-        boolean endSelected = selectDate(END_DATE, dates[1]);
+        cachedDates = CommonUtils.generateStartAndEndDates();
+        boolean startSelected = selectDate(START_DATE, cachedDates[0]);
+        boolean endSelected = selectDate(END_DATE, cachedDates[1]);
         return startSelected && endSelected;
     }
 
@@ -845,5 +861,39 @@ public class RunReportPanel {
     public String fetchFileNameHelpText() {
         FILE_NAME_HELP_TEXT.first().scrollIntoViewIfNeeded();
         return FILE_NAME_HELP_TEXT.first().textContent().trim();
+    }
+
+    public void clickReportOptions() {
+        waitUtility.waitUntilSpinnerHidden();
+        waitUtility.waitForLocatorVisible(GENERATED_REPORT_OPTIONS);
+        GENERATED_REPORT_OPTIONS.click();
+    }
+
+    public void deleteReport() {
+        waitUtility.waitForLocatorVisible(DELETE_REPORT_BUTTON);
+        DELETE_REPORT_BUTTON.click();
+        waitUtility.waitForLocatorVisible(DELETE_REPORT_CONFIRMATION_POPUP);
+        DELETE_REPORT_REMOVE_BUTTON.click();
+        waitUtility.waitForLocatorVisible(DELETE_REPORT_SUCCESS_ALERT);
+        waitUtility.waitUntilSpinnerHidden();
+    }
+
+    public String fetchReportDeleteSuccessAlert() {
+        String text = DELETE_REPORT_SUCCESS_ALERT.innerText().trim();
+        waitUtility.waitForLocatorHidden(DELETE_REPORT_SUCCESS_ALERT);
+        return text;
+    }
+
+    public String fetchNoReportFoundMessage(String reportName) {
+        clearSearchField();
+        searchReportName(reportName);
+        return NO_REPORT_AVAILABLE_TEXT.innerText();
+    }
+
+    public void clearSearchField() {
+        if (CLEAR_SEARCH_ICON.isVisible()) {
+            CLEAR_SEARCH_ICON.click();
+            waitUtility.waitUntilPreLoaderHidden();
+        }
     }
 }

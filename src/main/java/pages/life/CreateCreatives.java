@@ -2,6 +2,7 @@ package pages.life;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import factory.DriverFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -152,12 +153,11 @@ public class CreateCreatives {
         this.CREATED_BY = page.locator("//app-multi-select[contains(@placeholder,'Select Created By')]/div/span/input");
         this.SORT_DROPDOWN = page.locator("//div[contains(@class, 'sort-option-dropdown')]");
         this.SEARCH_BOX = page.locator("//div[contains(@class,'search-field')]/input[@placeholder='Search']");
-        this.CANCEL_BUTTON =
-                page.locator("//div[contains(@class,'newCreativeFooter')]//button[normalize-space(text())='Cancel']");
+        this.CANCEL_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Cancel"));
         this.CREATIVE_HEADER = page.locator("//div[contains(@class,'rightPanelHeader1')]");
-        this.OK_BUTTON = page.locator("//button[contains(@class,'okButton')]");
+        this.OK_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Save"));
         this.SUCCESS_ALERT = page.locator("//div[@aria-label='Success!']/following-sibling::div[@role='alert']");
-        this.NEW_CREATIVE_BUTTON = page.locator("//button[contains(text(),'New Creative')]");
+        this.NEW_CREATIVE_BUTTON = page.locator("//app-ds-button-wrapper[@label='New Creative']");
         this.ADVERTISER_DROPDOWN =
                 page.locator("//app-single-select-dropdown[contains(@placeholder,'Select Advertiser')]/div/div/input");
         this.ADVERTISER_DROPDOWN_VALUES = page.locator(
@@ -215,8 +215,7 @@ public class CreateCreatives {
                 page.locator("//span[contains(text(),'Last updated:')]//following-sibling::span");
         this.CREATIVE_SOURCE_LIST = page.locator("//span[contains(text(),'Source:')]//following-sibling::span");
         this.CREATIVE_AD_SIZE_LIST = page.locator("//span[contains(text(),'AdSize:')]//following-sibling::span");
-        this.APPROVAL_STATUS_BUTTON =
-                page.locator("//label[contains(text(),'Approval Status')]/following-sibling::div//button");
+        this.APPROVAL_STATUS_BUTTON = page.locator("div.approval-container button[role='tab']");
         this.CREATIVE_FREQUENCY_OPTIONS = page.locator("//button[@name='frequencyOptionType']");
         this.SELECTED_AD_SIZE = page.locator("//div[contains(@class,'ad-size-group')]//input/following-sibling::span");
         this.DELETE_ICON = page.locator("//app-icon-lable-link[@text='Delete']//div");
@@ -252,7 +251,7 @@ public class CreateCreatives {
         this.DURATION_FROM_CREATIVE_TILE = page.locator("//span[contains(text(),'DURATION:')]/following-sibling::span");
         this.CREATIVE_STATUS_FROM_CREATIVE_TILE = page.locator("//div[contains(@class,'status-label')]//span");
         this.CREATED_BY_FROM_CREATIVE_TILE =
-                page.locator("//span[contains(text(),'Created by :')]/following-sibling::span");
+                page.locator("//span[contains(text(),'Created by:')]/following-sibling::span");
         this.SOURCE_FROM_CREATIVE_TILE = page.locator("//span[contains(text(),'Source:')]/following-sibling::span");
         this.LAST_UPDATED_FROM_CREATIVE_TILE =
                 page.locator("//span[contains(text(),'Last updated:')]/following-sibling::span");
@@ -571,7 +570,7 @@ public class CreateCreatives {
     public void fillAttributes(String type, Map<String, String> attributeMap) {
         switch (type) {
             case "Html", "Html5", "Image":
-                page.locator(String.format("//button[text()='%s']", type)).click();
+                page.locator(String.format("button[role='tab']:text-is('%s')", type)).click();
                 if (type.equals("Html5")) {
                     CommonUtils.uploadFile(page, 0, imageTextLocator, attributeMap.get("ArchiveFile"));
                 }
@@ -592,7 +591,7 @@ public class CreateCreatives {
                 break;
 
             case "Upload", "Audio URL", "VAST URL", "VAST XML", "Video URL":
-                page.locator(String.format("//button[text()='%s']", type)).click();
+                page.locator(String.format("button[role='tab']:text-is('%s')", type)).click();
                 if (type.contains("Upload")) {
                     CommonUtils.uploadFile(page, 0, imageTextLocator, attributeMap.get("FileName"));
                     if (UPLOADING_PROGRESS_BAR.isVisible()) {
@@ -601,8 +600,10 @@ public class CreateCreatives {
                         waitUtility.waitForLocatorVisible(UPLOAD_DELETE_ICON);
                     } else {
                         waitUtility.waitUntilSpinnerHidden();
+                        waitUtility.waitForLocatorVisible(page.locator(String.format("//span[contains(text(),'%s')]", attributeMap.get("FileName"))));
                     }
-                } else if (type.contains("Audio URL") || type.contains("Video URL")) URL.fill(attributeMap.get("URL"));
+                }
+                else if (type.contains("Audio URL") || type.contains("Video URL")) URL.fill(attributeMap.get("URL"));
                 else if (type.contains("VAST URL")) URL.fill(attributeMap.get("VASTURL"));
                 else VAST_XML_TEXTAREA.fill(attributeMap.get("VASTXML"));
                 if (type.contains("Audio URL")
@@ -611,7 +612,7 @@ public class CreateCreatives {
                         || type.contains("VAST XML")) {
                     if (CREATIVE_WIDTH_TYPE.first().isVisible()) {
                         CommonUtils.selectAndClickElement(
-                                CREATIVE_TYPE_ICON, Collections.singletonList(attributeMap.get("Type")));
+                                CREATIVE_WIDTH_TYPE, Collections.singletonList(attributeMap.get("Type")));
                     }
                     DURATION.fill(attributeMap.get("Durations"));
                     if (WIDTH.isVisible() && HEIGHT.isVisible()) {
@@ -627,6 +628,9 @@ public class CreateCreatives {
                 if (SPONSORED_BY.isVisible()) SPONSORED_BY.fill(attributeMap.get("SponsoredBy"));
                 if (PRODUCT_DESCRIPTION.isVisible()) PRODUCT_DESCRIPTION.fill(attributeMap.get("Description"));
                 if (DISPLAY_URL.isVisible()) DISPLAY_URL.fill(attributeMap.get("DisplayURL"));
+                // Adding below two conditions since Duration and URL are getting blanked automatically
+                if(DURATION.isVisible() && DURATION.textContent().isEmpty() && attributeMap.get("Durations")!=null && !attributeMap.get("Durations").isEmpty()) DURATION.fill(attributeMap.get("Durations"));
+                if(URL.isVisible() && URL.textContent().isEmpty() && attributeMap.get("URL")!=null && !attributeMap.get("URL").isEmpty()) URL.fill(attributeMap.get("URL"));
                 break;
 
             case "Search":
@@ -745,8 +749,9 @@ public class CreateCreatives {
         if (CREATIVE_NAME.isVisible())
             creativeDetails.add(CREATIVE_NAME.inputValue().trim());
         for (int i = 0; i < APPROVAL_STATUS_BUTTON.count(); i++) {
-            if (APPROVAL_STATUS_BUTTON.nth(i).getAttribute("class").contains("active")) {
-                creativeDetails.add(APPROVAL_STATUS_BUTTON.nth(i).textContent().trim());
+            Locator tab = APPROVAL_STATUS_BUTTON.nth(i);
+            if (tab.getAttribute("aria-selected") != null) {
+                creativeDetails.add(tab.textContent().trim());
                 break;
             }
         }

@@ -38,10 +38,9 @@ public class ReportTemplates {
     private final Locator SELECT_TEMPLATE;
     private final Locator TACTIC_DROPDOWN;
     private final Locator SELECT_LIFETIME;
-    private final Locator RUN_REPORT;
+    private final Locator RUN_REPORT_BUTTON;
     private final Locator REPORT_DOWNLOAD_OPTION;
     private final Locator TEMPLATE_COLUMNS;
-    private final Locator SEARCH_ICON;
     private final Locator REPORT_PANEL;
     private final Locator SEARCH_REPORT;
     private final Locator SEARCH_BUTTON;
@@ -56,6 +55,15 @@ public class ReportTemplates {
     private final Locator FETCH_TEMPLATE_NAME_FROM_CONFIRMATION_POPUP;
     private final Locator DELETE_BUTTON_FROM_CONFIRMATION_POPUP;
     private final Locator DELETE_ICON_FROM_TEMPLATE_LIST;
+    private final Locator SHARED_CHECKBOX;
+    private final Locator TEMPLATE_NAME_FROM_LISTING_PAGE;
+    private final Locator DIMENSIONS_FROM_LISTING_PAGE;
+    private final Locator TEMPLATE_TYPE_FROM_LISTING_PAGE;
+    private final Locator SHARED_TYPE_FROM_LISTING_PAGE;
+    private final Locator CREATED_BY_FROM_LISTING_PAGE;
+    private final Locator TEMPLATE_TYPE;
+    private final Locator COPY_ICON;
+    private final Locator RUN_REPORT_ICON;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
 
     public ReportTemplates(Page page) {
@@ -67,7 +75,7 @@ public class ReportTemplates {
                 "//a[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'generated reports')]");
         this.SCHEDULING_TAB = page.locator(
                 "//a[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'scheduling')]");
-        this.NEW_TEMPLATE = page.locator("//button[normalize-space(text())='New Template']");
+        this.NEW_TEMPLATE = page.locator("//app-ds-button-wrapper[@label='New Template']");
         this.REPORT_DIMENSIONS = page.locator("//div[normalize-space(text())='Dimensions']");
         this.REPORT_METRICS = page.locator("//div[normalize-space(text())='Metrics']");
         this.TEMPLATE_NAME = page.locator("//input[contains(@class,'template-name')]");
@@ -77,18 +85,17 @@ public class ReportTemplates {
         this.SELECT_METRIC = page.locator("//label[text()='Impressions']");
         this.VERIFY_DIMENSION = page.locator("//sortable-item[contains(@class,'diemension')]//label");
         this.VERIFY_METRIC = page.locator("//sortable-item[contains(@class,'metric')]//label");
-        this.SAVE_TEMPLATE = page.locator("//button[normalize-space(text())='Save']");
+        this.SAVE_TEMPLATE = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Save"));
         this.TEMPLATE_SUCCESS =
                 page.locator("//div[@role='alert' and contains(text(),'Template created successfully')]");
         this.SEARCH_TEMPLATE = page.locator("//input[contains(@class,'gaTableSearch') and @placeholder='Search']");
-        this.CLICK_TEMPLATE_SEARCH = page.locator("//div[contains(@class,'gaTableSearchBtn')]");
+        this.CLICK_TEMPLATE_SEARCH = page.locator("//app-ds-button-wrapper[contains(@class,'gaTableSearchBtn')]");
         this.SELECT_TEMPLATE = page.locator("//input[@placeholder='Select Template']");
         this.TACTIC_DROPDOWN = page.locator("//input[@placeholder='Enter or Paste Tactics']");
-        this.SELECT_LIFETIME = page.locator("//button[normalize-space()='Lifetime']");
+        this.SELECT_LIFETIME = page.getByRole(AriaRole.TAB, new Page.GetByRoleOptions().setName("Lifetime"));
         this.TEMPLATE_COLUMNS =
                 page.locator("//tr[contains(@class, 'highlighted') and contains(@class, 'loadedall')]//td[1]/div");
-        this.SEARCH_ICON = page.locator(".search-field > .ui");
-        this.RUN_REPORT = page.getByRole(
+        this.RUN_REPORT_BUTTON = page.getByRole(
                 AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Run").setExact(true));
         this.REPORT_DOWNLOAD_OPTION = page.locator("//img[@title='options']");
         this.REPORT_PANEL = page.locator(".reports-body > div").first();
@@ -108,6 +115,15 @@ public class ReportTemplates {
         this.DELETE_BUTTON_FROM_CONFIRMATION_POPUP = page.locator(
                 "//div[contains(text(),'Delete Report Template')]/following-sibling::div//span[contains(text(),'Delete')]");
         this.DELETE_ICON_FROM_TEMPLATE_LIST = page.locator("//span[@title='Delete']");
+        this.SHARED_CHECKBOX = page.locator("//sui-checkbox//label[contains(text(),'Shared')]");
+        this.TEMPLATE_NAME_FROM_LISTING_PAGE = page.locator("//div[contains(text(),'Template Name')]/ancestor::div[contains(@class,'headerWrapper')]/following-sibling::table//div");
+        this.DIMENSIONS_FROM_LISTING_PAGE = page.locator("//div[contains(text(),'Rows/Metrics')]/ancestor::div[contains(@class,'headerWrapper')]/following-sibling::table//td[1]//div");
+        this.TEMPLATE_TYPE_FROM_LISTING_PAGE = page.locator("//div[contains(text(),'Type')]/ancestor::div[contains(@class,'headerWrapper')]/following-sibling::table//td[2]//div");
+        this.SHARED_TYPE_FROM_LISTING_PAGE = page.locator("//div[contains(text(),'Shared')]/ancestor::div[contains(@class,'headerWrapper')]/following-sibling::table//td[3]//div");
+        this.CREATED_BY_FROM_LISTING_PAGE = page.locator("//div[contains(text(),'Created By')]/ancestor::div[contains(@class,'headerWrapper')]/following-sibling::table//td[4]//div");
+        this.TEMPLATE_TYPE = page.locator("//sui-radio-button[@name='templateType']");
+        this.COPY_ICON = page.locator("//span[@title='Copy']");
+        this.RUN_REPORT_ICON = page.locator("//span[@title='Run Report']");
     }
 
     public void clickReportTemplatesLink() {
@@ -152,11 +168,11 @@ public class ReportTemplates {
         SEARCH_DIMENSION.clear();
     }
 
-    public List<String> verifySelectedDimensions() {
+    public List<String> fetchSelectedDimensions() {
         return VERIFY_DIMENSION.allInnerTexts().stream().map(String::trim).toList();
     }
 
-    public List<String> verifySelectedMetrics() {
+    public List<String> fetchSelectedMetrics() {
         return VERIFY_METRIC.allInnerTexts().stream().map(String::trim).toList();
     }
 
@@ -215,7 +231,7 @@ public class ReportTemplates {
     }
 
     public void runReport() {
-        RUN_REPORT.click();
+        RUN_REPORT_BUTTON.click();
     }
 
     public String downloadGeneratedReport(String templateNameRandom) throws IOException {
@@ -246,7 +262,7 @@ public class ReportTemplates {
         waitUtility.waitForLocatorVisible(TEMPLATE_PAGINATION);
         waitUtility.waitUntilPreLoaderHidden();
         SEARCH_TEMPLATE.fill(templateNameRandom);
-        SEARCH_ICON.click(new Locator.ClickOptions().setForce(true));
+        CLICK_TEMPLATE_SEARCH.click(new Locator.ClickOptions().setForce(true));
         waitUtility.waitForElementVisible(String.format("//div[contains(text(), '%s')]", templateNameRandom), 5000);
         List<String> expectedHeaders = Arrays.stream(
                         TEMPLATE_COLUMNS.innerText().split("\\s*,\\s*"))
@@ -338,5 +354,79 @@ public class ReportTemplates {
         return page.locator(String.format("//label[text()='%s']/parent::sui-radio-button", defaultTemplateType))
                 .getAttribute("class")
                 .contains("checked");
+    }
+
+    public void clickSharedCheckbox() {
+        SHARED_CHECKBOX.click();
+    }
+
+    public String getTemplateNameInTemplateListPage() {
+        return TEMPLATE_NAME_FROM_LISTING_PAGE.textContent().trim();
+    }
+
+    public List<String> getDimensionsInTemplateListPage() {
+        return Arrays.stream(DIMENSIONS_FROM_LISTING_PAGE.textContent().split(",")).map(String::trim).toList();
+    }
+
+    public String getCreatedByInTemplateListPage() {
+        return CREATED_BY_FROM_LISTING_PAGE.textContent().trim();
+    }
+
+    public String getTemplateTypeInTemplateListPage() {
+        return TEMPLATE_TYPE_FROM_LISTING_PAGE.textContent().trim();
+    }
+
+    public String getSharedInTemplateListPage() {
+        return SHARED_TYPE_FROM_LISTING_PAGE.textContent().trim();
+    }
+
+    public void selectTemplateType(String templateType) {
+        page.locator(String.format("//sui-radio-button[@name='templateType' and @value='%s']", templateType)).click();
+    }
+
+    public String getTemplateTypeInEditTemplatePanel() {
+        for(int i=0; i<TEMPLATE_TYPE.count(); i++) {
+            Locator radioButton = TEMPLATE_TYPE.nth(i);
+            if(radioButton.getAttribute("class").contains("checked")) {
+                return radioButton.getAttribute("value").trim();
+            }
+        }
+        return null;
+    }
+
+    public String getSharedInEditTemplatePanel() {
+        Locator sharedCheckbox = SHARED_CHECKBOX.locator("//preceding-sibling::input");
+        if(sharedCheckbox.getAttribute("class").contains("checked")) {
+            return "Shared";
+        }
+        return "Private";
+    }
+
+    public void copyExistingTemplate() {
+        COPY_ICON.click();
+        waitUtility.waitUntilSpinnerHidden();
+        waitUtility.waitForLocatorVisible(TEMPLATE_NAME);
+    }
+
+    public String fetchTemplateNameFromEditTemplatePanel() {
+        return TEMPLATE_NAME.inputValue().trim();
+    }
+
+    public List<String> fetchTemplateDetailsFromEditTemplatePanel() {
+        String templateName = TEMPLATE_NAME.inputValue().trim();
+        String templateType = getTemplateTypeInEditTemplatePanel();
+        String sharedStatus = getSharedInEditTemplatePanel();
+        List<String> selectedDimensions = fetchSelectedDimensions();
+        List<String> selectedMetrics = fetchSelectedMetrics();
+        return Arrays.asList(templateName, templateType, sharedStatus,
+                String.join(", ", selectedDimensions), String.join(", ", selectedMetrics));
+    }
+
+    public void clickRunReportIconForTemplate() {
+        RUN_REPORT_ICON.click();
+    }
+
+    public void clickGeneratedReportsTab() {
+        GENERATED_REPORTS_TAB.click();
     }
 }

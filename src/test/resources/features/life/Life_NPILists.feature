@@ -28,6 +28,8 @@ Feature: LIFE regression - Create NPI List of following types:
     Then Verify list gets saved successfully
     And User verifies the calculated data cost is similar to the displayed data cost
     And User retrieves all the entered data after saving the Static List
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER                      | NPI_NUMBER | LIST_NAME  |
@@ -46,6 +48,7 @@ Feature: LIFE regression - Create NPI List of following types:
     Then Verify list gets saved successfully
     And Verify the NPI Numbers from the uploaded file "<FILE_NAME>" are displayed correctly in the list details page
     When User edits the created list
+    And User navigates back to NPI Lists landing page
     Then Verify list gets updated successfully
     When User deletes the created list
     Then Verify list gets deleted successfully
@@ -103,6 +106,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And Verify list data is uploaded successfully
     And Refresh the Browser to view the data uploaded
     And Verify the Total NPI count displayed in Matched NPI section is similar to NPI records present in "<FILE_NAME>"
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | LIST_NAME     | ADVERTISER     | FILE_LOCATION | FILE_PATH                      | FILE_NAME                  | LIST_TYPE            | NPI_COLUMN_NAME | IMPORT_TYPE    |
@@ -129,7 +134,10 @@ Feature: LIFE regression - Create NPI List of following types:
     And Verify Reload Now button is available and enabled
     When User clicks on Reload Now button
     Then Verify the file is reloaded successfully
+    And Verify that user is able to download the uploaded "AutoImported NPI" list
     And Verify the Total NPI count displayed in Matched NPI section is similar to NPI records present in "<FILE_NAME>"
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | LIST_NAME     | ADVERTISER     | FILE_LOCATION | FILE_PATH                      | FILE_NAME                  | LIST_TYPE            | NPI_COLUMN_NAME | IMPORT_TYPE    |
@@ -174,6 +182,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE        | ENGAGEMENT_TYPE    | VISITED_URLS                        | IGNORED_URLS                         | KEYWORDS                     |
@@ -195,6 +205,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE     | HCP_SWITCH | NPI_GROUP_NAME |
@@ -230,6 +242,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE      | HCP_SWITCH   | SPECIALITY                           |
@@ -247,6 +261,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE       | PROFESSION                     |
@@ -267,6 +283,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE            | DRUG                              | DECILE |
@@ -285,6 +303,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE            | FILE_NAME                      |
@@ -305,6 +325,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE           | DIAGNOSIS                                     | DECILE |
@@ -323,6 +345,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE           | FILE_NAME                |
@@ -343,6 +367,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE                   | MEDICAL_PROCEDURE                                 | DECILE |
@@ -361,6 +387,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE                   | FILE_NAME                       |
@@ -386,6 +414,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE                         | DRUG_NAME                   | TOP_DROPPER_PERCENT | TIME_FRAME_SELECTOR |
@@ -406,6 +436,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE                         | DRUG_NAME                   | TIME_FRAME_SELECTOR |
@@ -427,6 +459,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE             | ENGAGEMENT_TYPE | CONTEXTUAL_CATEGORY | MESH_CONDITION  | RECENCY |
@@ -449,6 +483,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE             | ENGAGEMENT_TYPE | CONTEXTUAL_CATEGORY | MEDSCAPE_PRIMARY_CONCEPT | RECENCY |
@@ -471,6 +507,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE             | ENGAGEMENT_TYPE | CONTEXTUAL_CATEGORY | WEBMD_PRIMARY_TOPIC | RECENCY |
@@ -494,6 +532,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE             | ENGAGEMENT_TYPE | CONTEXTUAL_CATEGORY | MESH_CONDITION  | RECENCY |
@@ -528,6 +568,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE                                                |
@@ -549,6 +591,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE                                                                                                   |

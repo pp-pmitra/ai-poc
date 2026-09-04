@@ -54,15 +54,22 @@ public class ScheduleReport {
     private final Locator THREE_DOT_MENU;
     private final Locator DATE_TIME_FORMAT_OPTIONS;
     private final Locator REPORT_SECOND_ROW;
+    private final Locator DELETE_REPORT_ICON;
+    private final Locator DELETE_REPORT_CONFIRMATION_POPUP;
+    private final Locator DELETE_REPORT_REMOVE_BUTTON;
+    private final Locator DELETE_REPORT_SUCCESS_ALERT;
+    private final Locator NO_REPORT_AVAILABLE_TEXT;
+    private final Locator CLEAR_SEARCH_ICON;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
-    RunReportPanel runReportPanel = new RunReportPanel(DriverFactory.getPage());
+    RunReport runReport = new RunReport(DriverFactory.getPage());
+    private String[] cachedDates;
 
     public ScheduleReport(Page page) {
         this.page = page;
-        this.SCHEDULE_REPORT_BUTTON = page.locator("//button[text()='Schedule Report']");
+        this.SCHEDULE_REPORT_BUTTON = page.locator("//app-ds-button-wrapper[@label='Schedule Report']");
         this.SCHEDULE_REPORT_PANEL_HEADER = page.locator("//div[contains(text(),'Schedule Report')]");
         this.REPORT_NAME = page.locator("//input[@formcontrolname='scheduleReportName']");
-        this.FREQUENCY_BUTTON = page.locator("//button[@name='frequencyOptionType']");
+        this.FREQUENCY_BUTTON = page.locator("app-ds-tab-switch-wrapper button[role='tab']");
         this.SCHEDULE_START_DATE = page.locator("//input[@id='scheduleStartDate']");
         this.SCHEDULE_END_DATE = page.locator("//input[@id='scheduleEndDate']");
         this.CALENDAR_VIEW = page.locator("sui-calendar-date-view");
@@ -94,10 +101,10 @@ public class ScheduleReport {
         this.END_DATE = page.locator("//input[@placeholder='End Date']");
         this.SCHEDULE_START_TIME = page.locator("//input[@formcontrolname='scheduleDataStartTime']");
         this.SCHEDULE_END_TIME = page.locator("//input[@formcontrolname='scheduleDataEndTime']");
-        this.SCHEDULE_BUTTON = page.locator("//button[contains(@class, 'okButton') and contains(text(),'Schedule')]");
+        this.SCHEDULE_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Schedule").setExact(true));
         this.SUCCESS_ALERT = page.locator("//div[@aria-label='Success!']");
         this.SEARCH_TEXTBOX = page.locator("//input[contains(@class,'gaTableSearch')]");
-        this.SEARCH_ICON = page.locator("//div[contains(@class,'gaTableSearchBtn')]");
+        this.SEARCH_ICON = page.locator("//app-ds-button-wrapper[contains(@class,'gaTableSearchBtn')]");
         this.FETCHED_TEMPLATE_NAME = page.locator(
                 "//label[text()='Template']//following-sibling::app-single-select-dropdown//input/following-sibling::span");
         this.SEND_ON_DROPDOWN = page.locator("//label[contains(text(),'Send On')]/following-sibling::div");
@@ -107,6 +114,12 @@ public class ScheduleReport {
         this.THREE_DOT_MENU = page.locator("//div[@class='variableTooltip']");
         this.DATE_TIME_FORMAT_OPTIONS = page.locator("//span[@class='variable-text']");
         this.REPORT_SECOND_ROW = page.locator("//tr[contains(@class,'fixedrow ng-star-inserted')][2]");
+        this.DELETE_REPORT_ICON = page.locator("//span[@title='Delete']/img[contains(@src,'delete')]");
+        this.DELETE_REPORT_CONFIRMATION_POPUP = page.locator("//div[contains(@class,'confirm-modal header') and contains(text(),'Removal Confirmation')]");
+        this.DELETE_REPORT_REMOVE_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Remove"));
+        this.DELETE_REPORT_SUCCESS_ALERT = page.locator("//div[@role='alert' and contains(text(),'Schedule deleted succesfully')]");
+        this.NO_REPORT_AVAILABLE_TEXT = page.locator("//div[contains(text(), 'Nothing Found')]");
+        this.CLEAR_SEARCH_ICON = page.locator("//div[contains(@class,'clear-search-close')]");
     }
 
     public void clickScheduleReportButton() {
@@ -142,13 +155,15 @@ public class ScheduleReport {
     }
 
     public boolean selectScheduleStartDate() {
-        String[] dates = CommonUtils.generateStartAndEndDates();
-        return runReportPanel.selectDate(SCHEDULE_START_DATE, dates[0]);
+        cachedDates = CommonUtils.generateStartAndEndDates();
+        return runReport.selectDate(SCHEDULE_START_DATE, cachedDates[0]);
     }
 
     public boolean selectScheduleEndDate() {
-        String[] dates = CommonUtils.generateStartAndEndDates();
-        return runReportPanel.selectDate(SCHEDULE_END_DATE, dates[1]);
+        if (cachedDates == null) {
+            cachedDates = CommonUtils.generateStartAndEndDates();
+        }
+        return runReport.selectDate(SCHEDULE_END_DATE, cachedDates[1]);
     }
 
     private boolean selectDate(Locator input, int day) {
@@ -334,12 +349,12 @@ public class ScheduleReport {
 
     public boolean selectStartDate() {
         String[] dates = CommonUtils.generateStartAndEndDates();
-        return runReportPanel.selectDate(START_DATE, dates[0]);
+        return runReport.selectDate(START_DATE, dates[0]);
     }
 
     public boolean selectEndDate() {
         String[] dates = CommonUtils.generateStartAndEndDates();
-        return runReportPanel.selectDate(END_DATE, dates[1]);
+        return runReport.selectDate(END_DATE, dates[1]);
     }
 
     public void clickScheduleButton() {
@@ -508,5 +523,38 @@ public class ScheduleReport {
 
     public String fetchDestinationOptions() {
         return DESTINATION_DROPDOWN.locator("xpath=//span[2]").textContent();
+    }
+
+    public void deleteReport() {
+        waitUtility.waitForLocatorVisible(DELETE_REPORT_ICON);
+        DELETE_REPORT_ICON.click();
+        waitUtility.waitForLocatorVisible(DELETE_REPORT_CONFIRMATION_POPUP);
+        DELETE_REPORT_REMOVE_BUTTON.click();
+        waitUtility.waitForLocatorVisible(DELETE_REPORT_SUCCESS_ALERT);
+        waitUtility.waitUntilSpinnerHidden();
+    }
+
+    public String fetchReportDeleteSuccessAlert() {
+        String text = DELETE_REPORT_SUCCESS_ALERT.innerText().trim();
+        waitUtility.waitForLocatorHidden(DELETE_REPORT_SUCCESS_ALERT);
+        return text;
+    }
+
+    public void searchScheduledReport(String templateName) {
+        SEARCH_TEXTBOX.fill(templateName);
+        SEARCH_ICON.click();
+    }
+
+    public String fetchNoReportFoundMessage(String templateName) {
+        clearSearchField();
+        searchScheduledReport(templateName);
+        return NO_REPORT_AVAILABLE_TEXT.innerText();
+    }
+
+    public void clearSearchField() {
+        if (CLEAR_SEARCH_ICON.isVisible()) {
+            CLEAR_SEARCH_ICON.click();
+            waitUtility.waitUntilPreLoaderHidden();
+        }
     }
 }

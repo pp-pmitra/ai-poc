@@ -5,7 +5,9 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import java.util.Collections;
+import factory.DriverFactory;
 import utils.CommonUtils;
+import utils.WaitUtility;
 
 public class SmartActions {
 
@@ -33,6 +35,10 @@ public class SmartActions {
     private final Locator VERIFY_NPI_LIST_NAME;
     private final Locator SAVED_SUCCESS_MESSAGE;
     private final Locator COLLECTION_OPTION;
+    private final Locator SMART_ACTION_REMOVAL_CONFIRMATION_POPUP;
+    private final Locator REMOVE_BUTTON;
+    private final Locator SMART_ACTIONS_DELETE_ICON;
+    WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
 
     public SmartActions(Page page) {
         this.page = page;
@@ -66,6 +72,10 @@ public class SmartActions {
                 page.getByRole(AriaRole.OPTION, new Page.GetByRoleOptions().setName("Add NPI to the Smart List"));
         this.SMART_LIST_NAME = page.locator("//input[@formcontrolname='smartListName']");
         this.DAYS = page.locator("//input[@formcontrolname='noOfDays']");
+        this.SMART_ACTIONS_DELETE_ICON = page.locator("//app-icon-lable-link[@icon='20-delete.svg']");
+        this.SMART_ACTION_REMOVAL_CONFIRMATION_POPUP =
+                page.locator("//h1[contains(@class,'mat-mdc-dialog-title') and text()='Warning: Smart Action Removal']");
+        this.REMOVE_BUTTON = page.locator("//button[contains(@class,'btn')]//span[text()='Remove']");
     }
 
     public void responseTabDataEntryAndSave(String smartListName, String days) {
@@ -143,5 +153,19 @@ public class SmartActions {
         String alertText = SAVED_SUCCESS_MESSAGE.first().innerText();
         SAVED_SUCCESS_MESSAGE.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.HIDDEN));
         return alertText;
+    }
+
+    public void deleteSmartAction() {
+        waitUtility.waitUntilSpinnerHidden();
+        waitUtility.waitForLocatorVisible(ADD_SMART_ACTION);
+        SMART_ACTIONS_DELETE_ICON.click();
+        waitUtility.waitForLocatorVisible(SMART_ACTION_REMOVAL_CONFIRMATION_POPUP);
+        Page currentPage = DriverFactory.getPage();
+        currentPage.waitForResponse(
+                response -> response.status() == 200,
+                REMOVE_BUTTON::click
+        );
+        waitUtility.waitForLocatorHidden(SMART_ACTION_REMOVAL_CONFIRMATION_POPUP);
+        waitUtility.waitUntilSpinnerHidden();
     }
 }

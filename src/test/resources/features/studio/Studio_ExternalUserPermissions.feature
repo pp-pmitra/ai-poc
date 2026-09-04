@@ -4,8 +4,8 @@ Feature: External user permission to enable or disable studio platform
   Scenario Outline: Verify external user permission for studio application
     Given This scenario will be executed in the "Pre-release" environment as a "User"
     When "Life" application is logged in successfully with Account "automation@pulsepoint"
-    And User navigates to administration tab
-    And User clicks on accounts tab
+    When User navigates to Administrative section
+    And User navigates to Accounts Tab
     And Locate an account "<EXTERNAL_ACCOUNT>" with external user permission and select it
     And Go to users tab and search "<EXTERNAL_USER>" and select studio tab
     Then User turns on studio toggle for external users and verifies that it is enabled
@@ -14,5 +14,5 @@ Feature: External user permission to enable or disable studio platform
     Then User should be able to see Studio for that account
 
     Examples:
-      | EXTERNAL_ACCOUNT | EXTERNAL_USER |
-      | HMT Demo         | hmtdemo       |
+      | EXTERNAL_ACCOUNT | EXTERNAL_USER | ACCOUNT_NAME |
+      | HMT Demo         | hmtdemo       | HMT Demo     |

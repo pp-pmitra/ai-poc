@@ -276,3 +276,15 @@ Feature: LIFE Regression - Run Report fields verification and report generation
     Examples:
       | TEMPLATE       | ADVERTISER     | CAMPAIGN_INITIALS | LINE_ITEM_INITIALS | TACTIC_INITIALS | CREATIVE_INITIALS | TIME_ZONE                       | DESTINATION_NAME | DESTINATION_TYPE | HOST                | PORT | SERVER_PATH                    |
       | AutoTemplate20 | 01- Advertiser | CreativeCampaign  | CreativeLine       | CreativeTactic  | Creative          | (GMT+05:30) India Standard Time | Run_Destination_ | SFTP             | ma2-qa-automation01 |   22 | /home/NPIAutoImport/Automation |
+
+  @regression
+  Scenario Outline: Deletion of Custom Destination Row from the Admin Account
+    When User navigates to Administrative section
+    And User navigates to Accounts Tab
+    And User searches the account "automation@pulsepoint" and selects the account
+    And User navigates to Reporting tab
+    And User expands each Custom Destination created, performs delete operation on the entries created by "<USERNAME>" and verify successful deletion
+
+    Examples:
+      | USERNAME |
+      | rsherkar |

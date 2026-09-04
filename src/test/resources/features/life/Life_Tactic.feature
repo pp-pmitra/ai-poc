@@ -46,11 +46,11 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Then User creates new custom field "<CUSTOM_NAME>" and verifies the same
     And User verifies if new custom field is visible and empty in new tactic "<TACTIC_SEARCH>"
     Then User clears the custom field text
-    Then User deletes the custom field and verify its removed from new tactic
+    Then User deletes the custom field and verify its removed from new "tactic"
 
     Examples:
-      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | CUSTOM_NAME | TACTIC_SEARCH |
-      | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Custom ID   | Tactic        |
+      | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | CUSTOM_NAME  | TACTIC_SEARCH |
+      | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Custom_Field | Tactic        |
 
   @regression
   Scenario Outline: Verify Base bid price and Max bid price populates correctly for a tactic
@@ -233,13 +233,24 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
       | GEOGRAPHY          |
       | MEDIA SUPPLY       |
     And Verify Bid type with respect to category
-      | AUDIENCE ATTRIBUTE | Behavioral Segment,Day of The Week,Speciality,Practitioner Type,NPI              |
-      | DEMOGRAPHICS       | Age,Gender                                                                       |
-      | GEOGRAPHY          | Geo Targets                                                                      |
-      | MEDIA SUPPLY       | Browser,Device,Operating Systems,Inventory Source,Domains and Apps,Creative Size |
+      | AUDIENCE ATTRIBUTE | Behavioral Segment,Day of The Week,Speciality,Practitioner Type,NPI |
+      | DEMOGRAPHICS       | Age,Gender                                                          |
+      | GEOGRAPHY          | Geo Targets                                                         |
+      | MEDIA SUPPLY       | Browser,Device,Operating Systems,Inventory Source,Domains and Apps  |
     And User configures Bid multiplier rules as below with "<BID_VALUE>"
       | Behavioral Segment | 111 > 222 > Patients of HCPs prescribing Ivig and SCIg competitors |
       | NPI                | AutoSmartList954103283                                             |
+      | Day of The Week    | Monday                                                             |
+      | Speciality         | Behavioral Health & Social Service Providers                       |
+      | Practitioner Type  | Nurse Practitioner                                                 |
+      | Age                |                                                              35-39 |
+      | Gender             | Female                                                             |
+      | Geo Targets        | Afghanistan                                                        |
+      | Browser            | Chrome                                                             |
+      | Device             | Mobile                                                             |
+      | Operating Systems  | Linux                                                              |
+      | Inventory Source   | Aug14                                                              |
+      | Domains and Apps   |                                                       1Domain_0617 |
     Then Verify the configured Bid multiplier rules
     When User saves the Bid multiplier settings
     Then Verify settings details are saved and user is navigated to the creatives tab

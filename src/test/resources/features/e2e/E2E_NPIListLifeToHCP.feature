@@ -14,6 +14,7 @@ Feature: End to End Workflow of NPI Lists.
     # 1
     Given This scenario will be executed in the "Demo" environment as a "User"
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
+    And Verify Campaign Dashboard is displayed with title "Campaigns"
     And User navigates to NPI Lists page
     When User clicks on Create New List
     Then Verify creation of NPI List screen is displayed
@@ -54,15 +55,24 @@ Feature: End to End Workflow of NPI Lists.
     # 7 & 8
     When User clicks on Response and enter the details and creates smart list "<SMART_LIST_NAME>" "<DAYS>" and saves
     Then Verify data is saved successfully
+    And User clicks PulsePoint icon to navigate back to Life
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
+    And User navigates to NPI Lists page
+    And User searches for the created NPI list
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER   | LIST_NAME  | DRUG_NAME | CP_NAME        | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | SMART_ACTION_NAME | SMART_LIST_NAME | DAYS |
-      | Z_Automation | Smart List | Glynase   | Life_To_HCP365 | Regular |      2000 | Line      |         500 | TACTIC      | Display Advanced | SMART_ACTION      | SMART_LIST      |    5 |
+      | Z_Automation | Smart_List | Glynase   | Life_To_HCP365 | Regular |      2000 | Line      |         500 | TACTIC      | Display Advanced | SMART_ACTION      | SMART_LIST      |    5 |
 
   @e2e @regression
   Scenario Outline: End to End Workflow of Static NPI lists Integration with HCP365 Smart Action
     Given This scenario will be executed in the "Demo" environment as a "User"
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
+    And Verify Campaign Dashboard is displayed with title "Campaigns"
     And User navigates to NPI Lists page
     When User clicks on Create New List
     Then Verify creation of NPI List screen is displayed
@@ -98,6 +108,14 @@ Feature: End to End Workflow of NPI Lists.
     # 6
     When User clicks on Action and enters the details and saves
     Then Verify data is saved successfully
+    And User clicks PulsePoint icon to navigate back to Life
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
+    And User navigates to NPI Lists page
+    And User searches for the created NPI list
+    When User deletes the created list
+    Then Verify list gets deleted successfully
 
     Examples:
       | ADVERTISER   | LIST_NAME  | CP_NAME        | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | SMART_ACTION_NAME | NPI_NUMBER |

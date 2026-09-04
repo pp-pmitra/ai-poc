@@ -7,6 +7,7 @@ Feature: End to End workflow for NPI Lists - Attributed and Auto-Imported creati
     #1
     Given This scenario will be executed in the "Demo" environment as a "User"
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
+    And Verify Campaign Dashboard is displayed with title "Campaigns"
     #2
     And User navigates to NPI Lists page
     When User clicks on Create New List
@@ -39,6 +40,10 @@ Feature: End to End workflow for NPI Lists - Attributed and Auto-Imported creati
     Then Verify that the "NPI" rule is added to the tactic and retrieve the count of selected lists
     And Verify that the selected list is displayed in the targeting rule and retrieve the total count of targeted items
     And User saves the targeting
+    And User clicks PulsePoint icon to navigate back to Life
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
 
     Examples:
       | LIST_NAME | ADVERTISER     | FILE_NAME                | COLUMN_NAME | CP_NAME               | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          |
@@ -79,6 +84,10 @@ Feature: End to End workflow for NPI Lists - Attributed and Auto-Imported creati
     Then Verify that the "NPI" rule is added to the tactic and retrieve the count of selected lists
     And Verify that the selected list is displayed in the targeting rule and retrieve the total count of targeted items
     And User saves the targeting
+    And User clicks PulsePoint icon to navigate back to Life
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
 
     Examples:
       | LIST_NAME     | ADVERTISER     | FILE_LOCATION | FILE_PATH                      | FILE_NAME                  | LIST_TYPE            | NPI_COLUMN_NAME | IMPORT_TYPE    | CP_NAME                  | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          |

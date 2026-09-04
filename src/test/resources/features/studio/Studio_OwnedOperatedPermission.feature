@@ -19,13 +19,17 @@ Feature: Verify visibility of Owned and Operated Data based on Admin Permission 
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Explorer" workspace name as "<WORKSPACE_NAME>"
     And Verify Owned And Operated section is "<VISIBILITY_FLAG>" within the Cross-Filter section of the Workspace
     And User saves the "HCP Explorer" workspace
     Then Verify the "HCP Explorer" Workspace is saved
+    And Navigate to workspace dashboard
+    And User searches the workspace created to perform Actions from More menu
+    And User selects the "Delete" option by clicking More Actions menu
+    And Verify user is able to delete the workspace
 
     Examples:
       | PERMISSION_FLAG | ADVERTISER | WORKSPACE_NAME | VISIBILITY_FLAG |
-      | Enabled         | Abbvie     | Explorer       | Present         |
-     #| Disabled        | Abbvie     | Explorer       | Absent         |
+      | Enabled         | Abbvie     | HCP_Explorer   | Present         |
+#      | Disabled        | Abbvie     | HCP_Explorer   | Absent          |
      # Note: Above example is currently commented out as the permission takes a long time to get reflected, which is causing the test to fail

@@ -11,6 +11,7 @@ Feature: End to End Workflow of Report Generation.
     # 1
     Given This scenario will be executed in the "Demo" environment as a "User"
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
+    And Verify Campaign Dashboard is displayed with title "Campaigns"
     And User clicks on Create Campaign
     When User enters the campaign details as "<ADVERTISER>" "<CP_NAME>" "<CP_TYPE>" "<CP_BUDGET>" and saves the campaign
     Then Verify campaign details are saved and user is navigated to the line item page
@@ -35,10 +36,18 @@ Feature: End to End Workflow of Report Generation.
     # 3
     And User navigates to run report from mega menu of the life application
     Then User selects the report template created tactic and other fields for running the report
-    Then User verifies the selected campaign,line item, tactic and runs report by clicking on Run button
+    Then User verifies the selected campaign, line item, tactic and runs report by clicking on Run button
     Then User navigates to generate report field and verifies the report name by campaign name
     # 4 & 5
     Then User downloads the report and verify the data in downloaded report
+    And User navigates to generated reports tab
+    And User searches the "Generated" report
+    When User deletes the "Generated" report
+    Then Verify that the "Generated" report is deleted successfully
+    And User clicks PulsePoint icon to navigate back to Life
+    When User navigates to the created campaign
+    And User deletes the campaign
+    Then Verify that the campaign is deleted successfully
 
     Examples:
       | ADVERTISER     | CP_NAME         | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | CREATIVE    | TEMPLATE NAME | DIMENSIONS                    | METRICS            | RULE_TYPE          |

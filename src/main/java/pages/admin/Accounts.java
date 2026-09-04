@@ -7,6 +7,8 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import java.util.ArrayList;
 import java.util.List;
+import factory.DriverFactory;
+import pages.life.Campaigns;
 import utils.WaitUtility;
 
 public class Accounts {
@@ -78,6 +80,12 @@ public class Accounts {
     private final Locator PULSEPOINT_DATA_FEE;
     private final Locator NPI_TARGETING_GROSS_CPM;
     private final Locator LIFE_SETTINGS_PANEL_CANCEL_BUTTON;
+    private final Locator CUSTOM_FIELD_DELETION_POP_UP;
+    private final Locator CUSTOM_FIELD_CANNOT_DELETE_POPUP;
+    private final Locator CUSTOM_FIELD_DELETE_BUTTON;
+    private final Locator CAMPAIGN_LINK_FROM_CUSTOM_FIELD_POPUP;
+    private final Locator CUSTOM_FIELD_REMOVAL_POPUP;
+    private final Locator CUSTOM_DESTINATION_ROW;
     WaitUtility waitUtility;
 
     public Accounts(Page page) {
@@ -128,7 +136,7 @@ public class Accounts {
         this.TEST_CONNECTION_LINK = page.locator("//span[text()='Test Connection' or text()='Test Access']");
         this.CONNECTION_CONFIRMATION_TEXT = page.locator(
                 "//app-icon-lable-link[@text='Connection confirmed']/div | //span[contains(text(),'Access test successful')]");
-        this.OK_BUTTON = page.locator("//button[contains(@class, 'okButton') or contains(text(),'Save')]");
+        this.OK_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Save"));
         this.ACCOUNT_ADVERTISER_TAB = page.locator("//a[@routerlink='advertisers']");
         this.GLOBAL_SIGNALS_TAB = page.locator("//button[@class='signal']");
         this.ADVERTISER_PERMISSION_SAVE_BUTTON = page.locator("//button[@class='ui primary button okButton']");
@@ -136,7 +144,7 @@ public class Accounts {
         this.USER_SIGNAL_TAB = page.locator("//button[normalize-space(.)='Signal']");
         this.USER_PERMISSIONS_SAVE_BUTTON = page.locator("//button[@class='ui primary button okButton']");
         this.USER_PROFILE_ICON = page.locator("//div[@class='accountname']");
-        this.LOGOUT_BUTTON = page.locator("//span[text()='Sign Out']");
+        this.LOGOUT_BUTTON = page.locator("//div[text()='Sign Out'] | //span[text()='Sign Out']");
         this.MOMENTS_CHECKBOX = page.locator("//*[@id='44_0' and not(contains(@class, 'checked'))]");
         this.IBHEALTH_CHECKBOX = page.locator("//*[@id='45_0' and not(contains(@class, 'checked'))]");
         this.CLAIMSDATA_CHECKBOX = page.locator("//*[@id='43_0' and not(contains(@class, 'checked'))]");
@@ -163,6 +171,12 @@ public class Accounts {
         this.LIFE_SETTINGS = page.locator("//span[text()='Life Platform']/following-sibling::span");
         this.PULSEPOINT_DATA_FEE = page.locator("//input[@name='ppDataMargin']");
         this.NPI_TARGETING_GROSS_CPM = page.locator("//input[@name='NPITargeting']");
+        this.CUSTOM_FIELD_DELETION_POP_UP = page.locator("//div[contains(text(),'Delete Custom Field Settings')]");
+        this.CUSTOM_FIELD_CANNOT_DELETE_POPUP = page.locator("//div[contains(text(),'Custom Field Can’t Be Removed')]");
+        this.CUSTOM_FIELD_DELETE_BUTTON = page.locator("//div[contains(@class,'approveButtonText')]//span[contains(text(),'Delete')]");
+        this.CAMPAIGN_LINK_FROM_CUSTOM_FIELD_POPUP = page.locator("//a[contains(@class, 'bullet_list')]");
+        this.CUSTOM_FIELD_REMOVAL_POPUP = page.locator("//div[contains(@class,'confirm-modal header')]");
+        this.CUSTOM_DESTINATION_ROW = page.locator("//div[@class='customDestination-row']");
     }
 
     public void clickAdministration() {
@@ -511,5 +525,77 @@ public class Accounts {
                 page.locator(String.format("//*[@id='accSwitchContainer']/ul/li/span[text()='%s]", accountName));
         waitUtility.waitForLocatorVisible(SelectAccount);
         SelectAccount.click();
+    }
+
+    public List<String> fetchCustomFieldsStartingWith(String prefix){
+        Locator customFieldName = page.locator(String.format("//td[@id='fieldName']//div[starts-with(normalize-space(), '%s')]", prefix));
+        return customFieldName.allTextContents().stream().map(String::trim).toList();
+    }
+
+    public String deleteCustomField(String fieldName) {
+        Locator deleteIcon = page.locator(String.format("//td[@id='fieldName']//div[starts-with(normalize-space(), '%s')]/ancestor::tr//td[@id='action']//i[contains(@class,'delete')]", fieldName));
+        deleteIcon.click();
+        waitUtility.waitUntilSpinnerHidden();
+        waitUtility.waitForLocatorVisible(CUSTOM_FIELD_REMOVAL_POPUP);
+        if (CUSTOM_FIELD_CANNOT_DELETE_POPUP.isVisible()) {
+            waitUtility.waitForLocatorVisible(CUSTOM_FIELD_CANNOT_DELETE_POPUP);
+            for (int i = 0; i < CAMPAIGN_LINK_FROM_CUSTOM_FIELD_POPUP.count(); i++) {
+                Locator currentLink = CAMPAIGN_LINK_FROM_CUSTOM_FIELD_POPUP.nth(i);
+                Page originalTab = DriverFactory.getPage();
+                Page newTab = DriverFactory.getContext().waitForPage(() -> {
+                    currentLink.click(new Locator.ClickOptions().setForce(true));
+                });
+                newTab.bringToFront();
+                DriverFactory.threadLocalDriver.set(newTab);
+                Campaigns campaigns = new Campaigns(newTab);
+                campaigns.clearCustomFieldFromCampaign(fieldName);
+                newTab.close();
+                DriverFactory.threadLocalDriver.set(originalTab);
+                originalTab.bringToFront();
+            }
+            deleteIcon.click();
+            waitUtility.waitUntilSpinnerHidden();
+            waitUtility.waitForLocatorVisible(CUSTOM_FIELD_REMOVAL_POPUP);
+        }
+        waitUtility.waitForLocatorVisible(CUSTOM_FIELD_DELETION_POP_UP);
+        CUSTOM_FIELD_DELETE_BUTTON.click();
+        return ALERT.textContent().trim();
+    }
+
+    public List<String> deleteCustomDefinitionRow(String username) {
+        List<String> deletedEntries = new ArrayList<>();
+        waitUtility.waitForLocatorVisible(CUSTOM_DESTINATION_ROW.last());
+        int totalCount = CUSTOM_DESTINATION_ROW.count();
+        for (int i = 0; i < totalCount; i++) {
+            Locator currentRow = CUSTOM_DESTINATION_ROW.nth(i);
+            currentRow.scrollIntoViewIfNeeded();
+            Locator expandBtn = currentRow.locator("xpath=.//div[contains(@class,'collapsed-thin')]").first();
+            if (expandBtn.isVisible()) {
+                expandBtn.click();
+            }
+            Locator destinationName = currentRow.locator("xpath=.//div[label[text()='Name']]//input").first();
+            Locator userInput = currentRow.locator("xpath=.//div[label[text()='User Name']]//input").first();
+            Locator deleteIcon = currentRow.locator("xpath=.//app-icon-lable-link[contains(@text,'Delete')]//div").first();
+            try {
+                waitUtility.waitForLocatorVisible(userInput, 100);
+                String currentUsername = userInput.inputValue().trim();
+                if (currentUsername.equalsIgnoreCase(username)) {
+                    deletedEntries.add(destinationName.inputValue().trim());
+                    deleteIcon.click();
+                }
+            } catch (com.microsoft.playwright.TimeoutError e) {
+            }
+        }
+        saveAccountsAdvertiserTab();
+        return deletedEntries;
+    }
+
+    public boolean isDeletedEntryAvailable(String destinationName) {
+        for (int i = 0; i < ENTER_DESTINATION_NAME.count(); i++) {
+            if (!ENTER_DESTINATION_NAME.nth(i).inputValue().trim().equalsIgnoreCase(destinationName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

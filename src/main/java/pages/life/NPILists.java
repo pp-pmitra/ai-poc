@@ -3,8 +3,10 @@ package pages.life;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.LoadState;
 import factory.DriverFactory;
 import java.util.List;
+import pages.hcp.SmartActions;
 import utils.WaitUtility;
 
 public class NPILists {
@@ -25,6 +27,8 @@ public class NPILists {
     private final Locator MEDSCAPE_LIST;
     private final Locator DOWNLOAD_ICON;
     private final Locator NPI_BACK_BUTTON;
+    private final Locator BULLET_LIST_FROM_NPI_DELETE_POPUP;
+    private final Locator NPI_LIST_HEADER;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
 
     public NPILists(Page page) {
@@ -47,6 +51,8 @@ public class NPILists {
         this.MEDSCAPE_LIST = page.locator("//app-npilisttype[@listtypename='Medscape List']");
         this.DOWNLOAD_ICON = page.locator("//span[contains(@class,'image download')]");
         this.NPI_BACK_BUTTON = page.locator("//div[contains(@class,'npi-back-button')]");
+        this.BULLET_LIST_FROM_NPI_DELETE_POPUP = page.locator("//a[contains(@class, 'bullet_list')]");
+        this.NPI_LIST_HEADER = page.locator("//div[contains(@class,'npi-header-left')]");
     }
 
     public void clickNPILists() {
@@ -141,5 +147,24 @@ public class NPILists {
         NPI_BACK_BUTTON.click();
         waitUtility.waitUntilSpinnerHidden();
         waitUtility.waitForLocatorVisible(CREATE_NEW_LIST);
+    }
+
+    public void removeNPILinkage(){
+        for (int i = 0; i < BULLET_LIST_FROM_NPI_DELETE_POPUP.count(); i++) {
+            Locator currentLink = BULLET_LIST_FROM_NPI_DELETE_POPUP.nth(i);
+            Page originalTab = DriverFactory.getPage();
+            Page newTab = DriverFactory.getContext().waitForPage(() -> {
+                currentLink.click(new Locator.ClickOptions().setForce(true));
+            });
+            newTab.waitForLoadState(LoadState.DOMCONTENTLOADED);
+            newTab.bringToFront();
+            DriverFactory.threadLocalDriver.set(newTab);
+            SmartActions smartActions = new SmartActions(newTab);
+            smartActions.deleteSmartAction();
+            newTab.close();
+            DriverFactory.threadLocalDriver.set(originalTab);
+            originalTab.bringToFront();
+            waitUtility.waitForLocatorVisible(NPI_LIST_HEADER);
+        }
     }
 }

@@ -13,12 +13,13 @@ public class DTCExplorerWorkspace {
     private final Locator SAVE_WORKSPACE;
     private final Locator UNIQUE_CONSUMER_TEXT;
     private final Locator UNIQUE_CONSUMER_COUNT;
-    private final Locator SUBMIT_ICON;
-    private final Locator SUBMIT_BUTTON;
+    private final Locator AUDIENCE_ICON;
+    private final Locator SUBMIT_REQUEST_BUTTON;
     private final Locator AUDIENCE_SUBMIT_VERIFICATION;
-    private final Locator WORKSPACE_SUBMIT_TOAST;
-    private final Locator REQUEST_SUBMIT_TOAST;
-    private final WaitUtility waitUtility;
+    private final Locator WORKSPACE_SUBMIT_ALERT;
+    private final Locator REQUEST_SUBMIT_ALERT;
+    private final Locator OK_BUTTON;
+    WaitUtility waitUtility;
 
     public DTCExplorerWorkspace(Page page) {
         this.page = page;
@@ -28,14 +29,14 @@ public class DTCExplorerWorkspace {
         this.SAVE_WORKSPACE = WORKSPACE_FRAME.locator("[data-tour-id*='save-workspace-button']");
         this.UNIQUE_CONSUMER_TEXT = DASHBOARD_FRAME.locator("//h3[contains(text(), 'Unique Consumers')]");
         this.UNIQUE_CONSUMER_COUNT = DASHBOARD_FRAME.locator(
-                "//h3[normalize-space()='Unique Consumers']/ancestor::div[contains(@class,'single-value-visualization')]//span");
-        this.SUBMIT_ICON = WORKSPACE_FRAME
-                .locator("//div[contains(@class, 'sc-cXPBUD')]//div[contains(@class, 'Icon-sc')]")
-                .first();
-        this.SUBMIT_BUTTON = WORKSPACE_FRAME.locator("//button[.//div[text()='Submit request']]");
-        this.AUDIENCE_SUBMIT_VERIFICATION = WORKSPACE_FRAME.locator("//p[text()='Your Audience is being processed']");
-        this.WORKSPACE_SUBMIT_TOAST = WORKSPACE_FRAME.locator("//p[normalize-space(.)='Workspace saved successfully']");
-        this.REQUEST_SUBMIT_TOAST = WORKSPACE_FRAME.locator("//p[normalize-space(.)='Request submitted successfully']");
+                "//h3[normalize-space()='Unique Consumers']/ancestor::div[contains(@class,'kpi-visualization')]//span");
+        this.AUDIENCE_ICON = WORKSPACE_FRAME
+                .locator("//div[@role='group']/following-sibling::div");
+        this.SUBMIT_REQUEST_BUTTON = WORKSPACE_FRAME.locator("//button[.//div[text()='Submit request']]");
+        this.AUDIENCE_SUBMIT_VERIFICATION = WORKSPACE_FRAME.locator("//ds-typography[text()='Your Audience is being processed']");
+        this.WORKSPACE_SUBMIT_ALERT = WORKSPACE_FRAME.locator("//p[normalize-space(.)='Workspace saved successfully']");
+        this.REQUEST_SUBMIT_ALERT = WORKSPACE_FRAME.locator("//p[normalize-space(.)='Request submitted successfully']");
+        this.OK_BUTTON = WORKSPACE_FRAME.locator("//button/div[text()='Ok']");
     }
 
     public void waitForDashboardLoad() {
@@ -46,24 +47,35 @@ public class DTCExplorerWorkspace {
         SAVE_WORKSPACE.click();
     }
 
-    public String getUniqueConsumerCount() {
-        waitUtility.waitForLocatorVisible(UNIQUE_CONSUMER_TEXT);
-        return UNIQUE_CONSUMER_COUNT.textContent().replace(",", "");
+    public String getUniqueConsumerCount(String countType) {
+        waitUtility.waitForLocatorVisible(DASHBOARD_FRAME.locator(String.format("//h3[contains(text(), '%s')]", countType)));
+        return DASHBOARD_FRAME.locator(String.format("//h3[normalize-space()='%s']/ancestor::div[contains(@class,'kpi-visualization')]//span", countType)).textContent().replace(",", "");
+    }
+
+    public void clickAudienceIcon(){
+        AUDIENCE_ICON.click();
     }
 
     public void clickSubmitButton() {
-        SUBMIT_ICON.click();
-        SUBMIT_BUTTON.click();
+        SUBMIT_REQUEST_BUTTON.click();
     }
 
     public String getDialogMessage() {
-        SUBMIT_ICON.click();
         waitUtility.waitForLocatorVisible(AUDIENCE_SUBMIT_VERIFICATION);
         return AUDIENCE_SUBMIT_VERIFICATION.innerText().trim();
     }
 
-    public void verifyDTCExplorerWorkspaceConfirmationToast() {
-        waitUtility.waitForLocatorVisible(WORKSPACE_SUBMIT_TOAST);
-        waitUtility.waitForLocatorVisible(REQUEST_SUBMIT_TOAST);
+    public String getDTCExplorerWorkspaceSubmissionAlert() {
+        waitUtility.waitForLocatorVisible(WORKSPACE_SUBMIT_ALERT);
+        String text = WORKSPACE_SUBMIT_ALERT.textContent().trim();
+        waitUtility.waitForLocatorHidden(WORKSPACE_SUBMIT_ALERT);
+        return text;
+    }
+
+    public String getDTCExplorerWorkspaceRequestSubmitAlert() {
+        waitUtility.waitForLocatorVisible(REQUEST_SUBMIT_ALERT);
+        String text = REQUEST_SUBMIT_ALERT.textContent().trim();
+        waitUtility.waitForLocatorHidden(REQUEST_SUBMIT_ALERT);
+        return text;
     }
 }

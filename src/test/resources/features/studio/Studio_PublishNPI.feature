@@ -15,7 +15,7 @@ Feature: Studio Publish NPI List
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Explorer" workspace name as "<WORKSPACE_NAME>"
     And Verify that advertiser field is disabled and displayed in "rgba(34, 34, 34, 0.55)" after saving the workspace
     And User applies the filter and selects option
       | FilterName | Option                |
@@ -31,11 +31,15 @@ Feature: Studio Publish NPI List
     And User select the platform to publish the list
     Then Verify list is published
     And Check the Download icon is highlighted in green color
+    And Navigate to workspace dashboard
+    And User searches the workspace created to perform Actions from More menu
+    And User selects the "Delete" option by clicking More Actions menu
+    And Verify user is able to delete the workspace
 
     Examples:
       | WORKSPACE_NAME | ADVERTISER | LIST_TYPE |
-      | Explorer       | Abbvie     | Static    |
-      | Explorer       | Abbvie     | Live      |
+      | HCP_Explorer   | Abbvie     | Static    |
+      | HCP_Explorer   | Abbvie     | Live      |
 
   @regression
   Scenario Outline: Publish NPI List as Static List and Live List without selecting any platform
@@ -43,7 +47,7 @@ Feature: Studio Publish NPI List
     Then User sees the types of workspaces they have permissions for
     And User clicks on "HCP Explorer" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And User updates the workspace name as "<WORKSPACE_NAME>"
+    And User edits the "HCP Explorer" workspace name as "<WORKSPACE_NAME>"
     And Verify that advertiser field is disabled and displayed in "rgba(34, 34, 34, 0.55)" after saving the workspace
     And User applies the filter and selects option
       | FilterName | Option                |
@@ -62,8 +66,12 @@ Feature: Studio Publish NPI List
     And User searches the workspace in LIFE and selects it
     And User clicks on the published workspace
     And Verify the list should be available for LIFE platform by default
+    And User navigates to Studio application
+    And User searches the workspace created to perform Actions from More menu
+    And User selects the "Delete" option by clicking More Actions menu
+    And Verify user is able to delete the workspace
 
     Examples:
       | WORKSPACE_NAME | ADVERTISER | LIST_TYPE |
-      | Explorer       | Abbvie     | Static    |
-      | Explorer       | Abbvie     | Live      |
+      | HCP_Explorer   | Abbvie     | Static    |
+      | HCP_Explorer   | Abbvie     | Live      |
