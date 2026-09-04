@@ -104,7 +104,7 @@ public class ScheduleReport {
         this.SCHEDULE_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Schedule").setExact(true));
         this.SUCCESS_ALERT = page.locator("//div[@aria-label='Success!']");
         this.SEARCH_TEXTBOX = page.locator("//input[contains(@class,'gaTableSearch')]");
-        this.SEARCH_ICON = page.locator("//div[contains(@class,'gaTableSearchBtn')]");
+        this.SEARCH_ICON = page.locator("//app-ds-button-wrapper[contains(@class,'gaTableSearchBtn')]");
         this.FETCHED_TEMPLATE_NAME = page.locator(
                 "//label[text()='Template']//following-sibling::app-single-select-dropdown//input/following-sibling::span");
         this.SEND_ON_DROPDOWN = page.locator("//label[contains(text(),'Send On')]/following-sibling::div");
@@ -116,7 +116,7 @@ public class ScheduleReport {
         this.REPORT_SECOND_ROW = page.locator("//tr[contains(@class,'fixedrow ng-star-inserted')][2]");
         this.DELETE_REPORT_ICON = page.locator("//span[@title='Delete']/img[contains(@src,'delete')]");
         this.DELETE_REPORT_CONFIRMATION_POPUP = page.locator("//div[contains(@class,'confirm-modal header') and contains(text(),'Removal Confirmation')]");
-        this.DELETE_REPORT_REMOVE_BUTTON = page.locator("//div[contains(@class,'approveButtonText')]/span[contains(text(),'Remove')]");
+        this.DELETE_REPORT_REMOVE_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Remove"));
         this.DELETE_REPORT_SUCCESS_ALERT = page.locator("//div[@role='alert' and contains(text(),'Schedule deleted succesfully')]");
         this.NO_REPORT_AVAILABLE_TEXT = page.locator("//div[contains(text(), 'Nothing Found')]");
         this.CLEAR_SEARCH_ICON = page.locator("//div[contains(@class,'clear-search-close')]");

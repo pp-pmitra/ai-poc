@@ -202,7 +202,7 @@ public class RunReport {
         this.GENERATED_REPORT_OPTIONS = page.locator("//img[@title='options' and contains(@class,'actions')]");
         this.DELETE_REPORT_BUTTON = page.locator("//a[contains(@class,'item')]//span[@class='text' and text()='Delete']");
         this.DELETE_REPORT_CONFIRMATION_POPUP = page.locator("//div[contains(@class,'confirm-modal header') and contains(text(),'Removal Confirmation')]");
-        this.DELETE_REPORT_REMOVE_BUTTON = page.locator("//div[contains(@class,'approveButtonText')]/span[contains(text(),'Remove')]");
+        this.DELETE_REPORT_REMOVE_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Remove"));
         this.DELETE_REPORT_SUCCESS_ALERT = page.locator("//div[@role='alert' and contains(text(),'Report deleted successfully')]");
         this.NO_REPORT_AVAILABLE_TEXT = page.locator("//div[contains(text(), 'No Generated Reports')]");
         this.CLEAR_SEARCH_ICON = page.locator("//div[contains(@class,'clear-search-close')]");
