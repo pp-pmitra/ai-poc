@@ -12,7 +12,7 @@ Feature: LIFE Regression - Create a Targeting Template for below Line Item Type 
     And "Life" application is logged in successfully with Account "automation@pulsepoint"
     And Verify Campaign Dashboard is displayed with title "Campaigns"
 
-  @e2e @prs
+  @e2e
   Scenario Outline: Create a Targeting Template and import the template in Tactic
     #1
     When User navigates to Targeting template page by clicking the icon from Activation section
@@ -59,7 +59,7 @@ Feature: LIFE Regression - Create a Targeting Template for below Line Item Type 
       | TEMPLATE_NAME | CHANNEL                                         | LINE_ITEMS                                                                  | ADVERTISER     | CP_NAME           | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME |
       | Template      | Display Advanced, Video Advanced, DOOH Advanced | Display, Video, Native Display, Audio, Search Extension, DOOH, Native Video | 01- Advertiser | TargetingTemplate | Regular | 20000     | Line      | 500         | Tactic      |
 
-  @e2e @regression @prs1
+  @e2e @regression
   Scenario Outline: Create a Targeting Template from Tactic and its availability under Targeting templates page
     #1
     And Create a tactic with below targeting rules and "<LINE_ITEMS>" line items and other details "<ADVERTISER>" "<CP_NAME>" "<CP_TYPE>" "<CP_BUDGET>" "<LINE_NAME>" "<LINE_BUDGET>" "<TACTIC_NAME>"
