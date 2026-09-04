@@ -116,7 +116,7 @@ public class TacticDetails {
         this.SAVE_TEMPLATE_BUTTON = page.locator("//app-icon-lable-link[contains(@text,'Save as Template')]/div");
         this.SAVE_TEMPLATE_DIALOG = page.locator("//div[contains(text(),'Save as Template')]");
         this.TEMPLATE_NAME_TEXT = page.locator("//input[contains(@placeholder,'Template Name')]");
-        this.SAVE_BUTTON = page.locator("//button[contains(@class,'okButton')]");
+        this.SAVE_BUTTON = page.getByText("Save", new Page.GetByTextOptions().setExact(true));
         this.TEMPLATE_SAVED_SUCCESS_ALERT = page.locator("//div[contains(text(),'Saved as Template Successfully')]");
         this.TARGETING_RULES_ICON = page.locator("//span[contains(text(),'Targeting Rule')]");
         this.NEW_TACTIC_BUTTON = page.locator("//span[normalize-space(text())='New Tactic']");

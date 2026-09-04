@@ -2,6 +2,7 @@ package pages.life;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.LoadState;
 import factory.DriverFactory;
 import java.util.ArrayList;
@@ -188,7 +189,7 @@ public class Campaigns {
         this.CAMPAIGN_PAGINATION_ON_DASHBOARD = page.locator("//div[@class='paging-desc']");
         this.DELETE_CAMPAIGN_BUTTON = page.locator("//app-icon-lable-link[@title='Delete']//div[contains(@class,'icolink')]");
         this.DELETE_CAMPAIGN_CONFIRMATION_POPUP = page.locator("//div[contains(@class,'confirm-modal header') and contains(text(),'Removal Confirmation')]");
-        this.DELETE_CAMPAIGN_REMOVE_BUTTON = page.locator("//div[contains(@class,'approveButtonText')]/span[contains(text(),'Remove')]");
+        this.DELETE_CAMPAIGN_REMOVE_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Remove"));
         this.DELETE_CAMPAIGN_SUCCESS_ALERT = page.locator("//div[@role='alert' and contains(text(),'Campaign deleted successfully')]");
         this.CAMPAIGN_PANEL_NAME = page.locator("//div[@class='item-details']//div[contains(@class,'campaign-title')]");
         this.CAMPAIGN_UPDATED_POPUP = page.locator("//div[contains(@class, 'confirm-modal ') and contains(text(),'Campaign updated')]");
