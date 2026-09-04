@@ -51,7 +51,7 @@ public class TargetingTemplate {
         this.CHANNEL_VALUE = page.locator(
                 "//div[contains(@class,'display-flex')]/following-sibling::div//../div[@class='inventory-key']");
         this.ADD_TARGETING_RULE_BUTTON = page.locator("//span[contains(text(),'Add Targeting Rule')]");
-        this.SAVE_BUTTON = page.locator("//button[contains(text(),'Save')]");
+        this.SAVE_BUTTON = page.locator("//app-ds-button-wrapper[@label='Save']");
         this.TEMPLATE_NAME_ERROR = page.locator("//div[contains(text(),'Template Name is required')]");
         this.TARGETING_RULES_ERROR = page.locator("//div[contains(text(),'Please select atleast one targeting')]");
         this.TARGETING_RULES_DELETE_ICON = page.locator("//div[contains(@title,'delete')]");
