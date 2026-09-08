@@ -56,13 +56,40 @@ Feature: Medscape Soft Match Workspace in Studio Application
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
     Examples:
-      | ADVERTISER | SOURCE_NPI_LIST | BUSINESS     | BUSINESS_VERTICAL | PRODUCT           | PHARMA                 | BRAND                  | STATE_EXCLUSION |
-      | Medscape   | Medscape List_1 | Medscape (7) | Sponsorship (6)   | MSITE_TOPIC       | Bristol-Myers Squibb   | BMS Email Suppression  |                 |
-      | Medscape   | Medscape List_2 | MD/alert (3) | Sponsorship (19)  | MD/Alert e-Alerts | GlaxoSmithKline_Global | GlaxoSmithKline_Global | Colorado        |
-      | Medscape   | Medscape List_3 | MD/alert (3) | Sponsorship (19)  | MD/Alert e-Alerts |                        |                        |                 |
+      | ADVERTISER | WORKSPACE_NAME      | SOURCE_NPI_LIST | BUSINESS     | BUSINESS_VERTICAL | PRODUCT           | PHARMA                 | BRAND                  | STATE_EXCLUSION |
+      | Medscape   | Medscape_Soft_Match | Medscape List_1 | Medscape (7) | Sponsorship (6)   | MSITE_TOPIC       | Bristol-Myers Squibb   | BMS Email Suppression  |                 |
+      | Medscape   | Medscape_Soft_Match | Medscape List_2 | MD/alert (3) | Sponsorship (19)  | MD/Alert e-Alerts | GlaxoSmithKline_Global | GlaxoSmithKline_Global | Colorado        |
+      | Medscape   | Medscape_Soft_Match | Medscape List_3 | MD/alert (3) | Sponsorship (19)  | MD/Alert e-Alerts |                        |                        |                 |
 
   @todo
-  Scenario Outline: Create, save and delete Medscape Soft Match workspace and publish the workspace with unique SF Deliverable ID
+  Scenario Outline: Create, save, rename, duplicate and delete Medscape Soft Match workspace
+    When User clicks on Create New Workspace
+    Then User sees the types of workspaces they have permissions for
+    And User clicks on "Medscape Soft Match" workspace
+    And User selects the advertiser "<ADVERTISER>"
+    And Verify the Workspace creation page is displayed
+    Then User selects values in each fields as "<SOURCE_NPI_LIST>", "<BUSINESS>", "<BUSINESS_VERTICAL>", "<PRODUCT>", "<PHARMA>", "<BRAND>" and "<STATE_EXCLUSION>"
+    And User edits the "Medscape Soft Match" workspace name as "<WORKSPACE_NAME>"
+    And User saves the "Medscape Soft Match" workspace
+    And Verify the "Medscape Soft Match" Workspace is saved
+    Then Verify the workspace is visible in workspace management page
+    And Workspace status is updated and Workspace Definition is displayed as per selected fields
+    And User selects the "Rename" option by clicking More Actions menu
+    And Verify user is able to rename the "HCP Explorer" workspace as "<NEW_WORKSPACE_NAME>"
+    And User is able to search the workspace after performing operation - "Rename"
+    And User searches the workspace created to perform Actions from More menu
+    And User selects the "Duplicate" option by clicking More Actions menu
+    And Verify user is able to duplicate the "HCP Explorer" workspace
+    And User is able to search the workspace after performing operation - "Duplicate"
+    And User searches the workspace created to perform Actions from More menu
+    And User selects the "Delete" option by clicking More Actions menu
+    And Verify user is able to delete the workspace
+    Examples:
+      | ADVERTISER | WORKSPACE_NAME      | NEW_WORKSPACE_NAME      | SOURCE_NPI_LIST | BUSINESS     | BUSINESS_VERTICAL | PRODUCT     | PHARMA               | BRAND                 | STATE_EXCLUSION |
+      | Medscape   | Medscape_Soft_Match | New_Medscape_Soft_Match | Medscape List_1 | Medscape (7) | Sponsorship (6)   | MSITE_TOPIC | Bristol-Myers Squibb | BMS Email Suppression |                 |
+
+  @todo
+  Scenario Outline: Create, save and delete Medscape Soft Match workspace and publish the workspace with unique SF Deliverable ID and verify the Widget
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
     And User clicks on "Medscape Soft Match" workspace
@@ -78,15 +105,16 @@ Feature: Medscape Soft Match Workspace in Studio Application
     And User clicks on Push to Artemis button
     And Verify "Medscape Soft Match" workspace is published successfully only with unique SF Deliverable ID
     And Verify workspace is in Read only mode once published successfully
+    And Verify Match type Distribution widget is visible on explore tab
     Then Verify the workspace is visible in workspace management page
     And Workspace status is updated and Workspace Definition is displayed as per selected fields
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
     Examples:
-      | ADVERTISER | SOURCE_NPI_LIST | DELIVERABLE_ID | BUSINESS     | BUSINESS_VERTICAL | PRODUCT           | PHARMA                 | BRAND                  | STATE_EXCLUSION |
-      | Medscape   | Medscape List_1 | 338482.141     | Medscape (7) | Sponsorship (6)   | MSITE_TOPIC       | Bristol-Myers Squibb   | BMS Email Suppression  |                 |
-      | Medscape   | Medscape List_2 | 338482.141     | MD/alert (3) | Sponsorship (19)  | MD/Alert e-Alerts | GlaxoSmithKline_Global | GlaxoSmithKline_Global | Colorado        |
-      | Medscape   | Medscape List_3 | 338482.141     | MD/alert (3) | Sponsorship (19)  | MD/Alert e-Alerts |                        |                        |                 |
+      | ADVERTISER | WORKSPACE_NAME      | SOURCE_NPI_LIST | DELIVERABLE_ID | BUSINESS     | BUSINESS_VERTICAL | PRODUCT           | PHARMA                 | BRAND                  | STATE_EXCLUSION |
+      | Medscape   | Medscape_Soft_Match | Medscape List_1 | 338482.141     | Medscape (7) | Sponsorship (6)   | MSITE_TOPIC       | Bristol-Myers Squibb   | BMS Email Suppression  |                 |
+      | Medscape   | Medscape_Soft_Match | Medscape List_2 | 338482.141     | MD/alert (3) | Sponsorship (19)  | MD/Alert e-Alerts | GlaxoSmithKline_Global | GlaxoSmithKline_Global | Colorado        |
+      | Medscape   | Medscape_Soft_Match | Medscape List_3 | 338482.141     | MD/alert (3) | Sponsorship (19)  | MD/Alert e-Alerts |                        |                        |                 |
 
   @todo
   Scenario Outline: Create Medscape Soft Match workspace and download the reach analysis report and delete the workspace
@@ -111,14 +139,14 @@ Feature: Medscape Soft Match Workspace in Studio Application
     And Verify user is able to delete the workspace
 
     Examples:
-      | ADVERTISER | SOURCE_NPI_LIST | DELIVERABLE_ID | BUSINESS     | BUSINESS_VERTICAL | PRODUCT           | PHARMA                 | BRAND                  | STATE_EXCLUSION |
-      | Medscape   | Medscape List_1 | 338482.141     | Medscape (7) | Sponsorship (6)   | MSITE_TOPIC       |                        |                        |                 |
-      | Medscape   | Medscape List_1 | 338482.141     | Medscape (7) | Sponsorship (6)   | MSITE_TOPIC       |                        |                        | Colorado        |
-      | Medscape   | Medscape List_1 | 338482.141     | Medscape (7) | Sponsorship (6)   | MSITE_TOPIC       |                        |                        | Colorado        |
-      | Medscape   | Medscape List_1 | 338482.141     | Medscape (7) | Sponsorship (6)   | MSITE_TOPIC       | Bristol-Myers Squibb   | BMS Email Suppression  | Colorado        |
-      | Medscape   | Medscape List_3 | 338482.141     | MD/alert (3) | Sponsorship (19)  | MD/Alert e-Alerts |                        |                        |                 |
-      | Medscape   | Medscape List_2 | 338482.141     | MD/alert (3) | Sponsorship (19)  | MD/Alert e-Alerts |                        |                        |                 |
-      | Medscape   | Medscape List_2 | 338482.141     | MD/alert (3) | Sponsorship (19)  | MD/Alert e-Alerts | GlaxoSmithKline_Global | GlaxoSmithKline_Global |                 |
+      | ADVERTISER | WORKSPACE_NAME      | SOURCE_NPI_LIST | DELIVERABLE_ID | BUSINESS     | BUSINESS_VERTICAL | PRODUCT           | PHARMA                 | BRAND                  | STATE_EXCLUSION |
+      | Medscape   | Medscape_Soft_Match | Medscape List_1 | 338482.141     | Medscape (7) | Sponsorship (6)   | MSITE_TOPIC       |                        |                        |                 |
+      | Medscape   | Medscape_Soft_Match | Medscape List_1 | 338482.141     | Medscape (7) | Sponsorship (6)   | MSITE_TOPIC       |                        |                        | Colorado        |
+      | Medscape   | Medscape_Soft_Match | Medscape List_1 | 338482.141     | Medscape (7) | Sponsorship (6)   | MSITE_TOPIC       |                        |                        | Colorado        |
+      | Medscape   | Medscape_Soft_Match | Medscape List_1 | 338482.141     | Medscape (7) | Sponsorship (6)   | MSITE_TOPIC       | Bristol-Myers Squibb   | BMS Email Suppression  | Colorado        |
+      | Medscape   | Medscape_Soft_Match | Medscape List_3 | 338482.141     | MD/alert (3) | Sponsorship (19)  | MD/Alert e-Alerts |                        |                        |                 |
+      | Medscape   | Medscape_Soft_Match | Medscape List_2 | 338482.141     | MD/alert (3) | Sponsorship (19)  | MD/Alert e-Alerts |                        |                        |                 |
+      | Medscape   | Medscape_Soft_Match | Medscape List_2 | 338482.141     | MD/alert (3) | Sponsorship (19)  | MD/Alert e-Alerts | GlaxoSmithKline_Global | GlaxoSmithKline_Global |                 |
 
   @todo
   Scenario: Select Medscape Soft Match workspace and delete the workspace
