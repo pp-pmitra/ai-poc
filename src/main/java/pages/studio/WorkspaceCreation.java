@@ -95,9 +95,8 @@ public class WorkspaceCreation {
         this.RENAME_WORKSPACE_ALERT = WORKSPACE_FRAME.locator("//p[contains(text(),'Workspace renamed successfully')]");
         this.SEARCH_WORKSPACE = WORKSPACE_FRAME.locator("input[placeholder='Search']");
         this.DUPLICATE_BUTTON = WORKSPACE_FRAME.locator("//div[contains(text(),'Duplicate')]");
-        this.DUPLICATE_WORKSPACE_POPUP = WORKSPACE_FRAME.locator("//h3[contains(text(),'Duplicate Workspace')]");
-        this.DUPLICATE_BUTTON_FROM_POPUP = WORKSPACE_FRAME.locator(
-                "//h3[contains(text(),'Duplicate Workspace')]/parent::header/following-sibling::footer//div[contains(text(),'Duplicate')]");
+        this.DUPLICATE_WORKSPACE_POPUP = WORKSPACE_FRAME.getByText("Duplicate Workspace", new FrameLocator.GetByTextOptions().setExact(true));
+        this.DUPLICATE_BUTTON_FROM_POPUP = WORKSPACE_FRAME.getByText("Duplicate", new FrameLocator.GetByTextOptions().setExact(true));
         this.DUPLICATE_WORKSPACE_ALERT =
                 WORKSPACE_FRAME.locator("//p[contains(text(),'Workspace duplicated successfully')]");
         this.DUPLICATE_WORKSPACE_NAME = WORKSPACE_FRAME.locator("//ds-typography/b[starts-with(text(), 'Copy of')]");
