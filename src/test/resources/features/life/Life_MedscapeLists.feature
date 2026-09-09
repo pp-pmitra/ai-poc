@@ -31,7 +31,7 @@ Feature: LIFE regression - Create NPI List of following types:
     When User deletes the "Medscape" list
     Then Verify the list is deleted successfully
     Examples:
-      | LIST_NAME     | FILE_NAME            | MESSAGE                      | WAIT_TEXT                           |
+      | LIST_NAME     | FILE_NAME           | MESSAGE                      | WAIT_TEXT                           |
       | Medscape_List | Medscape_List_1.csv | Soft Matching in Progress... | This process may take a few minutes |
      # | Medscape_List | Medscape_List_2.csv | Soft Matching in Progress... | This process may take a few minutes |
      # | Medscape_List | Medscape_List_3.csv | Soft Matching in Progress... | This process may take a few minutes |
@@ -60,7 +60,7 @@ Feature: LIFE regression - Create NPI List of following types:
     When User deletes the "Medscape" list
     Then Verify the list is deleted successfully
     Examples:
-      | LIST_NAME     | FILE_NAME            | MESSAGE                      | WAIT_TEXT                           |
+      | LIST_NAME     | FILE_NAME           | MESSAGE                      | WAIT_TEXT                           |
       | Medscape_List | Medscape_List_1.csv | Soft Matching in Progress... | This process may take a few minutes |
       | Medscape_List | Medscape_List_2.csv | Soft Matching in Progress... | This process may take a few minutes |
       | Medscape_List | Medscape_List_3.csv | Soft Matching in Progress... | This process may take a few minutes |
