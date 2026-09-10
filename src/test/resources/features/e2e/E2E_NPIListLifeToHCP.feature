@@ -63,7 +63,6 @@ Feature: End to End Workflow of NPI Lists.
     And User searches for the created NPI list
     When User deletes the created list
     Then Verify list gets deleted successfully
-
     Examples:
       | ADVERTISER   | LIST_NAME  | DRUG_NAME | CP_NAME        | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | SMART_ACTION_NAME | SMART_LIST_NAME | DAYS |
       | Z_Automation | Smart_List | Glynase   | Life_To_HCP365 | Regular |      2000 | Line      |         500 | TACTIC      | Display Advanced | SMART_ACTION      | SMART_LIST      |    5 |
@@ -116,7 +115,6 @@ Feature: End to End Workflow of NPI Lists.
     And User searches for the created NPI list
     When User deletes the created list
     Then Verify list gets deleted successfully
-
     Examples:
       | ADVERTISER   | LIST_NAME  | CP_NAME        | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | SMART_ACTION_NAME | NPI_NUMBER |
       | Z_Automation | STATIC_NPI | Life_To_HCP365 | Regular |      2000 | Line      |         500 | TACTIC      | Display Advanced | SMART_ACTION      | 1234567890 |

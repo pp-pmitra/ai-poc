@@ -42,7 +42,6 @@ Feature: End to End workflow for Shared Lists - Domain, App Bundles, Keywords an
     When User navigates to the created campaign
     And User deletes the campaign
     Then Verify that the campaign is deleted successfully
-
     Examples:
       | LIST_NAME | DOMAIN_NAMES          | ADVERTISER     | CP_NAME             | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE    |
       | Domain    | amazon.com, apple.com | 01- Advertiser | DomainList_Campaign | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced | Domains/Apps |
@@ -80,7 +79,6 @@ Feature: End to End workflow for Shared Lists - Domain, App Bundles, Keywords an
     When User navigates to the created campaign
     And User deletes the campaign
     Then Verify that the campaign is deleted successfully
-
     Examples:
       | LIST_NAME | UPLOAD_FILENAME1   | ADVERTISER     | CP_NAME                | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE    |
       | AppBundle | AppBundleFile1.csv | 01- Advertiser | AppBundleList_Campaign | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced | Domains/Apps |
@@ -115,7 +113,6 @@ Feature: End to End workflow for Shared Lists - Domain, App Bundles, Keywords an
     And User saves the targeting
     And User clicks Tactic Setting tab
     And Verify that the selected list is displayed in the targeting rule and retrieve the total count of targeted items
-
     Examples:
       | LIST_NAME | KEYWORD_NAMES                              | ADVERTISER     | CP_NAME          | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE |
       | Keyword   | Active Shooter, Antisemitism, Church Shoot | 01- Advertiser | Keyword_Campaign | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced | Keywords  |
@@ -153,7 +150,6 @@ Feature: End to End workflow for Shared Lists - Domain, App Bundles, Keywords an
     When User navigates to the created campaign
     And User deletes the campaign
     Then Verify that the campaign is deleted successfully
-
     Examples:
       | LIST_NAME  | IP_ADDRESS             | ADVERTISER     | CP_NAME             | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE  |
       | IP_Address | 123.46.7.5, 123.46.7.7 | 01- Advertiser | IP_Address_Campaign | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced | IP Address |

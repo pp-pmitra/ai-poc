@@ -72,8 +72,9 @@ suppression at once.
 
 `.feature` files are checked for consistent Gherkin formatting (indentation, table column
 alignment, blank lines) using [`@cucumber/gherkin-utils`](https://github.com/cucumber/gherkin-utils),
-Cucumber's own formatter. It only normalizes style - it doesn't check step wording, tags, or
-scenario semantics.
+Cucumber's own formatter. A project wrapper removes the formatter's blank line between the last
+step of a Scenario Outline and its `Examples` block. It only normalizes style - it doesn't check
+step wording, tags, or scenario semantics.
 
 ### Setup
 
@@ -86,13 +87,16 @@ npm install
 ### When it runs
 
 Every `git commit` runs it via `.githooks/pre-commit`, but only against the `.feature` files
-you've actually staged - untouched files aren't checked until you edit them.
+you've actually staged - untouched files aren't checked until you edit them. Pull requests to
+`main` run the `Feature format check` GitHub Actions job against the full feature suite. Configure
+that job as a required status check in the `main` branch protection rule to block unformatted PRs.
 
 ### Running it manually
 
 ```
-npm run feature:check    # reports files that don't match canonical formatting
-npm run feature:format   # reformats files in place
+npm run feature:check          # reports files that don't match project formatting
+npm run feature:format         # reformats files in place
+npm run feature:formatter:test # tests the project-specific formatting rule
 ```
 
 ## References

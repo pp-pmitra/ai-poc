@@ -44,7 +44,6 @@ Feature: End to End workflow for NPI Lists - Attributed and Auto-Imported creati
     When User navigates to the created campaign
     And User deletes the campaign
     Then Verify that the campaign is deleted successfully
-
     Examples:
       | LIST_NAME | ADVERTISER     | FILE_NAME                | COLUMN_NAME | CP_NAME               | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          |
       | ATTRIBUTE | 01- Advertiser | NPI_AttributeList01.xlsx | NPI         | AttributeNPI_Campaign | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced |
@@ -88,7 +87,6 @@ Feature: End to End workflow for NPI Lists - Attributed and Auto-Imported creati
     When User navigates to the created campaign
     And User deletes the campaign
     Then Verify that the campaign is deleted successfully
-
     Examples:
       | LIST_NAME     | ADVERTISER     | FILE_LOCATION | FILE_PATH                      | FILE_NAME                  | LIST_TYPE            | NPI_COLUMN_NAME | IMPORT_TYPE    | CP_NAME                  | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          |
       | Auto_Imported | 01- Advertiser |        1OurVM | /home/NPIAutoImport/Automation | AutoImport_Automation1.csv | List with Attributes | NPI             | Import Columns | AutoImportedNPI_Campaign | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced |

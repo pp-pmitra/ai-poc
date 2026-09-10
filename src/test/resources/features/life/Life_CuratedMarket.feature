@@ -16,7 +16,6 @@ Feature: Curated Markets - Verify Deal Import, Validation, and Tactic Assignment
   Scenario Outline: Verify the error messages for mandatory fields - market name, accounts and market KPI and benchmark
     When User clicks Create Curated Market link
     And User creates a curated market with only "<DESCRIPTION>"
-
     Examples:
       | DESCRIPTION                |
       | Curated Market Description |
@@ -40,7 +39,6 @@ Feature: Curated Markets - Verify Deal Import, Validation, and Tactic Assignment
     And Verify Curated Market tab is displayed
     And User searches for the created Curated Market
     Then Verify the market id, media type, and floor price displayed in Curated Markets section matches the media type in Admin Setup for the same market
-
     Examples:
       | MARKET_NAME    | ACCOUNTS              | DESCRIPTION                | MARKET_KPI_BENCHMARK |
       | Curated_Market | automation@pulsepoint | Curated Market Description |                  0.5 |
@@ -67,7 +65,6 @@ Feature: Curated Markets - Verify Deal Import, Validation, and Tactic Assignment
     And Verify Curated Market tab is displayed
     And User searches for the created Curated Market
     Then Verify the market id, media type, and floor price displayed in Curated Markets section matches the media type in Admin Setup for the same market
-
     Examples:
       | MARKET_NAME    | ACCOUNTS              | DESCRIPTION                | MARKET_KPI_BENCHMARK |
       | Curated_Market | automation@pulsepoint | Curated Market Description |                  0.5 |

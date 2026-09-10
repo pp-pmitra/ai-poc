@@ -87,7 +87,6 @@ Feature: LIFE Regression - Targetings
     Then Verify the newly created campaign details in the campaign list: Campaign name, Line item name and Tactic name
     When User navigates to Targeting template page by clicking the icon from Activation section
     Then User searches and verifies the created targeting template is available on Targeting Templates page
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | CREATIVE      |
       | 01- Advertiser | Test    | Regular |     10000 | Line      |         120 | Tactic      | Display Advanced | Auto_Creative |
@@ -135,7 +134,6 @@ Feature: LIFE Regression - Targetings
     Then Verify the newly created campaign is in running state
     When User navigates to Targeting template page by clicking the icon from Activation section
     Then User searches and verifies the created targeting template is available on Targeting Templates page
-
     Examples:
       | ADVERTISER     | CP_NAME       | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | LINE_ITEMS | TACTIC_NAME | CHANNEL        | CREATIVE      |
       | 01- Advertiser | External_Auto | Regular |     10000 | Line      |         500 | Video      | Tactic      | Video Advanced | Auto_Creative |
@@ -182,7 +180,6 @@ Feature: LIFE Regression - Targetings
     Then Verify the newly created campaign is in running state
     When User navigates to Targeting template page by clicking the icon from Activation section
     Then User searches and verifies the created targeting template is available on Targeting Templates page
-
     Examples:
       | ADVERTISER     | CP_NAME       | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | LINE_ITEMS   | TACTIC_NAME | CREATIVE      |
       | 01- Advertiser | External_Auto | Regular |     10000 | Line      |         500 | Native Video | Tactic      | Auto_Creative |
@@ -228,7 +225,6 @@ Feature: LIFE Regression - Targetings
     Then Verify the newly created campaign is in running state
     When User navigates to Targeting template page by clicking the icon from Activation section
     Then User searches and verifies the created targeting template is available on Targeting Templates page
-
     Examples:
       | ADVERTISER     | CP_NAME       | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | LINE_ITEMS       | TACTIC_NAME | CREATIVE      |
       | 01- Advertiser | External_Auto | Regular |     10000 | Line      |         500 | Search Extension | Tactic      | Auto_Creative |
@@ -266,7 +262,6 @@ Feature: LIFE Regression - Targetings
     Then Verify the newly created campaign is in running state
     When User navigates to Targeting template page by clicking the icon from Activation section
     Then User searches and verifies the created targeting template is available on Targeting Templates page
-
     Examples:
       | ADVERTISER     | CP_NAME       | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | LINE_ITEMS | TACTIC_NAME | CREATIVE      |
       | 01- Advertiser | Campaign_DOOH | Regular |     10000 | Line      |         500 | DOOH       | Tactic      | Auto_Creative |
@@ -309,7 +304,6 @@ Feature: LIFE Regression - Targetings
     Then Verify the newly created campaign is in running state
     When User navigates to Targeting template page by clicking the icon from Activation section
     Then User searches and verifies the created targeting template is available on Targeting Templates page
-
     Examples:
       | ADVERTISER     | CP_NAME        | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | LINE_ITEMS | TACTIC_NAME | CREATIVE      |
       | 01- Advertiser | Campaign_Audio | Regular |     10000 | Line      |         500 | Audio      | Tactic      | Auto_Creative |

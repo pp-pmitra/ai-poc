@@ -35,7 +35,6 @@ Feature: Studio Publish NPI List
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
-
     Examples:
       | WORKSPACE_NAME | ADVERTISER | LIST_TYPE |
       | HCP_Explorer   | Abbvie     | Static    |
@@ -70,7 +69,6 @@ Feature: Studio Publish NPI List
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
-
     Examples:
       | WORKSPACE_NAME | ADVERTISER | LIST_TYPE |
       | HCP_Explorer   | Abbvie     | Static    |

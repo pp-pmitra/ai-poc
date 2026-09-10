@@ -47,7 +47,6 @@ Feature: Create and Publish HCP Explorer Workspace in Studio and Verify in LIFE
     And User searches the workspace created to perform Actions from More menu
     When User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
-
     Examples:
       | ADVERTISER | WORKSPACE_NAME | LIST_TYPE |
       | Abbvie     | Explorer       | Static    |
@@ -81,7 +80,6 @@ Feature: Create and Publish HCP Explorer Workspace in Studio and Verify in LIFE
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
-
     Examples:
       | WORKSPACE_NAME | ADVERTISER | LIST_TYPE | NPI_RETENTION_OPTION |
       | Explorer       | Abbvie     | Live      | indefinitely         |
@@ -125,7 +123,6 @@ Feature: Create and Publish HCP Explorer Workspace in Studio and Verify in LIFE
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
-
     Examples:
       | ADVERTISER | WORKSPACE_NAME | AI_PROMPT                                                                                | PRIMARY_FILTERS |
       | Abbvie     | Explorer       | Find doctors within certain age ranges, with specific professions, and narrow by wealth. | Profession      |

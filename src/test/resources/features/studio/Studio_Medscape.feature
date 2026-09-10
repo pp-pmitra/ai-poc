@@ -27,7 +27,6 @@ Feature: Medscape List Match + Consent Workspace in Studio Application
     And Verify the in-line error messages is displayed for Brand field
     And User clicks "Select Columns with Required Attributes" & deselects NPI
     And Verify the error displayed as "Please map the following required attributes before submitting: NPI_NUMBER, CUSTOMER_ID"
-
     Examples:
       | ADVERTISER | SOURCE_NPI_LIST                   | BUSINESS     | BUSINESS_VERTICAL | PRODUCT     | PHARMA               | BRAND                                                     |
       | Medscape   | ND_Prod_Opdivo_11May [ID: #92568] | Medscape (7) | Sponsorship (6)   | MSITE_TOPIC | Bristol-Myers Squibb | GlaxoSmithKline_Global,GSK Anoro Sample Email Suppression |
@@ -49,7 +48,6 @@ Feature: Medscape List Match + Consent Workspace in Studio Application
     And Verify system navigate on "Explore" tab from "Mapping" tab
     Then Verify the workspace is visible in workspace management page
     And Workspace status is updated & Workspace Definition is displayed as per selected fields
-
     Examples:
       | ADVERTISER | SOURCE_NPI_LIST                      | BUSINESS     | BUSINESS_VERTICAL | PRODUCT           | PHARMA                 | BRAND                  | STATE_EXCLUSION | CUSTOMER_ID_FIELD | VALUE       | NPI_ID     | ZIP_FIELD   | ZIP_VALUE |
       | Medscape   | ND_Prod_Opdivo_11May [ID: #92568]    | Medscape (7) | Sponsorship (6)   | MSITE_TOPIC       | Bristol-Myers Squibb   | BMS Email Suppression  |                 | Compass_ID        | CUSTOMER_ID | NPI_NUMBER | POSTAL_CODE | ZIP       |
@@ -78,7 +76,6 @@ Feature: Medscape List Match + Consent Workspace in Studio Application
     And Verify workspace is in Read only mode once published successfully
     Then Verify the workspace is visible in workspace management page
     And Workspace status is updated & Workspace Definition is displayed as per selected fields
-
     Examples:
       | ADVERTISER | SOURCE_NPI_LIST                      | DELIVERABLE_ID | BUSINESS     | BUSINESS_VERTICAL | PRODUCT           | PHARMA                 | BRAND                  | STATE_EXCLUSION | CUSTOMER_ID_FIELD | VALUE       | NPI_ID     | ZIP_FIELD   | ZIP_VALUE |
       | Medscape   | ND_Prod_Opdivo_11May [ID: #92568]    |     338482.141 | Medscape (7) | Sponsorship (6)   | MSITE_TOPIC       | Bristol-Myers Squibb   | BMS Email Suppression  |                 | Compass_ID        | CUSTOMER_ID | NPI_NUMBER | POSTAL_CODE | ZIP       |
@@ -104,7 +101,6 @@ Feature: Medscape List Match + Consent Workspace in Studio Application
     And User selects Push to Artemis button
     And Verify "Medscape List Match + Consent" workspace is published
     And Verify the values displayed on Explore tab
-
     Examples:
       | ADVERTISER | SOURCE_NPI_LIST                      | DELIVERABLE_ID | BUSINESS     | BUSINESS_VERTICAL | PRODUCT           | PHARMA                 | BRAND                  | STATE_EXCLUSION | CUSTOMER_ID_FIELD | VALUE       | NPI_ID     | ZIP_FIELD   | ZIP_VALUE |
       | Medscape   | ND_Prod_Opdivo_11May [ID: #92568]    |     338482.141 | Medscape (7) | Sponsorship (6)   | MSITE_TOPIC       |                        |                        |                 | Compass_ID        | CUSTOMER_ID | NPI_NUMBER | POSTAL_CODE |           |

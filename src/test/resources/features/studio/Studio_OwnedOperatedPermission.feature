@@ -27,7 +27,6 @@ Feature: Verify visibility of Owned and Operated Data based on Admin Permission 
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
-
     Examples:
       | PERMISSION_FLAG | ADVERTISER | WORKSPACE_NAME | VISIBILITY_FLAG |
       | Enabled         | Abbvie     | HCP_Explorer   | Present         |

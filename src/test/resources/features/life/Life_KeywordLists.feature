@@ -24,7 +24,6 @@ Feature: LIFE Regression – Generate Keyword Lists in the following ways:
     And Verify that the user is able to delete an existing "Keywords" name list
     And Verify the deleted list is no longer displayed in the left panel
     And Verify that PulsePoint provided domain list "Automation_KeywordList" is denoted with a purple P icon
-
     Examples:
       | LIST_NAME | KEYWORD_NAMES                              | EDITED_KEYWORDS_NAMES        |
       | Keyword   | Active Shooter, Antisemitism, Church Shoot | Cory Booker, Clinton Package |
@@ -44,7 +43,6 @@ Feature: LIFE Regression – Generate Keyword Lists in the following ways:
     And Verify that the user is able to delete the uploaded file "<UPLOAD_FILENAME1>"
     And Verify that the user is able to delete an existing "Keywords" name list
     And Verify the deleted list is no longer displayed in the left panel
-
     Examples:
       | LIST_NAME          | UPLOAD_FILENAME1  | UPLOAD_FILENAME2  |
       | Keyword_FileUpload | KeywordsFile1.csv | KeywordsFile2.csv |

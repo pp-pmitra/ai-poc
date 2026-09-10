@@ -55,7 +55,6 @@ Feature: LIFE Regression - Create a Creative Library and verify filters, sort, s
       | Creative Status | PendingApproval, Approved, Denied                                                                                                                                                                                                                                                                                                                                                                                                                                           |
       | Ad Sizes        | 1024x576, 1025x800, 1040x875, 1050x800, 1050x880, 1200x200, 1200x750, 120x20, 120x240, 120x600, 123x123, 125x125, 1280x720, 1500x900, 160x600, 168x28, 170x130, 180x150, 1920x1080, 200x200, 200x600, 216x36, 234x60, 250x250, 300x100, 300x250, 300x50, 300x600, 301x601, 320x100, 320x480, 320x50, 333x333, 336x280, 400x400, 468x60, 480x320, 640x100, 640x360, 640x480, 700x500, 728x200, 728x90, 768x576, 800x200, 800x250, 800x600, 854x480, 970x250, 970x30, 970x550 |
       | Creative Type   | Image, Html, Video, Search Extension, Html5, Audio, Native Display, Native Video                                                                                                                                                                                                                                                                                                                                                                                            |
-
     Examples:
       | ACTIVITY_TAB_NAME |
       | Active            |
@@ -67,7 +66,6 @@ Feature: LIFE Regression - Create a Creative Library and verify filters, sort, s
     Then Verify Creative Library page is displayed
     When User selects pagination values "<PAGINATION_VALUE>" from the dropdown
     And Verify pagination is working properly on the Creative Library page
-
     Examples:
       | PAGINATION_VALUE |
       |               10 |
@@ -146,7 +144,6 @@ Feature: LIFE Regression - Create a Creative Library and verify filters, sort, s
       | VAST URL     | Type:STANDARD VAST, VASTURL:https://www.pulsepoint.com, Durations:60, Width:100, Height:100, ClickThroughURL:pulsepoint.com, AdvertiserDomain:pulsepoint.com, IAB:Profane, Headline:Test Automation Headline, SponsoredBy:PulsePoint, Description:Test Automation Description, DisplayURL:https://www.pulsepoint.com |
       | VAST XML     | Type:VPAID, VASTXML:https://www.pulsepoint.com, Durations:60, Width:100, Height:100, ClickThroughURL:pulsepoint.com, AdvertiserDomain:pulsepoint.com, IAB:Profane, Headline:Test Automation Headline, SponsoredBy:PulsePoint, Description:Test Automation Description, DisplayURL:https://www.pulsepoint.com         |
     Then Verify the newly created creative is displayed in the Creative Library page
-
     Examples:
       | ADVERTISER     | CREATIVE_NAME | ADVERTISER_DSA | FINANCER      |
       | 01- Advertiser | Creative      | Auto_DSA       | Auto_Financer |
@@ -183,7 +180,6 @@ Feature: LIFE Regression - Create a Creative Library and verify filters, sort, s
     And User uploads a valid file "<FILE_NAME>" for "<CREATIVE_TYPE>" creative and previews the creative details
     And User saves the creative
     And Verify the newly created creative is displayed in the Creative Library page
-
     Examples:
       | CREATIVE_TYPE | ADVERTISER     | ADVERTISER_DSA | FINANCER      | STATUS   | FILE_NAME                       |
       | Display       | 01- Advertiser | Auto_DSA       | Auto_Financer | Pending  | DisplayBulkUploadTemplate1.xlsx |
@@ -217,7 +213,6 @@ Feature: LIFE Regression - Create a Creative Library and verify filters, sort, s
     And User uploads a valid file "Downloaded" for "Display" creative and previews the creative details
     And User saves the creative
     And Verify the newly created creative is displayed in the Creative Library page and contains all the details entered during creation
-
     Examples:
       | ADVERTISER     | IMAGE_FILENAME    | CAMPAIGN_NAME | FILE_NAME                       | BLANK_TEMPLATE                      | ADVERTISER_DSA | FINANCER      | STATUS   |
       | 01- Advertiser | Display_Image.jpg | Creative      | DisplayBulkUploadTemplate1.xlsx | BlankDisplayBulkUploadTemplate.xlsx | Auto_DSA       | Auto_Financer | Approved |
@@ -239,7 +234,6 @@ Feature: LIFE Regression - Create a Creative Library and verify filters, sort, s
     And Verify Rich Media checkbox should be present and selectable "Up"
     And Verify that the user is able to browse the computer, upload the following file types, and create creatives using details - "<ADVERTISER>", "<ADVERTISER_DSA>", "<FINANCER>", "<LANDING_DOMAIN>", "<STATUS>", "<CREATIVE_NAME>", "<SIZE>", "<DURATION>", "<FILE_TYPE>", "<FILE_NAME>"
     And Verify the newly created creative is displayed in the Creative Library page
-
     Examples:
       | ADVERTISER     | INVALID_LANDING_DOMAIN | LANDING_DOMAIN | ADVERTISER_DSA | FINANCER      | STATUS   | CREATIVE_NAME | SIZE    | DURATION | FILE_TYPE    | FILE_NAME              |
       | 01- Advertiser | test                   | www.google.com | Auto_DSA       | Auto_Financer | Approved | HTML_Creative | 800x250 |       60 | DCM File     | HTML_DCM.xls           |
@@ -257,7 +251,6 @@ Feature: LIFE Regression - Create a Creative Library and verify filters, sort, s
     When User selects the "HTML" creative type
     And Verify that the user is able to browse the computer, upload the following file types, and create creatives using details - "<ADVERTISER>", "<ADVERTISER_DSA>", "<FINANCER>", "<LANDING_DOMAIN>", "<STATUS>", "<CREATIVE_NAME>", "<SIZE>", "<DURATION>", "<FILE_TYPE>", "<FILE_NAME>"
     And Verify the newly created creative is displayed in the Creative Library page
-
     Examples:
       | ADVERTISER     | LANDING_DOMAIN | ADVERTISER_DSA | FINANCER      | STATUS   | CREATIVE_NAME | SIZE    | DURATION | FILE_TYPE  | FILE_NAME         |
       | 01- Advertiser | www.google.com | Auto_DSA       | Auto_Financer | Approved | HTML_Creative | 800x250 |       60 | PulsePoint | Download Template |
@@ -286,7 +279,6 @@ Feature: LIFE Regression - Create a Creative Library and verify filters, sort, s
     And User uploads a valid file "Downloaded" for "Native" creative and previews the creative details
     And User saves the creative
     And Verify the newly created creative is displayed in the Creative Library page and contains all the details entered during creation
-
     Examples:
       | ADVERTISER     | IMAGE_FILENAME          | CAMPAIGN_NAME | BLANK_TEMPLATE                     | ADVERTISER_DSA | FINANCER      | LANDING_DOMAIN | IAB     | STATUS   |
       | 01- Advertiser | NativeDisplay_Image.jpg | Creative      | BlankNativeBulkUploadTemplate.xlsx | Auto_DSA       | Auto_Financer | www.google.com | Profane | Approved |
@@ -311,7 +303,6 @@ Feature: LIFE Regression - Create a Creative Library and verify filters, sort, s
     And Verify default value of the Notes Column field should be "None"
     And Verify that the user is able to browse the computer, upload the following file types, and create creatives using details - "<ADVERTISER>", "<ADVERTISER_DSA>", "<FINANCER>", "<LANDING_DOMAIN>", "<STATUS>", "<CREATIVE_NAME>", "<SIZE>", "<DURATION>", "<FILE_TYPE>", "<FILE_NAME>"
     And Verify the newly created creative is displayed in the Creative Library page
-
     Examples:
       | ADVERTISER     | CLICKTHROUGH_URL   | LANDING_DOMAIN | ADVERTISER_DSA | FINANCER      | STATUS   | CREATIVE_NAME  | IMAGE_FILENAME    | SIZE    | DURATION | FILE_TYPE    | FILE_NAME               |
       | 01- Advertiser | AutomationTest.com | www.google.com | Auto_DSA       | Auto_Financer | Approved | Video_Creative | Display_Image.jpg | 800x250 |       60 | DCM File     | Video_DCM.xls           |

@@ -1,12 +1,12 @@
 #!/bin/sh
-# Verifies .feature files match gherkin-utils' canonical formatting.
+# Verifies .feature files match the project's gherkin-utils-based formatting.
 # Usage: scripts/check-feature-format.sh [file ...]   (defaults to all feature files)
 set -e
 
-GHERKIN_UTILS="$(dirname "$0")/../node_modules/.bin/gherkin-utils"
+FORMATTER="$(dirname "$0")/format-feature.mjs"
 FAIL=0
 
-if [ ! -x "$GHERKIN_UTILS" ]; then
+if [ ! -x "$(dirname "$0")/../node_modules/.bin/gherkin-utils" ]; then
   echo "gherkin-utils not found — run 'npm install' first."
   exit 1
 fi
@@ -18,7 +18,7 @@ else
 fi
 
 for f in $FILES; do
-  formatted=$(cat "$f" | "$GHERKIN_UTILS" format)
+  formatted=$(node "$FORMATTER" < "$f")
   original=$(cat "$f")
   if [ "$formatted" != "$original" ]; then
     echo "Needs formatting: $f"

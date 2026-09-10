@@ -48,7 +48,6 @@ Feature: End to End Workflow of Report Generation.
     When User navigates to the created campaign
     And User deletes the campaign
     Then Verify that the campaign is deleted successfully
-
     Examples:
       | ADVERTISER     | CP_NAME         | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | CREATIVE    | TEMPLATE NAME | DIMENSIONS                    | METRICS            | RULE_TYPE          |
       | 01- Advertiser | Report_Template | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced | QA_Creative | Template      | Advertiser Name,Campaign Name | Impressions,Clicks | Behavioral Segment |

@@ -15,7 +15,6 @@ Feature: Enable Studio permissions for an account,advertiser and external users
     Then User verifies if Studio appears in submenu for "<ACCOUNT_NAME>" account
     When User disables the studio permission for "<ACCOUNT_NAME>" account
     Then User should not be able to see the studio permission for that account
-
     Examples:
       | ACCOUNT_NAME |
       |      100Plus |
@@ -38,7 +37,6 @@ Feature: Enable Studio permissions for an account,advertiser and external users
     And User selects "<ADVERTISER>" from the Studio Workspace Advertiser dropdown
     And External user selects the workspace from the dashboard
     Then External user should be able to see the "<STUDIO_PERMISSIONS>" permission in the workspace
-
     Examples:
       | USER_NAME | STUDIO_PERMISSIONS | ACCOUNT_NAME | ADVERTISER_PERMISSIONS | WORKSPACE_TYPE | ADVERTISER |
       | hmtdemo   | MOMENTS            | HMT Demo     | MOMENTS                | HCP Explorer   | Demo W2O   |

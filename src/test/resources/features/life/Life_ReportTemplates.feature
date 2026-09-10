@@ -23,7 +23,6 @@ Feature: LIFE Regression - Create a Report Template
     And Verify details of the created template on Template Listing page
     And Verify the details of the created template on Edit Template panel
     And Verify the delete button is enabled on the Edit Template panel
-
     Examples:
       | TEMPLATE NAME | DIMENSIONS      | METRICS     |
       | AutoTemplate  | Advertiser Name | Impressions |
@@ -52,7 +51,6 @@ Feature: LIFE Regression - Create a Report Template
     And Verify the delete button is enabled on the Edit Template panel
     And User deletes the created template
     Then Verify the template is deleted and not displayed in the template list
-
     Examples:
       | TEMPLATE NAME         | DIMENSIONS                                                                                                          | METRICS                                                          |
       | MultiCategoryTemplate | Advertiser Name, Campaign Name, NPI First Name, Device Type, Area code, Keywords, Deal Name, Age, Current Step Name | Impressions, Clicks, Platform Fee, Complete Views, Midpoint Rate |
@@ -73,7 +71,6 @@ Feature: LIFE Regression - Create a Report Template
     Then Verify new template is saved and displayed in the template list
     And User deletes the existing template from the template list
     Then Verify the template is deleted and not displayed in the template list
-
     Examples:
       | TEMPLATE NAME | DIMENSIONS      | METRICS     |
       | AutoTemplate  | Advertiser Name | Impressions |
@@ -98,7 +95,6 @@ Feature: LIFE Regression - Create a Report Template
     And User saves the copied template with updated details
     Then Verify the copied template is displayed in the template list
     And Verify the data persistence of the copied template on Edit Template panel
-
     Examples:
       | TEMPLATE NAME | DIMENSIONS      | METRICS     | EDITED_DIMENSIONS | EDITED_METRICS |
       | AutoTemplate  | Advertiser Name | Impressions | Campaign ID       | Clicks         |
@@ -135,7 +131,6 @@ Feature: LIFE Regression - Create a Report Template
     And Verify the presence of Report Format field and default value - "CSV"
     And Verify the presence of Text Qualifier checkbox and by default it should be checked
     And User should be able to generate the report
-
     Examples:
       | TEMPLATE NAME | DIMENSIONS      | METRICS     | ADVERTISER     | CAMPAIGN_INITIALS | LINE_ITEM_INITIALS | TACTIC_INITIALS | CREATIVE_INITIALS | TIME_ZONE                       |
       | AutoTemplate  | Advertiser Name | Impressions | 01- Advertiser | CreativeCampaign  | CreativeLine       | CreativeTactic  | Creative          | (GMT+05:30) India Standard Time |

@@ -27,7 +27,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
       | Debugger  |
       | Details   |
     And Verify the status of first tactic under line item is "Incomplete"
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET |
       | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 |
@@ -47,7 +46,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     And User verifies if new custom field is visible and empty in new tactic "<TACTIC_SEARCH>"
     Then User clears the custom field text
     Then User deletes the custom field and verify its removed from new "tactic"
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | CUSTOM_NAME  | TACTIC_SEARCH |
       | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Custom_Field | Tactic        |
@@ -65,7 +63,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     When User enters the tactic details as "<TACTIC_NAME>" and saves the tactic
     Then Verify tactic details are saved and user is navigated to the settings tab
     And Verify Max Bid and Base Bid values on the tactic settings match with Campaign Settings values
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME |
       | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Tactic      |
@@ -86,7 +83,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Then Verify user is able to update and save the "max" bid price
     Then Verify user is not able to update "base" bid price more than allowed limit
     Then Verify user is not able to update "max" bid price more than allowed limit
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME |
       | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Tactic      |
@@ -100,7 +96,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Then Verify line item details are saved and user is navigated to the tactic page
     Then User creates a new tactic with details "<TACTIC_NAME>" "<CHANNEL>" "<COUNT>"
     Then User deletes the tactic and verifies it
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | CHANNEL | TACTIC_NAME | COUNT |
       | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Email   | Tactic      |     3 |
@@ -114,7 +109,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Then Verify line item details are saved and user is navigated to the tactic page
     Then User creates a new tactic with details "<TACTIC_NAME>" "<CHANNEL>" "<COUNT>"
     And User enables tactic through bulk action and verifies the status
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | CHANNEL | TACTIC_NAME | COUNT |
       | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Email   | Tactic      |     3 |
@@ -152,7 +146,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Then User clicks on details tab
     Then User adds "exceeded" frequency cap with details "<ON_LI_LEVEL>" "<EXCEEDED_FREQUENCY_VALUE>" "<TIMES_PER_1>" "<SCOPE_1>"
     Then User gets error of limit exceeded "<ON_LI_LEVEL>"
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | FREQUENCY_VALUE_1 | FREQUENCY_VALUE_2 | FREQUENCY_VALUE_3 | EXCEEDED_FREQUENCY_VALUE | TIMES_PER_1 | TIMES_PER_2 | TIMES_PER_3 | SCOPE_1    | SCOPE_2    | SCOPE_3       | ON_CAMPAIGN_LEVEL | ON_LI_LEVEL        | ON_TACTIC_LEVEL |
       | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 |                10 |                15 |                20 |                      999 | hour(s)     | month       | day         | Per Person | Per Person | Per Household | on Campaign Level | on Line Item Level | on tactic level |
@@ -174,7 +167,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     And User clicks the comments icon in the tactic "navigation" section and add "<NAV_COMMENT>"
     Then Verify that "<NAV_COMMENT>" is visible in "header" section
     Then User validates the comment added in "navigation" is "<NAV_COMMENT>" then clear it
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | HEADER_COMMENT        | NAV_COMMENT              |
       | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Test Note from Header | Test Note from Nav Panel |
@@ -189,7 +181,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Then User creates a new tactic with details "<TACTIC_NAME>" "<CHANNEL>" "<COUNT>"
     And User enables tactic through bulk action and verifies the status
     And User disables tactic through bulk action and verifies the status
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | CHANNEL | TACTIC_NAME | COUNT |
       | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Email   | Tactic      |     3 |
@@ -208,7 +199,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Then Verify settings details are saved and user is navigated to the creatives tab
     And User assigns the existing creative named "<CREATIVE>", enables the tactic and saves the changes
     When User duplicates tactic, verify data on the duplicated tactic using "Duplicate" option
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          | CREATIVE      |
       | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced | Behavioral Segment | Auto_Creative |
@@ -257,7 +247,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     And User assigns the existing creative named "<CREATIVE>", enables the tactic and saves the changes
     Then Verify the newly created campaign is in running state
     Then Verify the newly created campaign details in the campaign list: Campaign name, Line item name and Tactic name
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL | CREATIVE      | COUNT | BID_VALUE |
       | 01- Advertiser | Test    | Regular |     10000 | Line      |         120 | Tactic      | Email   | Auto_Creative |     1 |         2 |
@@ -283,7 +272,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
       | CPM        |         |  10.50 | + $10.5          |
       | % + CPM    |       7 |     10 | + 7 % + $10      |
       | Fixed CPM  |         |   11.1 | $11.1            |
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | CAMPAIGN_FEE_OPTION | CAMPAIGN_PERCENT | CAMPAIGN_AMOUNT | CAMPAIGN_DISPLAY_VALUE | CHANNEL | TACTIC_NAME | COUNT |
       | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Percentage          |                5 |               5 | + 5 %                  | Email   | Tactic      |     1 |
@@ -304,7 +292,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     And User saves the settings
     And User navigates to tactic setting tab
     Then User verifies the forecast data refreshes and displays values after adding targeting rule
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME |
       | 01- Advertiser | Test    | Regular |     10000 | Line      |         120 | Tactic      |
@@ -329,7 +316,6 @@ Feature: LIFE Regression - Verify below scenarios in Tactic creation flow
     Then The user clicks on show expression tab and fetch the values displayed
     Then Verify that all the rule types added in targeting rules are displayed in show expression with correct values along with "<DEFAULT_EXPRESSION>"
     And Verify show expression connector AND OR logic is correct
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | DEFAULT_EXPRESSION |
       | 01- Advertiser | Test    | Regular |     10000 | Line      |         120 | Dynamic_Tac | COUNTRY            |

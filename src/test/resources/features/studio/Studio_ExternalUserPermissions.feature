@@ -12,7 +12,6 @@ Feature: External user permission to enable or disable studio platform
     Given This scenario will be executed in the "Pre-release" environment as a "External User"
     And "Studio" application is logged in successfully with Account "<ACCOUNT_NAME>"
     Then User should be able to see Studio for that account
-
     Examples:
       | EXTERNAL_ACCOUNT | EXTERNAL_USER | ACCOUNT_NAME |
       | HMT Demo         | hmtdemo       | HMT Demo     |

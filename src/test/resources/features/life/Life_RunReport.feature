@@ -63,7 +63,6 @@ Feature: LIFE Regression - Run Report fields verification and report generation
     And User should be able to generate the report
     And Validate report details such as Created By, Reporting period, Report Name from Report Listing page
     And Confirms that the report panel retains the entered data
-
     Examples:
       | TEMPLATE       | ADVERTISER     | CAMPAIGN_INITIALS | LINE_ITEM_INITIALS | TACTIC_INITIALS | CREATIVE_INITIALS | USER_EMAIL                 |
       | AutoTemplate20 | 01- Advertiser | CreativeCampaign  | CreativeLine       | CreativeTactic  | Creative          | automationUserInter, Lista |
@@ -89,7 +88,6 @@ Feature: LIFE Regression - Run Report fields verification and report generation
     And User selects "Custom Dates" option from Report Period field and verify the fields displayed on selecting the option
     And User selects "Lifetime" option from Report Period field and verify the fields displayed on selecting the option
     And User selects "Flights" option from Report Period field and verify the fields displayed on selecting the option
-
     Examples:
       | TEMPLATE       | ADVERTISER     | CAMPAIGN_INITIALS | LINE_ITEM_INITIALS | TACTIC_INITIALS | CREATIVE_INITIALS | TIME_ZONE                       | REPORT_FORMATS                                                             |
       | AutoTemplate20 | 01- Advertiser | CreativeCampaign  | CreativeLine       | CreativeTactic  | Creative          | (GMT+05:30) India Standard Time | CSV, Excel, Pipe Delimited CSV, Pipe Delimited TXT, Tab Delimited TXT, TSV |
@@ -120,7 +118,6 @@ Feature: LIFE Regression - Run Report fields verification and report generation
       | DOS (CRLF) |
     And User should be able to generate the report
     And Confirms that the report panel retains the entered data
-
     Examples:
       | TEMPLATE       | ADVERTISER     | CAMPAIGN_INITIALS | LINE_ITEM_INITIALS | TACTIC_INITIALS | CREATIVE_INITIALS | TIME_ZONE                       | REPORT_FORMATS                                                             |
       | AutoTemplate20 | 01- Advertiser | CreativeCampaign  | CreativeLine       | CreativeTactic  | Creative          | (GMT+05:30) India Standard Time | CSV, Excel, Pipe Delimited CSV, Pipe Delimited TXT, Tab Delimited TXT, TSV |
@@ -147,7 +144,6 @@ Feature: LIFE Regression - Run Report fields verification and report generation
     And Verify that user is able to select Timezone field value "<TIME_ZONE>"
     And User should be able to generate the report
     And Confirms that the report panel retains the entered data
-
     Examples:
       | ADVERTISER     | CAMPAIGN_INITIALS | LINE_ITEM_INITIALS | TACTIC_INITIALS | CREATIVE_INITIALS | DIMENSIONS                                                 | METRICS             | TIME_ZONE                       |
       | 01- Advertiser | CreativeCampaign  | CreativeLine       | CreativeTactic  | Creative          | Advertiser Name, Campaign Name, LineItem Name, Tactic Name | Impressions, Clicks | (GMT+05:30) India Standard Time |
@@ -166,7 +162,6 @@ Feature: LIFE Regression - Run Report fields verification and report generation
     And User fetches all the Flight details and verifies that selected Line Item flight details appear in the Flight tab of the Run Report panel
     And User should be able to generate the report
     And Confirms that the report panel retains the entered data
-
     Examples:
       | TEMPLATE            | TACTIC_INITIALS                 | CAMPAIGN_NAME            |
       | Template_Automation | Multiple_Flight_Campaign_Tactic | Multiple_Flight_Campaign |
@@ -205,7 +200,6 @@ Feature: LIFE Regression - Run Report fields verification and report generation
     And User should be able to generate the report
     # And User downloads the Scheduled report and verify the data in downloaded report
     # And And confirm that the report panel retains the entered data
-
     Examples:
       | TEMPLATE       | ADVERTISER     | CAMPAIGN_INITIALS | LINE_ITEM_INITIALS | TACTIC_INITIALS | CREATIVE_INITIALS | FILE_BREAKDOWN_TYPE |
       | AutoTemplate20 | 01- Advertiser | Auto              | Line               | Tactic          | Creative          | Single File         |
@@ -240,7 +234,6 @@ Feature: LIFE Regression - Run Report fields verification and report generation
     And Verify Line Coding field is available with below options and default value is "Unix (LF)"
       | Unix (LF)  |
       | DOS (CRLF) |
-
     Examples:
       | DESTINATION_TYPE   | REPORT_FORMATS                                                             |
       | FTP, SFTP, S3, GCP | CSV, Excel, Pipe Delimited CSV, Pipe Delimited TXT, Tab Delimited TXT, TSV |
@@ -272,7 +265,6 @@ Feature: LIFE Regression - Run Report fields verification and report generation
     And Verify destination created should populate in the Destination dropdown field
     And User should be able to generate the report
     And Confirms that the report panel retains the entered data
-
     Examples:
       | TEMPLATE       | ADVERTISER     | CAMPAIGN_INITIALS | LINE_ITEM_INITIALS | TACTIC_INITIALS | CREATIVE_INITIALS | TIME_ZONE                       | DESTINATION_NAME | DESTINATION_TYPE | HOST                | PORT | SERVER_PATH                    |
       | AutoTemplate20 | 01- Advertiser | CreativeCampaign  | CreativeLine       | CreativeTactic  | Creative          | (GMT+05:30) India Standard Time | Run_Destination_ | SFTP             | ma2-qa-automation01 |   22 | /home/NPIAutoImport/Automation |
@@ -284,7 +276,6 @@ Feature: LIFE Regression - Run Report fields verification and report generation
     And User searches the account "automation@pulsepoint" and selects the account
     And User navigates to Reporting tab
     And User expands each Custom Destination created, performs delete operation on the entries created by "<USERNAME>" and verify successful deletion
-
     Examples:
       | USERNAME |
       | rsherkar |

@@ -54,7 +54,6 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
-
     Examples:
       | ADVERTISER | WORKSPACE_NAME |
       | Abbvie     | HCP_Explorer   |
@@ -69,7 +68,6 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     And Verify that advertiser field is disabled and displayed in "rgba(34, 34, 34, 0.55)" after saving the workspace
     And User clicks on AI Configurator and build audience using the AIPrompt "<AI_PROMPT>"
     Then Verify the filter is applied correctly "<PRIMARY_FILTERS>"
-
     Examples:
       | ADVERTISER | WORKSPACE_NAME | AI_PROMPT                                                                                                                                    | PRIMARY_FILTERS                                  |
       | Abbvie     | HCP_Explorer   | Select Cardiovascular Professionals who are reachable in California state and also exclude net worth Less than $50٫000                       | Net Worth, Specialty Filter, State               |
@@ -115,7 +113,6 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
-
     Examples:
       | ADVERTISER | WORKSPACE_NAME |
       | Abbvie     | HCP_Explorer   |
@@ -162,7 +159,6 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
-
     Examples:
       | ADVERTISER | WORKSPACE_NAME |
       | Abbvie     | HCP_Explorer   |
@@ -199,7 +195,6 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
-
     Examples:
       | ADVERTISER | WORKSPACE_NAME | NEW_WORKSPACE_NAME | WORKSPACE_NAME_EDIT |
       | Abbvie     | HCP_Explorer   | New_HCP_Explorer_  | Edit_HCP_Explorer   |
@@ -228,7 +223,6 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
-
     Examples:
       | ADVERTISER | WORKSPACE_NAME |
       | Abbvie     | HCP_Explorer   |
@@ -242,7 +236,6 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     And User navigates to another page within Studio and then returns to the workspace list page
     Then User verifies that the selected filters, dropdown values, and search input remain persistent unless they are manually deselected or cleared - "<WORKSPACE_TYPE>", "<ADVERTISER>", "<CREATED_BY>"
     And Verify on refresh of the page, the filters are reset and search input is cleared
-
     Examples:
       | WORKSPACE_TYPE | ADVERTISER | CREATED_BY                     |
       | HCP Explorer   | Abbvie     | ppqa_automation@pulsepoint.com |
@@ -266,7 +259,6 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     #And External User switches the "<ACCOUNT_NAME>"account in Studio application -- commiting this step for future changes, if pp engineering test account does not appears in external user account list in studio application
     When External user searches the workspace name in studio application with "<DRAFT_OPTION>" draft option
     Then External user verifies whether the workspace with "<DRAFT_OPTION>" is visible in workspace management page
-
     Examples:
       | ADVERTISER | DRAFT_OPTION | WORKSPACE_NAME | ACCOUNT_NAME        |
       | Abbvie     | Public       | HCP_Explorer   | PP engineering test |

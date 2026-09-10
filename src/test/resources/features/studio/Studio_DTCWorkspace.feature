@@ -37,7 +37,6 @@ Feature: DTC Workspace creation in Studio
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
-
     Examples:
       | ADVERTISER         | WORKSPACE_NAME | WORKSPACE_TYPE |
       | TAMTESTING ACCOUNT | DTC_Explorer   | DTC Explorer   |

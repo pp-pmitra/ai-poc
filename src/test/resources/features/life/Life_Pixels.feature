@@ -28,7 +28,6 @@ Feature: LIFE Regression - Create Pixel of following types:
     When User removes the created pixel
     Then Verify the pixel gets removed successfully
     Then Verify the removed pixel should not be displayed in the pixel list
-
     Examples:
       | PIXEL_TYPE        | PIXEL_NAME  | ADVERTISER   |
       | Retargeting Pixel | Retargeting | Z_Automation |
@@ -46,7 +45,6 @@ Feature: LIFE Regression - Create Pixel of following types:
     When User removes the created pixel
     Then Verify the pixel gets removed successfully
     Then Verify the removed pixel should not be displayed in the pixel list
-
     Examples:
       | PIXEL_TYPE        | PIXEL_NAME  | ADVERTISER             |
       | Retargeting Pixel | Retargeting | CacheTestAdvertise232n |
@@ -69,7 +67,6 @@ Feature: LIFE Regression - Create Pixel of following types:
     When User edits the name of the created "<PIXEL_TYPE>"
     Then Verify the "<PIXEL_TYPE>" gets updated successfully
     Then Verify user should not be able to deactivate the Smart Pixel if any Smart list is associated with it
-
     Examples:
       | PIXEL_TYPE  | ADVERTISER     | LIST_NAME   |
       | Smart Pixel | 01- Advertiser | Smart_Pixel |
@@ -87,7 +84,6 @@ Feature: LIFE Regression - Create Pixel of following types:
     When User deactivates the created pixel
     Then Verify the pixel gets deactivated successfully
     Then Verify the deactivated pixel should not be displayed in the pixel list
-
     Examples:
       | PIXEL_TYPE  | ADVERTISER       |
       | Smart Pixel | 1Demo Advertiser |
@@ -104,7 +100,6 @@ Feature: LIFE Regression - Create Pixel of following types:
     When User removes the created pixel
     Then Verify the pixel gets removed successfully
     Then Verify the removed pixel should not be displayed in the pixel list
-
     Examples:
       | PIXEL_TYPE       | PIXEL_NAME | ADVERTISER       | SCOPE  | TYPE               |
       | Conversion Pixel | Conversion | 1Demo Advertiser | Person | Submit Application |

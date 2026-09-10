@@ -26,7 +26,6 @@ Feature: Brand Explorer Workspace creation in Studio
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
-
     Examples:
       | ADVERTISER         | WORKSPACE_NAME |
       | TAMTESTING ACCOUNT | Brand_Explorer |
@@ -48,7 +47,6 @@ Feature: Brand Explorer Workspace creation in Studio
       | Last 180 Days |
       | Last 365 Days |
       | Custom        |
-
     Examples:
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
@@ -63,7 +61,6 @@ Feature: Brand Explorer Workspace creation in Studio
     When User selects the timeframe preset "<TIMEFRAME>"
     Then Verify the chart and table update immediately to reflect "<TIMEFRAME>" data
     And Verify the Day column shows <DAYS> dates in ascending order
-
     Examples:
       | ADVERTISER         | TIMEFRAME    | DAYS |
       | TAMTESTING ACCOUNT | Last 14 Days |   14 |
@@ -83,7 +80,6 @@ Feature: Brand Explorer Workspace creation in Studio
     When User sets a custom date range with start date "<START_DATE>" and end date "<END_DATE>"
     Then Verify "<START_DATE>" is the first date row in the table
     And Verify "<END_DATE>" is the last date row in the table
-
     Examples:
       | ADVERTISER         | START_DATE | END_DATE   |
       | TAMTESTING ACCOUNT | 2026-05-01 | 2026-05-07 |
@@ -100,7 +96,6 @@ Feature: Brand Explorer Workspace creation in Studio
     And User selects the timeframe preset "Custom"
     When User enters a start date "<START_DATE>" that is later than the end date "<END_DATE>"
     Then Verify an error message is displayed indicating the start date cannot be later than the end date
-
     Examples:
       | ADVERTISER         | START_DATE | END_DATE   |
       | TAMTESTING ACCOUNT | 2026-05-07 | 2026-05-01 |
@@ -123,7 +118,6 @@ Feature: Brand Explorer Workspace creation in Studio
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
-
     Examples:
       | ADVERTISER         | WORKSPACE_NAME | TIMEFRAME    | DAYS |
       | TAMTESTING ACCOUNT | Brand_Explorer | Last 30 Days |   30 |
@@ -146,7 +140,6 @@ Feature: Brand Explorer Workspace creation in Studio
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
-
     Examples:
       | ADVERTISER         | WORKSPACE_NAME | DIMENSION | DIM_CATEGORY | METRIC           | METRIC_CATEGORY |
       | TAMTESTING ACCOUNT | Brand_Explorer | Month     | Time Frame   | HCP Active Users | HCP Events      |
@@ -178,7 +171,6 @@ Feature: Brand Explorer Workspace creation in Studio
       | Time Frame               | Day, Day of Week, Hour, Month, Time Range, Timestamp, Week, Weekday or Weekend, Year                                                                                                              |
       | UTM Values               | Third Party CID, UTM Campaign, UTM Content, UTM Medium, UTM Source, UTM Term                                                                                                                      |
       | Visitation               | Attributed Source, File Name, From Domain (domain referrer), From URL (URL Referrer), Page Domain, Page URL, Page URL (Denormalized), Social Provider, Source, Source Type, Video Title           |
-
     Examples:
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
@@ -200,7 +192,6 @@ Feature: Brand Explorer Workspace creation in Studio
       | NPI Events   | Avg. Video Progress, Identified NPIs, NPI Active Users, NPI Avg. Engagement Time (sec), NPI Avg. Engagement Time per Session (sec), NPI Email Clicks, NPI Email Opens, NPI Engaged Sessions per User, NPI Events, NPI File Downloads, NPI First Visits, NPI Form Starts, NPI Form Submissions, NPI Media Clicks, NPI Media CTR, NPI Media Frequency, NPI Media Impressions, NPI Pageviews, NPI Returning Visits, NPI Search Clicks, NPI Social Clicks, NPI Social Impressions, NPI Unique Sessions, NPI Video Completes, NPI Video Starts, NPI Visits |
       | Time Spent   | Time Spent (days), Time Spent (hours), Time Spent (minutes), Time Spent (seconds)                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
       | Total Events | Avg. Video Progress, Total Active Users, Total Avg. Engagement Time (sec), Total Avg. Engagement Time per Session (sec), Total Email Clicks, Total Email Opens, Total Engaged Sessions per User, Total Events, Total File Downloads, Total First Visits, Total Form Starts, Total Form Submissions, Total Media Clicks, Total Media CTR, Total Media Impressions, Total Pageviews, Total Returning Visits, Total Search Clicks, Total Social Clicks, Total Social Impressions, Total Video Completes, Total Video Starts, Total Visits                |
-
     Examples:
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
@@ -215,7 +206,6 @@ Feature: Brand Explorer Workspace creation in Studio
     Then Verify each "segment" under below categories can be selected and removed
       | NPI List Name                 |
       | NPI List Name - separate rows |
-
     Examples:
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
@@ -232,7 +222,6 @@ Feature: Brand Explorer Workspace creation in Studio
     And Verify the Brand Explorer table is visible
     When User clicks the "Show Chart" chart toggle
     Then Verify the Brand Explorer chart is visible
-
     Examples:
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
@@ -247,7 +236,6 @@ Feature: Brand Explorer Workspace creation in Studio
     Then Verify "<FIELD>" is visible as a table column
     When User removes "<FIELD>" from the table header
     Then Verify "<FIELD>" is not visible as a table column
-
     Examples:
       | ADVERTISER         | CATEGORY                 | FIELD      |
       | TAMTESTING ACCOUNT | Healthcare Professionals | Profession |
@@ -271,7 +259,6 @@ Feature: Brand Explorer Workspace creation in Studio
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
-
     Examples:
       | ADVERTISER         | WORKSPACE_NAME | CATEGORY                 | FIELD      | VALUE     |
       | TAMTESTING ACCOUNT | Brand_Explorer | Healthcare Professionals | Profession | Physician |
@@ -289,7 +276,6 @@ Feature: Brand Explorer Workspace creation in Studio
     And User selects "<FIELD>" from "<CATEGORY>" component panel
     Then Verify "<FIELD>" is visible as a table column
     And Verify the table column "<FIELD>" only shows rows with value "<VALUE>"
-
     Examples:
       | ADVERTISER         | CATEGORY                 | FIELD      | VALUE     |
       | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | Physician |
@@ -318,7 +304,6 @@ Feature: Brand Explorer Workspace creation in Studio
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
     And Verify user is able to delete the workspace
-
     Examples:
       | ADVERTISER         | WORKSPACE_NAME     | NEW_WORKSPACE_NAME  | TIMEFRAME    |
       | TAMTESTING ACCOUNT | Automation_Persist | New_Brand_Explorer_ | Last 30 Days |
@@ -332,7 +317,6 @@ Feature: Brand Explorer Workspace creation in Studio
     And User removes the default "<COMPONENT>" only
     Then Verify the chart shows the empty state message
     And Verify "<REMAINING_COLUMN>" is visible as a table column
-
     Examples:
       | ADVERTISER         | COMPONENT | REMAINING_COLUMN |
       | TAMTESTING ACCOUNT | dimension | Identified NPIs  |
@@ -346,7 +330,6 @@ Feature: Brand Explorer Workspace creation in Studio
     And User selects the advertiser "<ADVERTISER>"
     And User removes the default dimensions and metric
     Then Verify the chart shows the empty state message
-
     Examples:
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
@@ -365,7 +348,6 @@ Feature: Brand Explorer Workspace creation in Studio
     Then Verify Dimension "Day" and Metric "Identified NPIs" are selected by default in the workspace
     And Verify the Brand Explorer chart is visible
     And Verify the Brand Explorer table is visible
-
     Examples:
       | ADVERTISER         |
       | TAMTESTING ACCOUNT |
@@ -383,7 +365,6 @@ Feature: Brand Explorer Workspace creation in Studio
     Then Verify "<DIMENSION>" is visible as a table column
     And Verify "<METRIC>" is visible as a table column
     And Verify the Brand Explorer chart is visible
-
     Examples:
       | ADVERTISER         | DIMENSION | DIMENSION_CATEGORY | METRIC           | METRIC_CATEGORY |
       | TAMTESTING ACCOUNT | Month     | Time Frame         | HCP Active Users | HCP Events      |
@@ -401,7 +382,6 @@ Feature: Brand Explorer Workspace creation in Studio
     And User selects "<FIELD>" from "<CATEGORY>" component panel
     Then Verify "<FIELD>" is visible as a table column
     And Verify the table column "<FIELD>" is filtered by operator "<OPERATOR>" and value "<VALUE>"
-
     Examples:
       | ADVERTISER         | CATEGORY                 | FIELD      | OPERATOR | VALUE     |
       | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | is       | Physician |
@@ -419,7 +399,6 @@ Feature: Brand Explorer Workspace creation in Studio
     And User selects "<FIELD>" from "<CATEGORY>" component panel
     Then Verify "<FIELD>" is visible as a table column
     And Verify the table column "<FIELD>" is filtered by operator "<OPERATOR>" and value "<VALUE>"
-
     Examples:
       | ADVERTISER         | CATEGORY                 | FIELD      | OPERATOR           | VALUE |
       | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | contains           | Phys  |
@@ -440,7 +419,6 @@ Feature: Brand Explorer Workspace creation in Studio
     Then Verify the filter on "<FIELD>" shows operator "is between"
     And Verify "<FIELD>" is visible as a table column
     And Verify the table column "<FIELD>" is filtered between values "<FROM>" and "<TO>"
-
     Examples:
       | ADVERTISER         | CATEGORY   | FIELD           | FROM | TO |
       | TAMTESTING ACCOUNT | NPI Events | Identified NPIs |    0 |  3 |
@@ -456,7 +434,6 @@ Feature: Brand Explorer Workspace creation in Studio
     Then Verify the typed filter on "<FIELD>" with operator "<OPERATOR>" shows value "<VALUE>"
     And Verify "<FIELD>" is visible as a table column
     And Verify the table column "<FIELD>" is filtered by operator "<OPERATOR>" and value "<VALUE>"
-
     Examples:
       | ADVERTISER         | CATEGORY   | FIELD           | OPERATOR | VALUE |
       | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | =        |     1 |

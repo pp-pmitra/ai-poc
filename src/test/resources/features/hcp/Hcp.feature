@@ -5,7 +5,6 @@ Feature: HCP365 Regression - Dashboard data Validation and Permission
     And User clicks on HCP 365 module from main menu
     When User land on Overview tab on HCP Dashboard
     Then Verify Tabs and Subtabs of Overview tab on HCP Dashboard
-
     Examples:
       | USER    | ADVERTISER | TYPE    | CLIENT | ExpectedOutput | User Type |
       | admin11 |            | Regular |        | XYZ            | Internal  |
@@ -15,7 +14,6 @@ Feature: HCP365 Regression - Dashboard data Validation and Permission
     And User clicks on HCP 365 module from main menu
     When User clicks on Site tab on HCP Dashboard
     Then Verify Tabs and Subtabs of Site tab on HCP Dashboard
-
     Examples:
       | USER    | ADVERTISER | TYPE    | CLIENT | ExpectedOutput | User Type |
       | admin11 |            | Regular |        | XYZ            | Internal  |
@@ -25,7 +23,6 @@ Feature: HCP365 Regression - Dashboard data Validation and Permission
     And User clicks on HCP 365 module from main menu
     When User clicks on Search tab on HCP Dashboard
     Then Verify Tabs and Subtabs of Search tab on HCP Dashboard
-
     Examples:
       | USER    | ADVERTISER | TYPE    | CLIENT | ExpectedOutput | User Type |
       | admin11 |            | Regular |        | XYZ            | Internal  |
@@ -35,7 +32,6 @@ Feature: HCP365 Regression - Dashboard data Validation and Permission
     And User clicks on HCP 365 module from main menu
     When User clicks on Media tab on HCP Dashboard
     Then Verify Tabs and Subtabs of Media tab on HCP Dashboard
-
     Examples:
       | USER    | ADVERTISER | TYPE    | CLIENT | ExpectedOutput | User Type |
       | admin11 |            | Regular |        | XYZ            | Internal  |
@@ -45,7 +41,6 @@ Feature: HCP365 Regression - Dashboard data Validation and Permission
     And User clicks on HCP 365 module from main menu
     When User clicks on Email tab on HCP Dashboard
     Then Verify Tabs and Subtabs of Email tab on HCP Dashboard
-
     Examples:
       | USER    | ADVERTISER | TYPE    | CLIENT | ExpectedOutput | User Type |
       | admin11 |            | Regular |        | XYZ            | Internal  |
@@ -55,7 +50,6 @@ Feature: HCP365 Regression - Dashboard data Validation and Permission
     And User clicks on HCP 365 module from main menu
     When User clicks on Social tab on HCP Dashboard
     Then Verify Tabs and Subtabs of Social tab on HCP Dashboard
-
     Examples:
       | USER    | ADVERTISER | TYPE    | CLIENT | ExpectedOutput | User Type |
       | admin11 |            | Regular |        | XYZ            | Internal  |
@@ -65,7 +59,6 @@ Feature: HCP365 Regression - Dashboard data Validation and Permission
     And User clicks on HCP 365 module from main menu
     When User change settings of HCP Dashboard Display modules
     Then Verify Tabs and Subtabs of shall change on HCP Dashboard
-
     Examples:
       | USER    | ADVERTISER | TYPE    | CLIENT | ExpectedOutput | User Type |
       | admin11 |            | Regular |        | XYZ            | Internal  |
@@ -75,7 +68,6 @@ Feature: HCP365 Regression - Dashboard data Validation and Permission
     And User clicks on HCP 365 module from main menu
     When User change filters of HCP Dashboard Overview tabs
     Then Verify data after change in filter of HCP Dashboard
-
     Examples:
       | USER    | ADVERTISER | TYPE    | CLIENT | ExpectedOutput | User Type |
       | admin11 |            | Regular |        | XYZ            | Internal  |

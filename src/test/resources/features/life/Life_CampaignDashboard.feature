@@ -19,7 +19,6 @@ Feature: LIFE Regression - Check below features available on Campaign Dashboard
     Then Verify comments, icon should display in bluish-green color "<COLOUR>" and comments should available on individual panel
     And User navigates to campaign, line item and tactic using "<Campaign ID>" and verifies that the comments are displayed in the respective tile comment boxes
     And User verifies the comments in the campaign, line item, and tactic dashboard's comment boxes
-
     Examples:
       | Campaign ID          | COLOUR                     |
       | Auto_20260528_000342 | 24-note-table-provided.svg |
@@ -35,7 +34,6 @@ Feature: LIFE Regression - Check below features available on Campaign Dashboard
     When User toggles the Enabled button for Line Items and Tactics
     Then Verify that Line Items and Tactics reflect the correct enabled or disabled state
     And User fetches the Line Items and Tactics enabled-disabled status from Campaign Dashboard using "<Campaign ID>" and verifies the same status in the respective Line Item and Tactic pages
-
     Examples:
       | Campaign ID          |
       | Auto_20260531_235701 |
@@ -64,7 +62,6 @@ Feature: LIFE Regression - Check below features available on Campaign Dashboard
     And Verify the Campaign Dashboard data should filter as per the selected filter values
     And Filter icon should display in the column header to which filter is applied and a red bullet "<RED BULLET>" on the filter icon present next to global search
     And User removes all the filters applied on the Dashboard and verifies the data is reset to default state
-
     Examples:
       | RED BULLET                             |
       | 20-filter-applied.1e22619f2d75d737.svg |
@@ -121,7 +118,6 @@ Feature: LIFE Regression - Check below features available on Campaign Dashboard
     When User enters "<Campaign ID>" and click Search button
     Then Verify Campaigns, line items, tactics names matching the "<Campaign ID>" should display on Dashboard table
     When User clicks Campaign "<Campaign ID>", Line Item and Tactic and verify navigation to respective pages
-
     Examples:
       | Campaign ID          |
       | Auto_20260519_183446 |
@@ -147,7 +143,6 @@ Feature: LIFE Regression - Check below features available on Campaign Dashboard
     And User navigates to Campaign Dashboard
     And User searches the campaign created in the above steps
     And User hover on the image icon for creative in red color and check whether creative is assigned to the campaign
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          | STATUS       |
       | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced | Behavioral Segment | Approved     |
@@ -177,7 +172,6 @@ Feature: LIFE Regression - Check below features available on Campaign Dashboard
     Then Verify that bulk actions are enabled when the entity checkbox is selected for a "Line Item"
     And User is able to enable or disable the "Line Item" using the bulk actions and verify the status column is updated accordingly
       | Disable Line Items |
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          | CREATIVE      |
       | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced | Behavioral Segment | Auto_Creative |
@@ -205,7 +199,6 @@ Feature: LIFE Regression - Check below features available on Campaign Dashboard
     Then Verify that bulk actions are enabled when the entity checkbox is selected for a "Tactic"
     And User is able to enable or disable the "Tactic" using the bulk actions and verify the status column is updated accordingly
       | Disable Tactics |
-
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          | CREATIVE      |
       | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced | Behavioral Segment | Auto_Creative |

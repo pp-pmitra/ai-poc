@@ -55,7 +55,6 @@ Feature: E2E Workflow for Targeting a Studio HCP Explorer List in LIFE at the Ta
     When User navigates to the created campaign
     And User deletes the campaign
     Then Verify that the campaign is deleted successfully
-
     Examples:
       | ADVERTISER | WORKSPACE_NAME | LIST_TYPE | CP_NAME     | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE |
       | Abbvie     | HCP_To_Life    | Static    | Studio_List | Regular |     10000 | New_Line  |          50 | New_Tactic  | Display Advanced | NPI       |

@@ -30,7 +30,6 @@ Feature: LIFE regression - Create NPI List of following types:
     Then Verify the updates are applied successfully
     When User deletes the "Medscape" list
     Then Verify the list is deleted successfully
-
     Examples:
       | LIST_NAME     | FILE_NAME            | MESSAGE                      | WAIT_TEXT                           |
       | Medscape_List | NPI_MedscapeList.csv | Soft Matching in Progress... | This process may take a few minutes |

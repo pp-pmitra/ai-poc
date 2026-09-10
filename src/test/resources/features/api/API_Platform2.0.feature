@@ -35,7 +35,6 @@ Feature: Fetch data using MCP Tools by retrieving metadata, creating query and e
       | X-Advertiser-Id | <ADVERTISER_ID>                     |
       | X-User-Id       | <USER_ID>                           |
     Then Verify the query execution response contains the retrieved data "<PROMPT_SPECIFIC_DIMENSIONS_METRICS>"
-
     Examples:
       | ACCOUNT_ID | ADVERTISER_ID | USER_ID | USER_PROMPT                                                                                                                          | PROMPT_SPECIFIC_DIMENSIONS_METRICS                                                                                                         | FILTER_LABEL                             | FILTER_VALUE              | SORT_BY                                           | LIMIT |
       |     561973 |          5590 |   69431 | What is the trend of Identified NPIs and Total Active Users by Day for the last 8 weeks, including a 7-day moving average?           | resolved_measures.distinct_npis, custom_measures_ga4.active_user_count_, hcp365_core.day                                                   | hcp365_core.day                          |   56 days ago for 56 days | hcp365_core.day asc                               |   500 |

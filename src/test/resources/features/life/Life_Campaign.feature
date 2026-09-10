@@ -29,7 +29,6 @@ Feature: LIFE Regression - Create a Campaign
     When User navigates to the created campaign
     And User deletes the campaign
     Then Verify that the campaign is deleted successfully
-
     Examples:
       | ADVERTISER     | CP_NAME       | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          | CREATIVE      |
       | 01- Advertiser | QA_Regression | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced | Behavioral Segment | Auto_Creative |
@@ -63,7 +62,6 @@ Feature: LIFE Regression - Create a Campaign
     When User navigates to the created campaign
     And User deletes the campaign
     Then Verify that the campaign is deleted successfully
-
     Examples:
       | ADVERTISER     | CP_NAME             | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | CREATIVE           |
       | 01- Advertiser | Multiple_Targetings | Regular |     10000 | Line      |         120 | Tactic      | Display Advanced | Please_Dont_Delete |
@@ -96,7 +94,6 @@ Feature: LIFE Regression - Create a Campaign
       | GEOGRAPHY          | Geo Targets,Geo Radius,Postal Codes,Area Codes,Weather Signals                                                                                                                                                                    |
       | MEDIA SUPPLY       | Brand Safety Profile,Brand Suitability,Browser,Curated Markets,Custom Targeting Bundle,Deal Groups,Device,Domains/Apps,IAS Context Control,Invalid Traffic,Inventory Source,Inventory Type,Operating System,Deals,Viewability     |
       | LEGAL TARGETINGS   | Legal Pages,Legal Populations                                                                                                                                                                                                     |
-
     Examples:
       | ADVERTISER             | CP_NAME                 | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          |
       | CacheTestAdvertise232n | Targetings_Verification | Regular |     10000 | Line      |         120 | Tactic      | Display Advanced |
@@ -128,7 +125,6 @@ Feature: LIFE Regression - Create a Campaign
     And User enters other campaign details "<ADVERTISER>" "<CP_NAME>" "<CP_TYPE>" "<CP_BUDGET>"
     And User retrieves all the entered data, saves the Campaign and verifies successful creation
     And Verify that the saved Campaign data matches the entered data
-
     Examples:
       | ADVERTISER     | CP_NAME     | CP_TYPE | CP_BUDGET | MANAGEMENT_FEE | DRUG_NAME | INVALID_CP_BUDGET | DESCRIPTION     | PERCENT | AMOUNT | CP_CLIENT   |
       | 01- Advertiser | QA_Campaign | Regular |     50000 | % + CPM        | Glynase   | Test              | Automation test |      35 |    300 | PHM Chicago |
@@ -151,7 +147,6 @@ Feature: LIFE Regression - Create a Campaign
     When User deletes the custom field for which campaign is created and verifies if it is deleted
     And User deletes the custom field for which campaign is not created and verifies if it is deleted
     And User verifies if the deleted custom field is available on New Campaign creation page
-
     Examples:
       | FIELD_NAME  | NEW_FIELD_NAME | ADVERTISER     | CP_NAME     | CP_TYPE | CP_BUDGET | CUSTOM_FIELD_VALUE |
       | CustomField | Custom_Field   | 01- Advertiser | QA_Campaign | Regular |     50000 | Test               |
@@ -179,7 +174,6 @@ Feature: LIFE Regression - Create a Campaign
     When User selects "week" from Times per Target dropdown and "Per Person" from Per Target Audience dropdown
     When User enters the campaign details as "<ADVERTISER>" "<CP_NAME>" "<CP_TYPE>" "<CP_BUDGET>" and saves the campaign
     Then Verify campaign details are saved and user is navigated to the line item page
-
     Examples:
       | ADVERTISER     | CP_NAME  | CP_TYPE | CP_BUDGET | WINDOW_LIMIT |
       | 01- Advertiser | Campaign | Regular |     50000 |            5 |
@@ -209,7 +203,6 @@ Feature: LIFE Regression - Create a Campaign
     When User navigates to the created campaign
     And User deletes the campaign
     Then Verify that the campaign is deleted successfully
-
     Examples:
       | ADVERTISER       | CP_NAME       | CP_TYPE | CP_BUDGET | LINE_NAME     | LINE_BUDGET | TACTIC_NAME     | RULE_TYPE          | CREATIVE          |
       | 1Demo Advertiser | External_Auto | Regular |     10000 | External_Line |         500 | External_Tactic | Behavioral Segment | External_Creative |
@@ -235,7 +228,6 @@ Feature: LIFE Regression - Create a Campaign
     When User navigates to the created campaign
     And User deletes the campaign
     Then Verify that the campaign is deleted successfully
-
     Examples:
       | CREATIVE      |
       | Auto_Creative |
@@ -277,7 +269,6 @@ Feature: LIFE Regression - Create a Campaign
     When User navigates to the created campaign
     And User deletes the campaign
     Then Verify that the campaign is deleted successfully
-
     Examples:
       | ADVERTISER     | CP_NAME   | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | CREATIVE           |
       | 01- Advertiser | Persisted | Regular |     10000 | Line      |         120 | Tactic      | Display Advanced | Please_Dont_Delete |

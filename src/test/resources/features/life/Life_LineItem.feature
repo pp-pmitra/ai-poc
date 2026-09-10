@@ -32,7 +32,6 @@ Feature: LIFE Regression - Line Item Management
     And Verify "Apply Impression Cap for This Flight" and "Apply Daily Impression Cap" checkboxes are available for each flight entry
     And User should be able to check the "Apply Impression Cap for This Flight" and "Apply Daily Impression Cap" checkboxes
     And Verify error message if user fails to add impression cap value when the checkboxes are selected and tries to save the line item page
-
     Examples:
       | LINE_ITEM  | BUDGET |
       | Line_Item_ |    200 |
@@ -48,7 +47,6 @@ Feature: LIFE Regression - Line Item Management
     Then User navigates to the Flights tab and verifies the flight details
     When User deletes some flight entries
     Then User should see the remaining flights listed under the Flights section
-
     Examples:
       | LINE_ITEM  | BUDGET | NUMBER_OF_FLIGHTS |
       | Line_Item_ |    200 |                 3 |
@@ -66,7 +64,6 @@ Feature: LIFE Regression - Line Item Management
     Then User navigates to the Flights tab and verifies the flight details
     When User deletes some flight entries
     Then User should see the remaining flights listed under the Flights section
-
     Examples:
       | LINE_ITEM  | BUDGET | NUMBER_OF_MONTHS |
       | Line_Item_ |    200 |                4 |
@@ -95,7 +92,6 @@ Feature: LIFE Regression - Line Item Management
     And Verify "Delete" is available for each item, and deleted items are removed from the Left menu
     And Verify "Generate Report" option opens the Run report screen for user and run the report for "<TEMPLATE>"
     And Verify that the reports generated on the Line Item page are available on the Generate Report page
-
     Examples:
       | LINE_ITEM_NOTE | TEMPLATE            |
       | Notes          | Template_Automation |
@@ -123,7 +119,6 @@ Feature: LIFE Regression - Line Item Management
     Then Verify that the new line item is added to the existing campaign and displayed in the left menu under the campaign
     And User updates line item details such as "<UPDATED_LINE_BUDGET>" and flight dates and saves the line item
     Then Verify that the line item details are updated successfully and reflected on the Line Item page
-
     Examples:
       | LINE_NAME | LINE_BUDGET | UPDATED_LINE_BUDGET |
       | Line      |         500 |              505.00 |
@@ -141,7 +136,6 @@ Feature: LIFE Regression - Line Item Management
     And User clicks on the existing campaign to open the campaign details page
     Then Verify the custom field created in line item details page is available for all line items under the campaign
     Then User deletes the custom field and verify its removed from new "line item"
-
     Examples:
       | LINE_ITEM  | CUSTOM_NAME  | LINE_BUDGET |
       | Line_Item_ | Custom_Field |          50 |

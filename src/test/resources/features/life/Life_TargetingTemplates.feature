@@ -28,7 +28,6 @@ Feature: LIFE Regression - Create a Targeting Template for below Line Item Type 
     #3
     And Create a tactic with "<LINE_ITEMS>" line items and other details "<ADVERTISER>" "<CP_NAME>" "<CP_TYPE>" "<CP_BUDGET>" "<LINE_NAME>" "<LINE_BUDGET>" "<TACTIC_NAME>" and import the template in Tactic
     Then Verify the template created can be imported in the Tactic
-
     Examples:
       | TEMPLATE_NAME | CHANNEL                                         | LINE_ITEMS                                                                  | ADVERTISER     | CP_NAME           | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME |
       | Template      | Display Advanced, Video Advanced, DOOH Advanced | Display, Video, Native Display, Audio, Search Extension, DOOH, Native Video | 01- Advertiser | TargetingTemplate | Regular |     20000 | Line      |         500 | Tactic      |
@@ -56,7 +55,6 @@ Feature: LIFE Regression - Create a Targeting Template for below Line Item Type 
     #5
     And Create a tactic with "<LINE_ITEMS>" line items and other details "<ADVERTISER>" "<CP_NAME>" "<CP_TYPE>" "<CP_BUDGET>" "<LINE_NAME>" "<LINE_BUDGET>" "<TACTIC_NAME>" and import the template in Tactic
     Then Verify the template created can be imported in the Tactic
-
     Examples:
       | TEMPLATE_NAME | CHANNEL                                         | LINE_ITEMS                                                                  | ADVERTISER     | CP_NAME           | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME |
       | Template      | Display Advanced, Video Advanced, DOOH Advanced | Display, Video, Native Display, Audio, Search Extension, DOOH, Native Video | 01- Advertiser | TargetingTemplate | Regular |     20000 | Line      |         500 | Tactic      |
@@ -76,7 +74,6 @@ Feature: LIFE Regression - Create a Targeting Template for below Line Item Type 
     And Verify Targeting template section opens by clicking New Template button
     #3
     Then User searches and verifies the already created targeting template using the search option
-
     Examples:
       | LINE_ITEMS                                                                  | ADVERTISER     | CP_NAME           | CP_TYPE | CP_BUDGET | LINE_NAME     | LINE_BUDGET | TACTIC_NAME     |
       | Display, Video, Native Display, Audio, Search Extension, DOOH, Native Video | 01- Advertiser | TargetingTemplate | Regular |     20000 | TargetingLine |         500 | TargetingTactic |

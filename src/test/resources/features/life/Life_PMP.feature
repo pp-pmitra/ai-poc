@@ -68,7 +68,6 @@ Feature: Life PMP Regression - Verify Private and Life MarketPlace Deals Creatio
     And Verify Base Bid Price "<BASE_BID_PRICE>" and Max Bid Price "<MAX_BID_PRICE>" fields are editable when deals are targeted
     When User clicks Save button from Tactic Setting tab
     Then Deals should get assigned to the Tactic
-
     Examples:
       | EXCHANGE_TYPE | DEAL_ID | DEAL_NAME  | MEDIA_TYPE                 | DEAL_PRICE_TYPE | PRICE | BASE_BID_PRICE | MAX_BID_PRICE | ADVERTISER     | CURATOR                          | PRICING_STRATEGY | VALUE |
       | JW Player     | Deal_   | Deal_Name_ | Display (All), Video (All) | Fixed           |   230 |             34 |            60 | 01- Advertiser | PulsePoint (Direct Integrations) | Flat             |    35 |
@@ -92,7 +91,6 @@ Feature: Life PMP Regression - Verify Private and Life MarketPlace Deals Creatio
     And Verify Archive option is available based on the campaign state
     And User clicks "Archived" button from the search section of deal listing page
     Then Verify that the deal is moved to archived deal section
-
     Examples:
       | EXCHANGE_TYPE | DEAL_ID | DEAL_NAME  | MEDIA_TYPE                 | DEAL_PRICE_TYPE | PRICE | ADVERTISER     | CURATOR                          |
       | JW Player     | Deal_   | Deal_Name_ | Display (All), Video (All) | Fixed           |   230 | 01- Advertiser | PulsePoint (Direct Integrations) |
@@ -118,7 +116,6 @@ Feature: Life PMP Regression - Verify Private and Life MarketPlace Deals Creatio
     And Verify Archive option is available based on the campaign state
     And Verify the Tactic Link is available in the confirmation pop-up
     And Verify the Tactic Link is clickable and navigates to the respective tactic page
-
     Examples:
       | EXCHANGE_TYPE | DEAL_ID | DEAL_NAME  | MEDIA_TYPE                 | DEAL_PRICE_TYPE | PRICE | ADVERTISER     | CURATOR                          | CREATIVE      |
       | JW Player     | Deal_   | Deal_Name_ | Display (All), Video (All) | Fixed           |   230 | 01- Advertiser | PulsePoint (Direct Integrations) | Auto_Creative |
@@ -155,7 +152,6 @@ Feature: Life PMP Regression - Verify Private and Life MarketPlace Deals Creatio
     And Verify Archive option is available based on the campaign state
     And User clicks "Archived" button from the search section of deal listing page
     Then Verify that the deal is moved to archived deal section
-
     Examples:
       | EXCHANGE_TYPE | DEAL_ID | DEAL_NAME  | MEDIA_TYPE                 | DEAL_PRICE_TYPE | PRICE | ADVERTISER     | CURATOR                          | CREATIVE      |
       | JW Player     | Deal_   | Deal_Name_ | Display (All), Video (All) | Fixed           |   230 | 01- Advertiser | PulsePoint (Direct Integrations) | Auto_Creative |
