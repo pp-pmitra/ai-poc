@@ -249,7 +249,7 @@ public class CreateCreatives {
                 page.locator("//span[contains(text(),'Domain Landing:')]/following-sibling::span");
         this.ADSIZE_FROM_CREATIVE_TILE = page.locator("//span[contains(text(),'AdSize:')]/following-sibling::span");
         this.DURATION_FROM_CREATIVE_TILE = page.locator("//span[contains(text(),'DURATION:')]/following-sibling::span");
-        this.CREATIVE_STATUS_FROM_CREATIVE_TILE = page.locator("//div[contains(@class,'status-label')]//span");
+        this.CREATIVE_STATUS_FROM_CREATIVE_TILE = page.locator("//app-ds-status-chip-wrapper");
         this.CREATED_BY_FROM_CREATIVE_TILE =
                 page.locator("//span[contains(text(),'Created by:')]/following-sibling::span");
         this.SOURCE_FROM_CREATIVE_TILE = page.locator("//span[contains(text(),'Source:')]/following-sibling::span");

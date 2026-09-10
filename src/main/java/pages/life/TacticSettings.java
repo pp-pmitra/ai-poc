@@ -125,9 +125,9 @@ public class TacticSettings {
         this.RULE_DEVICE_BLOCK = page.locator(
                 "//sui-radio-button[contains(@class,'ui radio checkbox')]//label[text()='Block Selected']");
         this.RULE_LEGAL_POPULATIONS_HOUSEHOLD_TAB = page.locator("//button[normalize-space(text())='Household']");
-        this.VERIFY_NPI = page.locator("//label[contains(@class,'target-item')]/span[normalize-space(text())='NPI']");
-        this.FETCH_TARGET_RULE_TYPES = page.locator("//label[contains(@class,'target-item__label')]");
-        this.FETCH_TARGET_RULE_OPTIONS = page.locator("//span[contains(@class,'target-ellipse')]");
+        this.VERIFY_NPI = page.locator("//span[contains(@class,'target-item')]/span[normalize-space(text())='NPI']");
+        this.FETCH_TARGET_RULE_TYPES = page.locator("//span[contains(@class,'target-item__label')]");
+        this.FETCH_TARGET_RULE_OPTIONS = page.locator("//app-ds-pill-wrapper");
         this.EXPAND_TARGETING_ICONS = page.locator("//i[@class='dropdown icon gaExpandTargeting']");
         this.TARGET_CATEGORY_NAME = page.locator("//div[contains(@class,'targetCategoryName')]");
         this.PERSON_TAB = page.locator("//button[normalize-space(text())='Person']");
@@ -812,9 +812,10 @@ public class TacticSettings {
 
     public List<Object> fetchRuleOptions() {
         ruleOptions = new ArrayList<>();
-        for (int i = 0; i < FETCH_TARGET_RULE_OPTIONS.count(); i++) {
-            FETCH_TARGET_RULE_OPTIONS.nth(i).scrollIntoViewIfNeeded();
-            String text = FETCH_TARGET_RULE_OPTIONS.nth(i).innerText();
+        Locator ruleOptionLocator = FETCH_TARGET_RULE_OPTIONS.locator("ds-typography");
+        for (int i = 0; i < ruleOptionLocator.count(); i++) {
+            ruleOptionLocator.nth(i).scrollIntoViewIfNeeded();
+            String text = ruleOptionLocator.nth(i).innerText();
             text = text.replaceAll("≥", "").trim();
             ruleOptions.add(text);
         }
@@ -953,13 +954,13 @@ public class TacticSettings {
     }
 
     public boolean isSelectedListPresentInTactic(String npiName) {
-        FETCH_TARGET_RULE_OPTIONS.locator("text=" + npiName).scrollIntoViewIfNeeded();
-        return FETCH_TARGET_RULE_OPTIONS.locator("text=" + npiName).isVisible();
+        FETCH_TARGET_RULE_OPTIONS.filter(new Locator.FilterOptions().setHasText(npiName)).scrollIntoViewIfNeeded();
+        return FETCH_TARGET_RULE_OPTIONS.filter(new Locator.FilterOptions().setHasText(npiName)).isVisible();
     }
 
     public String fetchSelectedListItemCountFromTactic(String npiName) {
         Locator targetCount =
-                FETCH_TARGET_RULE_OPTIONS.locator("text=" + npiName).locator("xpath=./following-sibling::span");
+                FETCH_TARGET_RULE_OPTIONS.filter(new Locator.FilterOptions().setHasText(npiName)).locator("ds-typography").nth(1);
         if (!targetCount.isVisible()) return "";
         return targetCount.innerText().trim();
     }
@@ -980,7 +981,7 @@ public class TacticSettings {
     }
 
     public String verifyRuleOption() {
-        return FETCH_TARGET_RULE_OPTIONS.innerText();
+        return FETCH_TARGET_RULE_OPTIONS.locator("ds-typography").innerText();
     }
 
     public BigDecimal getTacticBaseBidPrice() {
