@@ -107,7 +107,7 @@ public class TacticDetails {
         this.IMPORT_TEMPLATE_ICON = page.locator("//app-icon-lable-link[contains(@text,'Import Template')]/div");
         this.IMPORT_TEMPLATE_DIALOG = page.locator("//div[contains(text(),'Import Template')]");
         this.TEMPLATE_SEARCH_BOX = page.locator("//input[contains(@placeholder,'type in to search...')]");
-        this.IMPORT_BUTTON = page.locator("//button[contains(text(),'Import')]");
+        this.IMPORT_BUTTON = page.getByText("Import", new Page.GetByTextOptions().setExact(true));
         this.OVERRIDE_DIALOG = page.locator("//div[contains(text(),'Override Targeting Rules?')]");
         this.REPLACE_BUTTON = page.locator("//button[contains(text(),'Replace Targeting')]");
         this.TEMPLATE_IMPORT_ALERT = page.locator("//div[contains(text(),'Template Imported Successfully')]");
