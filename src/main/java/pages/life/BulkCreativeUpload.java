@@ -3,6 +3,7 @@ package pages.life;
 import com.microsoft.playwright.Download;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.SelectOption;
 import factory.DriverFactory;
 import java.io.IOException;
@@ -73,14 +74,14 @@ public class BulkCreativeUpload {
         this.BULK_UPLOAD_BUTTON = page.locator("//button[contains(text(),'Bulk Upload')]");
         this.BULK_UPLOAD_CREATIVE_HEADER = page.locator("//div[contains(text(),'Bulk Creative Upload')]");
         this.CREATIVE_TYPE_BUTTON =
-                page.locator("//label[contains(text(),'Creative Type')]/following-sibling::div//button");
+                page.locator("//label[contains(text(),'Creative Type')]/following-sibling::div//app-ds-tab-switch-wrapper").getByRole(AriaRole.TAB);
         this.ADVERTISER_DROPDOWN = page.locator("//sui-select[contains(@placeholder,'Select Advertiser')]");
         this.ADVERTISER_DROPDOWN_VALUE =
                 page.locator("//div[@suidropdownmenu]//sui-select-option/span[2]"); //no unique attribute in span tag hence index has been used
         this.APPROVAL_STATUS_BUTTON =
-                page.locator("//label[contains(text(),'Approval Status')]/following-sibling::div//button");
-        this.PREVIEW_BUTTON = page.locator("//button[contains(text(),'Preview')]");
-        this.OK_BUTTON = page.locator("//button[contains(text(),'Ok')]");
+                page.locator("//label[contains(text(),'Approval Status')]/following-sibling::div//app-ds-tab-switch-wrapper").getByRole(AriaRole.TAB);
+        this.PREVIEW_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Preview"));
+        this.OK_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Ok"));
         this.ERROR_ALERT = page.locator(
                 "//div[@role='alert' and contains(@aria-label,'Atleast one creative should be selected') or contains(@aria-label,'Select Advertiser') or contains(@aria-label,'Landing Page Domain is required') or contains(@aria-label, 'Landing Page Domain is not valid.') or contains(@aria-label,'1 error')]");
         this.SUCCESS_ALERT = page.locator("//div[@aria-label='Success!']/following-sibling::div[@role='alert']");
@@ -121,7 +122,7 @@ public class BulkCreativeUpload {
         this.INLINE_VALIDATION_MESSAGE = page.locator("//p[contains(@class,'ng-star-inserted')]");
         this.WIDTH_BOX = page.locator("//input[contains(@placeholder,'width')]");
         this.HEIGHT_BOX = page.locator("//input[contains(@placeholder, 'height')]");
-        this.UPLOAD_BUTTON = page.locator("//button[contains(@class,'okButton') and contains(text(),'Upload')]");
+        this.UPLOAD_BUTTON = page.locator("app-ds-button-wrapper").filter(new Locator.FilterOptions().setHasText("Upload"));
         this.VALIDATION_ERROR = page.locator("//div[contains(@class,'validation-erros')]");
         this.TOOL_TIP_TEXT = page.locator("//div[contains(@class,'tooltip-row')]");
         this.WARNING_IMAGE_ICON =
@@ -175,7 +176,7 @@ public class BulkCreativeUpload {
     }
 
     public void selectAndClickCreativeType(String creativeType) {
-        CREATIVE_TYPE_BUTTON.locator("text=" + creativeType).click();
+        CREATIVE_TYPE_BUTTON.filter(new Locator.FilterOptions().setHasText(creativeType)).click();
     }
 
     public void selectAdvertiser(String advertiser) {
