@@ -954,8 +954,9 @@ public class TacticSettings {
     }
 
     public boolean isSelectedListPresentInTactic(String npiName) {
-        FETCH_TARGET_RULE_OPTIONS.filter(new Locator.FilterOptions().setHasText(npiName)).scrollIntoViewIfNeeded();
-        return FETCH_TARGET_RULE_OPTIONS.filter(new Locator.FilterOptions().setHasText(npiName)).isVisible();
+        Locator targetRuleOptionsLocator = FETCH_TARGET_RULE_OPTIONS.filter(new Locator.FilterOptions().setHasText(npiName));
+        targetRuleOptionsLocator.scrollIntoViewIfNeeded();
+        return targetRuleOptionsLocator.isVisible();
     }
 
     public String fetchSelectedListItemCountFromTactic(String npiName) {
