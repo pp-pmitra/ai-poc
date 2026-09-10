@@ -86,6 +86,7 @@ public class Accounts {
     private final Locator CAMPAIGN_LINK_FROM_CUSTOM_FIELD_POPUP;
     private final Locator CUSTOM_FIELD_REMOVAL_POPUP;
     private final Locator CUSTOM_DESTINATION_ROW;
+    private final Locator CONNECTING_TEXT;
     WaitUtility waitUtility;
 
     public Accounts(Page page) {
@@ -165,7 +166,7 @@ public class Accounts {
         this.ERROR_ALERT = page.locator("//div[@aria-label='Error while saving.']");
         this.ALERT = page.locator("//div[@role='alert']");
         this.EXPORT_OPTIONS_DIALOG = page.locator("//div[text()='Choose file size to test access']");
-        this.RUN_BUTTON = page.locator("//button[text()='Run']");
+        this.RUN_BUTTON = page.locator("//app-ds-button-wrapper[@label='Run']");
         this.TEST_ACCESS_FAILED_TEXT = page.locator("//span[text()='Access Test Failed']");
         this.STUDIO_TOGGLE_ACTIVE = page.locator("//div[contains(@class,'button-active')]//span[text()='Studio']");
         this.LIFE_SETTINGS = page.locator("//span[text()='Life Platform']/following-sibling::span");
@@ -177,6 +178,7 @@ public class Accounts {
         this.CAMPAIGN_LINK_FROM_CUSTOM_FIELD_POPUP = page.locator("//a[contains(@class, 'bullet_list')]");
         this.CUSTOM_FIELD_REMOVAL_POPUP = page.locator("//div[contains(@class,'confirm-modal header')]");
         this.CUSTOM_DESTINATION_ROW = page.locator("//div[@class='customDestination-row']");
+        this.CONNECTING_TEXT = page.getByText("Connecting...");
     }
 
     public void clickAdministration() {
@@ -308,6 +310,7 @@ public class Accounts {
     public String clickTestConnection() {
         TEST_CONNECTION_LINK.last().click();
         if (EXPORT_OPTIONS_DIALOG.isVisible()) RUN_BUTTON.click();
+        waitUtility.waitForLocatorHidden(CONNECTING_TEXT);
         if (TEST_ACCESS_FAILED_TEXT.isVisible())
             return TEST_ACCESS_FAILED_TEXT.textContent().trim();
         else {
