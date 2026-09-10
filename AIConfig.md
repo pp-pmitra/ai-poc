@@ -33,6 +33,11 @@ GitHub branch above:
 3. **iAutomate (Shakti):**
    - **Path:** `plugins/qa-automation-skills/skills/shakti/iAutomateSkill.md`
    - **Action:** Read the file immediately. Process `@todo` scenarios in `[GHERKIN_FEATURES]` to build glue code and step definitions.
+   - **Accepted input (`[GHERKIN_FEATURES]`) — one of:**
+     * **Scenario name** — run that single `@todo` scenario only.
+     * **Tag name** (e.g. `@todo`, or any other tag present in the suite) — run every scenario carrying that tag.
+     * **Feature file name** (e.g. `Life_Deal_Platform.feature`) — scan that file for every `@todo`-tagged scenario and run all of them, in file order.
+   - Resolve which of the three the input is by matching it against the feature files first (exact `.feature` filename match), then tags (leading `@`), then falling back to a scenario-title match. If ambiguous or no match is found, ask which scenario/tag/feature was meant rather than guessing.
 
 4. **iFix (Kavach):**
    - **Path:** `plugins/qa-automation-skills/skills/kavach/iFixSkill.md`
@@ -47,6 +52,28 @@ GitHub branch above:
    - **Outputs Generated:** Update `[COMPLIANCE_REPORT_PATH]` and, when iTrack is invoked, `[SLACK_DRAFTS]`.
 
 Note: iMaintenance (Trishul) is named in the pipeline but has no skill file in the repo yet — nothing to resolve there until it's added.
+
+---
+
+## Remote-Fetch Mode (Claude Code CLI — iAutomate/Shakti & iFix/Kavach)
+
+`iAutomate (Shakti)` and `iFix (Kavach)` are run through Claude Code CLI, which does not read the account-level "Instructions for Claude." `CLAUDE.md` covers that gap when the CLI session's working directory is this repo — but these two stages must also work when it is **not**: no local checkout present, nothing to read from disk.
+
+**Trigger:** a prompt of the form `Run Shakti <repo-link> <scenario/tag/feature>` or `Run Kavach <repo-link> <ticket/input>`, where `<repo-link>` is a GitHub repo reference (full URL, `owner/repo` shorthand, or a URL with `/tree/<branch>`). For Shakti, `<scenario/tag/feature>` follows the same "Accepted input" rules as the Agent File Resolution entry above (scenario name / tag name / feature file name — a feature file name means run every `@todo` scenario in it).
+
+**Resolution rule:** when a repo link is supplied this way, it is authoritative — fetch from GitHub via the GitHub connector (`mcp__github__get_file_contents` or equivalent) instead of reading local disk, even if a local checkout of this repo happens to be open. Do not mix sources within one run.
+
+1. Parse `<repo-link>`:
+   - `owner`/`repo` from the path segment before `/tree/` or `/blob/` (or the whole `owner/repo` shorthand).
+   - `ref` (branch) from the segment after `/tree/`, if present; otherwise use the repository's default branch.
+2. Fetch the skill file at the fixed path for that agent, on that `owner/repo`/`ref`:
+   - Shakti: `plugins/qa-automation-skills/skills/shakti/iAutomateSkill.md`
+   - Kavach: `plugins/qa-automation-skills/skills/kavach/iFixSkill.md`
+3. Read the fetched content and execute it exactly as written, substituting the given scenario/tag/feature for `[GHERKIN_FEATURES]` (Shakti — resolved per the Accepted-input rules above) or the failing-run reference (Kavach).
+4. Any further file the skill instructs you to read (glue files, POM classes, feature files, other skill files) is fetched from the **same** `owner/repo`/`ref` via the GitHub connector — never assumed to exist locally, never guessed at. If the GitHub connector is unavailable or the fetch fails (bad link, missing branch, 404), stop and report the failure; do not fall back to local disk silently and do not fabricate file content.
+5. Commits/PRs this stage produces (per its own skill file) go to the same `owner/repo` via the GitHub connector, not to a local git working tree.
+
+If no `<repo-link>` is given and no local checkout is present either, ask for the repo link rather than guessing which repository/branch is intended.
 
 ---
 
