@@ -665,7 +665,7 @@ public class Campaigns {
 
     public int getCampaignBudgetStatusOptionsCount() {
         waitUtility.waitForLocatorVisible(BUDGET_STATUS_EXTERNAL);
-        return page.locator("div.approval-status ds-status").count();
+        return BUDGET_STATUS_EXTERNAL.count();
     }
 
     public void approveCampaign() {
