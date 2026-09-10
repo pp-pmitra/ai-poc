@@ -180,8 +180,7 @@ public class Campaigns {
                 page.locator("//button[contains(@class,'okButton') and contains(text(),'Export')]");
         this.EXPORT_CAMPAIGN_SETTINGS_SUCCESS_ALERT =
                 page.locator("//div[@role='alert' and contains(text(),'The exported file will be sent')]");
-        this.BUDGET_STATUS_EXTERNAL =
-                page.locator("//label[contains(text(),'Budget Status')]/following-sibling::div//span");
+        this.BUDGET_STATUS_EXTERNAL = page.locator("div.approval-status ds-status");
         this.CAMPAIGN_APPROVAL_STATUS = page.locator("//label[contains(text(),'Approval Status')]");
         this.CAMPAIGN_STATUS_APPROVED_BUTTON = page.locator("button[role='tab']:text-is('Approved')");
         this.FAVORITE_ONLY_CHECKBOX = page.locator("//sui-checkbox[label[normalize-space()='Favorite Only']]");
@@ -659,15 +658,14 @@ public class Campaigns {
     }
 
     public String checkBackgroundColorOfCampaignBudgetStatus() {
-        return BUDGET_STATUS_EXTERNAL
-                .evaluate("element => getComputedStyle(element).backgroundColor")
+        return BUDGET_STATUS_EXTERNAL.locator("span.ds-status__pill")
+                .evaluate("el => getComputedStyle(el).backgroundColor")
                 .toString();
     }
 
     public int getCampaignBudgetStatusOptionsCount() {
         waitUtility.waitForLocatorVisible(BUDGET_STATUS_EXTERNAL);
-        return page.locator("//label[contains(text(),'Budget Status')]/following-sibling::div//span")
-                .count();
+        return page.locator("div.approval-status ds-status").count();
     }
 
     public void approveCampaign() {
