@@ -59,6 +59,47 @@ Env / app / account are NOT asked — they are read from each scenario's
    NEVER freezes the queue.
 4. **Prereqs are mandatory.** Always treat each scenario's Background (env step +
    login step) as prerequisites; confirm their glue exists before Gate C.
+5. **Navigation-first exploration.** `navigation-tree.html` at the repo root is the
+   authoritative click-path source (same graph Sutra/iDesign resolved the
+   scenario's Background/navigation preamble from) — consult it before free-form
+   exploring so Gate C drives straight to the target page instead of guessing a
+   route.
+
+---
+
+## Navigation context (once per batch)
+
+Fetch `navigation-tree.html` from the repo root via the connector alongside the
+glue/POM files in DISCOVER. Extract ONLY the `GRAPH` object literal — the value
+assigned in `const GRAPH = { ... };` inside the page's `<script>` block; ignore
+the surrounding HTML/CSS/JS (rendering code, the `MC` module-color map,
+legend/DOM-building logic). Slice from that literal's opening `{` to its
+matching closing `}` (before the trailing `;`) and parse it — it uses only
+double-quoted keys/string values, so it parses directly. Build the same forward
+adjacency map Sutra uses (node -> `[{target, action}]`), plus the reverse index
+and `landing`/`MegaMenu` nodes. Reuse this parsed graph across every scenario in
+the batch — never re-fetch or re-parse mid-batch.
+
+Use it in Gate C as follows:
+- Match the scenario's target page (from its Gherkin navigation steps, or the
+  feature's module if the steps are still generic) against the graph's node keys.
+- If matched, run the same shortest-path BFS Sutra used to author those steps, so
+  you know in advance which real UI actions (`edge.action` strings, e.g. "Click
+  Curated Markets") the scenario's navigation steps correspond to — drive Gate C's
+  live exploration along that exact resolved path instead of clicking around to
+  rediscover it. This does not replace live locator harvesting: the graph names
+  the destination and the click sequence to get there, but the actual selector for
+  each click/element is still harvested live per the Explore rules below (the
+  graph carries no selectors, only page/action names).
+- If the target node carries `framework_gap: true`, or no node matches at all,
+  fall back to plain exploration as before — the graph gap is expected, not a
+  blocker, and mirrors what Sutra would have flagged as a Framework Gap when the
+  scenario was authored.
+- A scenario whose live click sequence diverges from the graph's resolved path
+  (a different menu item now reaches the page, an edge no longer exists) is a
+  signal the map is stale, not that the app is broken — note it in the final
+  report so the map can be refreshed; do not treat it as a scenario blocker on
+  its own.
 
 ---
 
@@ -68,7 +109,9 @@ Env / app / account are NOT asked — they are read from each scenario's
 2. Fetch the app glue files (`*Steps.java`) and the POM classes once into
    context — the reuse gate and POM checks match against these in-memory (more
    reliable than remote code-search). Note the login/nav entry (`Navigation.java`).
-3. Present the queue (feature file -> its @todo scenarios) and get the go-ahead.
+3. Fetch and parse `navigation-tree.html` (see Navigation context below) once
+   into context, alongside the glue/POM files.
+4. Present the queue (feature file -> its @todo scenarios) and get the go-ahead.
 
 Then loop feature files, and within each, its @todo scenarios — one at a time.
 
@@ -95,8 +138,10 @@ expression annotation.
 Output the classified table. Only NEW + EXTEND proceed to the browser.
 
 ### C. Explore (browser — NEW/EXTEND only)
-Log in with the pasted creds for the scenario's app; navigate as a human would.
-For each NEW/EXTEND step:
+Log in with the pasted creds for the scenario's app; navigate using the
+Navigation-context graph's resolved path when the target page matches a node
+(see Navigation context above) — otherwise navigate as a human would. For each
+NEW/EXTEND step:
 - Perform the action live; harvest the authoritative selector + iframe chain
   from the MCP "Ran … code" output.
 - Before minting a locator, grep the relevant POM for a reusable one; reuse if

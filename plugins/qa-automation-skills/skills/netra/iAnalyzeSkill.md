@@ -17,6 +17,7 @@ A single, end-to-end QA workflow. One input (Fix Version, ticket key, comma-sepa
 | 5 | Test-readiness triage | — | — |
 | 6 | Confluence docs | ✅ conditional | — |
 | 7 | Production issue fetch | ✅ #3 | — |
+| 7.5 | Navigation context (`navigation-tree.html` node match) | — | — |
 | 8 | Cache | — | — |
 | 9 | Pre-flight summary (sanity gate) | — | Brief text block |
 | 10 | Setup: write formatter scripts + init cache | — | Batch-plan widget |
@@ -157,11 +158,21 @@ Free-text `text ~ "theme"` is noisy and weakly indexed — use it only as a fall
 
 ---
 
+## STEP 7.5 — Navigation Context *(read-only, once per run)*
+
+The repository root's `navigation-tree.html` is the single source of truth for platform navigation (same file Sutra/iDesign resolves paths from downstream). Read it once and extract ONLY the `GRAPH` object literal — the value assigned in `const GRAPH = { ... };` inside the page's `<script>` block; ignore the surrounding HTML/CSS/JS (rendering code, the `MC` module-color map, legend/DOM-building logic). Slice from that literal's opening `{` to its matching closing `}` (before the trailing `;`) and parse it — it uses only double-quoted keys/string values, so it parses directly. Parse it once and reuse across all tickets in this run; never re-fetch mid-run.
+
+For each analyzed item, normalize its feature/area name (from summary, components, or Cross-Functional Impact) and match it against the graph's node keys (case-fold, strip "Page"/"Panel"/"Tab", keyword containment). On a clean match, record `navNode: <NodeKey>` and its `module`; on no match, record `navNode: null` (treat as an un-mapped area — this is informational, never a blocker per STEP 5).
+
+Store this as `navContext{}` in the cache (keyed by ticket), read by STEP 12: when Test Data or Expected Result depends on *how the user gets there*, ground it in the resolved node/module instead of guessing a click-path. Do not run path-finding (BFS) here — that is Sutra's job once scenarios are written; Netra only needs the node/module association to keep test data grounded in the real navigation surface. If the matched node carries `framework_gap: true`, note it in that ticket's Dependencies section (STEP 11, section 6) as a heads-up for the downstream automation stages — it is context, not a blocker for analysis or test-case generation.
+
+---
+
 ## STEP 8 — Cache
 
-Store fetched items, expanded context, production bugs, Confluence docs (if run), and triage results. This is the **single source of truth** for STEP 9–14. No re-fetching after this point.
+Store fetched items, expanded context, production bugs, Confluence docs (if run), triage results, and navigation context. This is the **single source of truth** for STEP 9–14. No re-fetching after this point.
 
-Persist the cache to `/home/claude/Cache_<identifier>_<date>.json` and keep it current as STEP 11–13 add content. It holds the fetched data plus the generated content the formatters read: `items` / `context` / `prodBugs` / `triage` (from here), and `analysis{}` (STEP 11, keyed by ticket), `testcases{}` (STEP 12, keyed by ticket), and `releaseSummary{}` (STEP 13) — the latter three initialized empty in STEP 10 and filled per ticket. It ships as a reference artifact in STEP 14 — never a primary deliverable, but included so the run is auditable and re-runnable from cache alone.
+Persist the cache to `/home/claude/Cache_<identifier>_<date>.json` and keep it current as STEP 11–13 add content. It holds the fetched data plus the generated content the formatters read: `items` / `context` / `prodBugs` / `triage` / `navContext` (from here and STEP 7.5), and `analysis{}` (STEP 11, keyed by ticket), `testcases{}` (STEP 12, keyed by ticket), and `releaseSummary{}` (STEP 13) — the latter three initialized empty in STEP 10 and filled per ticket. It ships as a reference artifact in STEP 14 — never a primary deliverable, but included so the run is auditable and re-runnable from cache alone.
 
 ---
 
@@ -236,7 +247,7 @@ Pure UX/visual concerns — layout, spacing, alignment, color, typography, copy 
 
 ### 12a — Context-first decomposition *(the core rule; produces the JSON)*
 
-Before emitting any row for a ticket, build an internal coverage checklist from **all** available information (ticket description + any AC, comments, parent/epic, linked issues, sub-tasks, Figma references, implementation notes, and STEP 11 GAP/AMB items). Formal AC is one input, not a prerequisite.
+Before emitting any row for a ticket, build an internal coverage checklist from **all** available information (ticket description + any AC, comments, parent/epic, linked issues, sub-tasks, Figma references, implementation notes, and STEP 11 GAP/AMB items). Formal AC is one input, not a prerequisite. Where the ticket's `navContext` (STEP 7.5) resolved a graph node, ground rows that depend on "where the user is" in that node's `module` rather than an invented area name — this keeps Test Data consistent with the real navigation surface Sutra/Shakti will later drive against.
 
 **Part A — Requirement inventory.** List every discrete testable behaviour; count them as `R`; attribute each to its source. A behaviour counts if it is an AC item, a behaviour in a parent/linked ticket, a named error state, a field/format/limit rule, a business or calculation rule, a data-persistence or transformation requirement, a permission condition, a state transition, an integration/API contract, or a negative/excluded behaviour.
 

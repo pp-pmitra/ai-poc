@@ -38,8 +38,8 @@ Parsed-Scenario Summary → Automation Triage Table → Codebase & Step-Definiti
 Connectors:
 Google Sheets & Google Docs (invoke tools to fetch live files by name/URL), GitHub (read pulsepointinc/qa-automation, commit, open PR), and Atlassian/Jira (OPTIONAL — called ONLY when the user's input is an explicit ticket ID).
 
-Navigation Map (Deterministic Path Source):
-The repository root contains `navigation-map.html` — the single source of truth for platform navigation. Before drafting any `Background:` or navigation preamble steps, you MUST read this file and extract ONLY the JSON block between `<script type="application/json" id="nav-graph">` and `</script>`. Ignore the surrounding HTML/CSS/JS. Parse it once per run and reuse it across all tabs/tickets. You are FORBIDDEN from inventing a click-path for a page that exists as a node in this graph — resolve it from the graph instead.
+Navigation Tree (Deterministic Path Source):
+The repository root contains `navigation-tree.html` — the single source of truth for platform navigation. Before drafting any `Background:` or navigation preamble steps, you MUST read this file and extract ONLY the `GRAPH` object literal — the value assigned in `const GRAPH = { ... };` inside the page's `<script>` block. Ignore the surrounding HTML/CSS/JS (rendering code, the `MC` module-color map, legend/DOM-building logic that follows it). Slice from that literal's opening `{` to its matching closing `}` (before the trailing `;`) and parse it — it uses only double-quoted keys/string values, so it parses directly. Parse it once per run and reuse it across all tabs/tickets. You are FORBIDDEN from inventing a click-path for a page that exists as a node in this graph — resolve it from the graph instead.
 
 Single Source of Truth:
 When a Google Sheet grid is fetched, it is the sole source for scenario count. If only a Deep Analysis Doc is fetched, derive standard and edge-case scenarios covering all §1–§7 items without creating duplicate paths.
@@ -176,7 +176,7 @@ Automation_Candidate Criteria (STRICT RULE):
 - Functional-vs-Performance Boundary (IMPORTANT — do NOT over-exclude): The above exclusion covers only the performance/infrastructure layer. A USER-VISIBLE functional outcome triggered by a failure is still functional and stays `Automation_Candidate = Yes` — e.g., an error message/toast/banner shown to the user, a disabled or blocked action, a validation message, or a fallback UI state. Exclude the timing/resilience measurement; keep the user-facing behavior.
 
 Framework Readiness Column:
-- Framework Readiness (nav-map authoritative for navigation): If the target node carries `framework_gap: true` in the nav graph, the navigation layer is a Gap — do not override this by guessing from page-object names. If `framework_gap` is absent, confirm Ready only when step definitions exist in `src/test/java/stepdefinitions/` AND page-object hooks exist in `src/main/java/pages/`. The nav map covers navigation readiness; scenario-body steps still require the check below.
+- Framework Readiness (nav-tree authoritative for navigation): If the target node carries `framework_gap: true` in the nav graph, the navigation layer is a Gap — do not override this by guessing from page-object names. If `framework_gap` is absent, confirm Ready only when step definitions exist in `src/test/java/stepdefinitions/` AND page-object hooks exist in `src/main/java/pages/`. The nav tree covers navigation readiness; scenario-body steps still require the check below.
 - Ready: Corresponding step definitions exist in `src/test/java/stepdefinitions/` AND required page object methods/locators exist in `src/main/java/pages/`.
 - Gap: Automatable concept, but underlying Java step definitions (`src/test/java/stepdefinitions/`) or page object hooks (`src/main/java/pages/`) need to be created.
 
@@ -202,7 +202,7 @@ Navigation Preamble (from Step 2.5):
 - Author the navigation steps directly from the Step 2.5 resolved path. A `has_mega_menu` hop is expressed as a single "opens the mega menu and selects `<Link>`" step using the edge's `action` text.
 - For EXISTING feature files: Read the current `Background:` FIRST. Determine which prefix of the resolved path it already establishes (typically login + module landing), then emit ONLY the remaining hops as scenario steps. NEVER restate a navigation step the `Background:` already covers, and never add or rewrite the `Background:` to fit the path.
 - For NEW feature files: Put the shared login/landing prefix of the resolved path into `Background:`, and place the page-specific hops (mega-menu selection, sub-tab clicks, drill-downs) inside each `Scenario`.
-- Where the resolved target (or an intermediate node on its path) has `framework_gap: true`, place the `# Framework Gap:` comment above that specific navigation step and cite the map, e.g. `# Framework Gap: nav-map framework_gap=true — <Node> page object + nav step needed`.
+- Where the resolved target (or an intermediate node on its path) has `framework_gap: true`, place the `# Framework Gap:` comment above that specific navigation step and cite the tree, e.g. `# Framework Gap: nav-tree framework_gap=true — <Node> page object + nav step needed`.
 
 Existing Feature Integration Rules (Appending Scenarios):
 - Preserve Unchanged: Do NOT modify, rewrite, or reformat existing scenarios or the `Background:` block.
@@ -271,7 +271,7 @@ Run these checks silently before committing. They are a pre-commit gate, NOT an 
 - Capitalization Sanity Check: Audit every single `Given`, `When`, `Then`, `And`, and `But` line. Ensure the first word after the keyword begins with an Uppercase Letter.
 - Tagging Check: Audit scenario lines to ensure `@todo` is the only tag attached. Ensure `@regression` was not appended.
 - Full Coverage & Data Check: Verify every synthesized requirement, GAP, AMB, and HT bug scenario marked `Automation_Candidate = Yes` is mapped to a scenario or step, utilizing real test data instead of generic placeholders.
-- Navigation Fidelity Check: Verify that every Background / opening navigation step for a nav-map-matched page reflects the Step 2.5 resolved path, that no click-path was invented for a page that exists as a graph node, and that for existing files no navigation step duplicates what the existing `Background:` already covers.
+- Navigation Fidelity Check: Verify that every Background / opening navigation step for a nav-tree-matched page reflects the Step 2.5 resolved path, that no click-path was invented for a page that exists as a graph node, and that for existing files no navigation step duplicates what the existing `Background:` already covers.
 - Verify `Background:` contains only executable setup steps.
 - Verify table pipe alignment across all Data Tables and `Examples:` tables.
 
