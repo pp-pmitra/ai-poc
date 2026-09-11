@@ -40,7 +40,7 @@ public class TacticCreatives {
         this.SAVE_TACTIC_CREATIVES = page.locator("//app-ds-button-wrapper[@label='Save']");
         this.TACTIC_CREATIVE_SUCCESS = page.locator("//div[@aria-label='Success!']");
         this.NAVIGATE_TO_CAMPAIGN_DASHBOARD = page.locator("//div[contains(@class,'campaign-tile')]");
-        this.CAMPAIGN_STATUS = page.locator("//span[contains(@class,'status-label')]/span");
+        this.CAMPAIGN_STATUS = page.locator("//app-ds-status-chip-wrapper");
         this.ASSIGN_CREATIVE_TITLE = page.locator("//div[contains(text(),'Assign Creatives')]");
         this.CREATIVE_TAB = page.locator("//a[contains(text(),'Creatives')]");
         this.ASSIGN_EXISTING_CREATIVE = page.locator("//span[contains(text(),'Assign Existing Creatives')]");
@@ -48,7 +48,7 @@ public class TacticCreatives {
         this.CREATIVE_STATUS = page.locator("//td[contains(@class,'status-label')]");
         this.CLEAR_SEARCH_BOX = page.locator("//div[contains(@class,'clear-search-close')]");
         this.CREATIVES_TABLE = page.locator("//div[@id='parentTable']");
-        this.CAMPAIGN_APPROVAL_STATUS = page.locator("//div[contains(@class,'inlineDiv status-label')]/span");
+        this.CAMPAIGN_APPROVAL_STATUS = page.locator("div.approval-status ds-status");
     }
 
     public String verifyTacticCreativesText() {
