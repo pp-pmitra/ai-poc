@@ -1,8 +1,0 @@
-{
-  "name": "qa-automation-skills",
-  "description": "Code-development skills for the PulsePoint qa-automation framework (BDD/Cucumber/Playwright/Java).",
-  "version": "0.1.0",
-  "author": {
-    "name": "PulsePoint QA Automation"
-  }
-}
