@@ -77,6 +77,8 @@ public class LineItemDetails {
     private final Locator SAVE_CUSTOM_FIELD_BUTTON;
     private final Locator FIELD_CREATE_SUCCESS;
     private final Locator FETCH_LINE_ITEM_NAME;
+    private final Locator LINE_ITEM_DETAILS_TAB;
+    private final Locator LINE_ITEM_OVERVIEW_TAB;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
     Calendar calendar = Calendar.getInstance();
     LocalDateTime currentDateTime = LocalDateTime.now();
@@ -98,7 +100,7 @@ public class LineItemDetails {
         this.LINE_ITEM_BUDGET = page.locator("//input[contains(@class,'gaFlightBudget')]");
         this.ENABLE_LINE_ITEM =
                 page.locator("//sui-checkbox[@class='toggle ui checkbox ng-untouched ng-pristine ng-valid']");
-        this.SAVE_LINE_ITEM = page.locator("//span[text()='Save']");
+        this.SAVE_LINE_ITEM = page.locator("//app-ds-button-wrapper[@label='Save']");
         this.LINE_ITEM_SUCCESS = page.locator(
                 "//div[@aria-label='Success!']/following-sibling::div[@role='alert' and contains(text(),'Lineitem')]");
         this.LINE_ITEM_TYPE_DROPDOWN = page.locator("//div[contains(@class,'lineItemType')]");
@@ -129,8 +131,7 @@ public class LineItemDetails {
         this.SEQUENTIAL_START_MONTH = page.locator(
                 "//label[text()='Start Month']/following-sibling::div//input[contains(@placeholder,'Start Date')]");
         this.NUMBER_OF_MONTHS = page.locator("//label[text()='Number of Months']/following-sibling::div//sui-select");
-        this.LINE_ITEM_PANEL_NAME = page.locator("//div[@class='item-detials']/div[@class='main-details']")
-                .last();
+        this.LINE_ITEM_PANEL_NAME = page.locator("//div[@class='item-detials']/div[@class='main-details']");
         this.CANCEL_TACTIC = page.locator("#lidcBody").getByText("Cancel");
         this.NEW_LINE_ITEM = page.locator("//app-icon-lable-link[@text='New Line Item']//div");
         this.NOTES_ICON = page.locator("//div[contains(@class,'notes-dashboard')]//span");
@@ -170,6 +171,8 @@ public class LineItemDetails {
         this.FIELD_CREATE_SUCCESS =
                 page.locator("//div[@role='alert' and contains(text(),'Successfully created custom Field')]");
         this.FETCH_LINE_ITEM_NAME = page.locator("//div[contains(@class,'item-detials')]/div[@class='main-details']");
+        this.LINE_ITEM_DETAILS_TAB = page.locator("//a[contains(@class,'gaTabDetails') and contains(text(),'Details')]");
+        this.LINE_ITEM_OVERVIEW_TAB = page.locator("//a[contains(@class,'gaTabOverview') and contains(text(),'Overview')]");
     }
 
     public String verifyLineItemText() {
@@ -632,5 +635,30 @@ public class LineItemDetails {
         return page.locator(String.format(
                         "//span[contains(@class,'cmp-form-label-text') and contains(text(),'%s')]", fieldName))
                 .isVisible();
+    }
+
+    public void clearCustomFieldFromLineItem(String fieldName) {
+        waitUtility.waitUntilSpinnerHidden();
+        if (LINE_ITEM_PANEL_NAME.last().isVisible()) {
+            for (int i = 0; i < LINE_ITEM_PANEL_NAME.count(); i++) {
+                LINE_ITEM_PANEL_NAME.nth(i).click();
+                waitUtility.waitForLocatorVisible(LINE_ITEM_OVERVIEW_TAB);
+                waitUtility.waitForLocatorVisible(LINE_ITEM_DETAILS_TAB);
+                LINE_ITEM_DETAILS_TAB.click();
+                Locator customFieldInput = page.locator(String.format("//span[@class='cmp-form-label-text' and contains(text(),'%s')]/parent::label[contains(@class,'cmp-form-label')]//following-sibling::input", fieldName));
+                waitUtility.waitForLocatorVisible(customFieldInput.last());
+                for (int j = 0; j < customFieldInput.count(); j++) {
+                    if (customFieldInput.nth(j).isVisible()) {
+                        customFieldInput.nth(j).clear();
+                    }
+                }
+                if (SAVE_LINE_ITEM.isVisible()) {
+                    SAVE_LINE_ITEM.click();
+                    waitUtility.waitForLocatorHidden(LINE_ITEM_SUCCESS);
+                }
+                TacticDetails tacticDetails = new TacticDetails(page);
+                tacticDetails.clearCustomFieldFromTactic(fieldName);
+            }
+        }
     }
 }

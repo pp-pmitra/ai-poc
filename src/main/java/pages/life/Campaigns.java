@@ -2,6 +2,7 @@ package pages.life;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.LoadState;
 import factory.DriverFactory;
 import java.util.ArrayList;
@@ -83,6 +84,9 @@ public class Campaigns {
     private final Locator DELETE_CAMPAIGN_CONFIRMATION_POPUP;
     private final Locator DELETE_CAMPAIGN_REMOVE_BUTTON;
     private final Locator DELETE_CAMPAIGN_SUCCESS_ALERT;
+    private final Locator CAMPAIGN_PANEL_NAME;
+    private final Locator CAMPAIGN_UPDATED_POPUP;
+    private final Locator REFRESH_BUTTON;
     private final Locator APPLY_FREQUENCY_CAPPING;
     private final Locator PER_TARGET_AUDIENCE_DROPDOWN;
     private final Locator WINDOWS_LIMIT_INPUT;
@@ -91,18 +95,20 @@ public class Campaigns {
 
     public Campaigns(Page page) {
         this.page = page;
-        this.CREATE_CAMPAIGN = page.locator("//button[text()='Create a Campaign']");
+        this.CREATE_CAMPAIGN = page.locator("//app-ds-button-wrapper[@label='Create a Campaign']");
         this.VERIFY_CAMPAIGN_PAGE = page.locator("//div[text()='Create New Campaign']");
         this.SEARCH_ADVERTISER = page.locator("//label[text()='Advertiser']/following-sibling::div//input");
         this.SELECT_ADVERTISER = page.getByText("");
         this.CAMPAIGN_NAME = page.locator("//input[@placeholder='Campaign Name']");
-        this.CAMPAIGN_TYPE = page.locator("//label[contains(text(),'Campaign Type')]/following-sibling::div//button");
+        this.CAMPAIGN_TYPE = page.locator("div.form-group")
+                .filter(new Locator.FilterOptions().setHas(page.locator("label:has-text('Campaign Type')")))
+                .locator("button[role='tab']");
         this.BUDGET = page.locator("//input[@id='budgetcap']");
-        this.SAVE_CAMPAIGN = page.locator("//span[text()='Save']");
+        this.SAVE_CAMPAIGN = page.locator("//app-ds-button-wrapper[@label='Save']");
         this.CAMPAIGN_SUCCESS = page.locator(
                 "//div[@aria-label='Success!']/following-sibling::div[@role='alert' and contains(text(),'Campaign')]");
         this.CAMPAIGN_DASHBOARD = page.locator("//span[@class='breadCrumbRoot']");
-        this.LIFE_TIME_FILTER = page.locator("//button[normalize-space()='Lifetime']");
+        this.LIFE_TIME_FILTER = page.locator("button[role='tab']:text-is('Lifetime')");
         this.CAMPAIGN_ENTRIES = page.locator("//tr[contains(@class,'cl-li-row')]");
         this.ADVERTISER_DROPDOWN_VALUES = page.locator(
                 "//input[@placeholder='Select Advertiser']/following-sibling::div[@class='menu transition visible']//div");
@@ -174,18 +180,19 @@ public class Campaigns {
                 page.locator("//button[contains(@class,'okButton') and contains(text(),'Export')]");
         this.EXPORT_CAMPAIGN_SETTINGS_SUCCESS_ALERT =
                 page.locator("//div[@role='alert' and contains(text(),'The exported file will be sent')]");
-        this.BUDGET_STATUS_EXTERNAL =
-                page.locator("//label[contains(text(),'Budget Status')]/following-sibling::div//span");
+        this.BUDGET_STATUS_EXTERNAL = page.locator("div.approval-status ds-status");
         this.CAMPAIGN_APPROVAL_STATUS = page.locator("//label[contains(text(),'Approval Status')]");
-        this.CAMPAIGN_STATUS_APPROVED_BUTTON = page.locator(
-                "//label[contains(text(),'Approval Status')]/following-sibling::div[contains(@class,'display-inlineBlock')]//button[text()='Approved']");
+        this.CAMPAIGN_STATUS_APPROVED_BUTTON = page.locator("button[role='tab']:text-is('Approved')");
         this.FAVORITE_ONLY_CHECKBOX = page.locator("//sui-checkbox[label[normalize-space()='Favorite Only']]");
         this.FREQUENCY_CAP_VALIDATION_ERROR = page.locator("//p[contains(@class,'ng-star-inserted')]");
         this.CAMPAIGN_PAGINATION_ON_DASHBOARD = page.locator("//div[@class='paging-desc']");
         this.DELETE_CAMPAIGN_BUTTON = page.locator("//app-icon-lable-link[@title='Delete']//div[contains(@class,'icolink')]");
         this.DELETE_CAMPAIGN_CONFIRMATION_POPUP = page.locator("//div[contains(@class,'confirm-modal header') and contains(text(),'Removal Confirmation')]");
-        this.DELETE_CAMPAIGN_REMOVE_BUTTON = page.locator("//div[contains(@class,'approveButtonText')]/span[contains(text(),'Remove')]");
+        this.DELETE_CAMPAIGN_REMOVE_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Remove"));
         this.DELETE_CAMPAIGN_SUCCESS_ALERT = page.locator("//div[@role='alert' and contains(text(),'Campaign deleted successfully')]");
+        this.CAMPAIGN_PANEL_NAME = page.locator("//div[@class='item-details']//div[contains(@class,'campaign-title')]");
+        this.CAMPAIGN_UPDATED_POPUP = page.locator("//div[contains(@class, 'confirm-modal ') and contains(text(),'Campaign updated')]");
+        this.REFRESH_BUTTON = page.locator("//div[contains(@class, 'approveButtonText')]/span[contains(text(),'Refresh')]");
         this.APPLY_FREQUENCY_CAPPING = page.locator("//label[contains(text(),'Apply Frequency Capping')]");
         this.PER_TARGET_AUDIENCE_DROPDOWN = page.locator("//div[contains(@class,'crossDevice-dropdown')]");
         this.WINDOWS_LIMIT_INPUT = page.locator("//input[@formcontrolname='windowLimit']");
@@ -333,7 +340,7 @@ public class Campaigns {
         if (FAVORITE_ONLY_CHECKBOX.getAttribute("class").contains("checked")) {
             FAVORITE_ONLY_CHECKBOX.click();
         }
-        if (LIFE_TIME_FILTER.getAttribute("class").contains("inactive")) {
+        if (LIFE_TIME_FILTER.getAttribute("aria-selected") == null) {
             LIFE_TIME_FILTER.click();
             waitUtility.waitForLocatorVisible(CAMPAIGN_PAGINATION_ON_DASHBOARD.last());
         }
@@ -381,8 +388,7 @@ public class Campaigns {
 
     public String fetchDefaultValue(Locator locator) {
         for (int i = 0; i < locator.count(); i++) {
-            if (locator.nth(i).getAttribute("class") != null
-                    && locator.nth(i).getAttribute("class").contains("active"))
+            if (locator.nth(i).getAttribute("aria-selected") != null)
                 return locator.nth(i).textContent().trim();
         }
         return "";
@@ -652,15 +658,14 @@ public class Campaigns {
     }
 
     public String checkBackgroundColorOfCampaignBudgetStatus() {
-        return BUDGET_STATUS_EXTERNAL
-                .evaluate("element => getComputedStyle(element).backgroundColor")
+        return BUDGET_STATUS_EXTERNAL.locator("span.ds-status__pill")
+                .evaluate("el => getComputedStyle(el).backgroundColor")
                 .toString();
     }
 
     public int getCampaignBudgetStatusOptionsCount() {
         waitUtility.waitForLocatorVisible(BUDGET_STATUS_EXTERNAL);
-        return page.locator("//label[contains(text(),'Budget Status')]/following-sibling::div//span")
-                .count();
+        return BUDGET_STATUS_EXTERNAL.count();
     }
 
     public void approveCampaign() {
@@ -730,5 +735,31 @@ public class Campaigns {
         PER_TARGET_AUDIENCE_DROPDOWN.click();
         Locator perTargetAudienceOption = PER_TARGET_AUDIENCE_DROPDOWN.locator(String.format("//div[@class='item' and text()='%s']", perTargetAudience));
         perTargetAudienceOption.click();
+    }
+
+    public void clearCustomFieldFromCampaign(String fieldName) {
+        waitUtility.waitUntilSpinnerHidden();
+        waitUtility.waitForLocatorVisible(CAMPAIGN_PANEL_NAME);
+        if (!CAMPAIGN_DETAILS_TAB.getAttribute("class").contains("active")) {
+            CAMPAIGN_DETAILS_TAB.click();
+        }
+        waitUtility.waitForLocatorVisible(CAMPAIGN_DETAILS_TAB);
+        if (CAMPAIGN_UPDATED_POPUP.isVisible()) {
+            REFRESH_BUTTON.click();
+            waitUtility.waitUntilSpinnerHidden();
+        }
+        Locator customFieldInput = page.locator(String.format("//span[@class='cmp-form-label-text' and contains(text(),'%s')]/parent::label[contains(@class,'cmp-form-label')]//following-sibling::input", fieldName));
+        waitUtility.waitForLocatorVisible(customFieldInput.last());
+        for (int j = 0; j < customFieldInput.count(); j++) {
+            if (customFieldInput.nth(j).isVisible()) {
+                customFieldInput.nth(j).clear();
+            }
+        }
+        if (SAVE_CAMPAIGN.isVisible()) {
+            SAVE_CAMPAIGN.click();
+            waitUtility.waitForLocatorHidden(CAMPAIGN_SUCCESS);
+        }
+        LineItemDetails lineItemDetails = new LineItemDetails(page);
+        lineItemDetails.clearCustomFieldFromLineItem(fieldName);
     }
 }

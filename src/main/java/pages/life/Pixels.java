@@ -3,6 +3,7 @@ package pages.life;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.PlaywrightException;
+import com.microsoft.playwright.options.AriaRole;
 import factory.DriverFactory;
 import java.util.List;
 import utils.WaitUtility;
@@ -43,16 +44,16 @@ public class Pixels {
         this.SMART_PIXEL = page.locator("//span[text()='Smart Pixel']");
         this.CONVERSION_PIXEL = page.locator("//span[text()='Conversion Pixel']");
         this.SEARCH_BOX = page.locator("//input[@placeholder='Search' and contains(@class,'search icon')]");
-        this.SAVE_BUTTON = page.locator("//button[text()='Save']");
+        this.SAVE_BUTTON = page.locator("//app-ds-button-wrapper[@label='Save']");
         this.SAVE_SUCCESS = page.locator("//div[contains(@aria-label,'Success!')]");
-        this.RETARGETING_TAB = page.locator("//button[text()='Retargeting']");
-        this.SMART_TAB = page.locator("//button[text()='Smart']");
-        this.CONVERSION_TAB = page.locator("//button[text()='Conversion']");
+        this.RETARGETING_TAB = page.locator("button[role='tab']:text-is('Retargeting')");
+        this.SMART_TAB = page.locator("button[role='tab']:text-is('Smart')");
+        this.CONVERSION_TAB = page.locator("button[role='tab']:text-is('Conversion')");
         this.ADVERTISER_DROPDOWN = page.locator("//app-multi-select[@placeholder='Any Advertiser']");
         this.UPDATE_SUCCESS = page.locator(
                 "//div[@role='alert' and (text()='Pixel updated successfully' or text()='Saved successfully')]");
         this.REMOVE_PIXEL_ICON = page.locator("//app-icon-lable-link[@icon='20-delete.svg']");
-        this.REMOVE_PIXEL_BUTTON = page.locator("//span[text()='Remove']");
+        this.REMOVE_PIXEL_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Remove"));
         this.REMOVE_SUCCESS = page.locator("//div[@role='alert' and text()='Pixel deleted successfully']");
         this.CANCEL_BUTTON = page.locator(
                 "//button[contains(@class,'cancel secondary button') and normalize-space(text())='Cancel']");

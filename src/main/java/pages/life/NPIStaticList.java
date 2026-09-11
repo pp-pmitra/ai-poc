@@ -39,8 +39,11 @@ public class NPIStaticList {
     private final Locator FETCH_SELECTED_AVAILABLE_IN;
     private final Locator TOTAL_NPI;
     private final Locator FETCH_DATA_COST;
+    private final Locator DELETE_CONFIRMATION_POPUP;
+    private final Locator OK_BUTTON;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
     NPISmartList npiSmartList = new NPISmartList(DriverFactory.getPage());
+    NPILists npiLists = new NPILists(DriverFactory.getPage());
 
     public NPIStaticList(Page page) {
         this.page = page;
@@ -69,6 +72,8 @@ public class NPIStaticList {
                 page.locator("//div[contains(text(),'Available In ')]//following-sibling::div//mat-checkbox");
         this.TOTAL_NPI = page.locator("//span[contains(text(),'Total NPI')]/preceding-sibling::span");
         this.FETCH_DATA_COST = page.locator("//div[contains(@class,'data-cost')]");
+        this.DELETE_CONFIRMATION_POPUP = page.locator("//mat-dialog-container[contains(@class,'mat-dialog-container')]");
+        this.OK_BUTTON = page.locator("//button[contains(@class,'confirm-button')]//span[text()='Ok']");
     }
 
     public void enterListName(String npiListName) {
@@ -126,9 +131,19 @@ public class NPIStaticList {
     }
 
     public void deleteList() {
-        waitUtility.waitForLocatorDetached(LIST_SUCCESS);
+        waitUtility.waitUntilSpinnerHidden();
         DELETE_LIST_ICON.click();
+        waitUtility.waitForLocatorVisible(DELETE_CONFIRMATION_POPUP);
+        if (!DELETE_LIST_BUTTON.isVisible()) {
+            npiLists.removeNPILinkage();
+            waitUtility.waitUntilSpinnerHidden();
+            waitUtility.waitForLocatorVisible(DELETE_CONFIRMATION_POPUP);
+            OK_BUTTON.click();
+            DELETE_LIST_ICON.click();
+            waitUtility.waitForLocatorVisible(DELETE_CONFIRMATION_POPUP);
+        }
         DELETE_LIST_BUTTON.click();
+        waitUtility.waitUntilSpinnerHidden();
     }
 
     public String deleteSuccess() {

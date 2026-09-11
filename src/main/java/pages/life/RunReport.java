@@ -4,6 +4,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.SelectOption;
 import factory.DriverFactory;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.regex.Pattern;
 import utils.CommonUtils;
 import utils.WaitUtility;
 
-public class RunReportPanel {
+public class RunReport {
     private final Page page;
     private final Locator RUN_REPORT_PANEL_HEADER;
     private final Locator TEMPLATE_DROPDOWN;
@@ -96,8 +97,9 @@ public class RunReportPanel {
     private final Locator NO_REPORT_AVAILABLE_TEXT;
     private final Locator CLEAR_SEARCH_ICON;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
+    private String[] cachedDates;
 
-    public RunReportPanel(Page page) {
+    public RunReport(Page page) {
         this.page = page;
         this.RUN_REPORT_PANEL_HEADER = page.locator("//div[contains(text(),'Run Report')]");
         this.TEMPLATE_DROPDOWN = page.locator("//input[@placeholder='Select Template']");
@@ -123,7 +125,7 @@ public class RunReportPanel {
                 page.locator("//label[@class='advanceSettings' and contains(text(),'Show Advanced Settings')]");
         this.REPORT_PERIOD_BUTTONS =
                 page.locator("//label[contains(text(),'Report Period')]/following-sibling::div//button");
-        this.RUN_BUTTON = page.locator("//button[contains(@class, 'okButton') and contains(text(),'Run')]");
+        this.RUN_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Run").setExact(true));
         this.SUCCESS_ALERT = page.locator("//div[@aria-label='Success!']");
         this.REPORT_MODIFY_OPTION = page.locator(
                 "//div[@class='icon report-progress']/ancestor::div[@class='left icon-section']/following-sibling::div//img/following-sibling::div//span[contains(text(),'Modify and Re-run')]");
@@ -200,7 +202,7 @@ public class RunReportPanel {
         this.GENERATED_REPORT_OPTIONS = page.locator("//img[@title='options' and contains(@class,'actions')]");
         this.DELETE_REPORT_BUTTON = page.locator("//a[contains(@class,'item')]//span[@class='text' and text()='Delete']");
         this.DELETE_REPORT_CONFIRMATION_POPUP = page.locator("//div[contains(@class,'confirm-modal header') and contains(text(),'Removal Confirmation')]");
-        this.DELETE_REPORT_REMOVE_BUTTON = page.locator("//div[contains(@class,'approveButtonText')]/span[contains(text(),'Remove')]");
+        this.DELETE_REPORT_REMOVE_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Remove"));
         this.DELETE_REPORT_SUCCESS_ALERT = page.locator("//div[@role='alert' and contains(text(),'Report deleted successfully')]");
         this.NO_REPORT_AVAILABLE_TEXT = page.locator("//div[contains(text(), 'No Generated Reports')]");
         this.CLEAR_SEARCH_ICON = page.locator("//div[contains(@class,'clear-search-close')]");
@@ -441,9 +443,9 @@ public class RunReportPanel {
     }
 
     public boolean selectStartAndEndDate() {
-        String[] dates = CommonUtils.generateStartAndEndDates();
-        boolean startSelected = selectDate(START_DATE, dates[0]);
-        boolean endSelected = selectDate(END_DATE, dates[1]);
+        cachedDates = CommonUtils.generateStartAndEndDates();
+        boolean startSelected = selectDate(START_DATE, cachedDates[0]);
+        boolean endSelected = selectDate(END_DATE, cachedDates[1]);
         return startSelected && endSelected;
     }
 

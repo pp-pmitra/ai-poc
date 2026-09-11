@@ -81,8 +81,8 @@ public class WorkspaceCreation {
         this.MENU_ICON = page.locator("//img[contains(@class,'menu-icon')]");
         this.WORKSPACE_TYPE_TITLE = WORKSPACE_FRAME.locator("//ds-typography[text()='Workspace Type']");
         this.MORE_ACTION_DIALOG = WORKSPACE_FRAME.locator("//div[@role='dialog']");
-        this.DELETE_BUTTON = WORKSPACE_FRAME.locator("//div[contains(text(),'Delete')]");
-        this.REMOVAL_CONFIRMATION_POPUP = WORKSPACE_FRAME.locator("//h3[contains(text(),'Removal Confirmation')]");
+        this.DELETE_BUTTON = WORKSPACE_FRAME.getByText("Delete", new FrameLocator.GetByTextOptions().setExact(true));
+        this.REMOVAL_CONFIRMATION_POPUP = WORKSPACE_FRAME.getByText("Removal Confirmation", new FrameLocator.GetByTextOptions().setExact(true));
         this.REMOVAL_CONFIRMATION_TEXT =
                 WORKSPACE_FRAME.locator("//div[contains(text(),'You are trying to delete the workspace')]");
         this.REMOVE_BUTTON = WORKSPACE_FRAME.locator("//div[text()='Remove']");
@@ -90,14 +90,13 @@ public class WorkspaceCreation {
                 WORKSPACE_FRAME.locator("//p[contains(text(),'Workspace deleted successfully')]");
         this.OUTER_FRAME = page.frameLocator("iframe").locator("//section[@id='main-content']");
         this.RENAME_BUTTON = WORKSPACE_FRAME.locator("//div[contains(text(),'Rename')]");
-        this.RENAME_WORKSPACE_POPUP = WORKSPACE_FRAME.locator("//h3[contains(text(),'Rename Workspace')]");
-        this.UPDATE_BUTTON = WORKSPACE_FRAME.locator("//div[contains(text(),'Update')]");
+        this.RENAME_WORKSPACE_POPUP = WORKSPACE_FRAME.getByText("Rename Workspace", new FrameLocator.GetByTextOptions().setExact(true));
+        this.UPDATE_BUTTON = WORKSPACE_FRAME.getByText("Update", new FrameLocator.GetByTextOptions().setExact(true));
         this.RENAME_WORKSPACE_ALERT = WORKSPACE_FRAME.locator("//p[contains(text(),'Workspace renamed successfully')]");
-        this.SEARCH_WORKSPACE = WORKSPACE_FRAME.locator("//input[contains(@placeholder,'Search')]");
+        this.SEARCH_WORKSPACE = WORKSPACE_FRAME.locator("input[placeholder='Search']");
         this.DUPLICATE_BUTTON = WORKSPACE_FRAME.locator("//div[contains(text(),'Duplicate')]");
-        this.DUPLICATE_WORKSPACE_POPUP = WORKSPACE_FRAME.locator("//h3[contains(text(),'Duplicate Workspace')]");
-        this.DUPLICATE_BUTTON_FROM_POPUP = WORKSPACE_FRAME.locator(
-                "//h3[contains(text(),'Duplicate Workspace')]/parent::header/following-sibling::footer//div[contains(text(),'Duplicate')]");
+        this.DUPLICATE_WORKSPACE_POPUP = WORKSPACE_FRAME.getByText("Duplicate Workspace", new FrameLocator.GetByTextOptions().setExact(true));
+        this.DUPLICATE_BUTTON_FROM_POPUP = WORKSPACE_FRAME.getByText("Duplicate", new FrameLocator.GetByTextOptions().setExact(true));
         this.DUPLICATE_WORKSPACE_ALERT =
                 WORKSPACE_FRAME.locator("//p[contains(text(),'Workspace duplicated successfully')]");
         this.DUPLICATE_WORKSPACE_NAME = WORKSPACE_FRAME.locator("//ds-typography/b[starts-with(text(), 'Copy of')]");
@@ -132,7 +131,7 @@ public class WorkspaceCreation {
                 page.locator("//button[@aria-label='Close AI Assistant' and @class='ai-icon-btn']");
         this.ABSENT_WORKSPACE = WORKSPACE_FRAME.locator("//p[text()='Nothing Found...']");
         this.WORKSPACE_TYPE_CHECKBOX = WORKSPACE_FRAME.locator("//div[@data-tour-id='workspaces-types-filter']//ds-checkbox");
-        this.RENAME_WORKSPACE_TEXTBOX = WORKSPACE_FRAME.locator("div:has(h3:has-text('Rename Workspace')) ds-input input");
+        this.RENAME_WORKSPACE_TEXTBOX = WORKSPACE_FRAME.locator("td[id$='-workspace_name']").locator("ds-input input");
         this.LOADER = WORKSPACE_FRAME.locator("//div[@data-testid='loading-spinner']");
     }
 

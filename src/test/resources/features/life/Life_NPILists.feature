@@ -28,6 +28,8 @@ Feature: LIFE regression - Create NPI List of following types:
     Then Verify list gets saved successfully
     And User verifies the calculated data cost is similar to the displayed data cost
     And User retrieves all the entered data after saving the Static List
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER                      | NPI_NUMBER | LIST_NAME  |
       | 01- Advertiser,1Demo Advertiser | 1478523698 | STATIC_NPI |
@@ -45,6 +47,7 @@ Feature: LIFE regression - Create NPI List of following types:
     Then Verify list gets saved successfully
     And Verify the NPI Numbers from the uploaded file "<FILE_NAME>" are displayed correctly in the list details page
     When User edits the created list
+    And User navigates back to NPI Lists landing page
     Then Verify list gets updated successfully
     When User deletes the created list
     Then Verify list gets deleted successfully
@@ -100,6 +103,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And Verify list data is uploaded successfully
     And Refresh the Browser to view the data uploaded
     And Verify the Total NPI count displayed in Matched NPI section is similar to NPI records present in "<FILE_NAME>"
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | LIST_NAME     | ADVERTISER     | FILE_LOCATION | FILE_PATH                      | FILE_NAME                  | LIST_TYPE            | NPI_COLUMN_NAME | IMPORT_TYPE    |
       | Auto_Imported | 01- Advertiser | 1OurVM        | /home/NPIAutoImport/Automation | AutoImport_Automation1.csv | Plain List           | NPI             | Add new NPIs   |
@@ -127,6 +132,8 @@ Feature: LIFE regression - Create NPI List of following types:
     Then Verify the file is reloaded successfully
     And Verify that user is able to download the uploaded "AutoImported NPI" list
     And Verify the Total NPI count displayed in Matched NPI section is similar to NPI records present in "<FILE_NAME>"
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | LIST_NAME     | ADVERTISER     | FILE_LOCATION | FILE_PATH                      | FILE_NAME                  | LIST_TYPE            | NPI_COLUMN_NAME | IMPORT_TYPE    |
       | Auto_Imported | 01- Advertiser | 1OurVM        | /home/NPIAutoImport/Automation | AutoImport_Automation1.csv | List with Attributes | NPI             | Import Columns |
@@ -169,6 +176,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE        | ENGAGEMENT_TYPE    | VISITED_URLS                        | IGNORED_URLS                         | KEYWORDS                     |
       | 01- Advertiser | SMART_Pixel_NPI | Smart Pixel | Engaged on Site    | www.brooklyn.com, www.manhattan.com | www.cambridge.org, www.wikipedia.org |                              |
@@ -189,6 +198,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE     | HCP_SWITCH | NPI_GROUP_NAME |
       | 01- Advertiser | SMART_Pixel_NPI | NPI List | HCP From   | NPI_           |
@@ -222,6 +233,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE      | HCP_SWITCH   | SPECIALITY                           |
       | 01- Advertiser | SMART_Pixel_NPI | Specialty | Include Only | Allergy & Immunology, Anesthesiology |
@@ -238,6 +251,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE       | PROFESSION                     |
       | 01- Advertiser | SMART_Pixel_NPI | Profession | Nurse Practitioner, Pharmacist |
@@ -257,6 +272,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE            | DRUG                              | DECILE |
       | 01- Advertiser | SMART_Pixel_NPI | Prescribed Drug | Glynase, L-Oral PARACETAMOL Syrup | 4      |
@@ -274,6 +291,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE            | FILE_NAME                      |
       | 01- Advertiser | SMART_Pixel_NPI | Prescribed Drug | PrescribedDrugs_BulkUpload.txt |
@@ -293,6 +312,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE           | DIAGNOSIS                                     | DECILE |
       | 01- Advertiser | SMART_Pixel_NPI | Diagnosis Code | Alcoholic fatty liver, Other specified sepsis | 5      |
@@ -310,6 +331,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE           | FILE_NAME                |
       | 01- Advertiser | SMART_Pixel_NPI | Diagnosis Code | Diagnosis_BulkUpload.txt |
@@ -329,6 +352,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE                   | MEDICAL_PROCEDURE                                 | DECILE |
       | 01- Advertiser | SMART_Pixel_NPI | Medical Procedure Code | Cardiac shunt imaging, Florbetaben f18 diagnostic | 6      |
@@ -346,6 +371,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE                   | FILE_NAME                       |
       | 01- Advertiser | SMART_Pixel_NPI | Medical Procedure Code | MedicalProcedure_BulkUpload.txt |
@@ -370,6 +397,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE                         | DRUG_NAME                   | TOP_DROPPER_PERCENT | TIME_FRAME_SELECTOR |
       | 01- Advertiser | SMART_Pixel_NPI | Prescription Behavior Change | Acne Reparatif, Parathyroid | 60                  | 10                  |
@@ -389,6 +418,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE                         | DRUG_NAME                   | TIME_FRAME_SELECTOR |
       | 01- Advertiser | SMART_Pixel_NPI | Prescription Behavior Change | Acne Reparatif, Parathyroid | 8                   |
@@ -409,6 +440,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE             | ENGAGEMENT_TYPE | CONTEXTUAL_CATEGORY | MESH_CONDITION  | RECENCY |
       | 01- Advertiser | SMART_Pixel_NPI | Endemic Research | IB Health       | MESH                | Animal Diseases | 55      |
@@ -430,6 +463,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE             | ENGAGEMENT_TYPE | CONTEXTUAL_CATEGORY | MEDSCAPE_PRIMARY_CONCEPT | RECENCY |
       | 01- Advertiser | SMART_Pixel_NPI | Endemic Research | IB Health       | Medscape            | Pacemaker, Arthritis     | 10      |
@@ -451,6 +486,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE             | ENGAGEMENT_TYPE | CONTEXTUAL_CATEGORY | WEBMD_PRIMARY_TOPIC | RECENCY |
       | 01- Advertiser | SMART_Pixel_NPI | Endemic Research | IB Health       | WebMD               | Knee Pain, Asthma   | 15      |
@@ -473,6 +510,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE             | ENGAGEMENT_TYPE | CONTEXTUAL_CATEGORY | MESH_CONDITION  | RECENCY |
       | 01- Advertiser | SMART_Pixel_NPI | Endemic Research | Endemic Network | MESH                | Animal Diseases | 20      |
@@ -505,6 +544,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE                                                |
       | 01- Advertiser | SMART_Pixel_NPI | Profession, Prescribed Drug, Medical Procedure Code |
@@ -525,6 +566,8 @@ Feature: LIFE regression - Create NPI List of following types:
     And User retrieves all the entered data before saving the list "<TYPE>"
     And User saves the Smart List and verifies the successful creation of the list
     And Verify that the retrieved data for the "<TYPE>" list was saved correctly
+    When User deletes the created list
+    Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE                                                                                                   |
       | 01- Advertiser | SMART_Pixel_NPI | Smart Pixel, NPI List, Prescription Behavior Change, Expand based on Practice and Hospital Affiliation |

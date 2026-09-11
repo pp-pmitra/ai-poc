@@ -2,6 +2,7 @@ package pages.life;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import factory.DriverFactory;
 import utils.WaitUtility;
@@ -31,15 +32,15 @@ public class TacticCreatives {
         this.page = page;
         this.VERIFY_TACTIC_CREATIVES_PAGE = page.locator("//div[text()='Creative(s)']");
         this.SEARCH_CREATIVE = page.locator("//input[contains(@class, 'gaTableSearch')]");
-        this.CLICK_SEARCH = page.locator("//div[contains(@class,'gaTableSearchBtn')]");
+        this.CLICK_SEARCH = page.locator("//app-ds-button-wrapper[contains(@class,'gaTableSearchBtn')]");
         this.ASSIGN_CREATIVE_OK_BUTTON =
-                page.locator("//button[@class='ui primary button okButton' and normalize-space(text())='Ok']");
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Ok").setExact(true));
         this.ENABLE_CREATIVE =
                 page.locator("//sui-checkbox[@class='toggle ui checkbox ng-untouched ng-pristine ng-valid']");
-        this.SAVE_TACTIC_CREATIVES = page.locator("//span[text()='Save']");
+        this.SAVE_TACTIC_CREATIVES = page.locator("//app-ds-button-wrapper[@label='Save']");
         this.TACTIC_CREATIVE_SUCCESS = page.locator("//div[@aria-label='Success!']");
         this.NAVIGATE_TO_CAMPAIGN_DASHBOARD = page.locator("//div[contains(@class,'campaign-tile')]");
-        this.CAMPAIGN_STATUS = page.locator("//span[contains(@class,'status-label')]/span");
+        this.CAMPAIGN_STATUS = page.locator("//app-ds-status-chip-wrapper");
         this.ASSIGN_CREATIVE_TITLE = page.locator("//div[contains(text(),'Assign Creatives')]");
         this.CREATIVE_TAB = page.locator("//a[contains(text(),'Creatives')]");
         this.ASSIGN_EXISTING_CREATIVE = page.locator("//span[contains(text(),'Assign Existing Creatives')]");
@@ -47,7 +48,7 @@ public class TacticCreatives {
         this.CREATIVE_STATUS = page.locator("//td[contains(@class,'status-label')]");
         this.CLEAR_SEARCH_BOX = page.locator("//div[contains(@class,'clear-search-close')]");
         this.CREATIVES_TABLE = page.locator("//div[@id='parentTable']");
-        this.CAMPAIGN_APPROVAL_STATUS = page.locator("//div[contains(@class,'inlineDiv status-label')]/span");
+        this.CAMPAIGN_APPROVAL_STATUS = page.locator("div.approval-status ds-status");
     }
 
     public String verifyTacticCreativesText() {

@@ -2,6 +2,7 @@ package pages.life;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.LoadState;
 import factory.DriverFactory;
 import java.math.BigDecimal;
@@ -114,9 +115,9 @@ public class TacticSettings {
         this.SELECT_RULE_TYPE = page.locator("(//a[@classname='target-tooltip'])[1]");
         this.SELECT_OPTION = page.locator("(//div[contains(@class,'include-default')])[1]");
         this.RULE_TYPE_OK_BUTTON =
-                page.locator("//button[@class='ui primary button okButton' and normalize-space(text())='Ok']");
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Ok").setExact(true));
         this.RULE_TYPE_CLOSE = page.locator("//div[contains(@class,'close_icon')]");
-        this.SAVE_TACTIC_SETTINGS = page.locator("//span[text()='Save']");
+        this.SAVE_TACTIC_SETTINGS = page.locator("//app-ds-button-wrapper[@label='Save']");
         this.TACTIC_SETTINGS_SUCCESS = page.locator("//div[@aria-label='Success!']");
         this.SEARCH_RULE_OPTION =
                 page.locator("//input[contains(@placeholder,'Search') and contains(@class,'panel-search')]");
@@ -124,9 +125,9 @@ public class TacticSettings {
         this.RULE_DEVICE_BLOCK = page.locator(
                 "//sui-radio-button[contains(@class,'ui radio checkbox')]//label[text()='Block Selected']");
         this.RULE_LEGAL_POPULATIONS_HOUSEHOLD_TAB = page.locator("//button[normalize-space(text())='Household']");
-        this.VERIFY_NPI = page.locator("//label[contains(@class,'target-item')]/span[normalize-space(text())='NPI']");
-        this.FETCH_TARGET_RULE_TYPES = page.locator("//label[contains(@class,'target-item__label')]");
-        this.FETCH_TARGET_RULE_OPTIONS = page.locator("//span[contains(@class,'target-ellipse')]");
+        this.VERIFY_NPI = page.locator("//span[contains(@class,'target-item')]/span[normalize-space(text())='NPI']");
+        this.FETCH_TARGET_RULE_TYPES = page.locator("//span[contains(@class,'target-item__label')]");
+        this.FETCH_TARGET_RULE_OPTIONS = page.locator("//app-ds-pill-wrapper");
         this.EXPAND_TARGETING_ICONS = page.locator("//i[@class='dropdown icon gaExpandTargeting']");
         this.TARGET_CATEGORY_NAME = page.locator("//div[contains(@class,'targetCategoryName')]");
         this.PERSON_TAB = page.locator("//button[normalize-space(text())='Person']");
@@ -811,9 +812,10 @@ public class TacticSettings {
 
     public List<Object> fetchRuleOptions() {
         ruleOptions = new ArrayList<>();
-        for (int i = 0; i < FETCH_TARGET_RULE_OPTIONS.count(); i++) {
-            FETCH_TARGET_RULE_OPTIONS.nth(i).scrollIntoViewIfNeeded();
-            String text = FETCH_TARGET_RULE_OPTIONS.nth(i).innerText();
+        Locator ruleOptionLocator = FETCH_TARGET_RULE_OPTIONS.locator("ds-typography");
+        for (int i = 0; i < ruleOptionLocator.count(); i++) {
+            ruleOptionLocator.nth(i).scrollIntoViewIfNeeded();
+            String text = ruleOptionLocator.nth(i).innerText();
             text = text.replaceAll("≥", "").trim();
             ruleOptions.add(text);
         }
@@ -952,13 +954,14 @@ public class TacticSettings {
     }
 
     public boolean isSelectedListPresentInTactic(String npiName) {
-        FETCH_TARGET_RULE_OPTIONS.locator("text=" + npiName).scrollIntoViewIfNeeded();
-        return FETCH_TARGET_RULE_OPTIONS.locator("text=" + npiName).isVisible();
+        Locator targetRuleOptionsLocator = FETCH_TARGET_RULE_OPTIONS.filter(new Locator.FilterOptions().setHasText(npiName));
+        targetRuleOptionsLocator.scrollIntoViewIfNeeded();
+        return targetRuleOptionsLocator.isVisible();
     }
 
     public String fetchSelectedListItemCountFromTactic(String npiName) {
         Locator targetCount =
-                FETCH_TARGET_RULE_OPTIONS.locator("text=" + npiName).locator("xpath=./following-sibling::span");
+                FETCH_TARGET_RULE_OPTIONS.filter(new Locator.FilterOptions().setHasText(npiName)).locator("ds-typography").nth(1);
         if (!targetCount.isVisible()) return "";
         return targetCount.innerText().trim();
     }
@@ -979,7 +982,7 @@ public class TacticSettings {
     }
 
     public String verifyRuleOption() {
-        return FETCH_TARGET_RULE_OPTIONS.innerText();
+        return FETCH_TARGET_RULE_OPTIONS.locator("ds-typography").innerText();
     }
 
     public BigDecimal getTacticBaseBidPrice() {

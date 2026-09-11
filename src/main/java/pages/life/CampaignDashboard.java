@@ -133,7 +133,7 @@ public class CampaignDashboard {
                 page.locator("//div[contains(@class,'display-inline')]/span[contains(text(),'Campaign')]");
         this.CREATIVE_TOOLTIP = page.locator(
                 "//div[contains(@class, 'tactic-data')]//span[contains(@class,'approval-icon creative-red') or contains(@class, 'approval-icon creative')]");
-        this.LIFE_TIME_FILTER = page.locator("//button[@name='FilterOptionType' and normalize-space()='Lifetime']");
+        this.LIFE_TIME_FILTER = page.locator("button[role='tab']:text-is('Lifetime')");
         this.CLICK_SETTINGS = page.locator("//i[@class='icon gearIcon']");
         this.SEARCH_CAMPAIGN = page.locator("//input[@placeholder='Search' and contains(@class, 'gaTableSearch')]");
         this.CLICK_CAMPAIGN_SEARCH = page.locator("//div[contains(@class,'gaTableSearchBtn')]");

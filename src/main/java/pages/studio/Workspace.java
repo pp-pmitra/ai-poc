@@ -89,8 +89,8 @@ public class Workspace {
         this.WEBHOOK_ICON = WORKSPACE_FRAME.locator(
                 "(//div[@role='group']/following-sibling::div//button)[3]"); // no unique identifier is available hence
         // index needs to be provided
-        this.WEBHOOK_TOGGLE_BUTTON = WORKSPACE_FRAME.locator("//span[contains(@class,'MuiButtonBase-root')]");
-        this.WEBHOOK_PANEL_TITLE = WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'Webhook')]");
+        this.WEBHOOK_TOGGLE_BUTTON = WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'Webhook')]/parent::div/following-sibling::div//span[contains(@class,'MuiButtonBase-root')]");
+        this.WEBHOOK_PANEL_TITLE = WORKSPACE_FRAME.locator("//div[@role='dialog']//ds-typography[contains(text(),'Webhook') and @role='heading']");
         this.WEBHOOK_CANCEL_BUTTON = WORKSPACE_FRAME.locator("//button[@type='button']/div[contains(text(),'Cancel')]");
         this.URL_TEXTAREA = WORKSPACE_FRAME.locator("//textarea[@name='url']");
         this.BODY_TEXTAREA = WORKSPACE_FRAME.locator("//textarea[@name='body']");
@@ -104,8 +104,8 @@ public class Workspace {
                 WORKSPACE_FRAME.locator("//div[contains(@class, 'Toastify')]//p[contains(text(),'Webhook')]");
         this.CREATE_WORKSPACE = WORKSPACE_FRAME.locator(
                 "//div[text()='Create New Workspace' or contains(text(),'Open New Workspace')]");
-        this.BEFORE_YOU_LEAVE_DIALOG = WORKSPACE_FRAME.locator("//h3[contains(text(),'Before you leave')]");
-        this.EXIT_BUTTON = WORKSPACE_FRAME.locator("//div[contains(text(),'Yes, Exit')]");
+        this.BEFORE_YOU_LEAVE_DIALOG = WORKSPACE_FRAME.getByText("Before you leave", new FrameLocator.GetByTextOptions().setExact(true));
+        this.EXIT_BUTTON = WORKSPACE_FRAME.getByText("Yes, Exit", new FrameLocator.GetByTextOptions().setExact(true));
         this.BACK_ARROW = WORKSPACE_FRAME.locator("//div[contains(@style,'cursor: pointer')]");
         this.DOWNLOAD_NPI_BUTTON = WORKSPACE_FRAME.locator("//div[contains(text(),'Download NPIs')]");
         this.DOWNLOAD_BUTTON = WORKSPACE_FRAME.locator("//div[text()='Download']");

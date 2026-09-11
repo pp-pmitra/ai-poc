@@ -92,7 +92,6 @@ Feature: LIFE Regression - Check below features available on Campaign Dashboard
     And User clicks the Settings icon and selects the following group by options and verify dashboard data is grouped accordingly
       | Group By Campaign   |
       | Group By Advertiser |
-      | No Grouping         |
 
   @regression
   Scenario: Verify Campaign Dashboard displays correct data based Favourite and Hide Finished checkbox selection

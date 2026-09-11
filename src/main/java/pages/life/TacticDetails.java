@@ -86,6 +86,7 @@ public class TacticDetails {
     private final Locator PERCENT_TYPE_FEE_INPUT;
     private final Locator DOLLAR_TYPE_FEE_INPUT;
     private final Locator CANCEL_BUTTON;
+    private final Locator TACTIC_PANEL_NAME;
     private List<String> showExpressionRawValues;
     private List<String> showExpressionValues;
     Campaigns campaigns = new Campaigns(DriverFactory.getPage());
@@ -101,12 +102,12 @@ public class TacticDetails {
         this.page = page;
         this.VERIFY_TACTIC_DETAILS_PAGE = page.locator("//div[text()='New Tactic' or text()='New Ad Group']");
         this.TACTIC_NAME = page.locator("//input[@placeholder='Tactic Name' or @placeholder='Ad Group Name']");
-        this.SAVE_TACTIC_DETAILS = page.locator("//span[text()='Save']");
+        this.SAVE_TACTIC_DETAILS = page.locator("//app-ds-button-wrapper[@label='Save']");
         this.TACTIC_DETAILS_SUCCESS = page.locator("//div[@aria-label='Success!']/following-sibling::div[@role='alert' and contains(text(),'Tactic')]");
         this.IMPORT_TEMPLATE_ICON = page.locator("//app-icon-lable-link[contains(@text,'Import Template')]/div");
         this.IMPORT_TEMPLATE_DIALOG = page.locator("//div[contains(text(),'Import Template')]");
         this.TEMPLATE_SEARCH_BOX = page.locator("//input[contains(@placeholder,'type in to search...')]");
-        this.IMPORT_BUTTON = page.locator("//button[contains(text(),'Import')]");
+        this.IMPORT_BUTTON = page.getByText("Import", new Page.GetByTextOptions().setExact(true));
         this.OVERRIDE_DIALOG = page.locator("//div[contains(text(),'Override Targeting Rules?')]");
         this.REPLACE_BUTTON = page.locator("//button[contains(text(),'Replace Targeting')]");
         this.TEMPLATE_IMPORT_ALERT = page.locator("//div[contains(text(),'Template Imported Successfully')]");
@@ -115,7 +116,7 @@ public class TacticDetails {
         this.SAVE_TEMPLATE_BUTTON = page.locator("//app-icon-lable-link[contains(@text,'Save as Template')]/div");
         this.SAVE_TEMPLATE_DIALOG = page.locator("//div[contains(text(),'Save as Template')]");
         this.TEMPLATE_NAME_TEXT = page.locator("//input[contains(@placeholder,'Template Name')]");
-        this.SAVE_BUTTON = page.locator("//button[contains(@class,'okButton')]");
+        this.SAVE_BUTTON = page.getByText("Save", new Page.GetByTextOptions().setExact(true));
         this.TEMPLATE_SAVED_SUCCESS_ALERT = page.locator("//div[contains(text(),'Saved as Template Successfully')]");
         this.TARGETING_RULES_ICON = page.locator("//span[contains(text(),'Targeting Rule')]");
         this.NEW_TACTIC_BUTTON = page.locator("//span[normalize-space(text())='New Tactic']");
@@ -171,6 +172,7 @@ public class TacticDetails {
         this.PERCENT_TYPE_FEE_INPUT = page.locator("//div[contains(@class,'management-fee-container')]//input[contains(@class,'percent-img')]");
         this.DOLLAR_TYPE_FEE_INPUT = page.locator("//div[contains(@class,'management-fee-container')]//input[contains(@class,'doller-img')]");
         this.CANCEL_BUTTON = page.locator("//span[contains(@class,'cancleButton')]");
+        this.TACTIC_PANEL_NAME = page.locator("//div[@class='tactic item-details']/div[@class='tactic-main-details']");
     }
 
     public void clickNewTactic() {
@@ -727,5 +729,30 @@ public class TacticDetails {
     public void addNewTactic() {
         NEW_TACTIC_BUTTON.click();
         waitUtility.waitForLocatorVisible(CUSTOM_FIELD);
+    }
+
+    public void clearCustomFieldFromTactic(String fieldName) {
+        waitUtility.waitUntilSpinnerHidden();
+        if (TACTIC_PANEL_NAME.last().isVisible()) {
+            for (int j = 0; j < TACTIC_PANEL_NAME.count(); j++) {
+                TACTIC_PANEL_NAME.nth(j).click();
+                waitUtility.waitUntilSpinnerHidden();
+                waitUtility.waitForLocatorVisible(TACTIC_DETAILS_TAB);
+                if (TACTIC_DETAILS_TAB.isVisible()) {
+                    TACTIC_DETAILS_TAB.click();
+                    waitUtility.waitUntilSpinnerHidden();
+                    Locator customFieldInput = page.locator(String.format("//span[@class='cmp-form-label-text' and contains(text(),'%s')]/parent::label[contains(@class,'cmp-form-label')]//following-sibling::input", fieldName));
+                    for (int i = 0; i < customFieldInput.count(); i++) {
+                        if (customFieldInput.nth(i).isVisible()) {
+                            customFieldInput.nth(i).clear();
+                        }
+                    }
+                    if (SAVE_TACTIC_DETAILS.isVisible()) {
+                        SAVE_TACTIC_DETAILS.click();
+                        waitUtility.waitForLocatorHidden(TACTIC_DETAILS_SUCCESS);
+                    }
+                }
+            }
+        }
     }
 }

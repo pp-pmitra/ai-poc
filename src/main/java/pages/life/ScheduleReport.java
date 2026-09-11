@@ -61,14 +61,15 @@ public class ScheduleReport {
     private final Locator NO_REPORT_AVAILABLE_TEXT;
     private final Locator CLEAR_SEARCH_ICON;
     WaitUtility waitUtility = new WaitUtility(DriverFactory.getPage());
-    RunReportPanel runReportPanel = new RunReportPanel(DriverFactory.getPage());
+    RunReport runReport = new RunReport(DriverFactory.getPage());
+    private String[] cachedDates;
 
     public ScheduleReport(Page page) {
         this.page = page;
-        this.SCHEDULE_REPORT_BUTTON = page.locator("//button[text()='Schedule Report']");
+        this.SCHEDULE_REPORT_BUTTON = page.locator("//app-ds-button-wrapper[@label='Schedule Report']");
         this.SCHEDULE_REPORT_PANEL_HEADER = page.locator("//div[contains(text(),'Schedule Report')]");
         this.REPORT_NAME = page.locator("//input[@formcontrolname='scheduleReportName']");
-        this.FREQUENCY_BUTTON = page.locator("//button[@name='frequencyOptionType']");
+        this.FREQUENCY_BUTTON = page.locator("app-ds-tab-switch-wrapper button[role='tab']");
         this.SCHEDULE_START_DATE = page.locator("//input[@id='scheduleStartDate']");
         this.SCHEDULE_END_DATE = page.locator("//input[@id='scheduleEndDate']");
         this.CALENDAR_VIEW = page.locator("sui-calendar-date-view");
@@ -100,10 +101,10 @@ public class ScheduleReport {
         this.END_DATE = page.locator("//input[@placeholder='End Date']");
         this.SCHEDULE_START_TIME = page.locator("//input[@formcontrolname='scheduleDataStartTime']");
         this.SCHEDULE_END_TIME = page.locator("//input[@formcontrolname='scheduleDataEndTime']");
-        this.SCHEDULE_BUTTON = page.locator("//button[contains(@class, 'okButton') and contains(text(),'Schedule')]");
+        this.SCHEDULE_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Schedule").setExact(true));
         this.SUCCESS_ALERT = page.locator("//div[@aria-label='Success!']");
         this.SEARCH_TEXTBOX = page.locator("//input[contains(@class,'gaTableSearch')]");
-        this.SEARCH_ICON = page.locator("//div[contains(@class,'gaTableSearchBtn')]");
+        this.SEARCH_ICON = page.locator("//app-ds-button-wrapper[contains(@class,'gaTableSearchBtn')]");
         this.FETCHED_TEMPLATE_NAME = page.locator(
                 "//label[text()='Template']//following-sibling::app-single-select-dropdown//input/following-sibling::span");
         this.SEND_ON_DROPDOWN = page.locator("//label[contains(text(),'Send On')]/following-sibling::div");
@@ -115,7 +116,7 @@ public class ScheduleReport {
         this.REPORT_SECOND_ROW = page.locator("//tr[contains(@class,'fixedrow ng-star-inserted')][2]");
         this.DELETE_REPORT_ICON = page.locator("//span[@title='Delete']/img[contains(@src,'delete')]");
         this.DELETE_REPORT_CONFIRMATION_POPUP = page.locator("//div[contains(@class,'confirm-modal header') and contains(text(),'Removal Confirmation')]");
-        this.DELETE_REPORT_REMOVE_BUTTON = page.locator("//div[contains(@class,'approveButtonText')]/span[contains(text(),'Remove')]");
+        this.DELETE_REPORT_REMOVE_BUTTON = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Remove"));
         this.DELETE_REPORT_SUCCESS_ALERT = page.locator("//div[@role='alert' and contains(text(),'Schedule deleted succesfully')]");
         this.NO_REPORT_AVAILABLE_TEXT = page.locator("//div[contains(text(), 'Nothing Found')]");
         this.CLEAR_SEARCH_ICON = page.locator("//div[contains(@class,'clear-search-close')]");
@@ -154,13 +155,15 @@ public class ScheduleReport {
     }
 
     public boolean selectScheduleStartDate() {
-        String[] dates = CommonUtils.generateStartAndEndDates();
-        return runReportPanel.selectDate(SCHEDULE_START_DATE, dates[0]);
+        cachedDates = CommonUtils.generateStartAndEndDates();
+        return runReport.selectDate(SCHEDULE_START_DATE, cachedDates[0]);
     }
 
     public boolean selectScheduleEndDate() {
-        String[] dates = CommonUtils.generateStartAndEndDates();
-        return runReportPanel.selectDate(SCHEDULE_END_DATE, dates[1]);
+        if (cachedDates == null) {
+            cachedDates = CommonUtils.generateStartAndEndDates();
+        }
+        return runReport.selectDate(SCHEDULE_END_DATE, cachedDates[1]);
     }
 
     private boolean selectDate(Locator input, int day) {
@@ -346,12 +349,12 @@ public class ScheduleReport {
 
     public boolean selectStartDate() {
         String[] dates = CommonUtils.generateStartAndEndDates();
-        return runReportPanel.selectDate(START_DATE, dates[0]);
+        return runReport.selectDate(START_DATE, dates[0]);
     }
 
     public boolean selectEndDate() {
         String[] dates = CommonUtils.generateStartAndEndDates();
-        return runReportPanel.selectDate(END_DATE, dates[1]);
+        return runReport.selectDate(END_DATE, dates[1]);
     }
 
     public void clickScheduleButton() {
