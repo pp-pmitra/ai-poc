@@ -111,7 +111,8 @@ Style & Cosmetic Conventions Extraction:
 Step 2.5 — Navigation Path Resolution
 -------------------------------------------------------------------------------
 For every target page/state implied by a requirement, resolve its navigation
-facts from the nav-graph JSON before writing any Gherkin.
+facts from the `navigation-tree.html` `GRAPH` (see Navigation Tree above)
+before writing any Gherkin.
 
 Requirement-to-Node Mapping:
 - Normalize the feature/area name from the Sheet/Doc (strip "Page"/"Panel"/
@@ -120,7 +121,7 @@ Requirement-to-Node Mapping:
   node's `module` and `note` fields. If no node matches, treat the page as an
   un-mapped area and fall back to page-object inspection (Step 2) as today.
 
-Graph Preparation (once per run, right after parsing the JSON):
+Graph Preparation (once per run, right after extracting and parsing `GRAPH`):
 - Build a forward adjacency map: node → [{target, action}].
 - Build a reverse index: target → [{source, action}] (so leaf pages with empty
   `edges` are still reachable — you look up who points AT them).
@@ -136,12 +137,18 @@ Path-Finding (Shortest-Path BFS, not fixed hop-count):
   top-level pages. Continue following forward edges (MegaMenu → Administration
   → Setup → Setup sub-tab, etc.) to any depth until the target is reached.
 - Use the SHORTEST resulting path. Each traversed edge's `action` string is one
-  navigation step, emitted VERBATIM (e.g. "Click Curated Markets",
-  "Click Setup tab"). The has_mega_menu→MegaMenu transition renders as a single
-  "opens the mega menu and selects <next action>" step.
-- If BFS finds no path (target has no inbound edge / is disconnected, e.g.
-  PMPDealsPage), mark it `unreachable-in-map`, fall back to page-object
-  inspection (Step 2), and log the map gap — do NOT invent a click-path.
+  navigation step, emitted VERBATIM exactly as it appears in `navigation-tree.html`
+  (e.g. "Curated Markets", "Setup tab" — the tree's action strings are bare labels,
+  not "Click ..." phrases; word the surrounding step text around the verbatim
+  label rather than assuming a verb is already there). The has_mega_menu→MegaMenu
+  transition renders as a single "opens the mega menu and selects <next action>"
+  step, and a MegaMenu→MegaMenuLinks hop (a real submenu) renders the same way —
+  "opens the mega menu and selects Menu Links" — before continuing to the
+  requested item's own edge/step.
+- If BFS finds no path (no node matches the requirement, or the matched node has
+  no inbound edge / is disconnected), mark it `unreachable-in-tree`, fall back to
+  page-object inspection (Step 2), and log the tree gap — do NOT invent a
+  click-path.
 
 Emit a Navigation Resolution note per target page (internal, not a PR section):
   `<TargetNode> | module=<module> | path=<Start → … → Target> | hops=<n> | framework_gap=<true/false>`
