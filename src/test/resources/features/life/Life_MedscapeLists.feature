@@ -33,8 +33,8 @@ Feature: LIFE regression - Create NPI List of following types:
     Examples:
       | LIST_NAME     | FILE_NAME           | MESSAGE                      | WAIT_TEXT                           |
       | Medscape_List | Medscape_List_1.csv | Soft Matching in Progress... | This process may take a few minutes |
-     # | Medscape_List | Medscape_List_2.csv | Soft Matching in Progress... | This process may take a few minutes |
-     # | Medscape_List | Medscape_List_3.csv | Soft Matching in Progress... | This process may take a few minutes |
+      | Medscape_List | Medscape_List_2.csv | Soft Matching in Progress... | This process may take a few minutes |
+      | Medscape_List | Medscape_List_3.csv | Soft Matching in Progress... | This process may take a few minutes |
 
   @regression
   Scenario Outline: Create and delete Medscape List by uploading file "<FILE_NAME>" without NPI number mapped
