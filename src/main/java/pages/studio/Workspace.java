@@ -66,8 +66,7 @@ public class Workspace {
                 .filter(new Locator.FilterOptions().setHasText("Studio"))
                 .nth(3);
         this.FLY_PAGE_BUTTON = WORKSPACE_FRAME
-                .locator("//div[@role='group']/following-sibling::div//button")
-                .first();
+                .locator("div[data-tour-id='npi-list-header-button']>button");
         this.PUBLISH_NPI = WORKSPACE_FRAME.getByRole(
                 AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Publish NPI List"));
         this.PUBLISHED_NPI = WORKSPACE_FRAME.getByRole(
@@ -116,7 +115,7 @@ public class Workspace {
                 .locator(
                         "//h3[contains(text(),'Identified NPIs')]/ancestor::div[contains(@class,'kpi-visualization')]//span");
         this.RETROFIT_CHECKBOX = WORKSPACE_FRAME.getByRole(AriaRole.CHECKBOX, new FrameLocator.GetByRoleOptions().setName("Retrofit NPIs"));
-        this.NPI_ENGAGING_TEXT = WORKSPACE_FRAME.locator("//p[contains(text(),'NPIs engaging on or')]");
+        this.NPI_ENGAGING_TEXT = WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'NPIs engaging on or')]");
         this.HCP_WORKSPACE_FILTER_CHECKBOX = WORKSPACE_FRAME.getByRole(
                 AriaRole.CHECKBOX, new FrameLocator.GetByRoleOptions().setName("HCP Explorer"));
         this.EXISTING_WORKSPACE = WORKSPACE_FRAME.locator("//tr[1]/td[1]//span");
@@ -125,7 +124,7 @@ public class Workspace {
         this.PUBLISH_LOADER = WORKSPACE_FRAME.locator(
                 "//div[contains(@data-tour-id,'hcp-workspace-actions-container')]/div[contains(@data-testid, 'loading-spinner')]");
         this.NPI_LIST_PULLOUT_MENU = WORKSPACE_FRAME.locator("//ul[@data-tour-id='npi-list-pullout-menu']");
-        this.OK_BUTTON = WORKSPACE_FRAME.locator("//div[contains(text(),'OK')]");
+        this.OK_BUTTON = WORKSPACE_FRAME.locator("ul[data-tour-id='npi-list-pullout-menu'] > div div:text-is('OK')");
         this.NPI_PUBLISH_ALERT = WORKSPACE_FRAME.locator("//p[contains(text(), 'NPI list published successfully')]");
         this.SAVE_WORKSPACE = WORKSPACE_FRAME.locator("//button[contains(@data-tour-id,'save-workspace-button')]");
     }
@@ -347,8 +346,9 @@ public class Workspace {
     }
 
     public void clickNPIRetentionOption(String option) {
-        Locator retentionXpath = WORKSPACE_FRAME.locator(String.format("//button[contains(@value,'%s')]", option));
-        retentionXpath.click();
+        Locator retentionCssLocator = WORKSPACE_FRAME.locator("ds-tab-switch")
+                                                .getByRole(AriaRole.TAB, new Locator.GetByRoleOptions().setName(option).setExact(true));
+        retentionCssLocator.click();
     }
 
     public void clickPublishedButton() {
@@ -357,7 +357,7 @@ public class Workspace {
 
     public boolean verifyListTypeAfterPublished(String listType) {
         return WORKSPACE_FRAME
-                .locator(String.format("//p[contains(text(),'%s')]", listType))
+                .locator(String.format("//ds-typography[contains(text(),'%s')]", listType))
                 .isVisible();
     }
 

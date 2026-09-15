@@ -241,7 +241,7 @@ public class ExplorerWorkspace {
                     "Gender":
                 for (String option : options) {
                     WORKSPACE_FRAME
-                            .locator(String.format("//label[contains(text(),'%s')]", option.trim()))
+                            .getByText(option.trim(), new FrameLocator.GetByTextOptions().setExact(true))
                             .click();
                 }
                 break;
