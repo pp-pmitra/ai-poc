@@ -49,7 +49,7 @@ public class BrandExplorerWorkspace {
         this.START_DATE_INPUT = WORKSPACE_FRAME.locator("input[data-testid='date-from-text-input']");
         this.END_DATE_INPUT = WORKSPACE_FRAME.locator("input[data-testid='date-to-text-input']");
         this.DATE_RANGE_ERROR =
-                WORKSPACE_FRAME.locator("//p[normalize-space()='Start date cannot be later than end date.']");
+                WORKSPACE_FRAME.locator("ds-notification[variant='error']");
         this.DATE_CELLS =
                 WORKSPACE_FRAME.locator("//div[contains(@class,'Box')]//table//tbody//tr//td[1][@aria-colindex]");
         this.SPINNER = WORKSPACE_FRAME.locator("//div[@data-testid='loading-spinner']");
