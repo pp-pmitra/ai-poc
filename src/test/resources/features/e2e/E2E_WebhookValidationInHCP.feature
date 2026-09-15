@@ -11,7 +11,7 @@ Feature: Webhook Creation and Validation in HCP Explorer Workspace
 
   Background:
     Given This scenario will be executed in the "Pre-release" environment as a "User"
-    And "Studio" application is logged in successfully with Account "automation@pulsepoint"
+    And "Life" application is logged in successfully with Account "automation@pulsepoint"
     When User navigates to Administrative section
     And User navigates to Accounts Tab
     And User searches the account "PP engineering test" and checks Studio permissions
