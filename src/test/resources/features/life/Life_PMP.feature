@@ -280,3 +280,161 @@ Feature: Life PMP Regression - Verify Private and Life MarketPlace Deals Creatio
   # Framework Gap: Requires rapid-Timeframe-switch simulation and stale-response-guard read hook in LifeSteps.java
     When User selects "Last 30 Days" immediately after "Last 7 Days", before the first response returns
     Then The panel reflects only the most recently selected Timeframe once loading completes
+
+  # Source: ET-25051
+  @todo
+  Scenario Outline: Ad size distribution shows the top 10 sizes plus an Others bucket at and below the boundary
+    When User clicks Tactic Setting tab
+    Then User should navigate to respective Tactic Setting tab
+    When User add new targeting rule for Rule Type "Deals"
+    Then user should navigate to PMP Deals Panel
+    When User searches the deal and assign it from the deal list
+    # Framework Gap: Requires an ad-size-distribution read hook (top 10 + Others bucket) in LifeSteps.java
+    And User opens the Inventory Breakdown for a deal with "<DISTINCT_SIZES>" distinct ad sizes
+    Then The Display Inventory ad size section shows "<EXPECTED>"
+    Examples:
+      | DISTINCT_SIZES | EXPECTED                                    |
+      | more than 10    | the top 10 sizes plus an Others bucket      |
+      | exactly 10      | all 10 sizes with no Others bucket          |
+      | fewer than 10   | only the sizes that exist, no Others bucket |
+
+  # Source: ET-25051
+  @todo
+  Scenario: Video Inventory shows the VAST versus VPAID tag-type split alongside duration
+    When User clicks Tactic Setting tab
+    Then User should navigate to respective Tactic Setting tab
+    When User add new targeting rule for Rule Type "Deals"
+    Then user should navigate to PMP Deals Panel
+    When User searches the deal and assign it from the deal list
+    # Framework Gap: Requires a VAST/VPAID tag-type split read hook in LifeSteps.java
+    And User opens the Inventory Breakdown and views Video Inventory
+    Then The minimum and maximum video duration are shown, and the VAST and VPAID percentages are shown and sum to 100
+
+  # Source: ET-25051
+  @todo
+  Scenario: Top 10 domains and app bundles are shown for every media type, and a display-only deal shows no video or audio section
+    When User clicks Tactic Setting tab
+    Then User should navigate to respective Tactic Setting tab
+    When User add new targeting rule for Rule Type "Deals"
+    Then user should navigate to PMP Deals Panel
+    When User searches the deal and assign it from the deal list
+    # Framework Gap: Requires top-10-domains and top-10-app-bundles read hooks in LifeSteps.java
+    And User opens the Inventory Breakdown
+    Then The top 10 domains and the top 10 app bundles are shown regardless of media type
+    # Framework Gap: Requires a display-only deal fixture and a media-type-section-visibility read hook
+    Given The deal opened is display-only, with no video or audio inventory
+    Then No Video Inventory or Audio Inventory section is shown, or each shows an explicit empty state rather than the wrong media type's data
+
+  # Source: ET-25051
+  @todo
+  Scenario: The breakdown figures match the underlying deal delivery statistics
+    # Framework Gap: Requires a direct read hook against dealdailystats/dealdomaindailystats (or an equivalent reporting API) to compare against the panel, in LifeSteps.java
+    Given A deal has known recorded statistics in dealdailystats and dealdomaindailystats for a given timeframe
+    When User opens the Inventory Breakdown for that deal and timeframe
+    Then The percentages and top-10 lists shown match the underlying statistics for that deal and timeframe
+
+  # Source: ET-25051
+  @todo
+  Scenario: Opening and closing the Inventory Breakdown leaves the underlying deal selection unchanged
+    When User clicks Tactic Setting tab
+    Then User should navigate to respective Tactic Setting tab
+    When User add new targeting rule for Rule Type "Deals"
+    Then user should navigate to PMP Deals Panel
+    When User searches the deal and assign it from the deal list
+    # Framework Gap: Requires an Inventory Breakdown open/close hook that doesn't disturb deal-selection state, in LifeSteps.java
+    And User opens the Inventory Breakdown for the selected deal and then closes it
+    Then The deal remains selected exactly as it was before the panel was opened
+
+  # Source: ET-25051
+  @todo
+  Scenario: The Inventory Breakdown does not regress the Media Planner view, deal labels, or reporting for deals with nothing applied
+    # Framework Gap: Requires a before/after Media Planner behavior comparison hook in LifeSteps.java
+    Given The Media Planner deals view is used as it was before this release
+    Then Its existing behaviour is unaffected by the added Inventory Breakdown control
+    # Framework Gap: Requires a deal-label regression check across the deal screens
+    And Deal detail labels and figures elsewhere on the deal screens remain correct after the breakdown is added
+    # Framework Gap: Requires a no-deals-applied fixture and a curated-market/PMP-attribution read hook
+    Given A deal has no deals applied to it
+    Then Its breakdown shows no curated market or PMP inventory attribution
+    # Framework Gap: Requires a same-deal multi-timeframe percentage-consistency read hook
+    And The breakdown percentages for one deal are internally consistent across all three timeframes
+
+  # Source: ET-25054
+  @todo
+  Scenario: A no-avails warning appears at tactic level for a directly targeted deal, scoped to the 1-day and 7-day windows
+    # Framework Gap: Requires an avails-history fixture (deal with no avails yesterday / past 7 days) and a tactic-level warning indicator page object
+    Given A tactic directly targets an active deal
+    When That deal had no avails yesterday
+    Then A warning appears at tactic level and states that the 1-day window triggered
+    When That deal has had no avails for the whole 7-day period including yesterday
+    Then The warning states that both windows triggered
+    When The deal had avails yesterday and across the past 7 days
+    Then No warning appears
+
+  # Source: ET-25054
+  @todo
+  Scenario Outline: No-avails warnings are suppressed for deals that are not actually eligible to deliver
+    # Framework Gap: Requires fixtures for out-of-flight-date, disabled, and not-yet-started deals with no avails
+    Given A deal has no avails but is "<CONDITION>"
+    Then No warning is triggered
+    Examples:
+      | CONDITION                       |
+      | outside its start and end dates |
+      | disabled                        |
+      | not yet started                 |
+
+  # Source: ET-25054
+  @todo
+  Scenario: Deal group no-avails warnings surface every flagged deal next to the group name
+    # Framework Gap: Requires a targeted-deal-group fixture with a mix of flagged and healthy deals
+    Given A targeted deal group contains a deal with no recent avails
+    Then A warning appears next to the deal group name without needing to expand the group
+    When More than one deal inside the group has no recent avails
+    Then All flagged deals are surfaced, not only the first, and the count in the deal section warning matches the number of flagged deals
+
+  # Source: ET-25054
+  @todo
+  Scenario: An all-deals-unavailable state shows an orange box alongside the per-deal warnings
+    # Framework Gap: Requires an all-unavailable fixture, both for a multi-deal group and for a tactic targeting exactly one deal
+    Given Every deal applied to a tactic is unavailable
+    Then An orange box warning appears
+    And Both the per-deal warning and the all-unavailable orange box appear together where the design requires it
+
+  # Source: ET-25054
+  @todo
+  Scenario: The no-avails warning appears under both inventory targeting modes
+    Given A tactic's inventory targeting is set to Selected Inventory Only
+    Then The no-avails warning is surfaced when applicable
+    Given A tactic's inventory targeting is Selected Inventory plus Open Exchange
+    Then The no-avails warning is surfaced when applicable
+
+  # Source: ET-25054
+  @todo
+  Scenario: A tactic showing a no-avails warning can still be saved and activated, and the warning clears once avails resume
+    Given A tactic shows a no-avails warning
+    Then The tactic can still be saved and can still be activated
+    Given Every deal on a tactic is unavailable
+    Then The tactic can still be saved and activated
+    When A flagged deal starts recording avails again
+    Then Its warning disappears, while a warning on another deal in the same group remains until that deal also recovers
+    When A flagged deal is removed from the tactic
+    Then The warning updates accordingly
+
+  # Source: ET-25054
+  @todo
+  Scenario: No-avails warnings coexist with the existing curated market indicator, and a data-lookup failure does not flag every deal
+    # Framework Gap: Requires the existing curated-market-incompatibility indicator located and confirmed in the codebase before a coexistence assertion can be written
+    Given A deal group carries both a no-avails warning and the existing curated markets incompatibility indicator
+    Then Both render correctly and neither suppresses the other
+    # Framework Gap: Requires an avails-data-retrieval-failure fixture
+    When The avails data retrieval fails
+    Then Every applied deal is not automatically flagged as a false positive
+    # Framework Gap: Requires a mixed active/inactive deal-group fixture, and a fixture combining a direct deal with a deal group on the same tactic
+    Given A deal group holds both an inactive deal with no avails and an active deal with no avails
+    Then The warning reflects only the active, eligible deal
+    Given A tactic targets both a direct deal and a deal group
+    Then Flagged deals from both are surfaced
+    # Framework Gap: Requires a hidden/inaccessible-deal fixture, consistent with the unshared-deal handling in ET-25077
+    Given A hidden or inaccessible deal is applied to a tactic
+    Then No false no-avails warning appears for it beyond what the unshared-deal handling already covers
+    And No false no-avails warning appears on a tactic whose deals all have healthy avails
