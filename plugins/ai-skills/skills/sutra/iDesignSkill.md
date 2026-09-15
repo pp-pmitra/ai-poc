@@ -62,7 +62,7 @@ Every external fetch in this skill must resolve to a specific, fully-qualified t
 |---|---|
 | Parsed-Scenario Summary | scenario count per ticket/tab, distinct Requirement/Ticket IDs, Ingestion Mode notice |
 | Duplicate/Overlap Disposition | which tickets are Duplicate vs partially-new, and against what source |
-| Automation Triage Table | full schema, every ticket, every run |
+| Automation Triage Table | full schema, every ticket, every test case, every run (chat only — the PR body carries a per-ticket rollup of this, see STEP 6) |
 | Codebase & Step-Definition Calibration Summary | matched target file(s), append-vs-create decision, extracted conventions |
 | Gherkin Feature File | workflow-consolidated scenarios, written to the repo |
 | Traceability Table | ticket → scenario count → target file → status (done / queued, with resumption path) |
@@ -263,6 +263,8 @@ Resolve navigation facts from the `navigation-tree.html` GRAPH (see Navigation T
 
 Schema: `Test ID | Requirement ID / Source | Automation_Candidate (Yes/No/Blocked) | Priority (High/Med/Low) | Framework Readiness (Ready/Gap) | Rationale`
 
+This full, per-test-case table is chat output for THIS run — every ticket, every test case, never abbreviated here. It is the authoritative detail; STEP 6's PR body carries a per-ticket rollup of these same rows (see STEP 6) rather than repeating every test case, so the PR stays readable regardless of run size.
+
 **Automation_Candidate (STRICT):**
 - **Yes:** deterministic UI/UX flows, file uploads, preview grids, filter checks, permission checks, backend sync checks, functional/UX changes. Framework gaps do NOT block a Yes. Includes: user interaction/component behavior, navigation/workflow, field validation/form submission, enabled/disabled/selected/expanded/collapsed states, responsive behavior that hides functionality, keyboard/focus/screen-reader/accessibility, data display/sort/filter/pagination/conditional content, permissions/roles/business rules.
 - **No:** only non-automatable manual tests (physical hardware, un-mockable external vendors), or tickets limited strictly to non-functional/cosmetic changes.
@@ -360,12 +362,19 @@ native Google Doc/Sheet (state that instead).>
 "created" / "skipped — duplicate of <source>" / "skipped — blocked, see triage">
 
 ## Automation triage on all the tickets
-<Per ticket, full schema, every column, every run — never abbreviated:
-`Test ID | Requirement ID/Source | Automation_Candidate (Yes/No/Blocked) | Priority | Framework Readiness | Rationale`
-- Automation_Candidate stays even when every row is Yes — say so in one line above the table.
-- Blocked rows go IN this table with the reason in Rationale.
-- Any GAP-X/AMB-X/HT-XXXX referenced anywhere must appear in some row's Requirement ID/Source
-  or Rationale cell — never cited only in prose and left untraceable.
+<Per-ticket ROLLUP, not per-test-case. The full per-test-case triage (every Test ID, every column)
+was already produced and shown in chat as this run's STEP 3 Automation Triage Table — the PR body
+carries the release-level summary of that same data so it stays readable at any scale (40+ tickets
+at ~30 TCs each would otherwise blow a flat per-test-case table out to 1000+ table rows in one PR
+description). Nothing is dropped, only rolled up — one row per ticket, full schema, every run:
+
+`Ticket | Total TCs | Yes | No | Blocked | Duplicate | Priority (High/Med/Low) | Framework Readiness (Ready/Gap) | GAP/AMB/HT cited`
+- The Yes/No/Blocked/Duplicate columns stay even when every ticket is all-Yes — say so in one line
+  above the table instead of dropping columns.
+- A ticket with any Blocked test cases gets that count in its own Blocked cell, not separate prose —
+  e.g. a cell reading `3` with the actual reasons available in the STEP 3 chat output for that run.
+- GAP/AMB/HT cited lists every GAP-X/AMB-X/HT-XXXX id referenced anywhere in that ticket's full
+  triage — nothing gets cited only in chat/PR-summary prose and left untraceable in this table.
 
 Framework Glue Needed: <comma-separated list of newly authored Gherkin steps requiring new
 Java @Given/@When/@Then bindings or Page Object methods — omit only if every scenario's
