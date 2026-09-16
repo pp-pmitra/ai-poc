@@ -18,20 +18,20 @@ IMMEDIATELY read the skill definition file from workspace disk or the remote
 GitHub branch above:
 
 1. **iAnalyze (Netra):**
-   - **Path:** `plugins/qa-automation-skills/skills/netra/iAnalyzeSkill.md`
+   - **Path:** `ai-skills/netra/iAnalyze.md`
    - **Action:** Read the file immediately. Execute its 14-step requirement analysis workflow.
    - **Assets to Inspect:**
-     * `plugins/qa-automation-skills/skills/netra/Test Design Template.xlsx`
-     * `plugins/qa-automation-skills/skills/netra/Confluence.md` (if Confluence docs are in scope)
+     * `ai-skills/netra/Test Design Template.xlsx`
+     * `ai-skills/netra/Confluence.md` (if Confluence docs are in scope)
    - **Outputs Generated:** Update `[CACHE_FILE]`, `[XLSX_PATH]`, `[DOCX_PATH]`, and `[HTML_PATH]`.
 
 2. **iDesign (Sutra):**
-   - **Path:** `plugins/qa-automation-skills/skills/sutra/iDesignSkill.md`
+   - **Path:** `ai-skills/sutra/iDesign.md`
    - **Action:** Read the file immediately. Consume `[XLSX_PATH]` / `[DOCX_PATH]` from Netra and parse `navigation-map.html`.
    - **Outputs Generated:** Generate Gherkin scenarios in `src/test/resources/features/`, commit, open PR, and update `[GHERKIN_FEATURES]`, `[BRANCH_NAME]`, `[PR_LINK]`.
 
 3. **iAutomate (Shakti):**
-   - **Path:** `plugins/qa-automation-skills/skills/shakti/iAutomateSkill.md`
+   - **Path:** `ai-skills/shakti/iAutomate.md`
    - **Action:** Read the file immediately. Process `@todo` scenarios in `[GHERKIN_FEATURES]` to build glue code and step definitions.
    - **Accepted input (`[GHERKIN_FEATURES]`) — one of:**
      * **Scenario name** — run that single `@todo` scenario only.
@@ -40,14 +40,14 @@ GitHub branch above:
    - Resolve which of the three the input is by matching it against the feature files first (exact `.feature` filename match), then tags (leading `@`), then falling back to a scenario-title match. If ambiguous or no match is found, ask which scenario/tag/feature was meant rather than guessing.
 
 4. **iFix (Kavach):**
-   - **Path:** `plugins/qa-automation-skills/skills/kavach/iFixSkill.md`
+   - **Path:** `ai-skills/kavach/iFix.md`
    - **Action:** Read the file immediately. Replay failing Cucumber/Playwright scenarios live in the browser; classify each as a script issue (fix proposed) or a product bug (flagged only); write a timestamped verdict report.
    - **Outputs Generated:** Update `[VERDICT_REPORT]`.
 
 5. **iClose (Purna):**
-   - **Path (closure/compliance audit):** `plugins/qa-automation-skills/skills/purna/iCloseSkill.md`
+   - **Path (closure/compliance audit):** `ai-skills/purna/iClose.md`
    - **Action:** Read the file immediately. Audit the given QA ticket or fix version for comment/test-evidence closure compliance, applying the Global Exclusion Filter, and produce the downloadable Excel/Sheet report (compliance-gap tables, Ready for Release table, Scope Notes sheet).
-   - **Path (status/tracking — iTrack, folded into iClose):** `plugins/qa-automation-skills/skills/purna/iTrackSkill.md`
+   - **Path (status/tracking — iTrack, folded into iClose):** `ai-skills/purna/iTrack.md`
    - **Action:** Read the file immediately. Query the Jira "QA" project for the release; run staleness detection, comment analysis, and/or Slack notification drafting per the request's detected intent.
    - **Outputs Generated:** Update `[COMPLIANCE_REPORT_PATH]` and, when iTrack is invoked, `[SLACK_DRAFTS]`.
 
@@ -67,8 +67,8 @@ Note: iMaintenance (Trishul) is named in the pipeline but has no skill file in t
    - `owner`/`repo` from the path segment before `/tree/` or `/blob/` (or the whole `owner/repo` shorthand).
    - `ref` (branch) from the segment after `/tree/`, if present; otherwise use the repository's default branch.
 2. Fetch the skill file at the fixed path for that agent, on that `owner/repo`/`ref`:
-   - Shakti: `plugins/qa-automation-skills/skills/shakti/iAutomateSkill.md`
-   - Kavach: `plugins/qa-automation-skills/skills/kavach/iFixSkill.md`
+   - Shakti: `ai-skills/shakti/iAutomate.md`
+   - Kavach: `ai-skills/kavach/iFix.md`
 3. Read the fetched content and execute it exactly as written, substituting the given scenario/tag/feature for `[GHERKIN_FEATURES]` (Shakti — resolved per the Accepted-input rules above) or the failing-run reference (Kavach).
 4. Any further file the skill instructs you to read (glue files, POM classes, feature files, other skill files) is fetched from the **same** `owner/repo`/`ref` via the GitHub connector — never assumed to exist locally, never guessed at. If the GitHub connector is unavailable or the fetch fails (bad link, missing branch, 404), stop and report the failure; do not fall back to local disk silently and do not fabricate file content.
 5. Commits/PRs this stage produces (per its own skill file) go to the same `owner/repo` via the GitHub connector, not to a local git working tree.
@@ -122,7 +122,7 @@ Track and pass these dynamic state variables across sequential prompts and agent
 
 Tests whether this config file is actually being read by a given surface (Claude.ai chat vs. Claude Code CLI), independent of whether Netra's own skill file loads correctly.
 
-On receiving `/Run Netra` — or any message that triggers the iAnalyze (Netra) resolution above — print this line first, verbatim, on its own, before reading `netra/iAnalyzeSkill.md` or doing anything else:
+On receiving `/Run Netra` — or any message that triggers the iAnalyze (Netra) resolution above — print this line first, verbatim, on its own, before reading `netra/iAnalyze.md` or doing anything else:
 
 `>>> ORCH-INSTRUCTIONS-LOADED :: QA-1793-NETRA-CHECK`
 
