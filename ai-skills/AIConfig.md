@@ -4,7 +4,7 @@
 
 You manage a connected QA pipeline: iAnalyze (Netra) -> iDesign (Sutra) -> iAutomate (Shakti) -> iFix (Kavach) -> iClose (Purna, includes iTrack).
 
-Repository: `pulsepointinc/qa-automation`  Branch: `QA-1793`
+Repository: `pulsepointinc/qa-automation`  Branch: `main`
 
 This file holds both the account-level orchestrator behavior and the detailed mechanics for the pipeline (agent file paths, pipeline variables, Google Drive publishing rules, and the execution/handoff protocol). Read it in full whenever any pipeline stage is invoked — do not rely on session memory, installed CLI plugins, or clarification popups for these details.
 
@@ -12,7 +12,7 @@ Minimize token usage wherever possible: keep chat/terminal responses terse, avoi
 
 ## DIRECT PHASE TRIGGER
 
-If a message is just an agent name plus a ticket/fixVersion/URL/list — in any order, any casing, with or without the word "Run" (e.g. "Run Netra QA-1793", "Netra QA-1793", "Run Sutra ", "Run Kavach for the last failed run", "Run Purna May 2026 Release") — treat it as a direct command to jump straight into that agent's phase with the given input as `[JIRA_KEY]` (or the equivalent input for that phase). Do not ask which mode/sub-skill to use, do not ask for confirmation, and do not run any earlier pipeline phase first unless the input is explicitly chained (e.g. "Netra to Sutra for QA-1793"). Resolve the agent name via the Agent File Resolution section below immediately, exactly as with any other invocation.
+If a message is just an agent name plus a ticket/fixVersion/URL/list — in any order, any casing, with or without the word "Run" (e.g. "Run Netra main", "Netra main", "Run Sutra ", "Run Kavach for the last failed run", "Run Purna May 2026 Release") — treat it as a direct command to jump straight into that agent's phase with the given input as `[JIRA_KEY]` (or the equivalent input for that phase). Do not ask which mode/sub-skill to use, do not ask for confirmation, and do not run any earlier pipeline phase first unless the input is explicitly chained (e.g. "Netra to Sutra for main"). Resolve the agent name via the Agent File Resolution section below immediately, exactly as with any other invocation.
 
 This applies identically whether the session is running in Claude Code CLI or Claude.ai/Cowork — this file is the CLI-side equivalent of the account-level "Instructions for Claude" setting, since Claude Code does not read that account setting. Run Shakti \<ticket/link> and Run Kavach \<ticket/link> (or bare Run Netra/Run Sutra/Run Purna) work the same way here as they do in chat.
 
@@ -106,7 +106,7 @@ Track and pass these dynamic state variables across sequential prompts and agent
 * Always load the target agent's skill file first before attempting to generate deliverables.
 * Before consuming `[XLSX_PATH]` / `[DOCX_PATH]` / `[HTML_PATH]` / `[GHERKIN_FEATURES]` / `[VERDICT_REPORT]` / `[COMPLIANCE_REPORT_PATH]` / `[SLACK_DRAFTS]` in any agent step, apply the Google Drive Publishing resolution rule (if the value is a link) and the fresh-read rule (always, regardless of link-or-local state) — both happen here, never inside the agent's own skill file.
 * Keep chat output concise (widgets/progress lines only as specified in Netra's skill file); full analysis text and test tables belong in the output files (`.docx` / `.xlsx`).
-* Execute sequential agent pipelines automatically when chained (e.g., "Run Netra to Sutra for QA-1793", "Run Kavach then Purna for the last failed run").
+* Execute sequential agent pipelines automatically when chained (e.g., "Run Netra to Sutra for main", "Run Kavach then Purna for the last failed run").
 
 ## Diagnostic Marker — TEMPORARY, DELETE AFTER VERIFYING
 
