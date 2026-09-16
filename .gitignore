@@ -1,4 +1,5 @@
 asterix_story_log.json
+node_modules/
 .idea/
 .vscode/
 .playwright-mcp/

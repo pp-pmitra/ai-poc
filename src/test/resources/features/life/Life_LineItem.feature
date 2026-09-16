@@ -34,7 +34,7 @@ Feature: LIFE Regression - Line Item Management
     And Verify error message if user fails to add impression cap value when the checkboxes are selected and tries to save the line item page
     Examples:
       | LINE_ITEM  | BUDGET |
-      | Line_Item_ | 200    |
+      | Line_Item_ |    200 |
 
   @regression
   Scenario Outline: Add multiple flights to a line item and verify Flights tab after deleting some entries
@@ -49,7 +49,7 @@ Feature: LIFE Regression - Line Item Management
     Then User should see the remaining flights listed under the Flights section
     Examples:
       | LINE_ITEM  | BUDGET | NUMBER_OF_FLIGHTS |
-      | Line_Item_ | 200    | 3                 |
+      | Line_Item_ |    200 |                 3 |
 
   @regression
   Scenario Outline: Add sequential flights to a line item and verify Flights tab after deleting some entries
@@ -66,7 +66,7 @@ Feature: LIFE Regression - Line Item Management
     Then User should see the remaining flights listed under the Flights section
     Examples:
       | LINE_ITEM  | BUDGET | NUMBER_OF_MONTHS |
-      | Line_Item_ | 200    | 4                |
+      | Line_Item_ |    200 |                4 |
 
   @regression
   Scenario Outline: Perform create, modify, duplicate, delete, and toggle operations on line items using Bulk Edit Mode and verify data integrity after duplication
@@ -121,7 +121,7 @@ Feature: LIFE Regression - Line Item Management
     Then Verify that the line item details are updated successfully and reflected on the Line Item page
     Examples:
       | LINE_NAME | LINE_BUDGET | UPDATED_LINE_BUDGET |
-      | Line      | 500         | 505.00              |
+      | Line      |         500 |              505.00 |
 
   @regression
   Scenario Outline: Create new custom field in Line Item details page and verify its availability in all the new and existing line items under all Campaigns of the selected account
@@ -138,4 +138,4 @@ Feature: LIFE Regression - Line Item Management
     Then User deletes the custom field and verify its removed from new "line item"
     Examples:
       | LINE_ITEM  | CUSTOM_NAME  | LINE_BUDGET |
-      | Line_Item_ | Custom_Field | 50          |
+      | Line_Item_ | Custom_Field |          50 |

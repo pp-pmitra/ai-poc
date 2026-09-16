@@ -22,13 +22,13 @@ Feature: LIFE Regression - Create a Creative Library and verify filters, sort, s
     And Check Activity buttons "Active" and verify following filters are available and working
       | Advertiser      | 01- Advertiser |
       | Creative Status | Approved       |
-      | Ad Sizes        | 1025x800       |
+      | Ad Sizes        |       1025x800 |
       | CreatedBy       | Anand          |
       | Creative Type   | Image, Video   |
     And Check Activity buttons "Archived" and verify following filters are available and working
       | Advertiser      | Amgen       |
       | Creative Status | Approved    |
-      | Ad Sizes        | 320x50      |
+      | Ad Sizes        |      320x50 |
       | CreatedBy       | Anand       |
       | Creative Type   | Html, Video |
     And Verify the following sort options are available and working
@@ -42,7 +42,7 @@ Feature: LIFE Regression - Create a Creative Library and verify filters, sort, s
       | VideoURLCreative |
       | Manual           |
       | BulkUpload       |
-      | 120x600          |
+      |          120x600 |
     And User checks Copy option is working for creative and verify details before and after saving the creative
     And User checks Archive option is working for creative and verify the creative is moved to "Archived" tab
     And User checks Unarchive option is working for creative and verify the creative is moved to "Active" tab
@@ -68,10 +68,10 @@ Feature: LIFE Regression - Create a Creative Library and verify filters, sort, s
     And Verify pagination is working properly on the Creative Library page
     Examples:
       | PAGINATION_VALUE |
-      | 10               |
-      | 20               |
-      | 50               |
-      | 100              |
+      |               10 |
+      |               20 |
+      |               50 |
+      |              100 |
 
   @regression
   Scenario: Verify deletion on creatives associated with a Campaign and on creatives that are not associated with any Campaign
@@ -236,12 +236,12 @@ Feature: LIFE Regression - Create a Creative Library and verify filters, sort, s
     And Verify the newly created creative is displayed in the Creative Library page
     Examples:
       | ADVERTISER     | INVALID_LANDING_DOMAIN | LANDING_DOMAIN | ADVERTISER_DSA | FINANCER      | STATUS   | CREATIVE_NAME | SIZE    | DURATION | FILE_TYPE    | FILE_NAME              |
-      | 01- Advertiser | test                   | www.google.com | Auto_DSA       | Auto_Financer | Approved | HTML_Creative | 800x250 | 60       | DCM File     | HTML_DCM.xls           |
-      | 01- Advertiser | test                   | www.google.com | Auto_DSA       | Auto_Financer | Approved | HTML_Creative | 800x250 | 60       | PulsePoint   | HTML_Pulsepoint.xlsx   |
-      | 01- Advertiser | test                   | www.google.com | Auto_DSA       | Auto_Financer | Approved | HTML_Creative | 800x250 | 60       | Adform       | HTML_Adform.xls        |
-      | 01- Advertiser | test                   | www.google.com | Auto_DSA       | Auto_Financer | Approved | HTML_Creative | 800x250 | 60       | DoubleVerify | HTML_DoubleVerify.xlsx |
-      | 01- Advertiser | test                   | www.google.com | Auto_DSA       | Auto_Financer | Approved | HTML_Creative | 800x250 | 60       | Flashtalking | HTML_Flashtalking.csv  |
-      | 01- Advertiser | test                   | www.google.com | Auto_DSA       | Auto_Financer | Approved | HTML_Creative | 800x250 | 60       | Sizmek       | HTML_Sizmek.xlsx       |
+      | 01- Advertiser | test                   | www.google.com | Auto_DSA       | Auto_Financer | Approved | HTML_Creative | 800x250 |       60 | DCM File     | HTML_DCM.xls           |
+      | 01- Advertiser | test                   | www.google.com | Auto_DSA       | Auto_Financer | Approved | HTML_Creative | 800x250 |       60 | PulsePoint   | HTML_Pulsepoint.xlsx   |
+      | 01- Advertiser | test                   | www.google.com | Auto_DSA       | Auto_Financer | Approved | HTML_Creative | 800x250 |       60 | Adform       | HTML_Adform.xls        |
+      | 01- Advertiser | test                   | www.google.com | Auto_DSA       | Auto_Financer | Approved | HTML_Creative | 800x250 |       60 | DoubleVerify | HTML_DoubleVerify.xlsx |
+      | 01- Advertiser | test                   | www.google.com | Auto_DSA       | Auto_Financer | Approved | HTML_Creative | 800x250 |       60 | Flashtalking | HTML_Flashtalking.csv  |
+      | 01- Advertiser | test                   | www.google.com | Auto_DSA       | Auto_Financer | Approved | HTML_Creative | 800x250 |       60 | Sizmek       | HTML_Sizmek.xlsx       |
 
   @regression
   Scenario Outline: Validate Bulk Upload Functionality for HTML Creatives by downloading the template and uploading the file with type "<FILE_TYPE>"
@@ -253,7 +253,7 @@ Feature: LIFE Regression - Create a Creative Library and verify filters, sort, s
     And Verify the newly created creative is displayed in the Creative Library page
     Examples:
       | ADVERTISER     | LANDING_DOMAIN | ADVERTISER_DSA | FINANCER      | STATUS   | CREATIVE_NAME | SIZE    | DURATION | FILE_TYPE  | FILE_NAME         |
-      | 01- Advertiser | www.google.com | Auto_DSA       | Auto_Financer | Approved | HTML_Creative | 800x250 | 60       | PulsePoint | Download Template |
+      | 01- Advertiser | www.google.com | Auto_DSA       | Auto_Financer | Approved | HTML_Creative | 800x250 |       60 | PulsePoint | Download Template |
 
   @regression
   Scenario Outline: Validate Bulk Upload Functionality and Field Requirements for Native Creatives
@@ -305,11 +305,10 @@ Feature: LIFE Regression - Create a Creative Library and verify filters, sort, s
     And Verify the newly created creative is displayed in the Creative Library page
     Examples:
       | ADVERTISER     | CLICKTHROUGH_URL   | LANDING_DOMAIN | ADVERTISER_DSA | FINANCER      | STATUS   | CREATIVE_NAME  | IMAGE_FILENAME    | SIZE    | DURATION | FILE_TYPE    | FILE_NAME               |
-      | 01- Advertiser | AutomationTest.com | www.google.com | Auto_DSA       | Auto_Financer | Approved | Video_Creative | Display_Image.jpg | 800x250 | 60       | DCM File     | Video_DCM.xls           |
-      | 01- Advertiser | AutomationTest.com | www.google.com | Auto_DSA       | Auto_Financer | Approved | Video_Creative | Display_Image.jpg | 800x250 | 60       | DoubleVerify | Video_DoubleVerify.xls  |
-      | 01- Advertiser | AutomationTest.com | www.google.com | Auto_DSA       | Auto_Financer | Approved | Video_Creative | Display_Image.jpg | 800x250 | 60       | Flashtalking | Video_FlashTalking.xlsx |
-      | 01- Advertiser | AutomationTest.com | www.google.com | Auto_DSA       | Auto_Financer | Approved | Video_Creative | Display_Image.jpg | 800x250 | 60       | Innovid      | Video_INNOVID.xlsx      |
-
+      | 01- Advertiser | AutomationTest.com | www.google.com | Auto_DSA       | Auto_Financer | Approved | Video_Creative | Display_Image.jpg | 800x250 |       60 | DCM File     | Video_DCM.xls           |
+      | 01- Advertiser | AutomationTest.com | www.google.com | Auto_DSA       | Auto_Financer | Approved | Video_Creative | Display_Image.jpg | 800x250 |       60 | DoubleVerify | Video_DoubleVerify.xls  |
+      | 01- Advertiser | AutomationTest.com | www.google.com | Auto_DSA       | Auto_Financer | Approved | Video_Creative | Display_Image.jpg | 800x250 |       60 | Flashtalking | Video_FlashTalking.xlsx |
+      | 01- Advertiser | AutomationTest.com | www.google.com | Auto_DSA       | Auto_Financer | Approved | Video_Creative | Display_Image.jpg | 800x250 |       60 | Innovid      | Video_INNOVID.xlsx      |
 
   @regression
   Scenario: Verify Column Filter present on Association Tab of existing creative

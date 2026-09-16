@@ -9,7 +9,7 @@ Feature: Brand Explorer Workspace creation in Studio
     And User clicks PulsePoint icon to navigate back to Life
     And User navigates to Studio application
 
-  @e2e 
+  @e2e
   Scenario Outline: Create and save Brand Explorer workspace with default selections
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -63,9 +63,9 @@ Feature: Brand Explorer Workspace creation in Studio
     And Verify the Day column shows <DAYS> dates in ascending order
     Examples:
       | ADVERTISER         | TIMEFRAME    | DAYS |
-      | TAMTESTING ACCOUNT | Last 14 Days | 14   |
-      | TAMTESTING ACCOUNT | Last 30 Days | 30   |
-      | TAMTESTING ACCOUNT | Yesterday    | 1    |
+      | TAMTESTING ACCOUNT | Last 14 Days |   14 |
+      | TAMTESTING ACCOUNT | Last 30 Days |   30 |
+      | TAMTESTING ACCOUNT | Yesterday    |    1 |
 
   @regression
   Scenario Outline: Verify Custom date range picker and inclusive start "<START_DATE>" and end "<END_DATE>" dates in the returned dataset
@@ -120,7 +120,7 @@ Feature: Brand Explorer Workspace creation in Studio
     And Verify user is able to delete the workspace
     Examples:
       | ADVERTISER         | WORKSPACE_NAME | TIMEFRAME    | DAYS |
-      | TAMTESTING ACCOUNT | Brand_Explorer | Last 30 Days | 30   |
+      | TAMTESTING ACCOUNT | Brand_Explorer | Last 30 Days |   30 |
 
   @regression
   Scenario Outline: Verify saved non-default dimension and metric persist when the workspace is closed and reopened
@@ -240,7 +240,7 @@ Feature: Brand Explorer Workspace creation in Studio
       | ADVERTISER         | CATEGORY                 | FIELD      |
       | TAMTESTING ACCOUNT | Healthcare Professionals | Profession |
 
-  @regression 
+  @regression
   Scenario Outline: Verify a saved filter persists when the workspace is closed and reopened
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -263,7 +263,7 @@ Feature: Brand Explorer Workspace creation in Studio
       | ADVERTISER         | WORKSPACE_NAME | CATEGORY                 | FIELD      | VALUE     |
       | TAMTESTING ACCOUNT | Brand_Explorer | Healthcare Professionals | Profession | Physician |
 
-  @regression 
+  @regression
   Scenario Outline: Verify an applied filter is reflected immediately and correctly narrows the dataset in the table
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -293,7 +293,7 @@ Feature: Brand Explorer Workspace creation in Studio
     Then Verify the "Brand Explorer" Workspace is saved
     And Navigate to workspace dashboard
     And User selects the workspace type "Brand Explorer"
-    And User clicks on the More Actions menu for the saved workspace 
+    And User clicks on the More Actions menu for the saved workspace
     And User selects the "Rename" option by clicking More Actions menu
     And Verify user is able to rename the "Brand Explorer" workspace as "<NEW_WORKSPACE_NAME>"
     And User is able to search the workspace after performing operation - "Rename"
@@ -368,8 +368,8 @@ Feature: Brand Explorer Workspace creation in Studio
     Examples:
       | ADVERTISER         | DIMENSION | DIMENSION_CATEGORY | METRIC           | METRIC_CATEGORY |
       | TAMTESTING ACCOUNT | Month     | Time Frame         | HCP Active Users | HCP Events      |
-      
-  @regression 
+
+  @regression
   Scenario Outline: Verify categorical filter operators that use a value list can be applied
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -386,7 +386,7 @@ Feature: Brand Explorer Workspace creation in Studio
       | ADVERTISER         | CATEGORY                 | FIELD      | OPERATOR | VALUE     |
       | TAMTESTING ACCOUNT | Healthcare Professionals | Profession | is       | Physician |
 
-  @regression 
+  @regression
   Scenario Outline: Verify filter operators that use a free-text value can be applied
     When User clicks on Create New Workspace
     Then User sees the types of workspaces they have permissions for
@@ -421,7 +421,7 @@ Feature: Brand Explorer Workspace creation in Studio
     And Verify the table column "<FIELD>" is filtered between values "<FROM>" and "<TO>"
     Examples:
       | ADVERTISER         | CATEGORY   | FIELD           | FROM | TO |
-      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | 0    | 3  |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs |    0 |  3 |
 
   @regression
   Scenario Outline: Verify numeric filter operators that use a typed value can be applied
@@ -436,11 +436,9 @@ Feature: Brand Explorer Workspace creation in Studio
     And Verify the table column "<FIELD>" is filtered by operator "<OPERATOR>" and value "<VALUE>"
     Examples:
       | ADVERTISER         | CATEGORY   | FIELD           | OPERATOR | VALUE |
-      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | =        | 1     |
-      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | >        | 0     |
-      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | >=       | 1     |
-      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | <        | 2     |
-      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | <=       | 1     |
-      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | !=       | 1     |
-    
-    
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | =        |     1 |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | >        |     0 |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | >=       |     1 |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | <        |     2 |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | <=       |     1 |
+      | TAMTESTING ACCOUNT | NPI Events | Identified NPIs | !=       |     1 |

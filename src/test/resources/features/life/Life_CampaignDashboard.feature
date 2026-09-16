@@ -109,7 +109,6 @@ Feature: LIFE Regression - Check below features available on Campaign Dashboard
     And User unchecks Hide Finished checkbox
     And Verify the dashboard data should reflect campaigns with Finished status
 
-
   @regression
   Scenario Outline: Verify navigation to Campaign, Line Item and Tactic pages one by one from Campaign Dashboard
     Given This scenario will be executed in the "Demo" environment as a "User"
@@ -146,9 +145,9 @@ Feature: LIFE Regression - Check below features available on Campaign Dashboard
     And User hover on the image icon for creative in red color and check whether creative is assigned to the campaign
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          | STATUS       |
-      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Behavioral Segment | Approved     |
-      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Behavioral Segment | Pending Appr |
-      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Behavioral Segment | Denied       |
+      | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced | Behavioral Segment | Approved     |
+      | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced | Behavioral Segment | Pending Appr |
+      | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced | Behavioral Segment | Denied       |
 
   @regression
   Scenario Outline: Verify that bulk actions are enabled when the entity checkbox is selected for a Line Item
@@ -175,7 +174,7 @@ Feature: LIFE Regression - Check below features available on Campaign Dashboard
       | Disable Line Items |
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          | CREATIVE      |
-      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Behavioral Segment | Auto_Creative |
+      | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced | Behavioral Segment | Auto_Creative |
 
   @regression
   Scenario Outline: Verify that bulk actions are enabled when the entity checkbox is selected for a Tactic
@@ -202,4 +201,4 @@ Feature: LIFE Regression - Check below features available on Campaign Dashboard
       | Disable Tactics |
     Examples:
       | ADVERTISER     | CP_NAME | CP_TYPE | CP_BUDGET | LINE_NAME | LINE_BUDGET | TACTIC_NAME | CHANNEL          | RULE_TYPE          | CREATIVE      |
-      | 01- Advertiser | Auto    | Regular | 20000     | Line      | 500         | Tactic      | Display Advanced | Behavioral Segment | Auto_Creative |
+      | 01- Advertiser | Auto    | Regular |     20000 | Line      |         500 | Tactic      | Display Advanced | Behavioral Segment | Auto_Creative |
