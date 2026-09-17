@@ -762,4 +762,10 @@ public class Campaigns {
         LineItemDetails lineItemDetails = new LineItemDetails(page);
         lineItemDetails.clearCustomFieldFromLineItem(fieldName);
     }
+
+    public String getPageUrl() {
+        return page.url();
+    }
+
+
 }

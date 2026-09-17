@@ -4698,7 +4698,10 @@ public class LifeSteps {
     @When("User navigates to Administrative section")
     public void userNavigatesToAdministrativeSection() {
         logger.info("User navigates to Administrative section");
-        campaignDashboard.waitUntilCampaignPaginationAppears();
+        if (campaigns.getPageUrl().contains("campaign")){
+            logger.info("Waiting for Campaign pagination to appear");
+            campaignDashboard.waitUntilCampaignPaginationAppears();
+        }
         navigation.clickSubMenu();
         accounts.clickAdministration();
     }
