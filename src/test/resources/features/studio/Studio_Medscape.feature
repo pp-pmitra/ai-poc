@@ -18,7 +18,7 @@ Feature: Medscape List Match + Consent Workspace in Studio Application
     Then User sees the types of workspaces they have permissions for
     And User clicks on "Medscape List Match + Consent" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And Verify the Workspace is created
+    And Verify the Workspace creation page is displayed
     Then User clicks the Save button without selecting values in any fields
     And Verify the in-line error messages are displayed for mandatory fields i.e Source NPI List, Business, Business Vertical, Product
     Then User selects values in each fields as "<SOURCE_NPI_LIST>", "<BUSINESS>", "<BUSINESS_VERTICAL>", "<PRODUCT>", "<PHARMA>" & "<BRAND>"
@@ -37,7 +37,7 @@ Feature: Medscape List Match + Consent Workspace in Studio Application
     Then User sees the types of workspaces they have permissions for
     And User clicks on "Medscape List Match + Consent" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And Verify the Workspace is created
+    And Verify the Workspace creation page is displayed
     Then User selects values in each fields as "<SOURCE_NPI_LIST>", "<BUSINESS>", "<BUSINESS_VERTICAL>", "<PRODUCT>", "<PHARMA>", "<BRAND>" and "<STATE_EXCLUSION>"
     And User clicks "Select Columns with Required Attributes" & deselects NPI
     And User maps fields as "<CUSTOMER_ID_FIELD>","<VALUE>" "<NPI_ID>", "<ZIP_FIELD>" and "<ZIP_VALUE>"
@@ -60,7 +60,7 @@ Feature: Medscape List Match + Consent Workspace in Studio Application
     Then User sees the types of workspaces they have permissions for
     And User clicks on "Medscape List Match + Consent" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And Verify the Workspace is created
+    And Verify the Workspace creation page is displayed
     Then User selects values in each fields as "<SOURCE_NPI_LIST>","<DELIVERABLE_ID>", "<BUSINESS>", "<BUSINESS_VERTICAL>", "<PRODUCT>", "<PHARMA>", "<BRAND>" and "<STATE_EXCLUSION>"
     And Verify for valid Deliverable ID, suggestion is displayed below Pharma & brand
     And User clicks "Select Columns with Required Attributes" & deselects NPI
@@ -88,7 +88,7 @@ Feature: Medscape List Match + Consent Workspace in Studio Application
     Then User sees the types of workspaces they have permissions for
     And User clicks on "Medscape List Match + Consent" workspace
     And User selects the advertiser "<ADVERTISER>"
-    And Verify the Workspace is created
+    And Verify the Workspace creation page is displayed
     Then User selects values in each fields as "<SOURCE_NPI_LIST>","<DELIVERABLE_ID>", "<BUSINESS>", "<BUSINESS_VERTICAL>", "<PRODUCT>", "<PHARMA>", "<BRAND>" and "<STATE_EXCLUSION>"
     And And User clicks "Select Columns with Required Attributes" & deselects NPI
     And User maps fields as "<CUSTOMER_ID_FIELD>","<VALUE>" "<NPI_ID>", "<ZIP_FIELD>" and "<ZIP_VALUE>"
