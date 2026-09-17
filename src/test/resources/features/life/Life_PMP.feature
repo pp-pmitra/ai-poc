@@ -70,9 +70,9 @@ Feature: Life PMP Regression - Verify Private and Life MarketPlace Deals Creatio
     Then Deals should get assigned to the Tactic
     Examples:
       | EXCHANGE_TYPE | DEAL_ID | DEAL_NAME  | MEDIA_TYPE                 | DEAL_PRICE_TYPE | PRICE | BASE_BID_PRICE | MAX_BID_PRICE | ADVERTISER     | CURATOR                          | PRICING_STRATEGY | VALUE |
-      | JW Player     | Deal_   | Deal_Name_ | Display (All), Video (All) | Fixed           | 230   | 34             | 60            | 01- Advertiser | PulsePoint (Direct Integrations) | Flat             | 35    |
-      | JW Player     | Deal_   | Deal_Name_ | Display (All), Video (All) | Floor           | 230   | 34             | 60            | 01- Advertiser | PulsePoint (Direct Integrations) | Floor+           |       |
-      | JW Player     | Deal_   | Deal_Name_ | Display (All), Video (All) | Fixed           | 230   | 34             | 60            | 01- Advertiser | PulsePoint (Direct Integrations) | Default          |       |
+      | JW Player     | Deal_   | Deal_Name_ | Display (All), Video (All) | Fixed           |   230 |             34 |            60 | 01- Advertiser | PulsePoint (Direct Integrations) | Flat             |    35 |
+      | JW Player     | Deal_   | Deal_Name_ | Display (All), Video (All) | Floor           |   230 |             34 |            60 | 01- Advertiser | PulsePoint (Direct Integrations) | Floor+           |       |
+      | JW Player     | Deal_   | Deal_Name_ | Display (All), Video (All) | Fixed           |   230 |             34 |            60 | 01- Advertiser | PulsePoint (Direct Integrations) | Default          |       |
 
   @regression
   Scenario Outline: Verify active deal moves to archived while campaign is not running state
@@ -93,7 +93,7 @@ Feature: Life PMP Regression - Verify Private and Life MarketPlace Deals Creatio
     Then Verify that the deal is moved to archived deal section
     Examples:
       | EXCHANGE_TYPE | DEAL_ID | DEAL_NAME  | MEDIA_TYPE                 | DEAL_PRICE_TYPE | PRICE | ADVERTISER     | CURATOR                          |
-      | JW Player     | Deal_   | Deal_Name_ | Display (All), Video (All) | Fixed           | 230   | 01- Advertiser | PulsePoint (Direct Integrations) |
+      | JW Player     | Deal_   | Deal_Name_ | Display (All), Video (All) | Fixed           |   230 | 01- Advertiser | PulsePoint (Direct Integrations) |
 
   @regression
   Scenario Outline: Verify active deal should not be deleted while campaign is running state
@@ -118,7 +118,7 @@ Feature: Life PMP Regression - Verify Private and Life MarketPlace Deals Creatio
     And Verify the Tactic Link is clickable and navigates to the respective tactic page
     Examples:
       | EXCHANGE_TYPE | DEAL_ID | DEAL_NAME  | MEDIA_TYPE                 | DEAL_PRICE_TYPE | PRICE | ADVERTISER     | CURATOR                          | CREATIVE      |
-      | JW Player     | Deal_   | Deal_Name_ | Display (All), Video (All) | Fixed           | 230   | 01- Advertiser | PulsePoint (Direct Integrations) | Auto_Creative |
+      | JW Player     | Deal_   | Deal_Name_ | Display (All), Video (All) | Fixed           |   230 | 01- Advertiser | PulsePoint (Direct Integrations) | Auto_Creative |
 
   @regression
   Scenario Outline: Verify that after deleting an active deal from targeting, the user is able to delete the deal while the campaign is in a running state
@@ -154,7 +154,7 @@ Feature: Life PMP Regression - Verify Private and Life MarketPlace Deals Creatio
     Then Verify that the deal is moved to archived deal section
     Examples:
       | EXCHANGE_TYPE | DEAL_ID | DEAL_NAME  | MEDIA_TYPE                 | DEAL_PRICE_TYPE | PRICE | ADVERTISER     | CURATOR                          | CREATIVE      |
-      | JW Player     | Deal_   | Deal_Name_ | Display (All), Video (All) | Fixed           | 230   | 01- Advertiser | PulsePoint (Direct Integrations) | Auto_Creative |
+      | JW Player     | Deal_   | Deal_Name_ | Display (All), Video (All) | Fixed           |   230 | 01- Advertiser | PulsePoint (Direct Integrations) | Auto_Creative |
 
     # Source: QA-1849
   @todo

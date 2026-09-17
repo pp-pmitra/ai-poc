@@ -1,0 +1,14 @@
+{
+  "name": "qa-automation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tooling support (feature-file formatting) for the qa-automation Java/Cucumber project.",
+  "scripts": {
+    "feature:check": "sh scripts/check-feature-format.sh",
+    "feature:format": "sh scripts/format-features.sh",
+    "feature:formatter:test": "node --test scripts/format-feature.test.mjs"
+  },
+  "devDependencies": {
+    "@cucumber/gherkin-utils": "^12.0.2"
+  }
+}

@@ -45,4 +45,4 @@ Feature: E2E workflow for creating a campaign with an external user and approvin
     Then Verify that the campaign is deleted successfully
     Examples:
       | ADVERTISER       | CP_NAME       | CP_TYPE | CP_BUDGET | LINE_NAME     | LINE_BUDGET | TACTIC_NAME     | RULE_TYPE          | CREATIVE          |
-      | 1Demo Advertiser | External_User | Regular | 10000     | External_Line | 500         | External_Tactic | Behavioral Segment | External_Creative |
+      | 1Demo Advertiser | External_User | Regular |     10000 | External_Line |         500 | External_Tactic | Behavioral Segment | External_Creative |

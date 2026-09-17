@@ -149,6 +149,30 @@
           </formats>
         </configuration>
       </plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>3.3.0</version>
+          <configuration>
+            <configLocation>config/checkstyle/checkstyle.xml</configLocation>
+            <propertyExpansion>config_loc=${project.basedir}/config/checkstyle</propertyExpansion>
+            <consoleOutput>true</consoleOutput>
+            <failsOnError>true</failsOnError>
+            <violationSeverity>warning</violationSeverity>
+            <includeResources>false</includeResources>
+            <includeTestResources>false</includeTestResources>
+            <includeTestSourceDirectory>false</includeTestSourceDirectory>
+          </configuration>
+          <executions>
+            <execution>
+              <id>checkstyle-verify</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+      </plugin>
     </plugins>
   </build>
 

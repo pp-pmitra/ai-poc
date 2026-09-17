@@ -107,8 +107,8 @@ Feature: LIFE regression - Create NPI List of following types:
     Then Verify list gets deleted successfully
     Examples:
       | LIST_NAME     | ADVERTISER     | FILE_LOCATION | FILE_PATH                      | FILE_NAME                  | LIST_TYPE            | NPI_COLUMN_NAME | IMPORT_TYPE    |
-      | Auto_Imported | 01- Advertiser | 1OurVM        | /home/NPIAutoImport/Automation | AutoImport_Automation1.csv | Plain List           | NPI             | Add new NPIs   |
-      | Auto_Imported | 01- Advertiser | 1OurVM        | /home/NPIAutoImport/Automation | AutoImport_Automation1.csv | List with Attributes | NPI             | Import Columns |
+      | Auto_Imported | 01- Advertiser |        1OurVM | /home/NPIAutoImport/Automation | AutoImport_Automation1.csv | Plain List           | NPI             | Add new NPIs   |
+      | Auto_Imported | 01- Advertiser |        1OurVM | /home/NPIAutoImport/Automation | AutoImport_Automation1.csv | List with Attributes | NPI             | Import Columns |
 
   @regression
   Scenario Outline: Create Auto-Imported NPI List with "<LIST_TYPE>" by uploading file using Reload Now button
@@ -136,7 +136,7 @@ Feature: LIFE regression - Create NPI List of following types:
     Then Verify list gets deleted successfully
     Examples:
       | LIST_NAME     | ADVERTISER     | FILE_LOCATION | FILE_PATH                      | FILE_NAME                  | LIST_TYPE            | NPI_COLUMN_NAME | IMPORT_TYPE    |
-      | Auto_Imported | 01- Advertiser | 1OurVM        | /home/NPIAutoImport/Automation | AutoImport_Automation1.csv | List with Attributes | NPI             | Import Columns |
+      | Auto_Imported | 01- Advertiser |        1OurVM | /home/NPIAutoImport/Automation | AutoImport_Automation1.csv | List with Attributes | NPI             | Import Columns |
 
   @regression
   Scenario Outline: Validate List Population Options in Smart List Creation Panel
@@ -276,7 +276,7 @@ Feature: LIFE regression - Create NPI List of following types:
     Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE            | DRUG                              | DECILE |
-      | 01- Advertiser | SMART_Pixel_NPI | Prescribed Drug | Glynase, L-Oral PARACETAMOL Syrup | 4      |
+      | 01- Advertiser | SMART_Pixel_NPI | Prescribed Drug | Glynase, L-Oral PARACETAMOL Syrup |      4 |
 
   @regression
   Scenario Outline: Validate the successful creation of a Smart List as a Prescribed Drug by uploading a File
@@ -316,7 +316,7 @@ Feature: LIFE regression - Create NPI List of following types:
     Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE           | DIAGNOSIS                                     | DECILE |
-      | 01- Advertiser | SMART_Pixel_NPI | Diagnosis Code | Alcoholic fatty liver, Other specified sepsis | 5      |
+      | 01- Advertiser | SMART_Pixel_NPI | Diagnosis Code | Alcoholic fatty liver, Other specified sepsis |      5 |
 
   @regression
   Scenario Outline: Validate the successful creation of a Smart List as a Diagnosis Code by uploading a File
@@ -356,7 +356,7 @@ Feature: LIFE regression - Create NPI List of following types:
     Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE                   | MEDICAL_PROCEDURE                                 | DECILE |
-      | 01- Advertiser | SMART_Pixel_NPI | Medical Procedure Code | Cardiac shunt imaging, Florbetaben f18 diagnostic | 6      |
+      | 01- Advertiser | SMART_Pixel_NPI | Medical Procedure Code | Cardiac shunt imaging, Florbetaben f18 diagnostic |      6 |
 
   @regression
   Scenario Outline: Validate the successful creation of a Smart List as a Medical Procedure by uploading a File
@@ -401,7 +401,7 @@ Feature: LIFE regression - Create NPI List of following types:
     Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE                         | DRUG_NAME                   | TOP_DROPPER_PERCENT | TIME_FRAME_SELECTOR |
-      | 01- Advertiser | SMART_Pixel_NPI | Prescription Behavior Change | Acne Reparatif, Parathyroid | 60                  | 10                  |
+      | 01- Advertiser | SMART_Pixel_NPI | Prescription Behavior Change | Acne Reparatif, Parathyroid |                  60 |                  10 |
 
   @regression
   Scenario Outline: Validate the successful creation of a Smart List as a Prescription Behavior Change with New Prescribers option
@@ -422,7 +422,7 @@ Feature: LIFE regression - Create NPI List of following types:
     Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE                         | DRUG_NAME                   | TIME_FRAME_SELECTOR |
-      | 01- Advertiser | SMART_Pixel_NPI | Prescription Behavior Change | Acne Reparatif, Parathyroid | 8                   |
+      | 01- Advertiser | SMART_Pixel_NPI | Prescription Behavior Change | Acne Reparatif, Parathyroid |                   8 |
 
   @regression
   Scenario Outline: Validate the successful creation of a Smart List as a Endemic Research under IB Health with MESH option
@@ -444,7 +444,7 @@ Feature: LIFE regression - Create NPI List of following types:
     Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE             | ENGAGEMENT_TYPE | CONTEXTUAL_CATEGORY | MESH_CONDITION  | RECENCY |
-      | 01- Advertiser | SMART_Pixel_NPI | Endemic Research | IB Health       | MESH                | Animal Diseases | 55      |
+      | 01- Advertiser | SMART_Pixel_NPI | Endemic Research | IB Health       | MESH                | Animal Diseases |      55 |
 
   @regression
   Scenario Outline: Validate the successful creation of a Smart List as a Endemic Research under IB Health with Medscape option
@@ -467,7 +467,7 @@ Feature: LIFE regression - Create NPI List of following types:
     Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE             | ENGAGEMENT_TYPE | CONTEXTUAL_CATEGORY | MEDSCAPE_PRIMARY_CONCEPT | RECENCY |
-      | 01- Advertiser | SMART_Pixel_NPI | Endemic Research | IB Health       | Medscape            | Pacemaker, Arthritis     | 10      |
+      | 01- Advertiser | SMART_Pixel_NPI | Endemic Research | IB Health       | Medscape            | Pacemaker, Arthritis     |      10 |
 
   @regression
   Scenario Outline: Validate the successful creation of a Smart List as a Endemic Research under IB Health with WebMD option
@@ -490,7 +490,7 @@ Feature: LIFE regression - Create NPI List of following types:
     Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE             | ENGAGEMENT_TYPE | CONTEXTUAL_CATEGORY | WEBMD_PRIMARY_TOPIC | RECENCY |
-      | 01- Advertiser | SMART_Pixel_NPI | Endemic Research | IB Health       | WebMD               | Knee Pain, Asthma   | 15      |
+      | 01- Advertiser | SMART_Pixel_NPI | Endemic Research | IB Health       | WebMD               | Knee Pain, Asthma   |      15 |
 
   @regression
   Scenario Outline: Validate the successful creation of a Smart List as a Endemic Research under Endemic Network
@@ -514,7 +514,7 @@ Feature: LIFE regression - Create NPI List of following types:
     Then Verify list gets deleted successfully
     Examples:
       | ADVERTISER     | LIST_NAME       | TYPE             | ENGAGEMENT_TYPE | CONTEXTUAL_CATEGORY | MESH_CONDITION  | RECENCY |
-      | 01- Advertiser | SMART_Pixel_NPI | Endemic Research | Endemic Network | MESH                | Animal Diseases | 20      |
+      | 01- Advertiser | SMART_Pixel_NPI | Endemic Research | Endemic Network | MESH                | Animal Diseases |      20 |
 
   @regression
   Scenario Outline: Validate error message when saving Smart List as Expand based on Practice and Hospital Affiliation without selecting other Population options

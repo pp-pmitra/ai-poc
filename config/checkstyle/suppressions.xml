@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suppressions PUBLIC
+  "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+  "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<!--
+  Baseline of violations that existed before Checkstyle was enforced
+  (see checkstyle.xml's SuppressionFilter). These are grandfathered in
+  so this pilot doesn't break the build on day one; new/modified code
+  is still checked normally.
+
+  To re-enable full enforcement:
+    - remove one entry below once its file is cleaned up, or
+    - delete this whole file to lift every suppression at once.
+-->
+<suppressions>
+  <suppress files="ApiActions.java" checks="AvoidStarImportCheck"/>
+  <suppress files="DriverFactory.java" checks="AvoidStarImportCheck"/>
+  <suppress files="Navigation.java" checks="LineLengthCheck"/>
+  <suppress files="Accounts.java" checks="LineLengthCheck|LocalVariableName"/>
+  <suppress files="Setup.java" checks="LineLengthCheck"/>
+  <suppress files="SmartActions.java" checks="LineLengthCheck|ParameterName"/>
+  <suppress files="BulkCreativeUpload.java" checks="AvoidStarImportCheck|LineLengthCheck"/>
+  <suppress files="CampaignDashboard.java" checks="LineLengthCheck"/>
+  <suppress files="Campaigns.java" checks="LineLengthCheck|LocalVariableName"/>
+  <suppress files="ConversionPixel.java" checks="LineLengthCheck"/>
+  <suppress files="CreateCreatives.java" checks="LineLengthCheck"/>
+  <suppress files="CuratedMarket.java" checks="LineLengthCheck"/>
+  <suppress files="LineItemDetails.java" checks="AvoidStarImportCheck|LineLengthCheck"/>
+  <suppress files="LineItemFlights.java" checks="LineLengthCheck"/>
+  <suppress files="NPIAttributesList.java" checks="LineLengthCheck"/>
+  <suppress files="NPIAutoImportedList.java" checks="LineLengthCheck"/>
+  <suppress files="NPILists.java" checks="LineLengthCheck"/>
+  <suppress files="NPIMedscapeList.java" checks="LineLengthCheck"/>
+  <suppress files="NPISmartList.java" checks="LineLengthCheck|LocalVariableName"/>
+  <suppress files="NPIStaticList.java" checks="LineLengthCheck"/>
+  <suppress files="PMP.java" checks="LineLengthCheck"/>
+  <suppress files="Pixels.java" checks="LineLengthCheck"/>
+  <suppress files="ReportTemplates.java" checks="LineLengthCheck|LocalVariableName"/>
+  <suppress files="RunReport.java" checks="LineLengthCheck"/>
+  <suppress files="ScheduleReport.java" checks="LineLengthCheck"/>
+  <suppress files="SharedList.java" checks="LineLengthCheck|LocalVariableName"/>
+  <suppress files="TacticCreatives.java" checks="ParameterName"/>
+  <suppress files="TacticDetails.java" checks="AvoidStarImportCheck|LineLengthCheck|LocalVariableName|ParameterName"/>
+  <suppress files="TacticSettings.java" checks="AvoidStarImportCheck|LineLengthCheck|LocalVariableName"/>
+  <suppress files="TargetingTemplate.java" checks="LineLengthCheck"/>
+  <suppress files="DTCExplorerWorkspace.java" checks="LineLengthCheck"/>
+  <suppress files="ExplorerWorkspace.java" checks="LineLengthCheck|LocalVariableName|ParameterName"/>
+  <suppress files="Workspace.java" checks="AvoidStarImportCheck|LineLengthCheck|LocalVariableName"/>
+  <suppress files="WorkspaceCreation.java" checks="LineLengthCheck"/>
+  <suppress files="CommonUtils.java" checks="AvoidStarImportCheck"/>
+  <suppress files="DatabaseActions.java" checks="AvoidStarImportCheck"/>
+  <suppress files="ExcelActions.java" checks="UnusedImports"/>
+  <suppress files="FileActions.java" checks="AvoidStarImportCheck|UnusedImports"/>
+</suppressions>
