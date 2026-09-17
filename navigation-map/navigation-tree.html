@@ -1,0 +1,364 @@
+<!--
+  PulsePoint Platform — Interactive Navigation Tree
+  True left-to-right horizontal tree. Click any node to expand/collapse children.
+-->
+<title>PulsePoint Navigation — Interactive Tree</title>
+<style>
+  :root {
+    --bg:#ffffff;--bg-2:#f6f7f9;--bg-3:#ebedf0;--text:#1a1a2e;--text-2:#6b7280;--text-3:#9ca3af;
+    --border:#dde1e8;--accent:#2563eb;--accent-bg:#eff4ff;--line:#b8bfcc;
+    --life:#2563eb;--life-bg:#eff4ff;--studio:#7c3aed;--studio-bg:#f5f3ff;
+    --hcp:#0891b2;--hcp-bg:#ecfeff;--hcp365:#0d9488;--hcp365-bg:#f0fdfa;
+    --admin:#dc2626;--admin-bg:#fef2f2;--shared:#ea580c;--shared-bg:#fff7ed;
+    --auth:#64748b;--auth-bg:#f8fafc;--utility:#78716c;--utility-bg:#fafaf9;
+    --am:#c026d3;--am-bg:#fdf4ff;--fabric:#16a34a;--fabric-bg:#f0fdf4;
+  }
+  @media(prefers-color-scheme:dark){:root{
+    --bg:#0f1117;--bg-2:#181b28;--bg-3:#222639;--text:#e5e7eb;--text-2:#9ca3af;--text-3:#6b7280;
+    --border:#2d3348;--accent:#60a5fa;--accent-bg:#1e2a4a;--line:#4b5270;
+    --life:#60a5fa;--life-bg:#141e33;--studio:#a78bfa;--studio-bg:#1c1635;
+    --hcp:#22d3ee;--hcp-bg:#0c1f25;--hcp365:#2dd4bf;--hcp365-bg:#0c1f1c;
+    --admin:#f87171;--admin-bg:#1f1212;--shared:#fb923c;--shared-bg:#1f170c;
+    --auth:#94a3b8;--auth-bg:#151820;--utility:#a8a29e;--utility-bg:#19181a;
+    --am:#e879f9;--am-bg:#1c0f22;--fabric:#4ade80;--fabric-bg:#0c1f14;
+  }}
+  :root[data-theme="light"]{
+    --bg:#ffffff;--bg-2:#f6f7f9;--bg-3:#ebedf0;--text:#1a1a2e;--text-2:#6b7280;--text-3:#9ca3af;
+    --border:#dde1e8;--accent:#2563eb;--accent-bg:#eff4ff;--line:#b8bfcc;
+    --life:#2563eb;--life-bg:#eff4ff;--studio:#7c3aed;--studio-bg:#f5f3ff;
+    --hcp:#0891b2;--hcp-bg:#ecfeff;--hcp365:#0d9488;--hcp365-bg:#f0fdfa;
+    --admin:#dc2626;--admin-bg:#fef2f2;--shared:#ea580c;--shared-bg:#fff7ed;
+    --auth:#64748b;--auth-bg:#f8fafc;--utility:#78716c;--utility-bg:#fafaf9;
+    --am:#c026d3;--am-bg:#fdf4ff;--fabric:#16a34a;--fabric-bg:#f0fdf4;
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f1117;--bg-2:#181b28;--bg-3:#222639;--text:#e5e7eb;--text-2:#9ca3af;--text-3:#6b7280;
+    --border:#2d3348;--accent:#60a5fa;--accent-bg:#1e2a4a;--line:#4b5270;
+    --life:#60a5fa;--life-bg:#141e33;--studio:#a78bfa;--studio-bg:#1c1635;
+    --hcp:#22d3ee;--hcp-bg:#0c1f25;--hcp365:#2dd4bf;--hcp365-bg:#0c1f1c;
+    --admin:#f87171;--admin-bg:#1f1212;--shared:#fb923c;--shared-bg:#1f170c;
+    --auth:#94a3b8;--auth-bg:#151820;--utility:#a8a29e;--utility-bg:#19181a;
+    --am:#e879f9;--am-bg:#1c0f22;--fabric:#4ade80;--fabric-bg:#0c1f14;
+  }
+
+  html,body{background:var(--bg);color:var(--text);margin:0;padding:0;height:100%;overflow:hidden;}
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;}
+
+  #app{display:flex;flex-direction:column;height:100%;}
+  #header{padding:10px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg);flex-shrink:0;}
+  #header h1{font-size:15px;font-weight:700;margin:0;}
+  #header .meta{font-size:12px;color:var(--text-2);display:flex;gap:16px;align-items:center;}
+  #legend{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .leg-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text-2);}
+  .leg-dot{width:10px;height:10px;border-radius:3px;border:1.5px solid;}
+
+  #toolbar{padding:8px 20px;border-bottom:1px solid var(--border);background:var(--bg-2);display:flex;gap:12px;align-items:center;flex-shrink:0;}
+  #search{width:240px;padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;outline:none;}
+  #search:focus{border-color:var(--accent);}
+  #search::placeholder{color:var(--text-3);}
+  .tool-btn{padding:4px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text-2);font-size:11px;cursor:pointer;}
+  .tool-btn:hover{background:var(--bg-3);}
+
+  #tree-wrap{flex:1;overflow:auto;padding:40px 32px 120px 32px;}
+
+  /* === CARD: fixed 32px height === */
+  .card{
+    height:32px;padding:0 12px;border-radius:6px;border:2px solid;cursor:pointer;user-select:none;
+    white-space:nowrap;display:inline-flex;align-items:center;gap:5px;
+    transition:transform 0.12s,box-shadow 0.12s;flex-shrink:0;
+  }
+  .card:hover{transform:scale(1.05);box-shadow:0 3px 12px rgba(0,0,0,0.1);}
+  .card.gap{border-style:dashed;}
+  .card.ref{opacity:0.4;cursor:default;border-style:dotted;}
+  .card.ref:hover{transform:none;box-shadow:none;}
+  .card.hl{outline:3px solid var(--accent);outline-offset:3px;}
+  .card .nm{font-size:12px;font-weight:700;}
+  .card .tog{width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:var(--bg-3);color:var(--text-2);flex-shrink:0;line-height:1;}
+  .card .bdg{font-size:8px;padding:1px 5px;border-radius:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;}
+  .card .cnt{font-size:9px;color:var(--text-3);}
+
+  /* === TREE STRUCTURE ===
+     .node = horizontal flex: [card] [arm] [children-col]
+     .child-row = flex row: [rail-col] [child .node]
+     rail-col has: vertical line (full stretch) + horizontal line (fixed 16px from top = card center)
+  */
+  .node{display:flex;flex-direction:row;align-items:flex-start;}
+
+  .children-col{display:flex;flex-direction:column;}
+  .children-col.collapsed{display:none;}
+
+  /* Arm: horizontal line from parent card center to the children rail */
+  .arm{width:28px;height:32px;position:relative;flex-shrink:0;}
+  .arm::after{content:'';position:absolute;left:0;top:16px;width:28px;height:1.5px;background:var(--line);border-radius:1px;}
+
+  /* Each child row. First row sits flush with the top so its card center (16px)
+     lines up exactly with the parent's arm; other rows keep the 3px breathing room. */
+  .child-row{display:flex;flex-direction:row;align-items:flex-start;padding:3px 0;}
+  .child-row:first-child{padding-top:0;}
+
+  /* Rail column: vertical trunk + horizontal tick connecting to each card */
+  .rail{width:24px;align-self:stretch;position:relative;flex-shrink:0;}
+  /* Middle rows: straight trunk running the full row height, with a tick at the card center (19px = 3px padding + 16px) */
+  .rail::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1.5px;background:var(--line);border-radius:1px;}
+  .rail::after{content:'';position:absolute;left:0;top:19px;width:24px;height:1.5px;background:var(--line);border-radius:1px;}
+
+  /* First child: rounded elbow — trunk enters at the card center (16px, no top padding) and curves right into the tick */
+  .child-row:first-child>.rail::before{
+    top:16px;bottom:0;width:24px;height:auto;background:none;
+    border-left:1.5px solid var(--line);border-top:1.5px solid var(--line);
+    border-top-left-radius:8px;
+  }
+  .child-row:first-child>.rail::after{display:none;}
+
+  /* Last child: rounded elbow — trunk arrives from above and curves right into the tick (19px = 3px padding + 16px) */
+  .child-row:last-child>.rail::before{
+    top:0;bottom:auto;height:21px;width:24px;background:none;
+    border-left:1.5px solid var(--line);border-bottom:1.5px solid var(--line);
+    border-bottom-left-radius:8px;
+  }
+  .child-row:last-child>.rail::after{display:none;}
+
+  /* Only child: no trunk at all, just the tick to the card */
+  .child-row:only-child>.rail::before{display:none;border:none;background:none;}
+  .child-row:only-child>.rail::after{display:block;top:16px;}
+</style>
+
+<div id="app">
+<div id="header">
+  <div><h1>PulsePoint Platform — Interactive Navigation Tree</h1></div>
+  <div class="meta"><span id="stats"></span><div id="legend"></div></div>
+</div>
+<div id="toolbar">
+  <input id="search" type="text" placeholder="Search nodes...">
+  <button class="tool-btn" id="expand-all">Expand all</button>
+  <button class="tool-btn" id="collapse-all">Collapse all</button>
+</div>
+<div id="tree-wrap"></div>
+</div>
+
+<script>
+const GRAPH = {
+  "LoginPage":{"module":"auth","edges":[{"action":"Login","target":"AdminLanding"}]},
+  "AdminLanding":{"module":"admin","edges":[{"action":"Life link","target":"CampaignDashboard"},{"action":"Hamburger","target":"MegaMenu"}]},
+  "MegaMenu":{"module":"shared","edges":[{"action":"Campaigns","target":"CampaignDashboard"},{"action":"HCP365","target":"HCP365Dashboard"},{"action":"Studio","target":"StudioDashboard"},{"action":"Audience Manager","target":"AudienceManagerPage"},{"action":"Fabric","target":"FabricPage"},{"action":"Signal","target":"HCPLanding"},{"action":"Menu Links","target":"MegaMenuLinks"}]},
+  "MegaMenuLinks":{"module":"shared","edges":[{"action":"NPI Lists","target":"NPIListsPage"},{"action":"Domain & App Lists","target":"DomainAndAppListsPage"},{"action":"Keyword Lists","target":"KeywordListsPage"},{"action":"IP Address Lists","target":"IPAddressListsPage"},{"action":"Email Lists","target":"EmailListsPage"},{"action":"Deals","target":"DealsPage"},{"action":"Deal Groups","target":"DealGroupsPage"},{"action":"Curated Markets","target":"CuratedMarketsPage"},{"action":"Pixels","target":"PixelsPage"},{"action":"Tag Manager","target":"TagManagerPage"},{"action":"Personalization API","target":"PersonalizationAPIPage"},{"action":"IBIQ Dashboards","target":"IBIQDashboardsPage"},{"action":"MedscapeOne","target":"MedscapeOnePage"},{"action":"Medscape MedAffairs","target":"MedscapeOneMedAffairsPage"},{"action":"Medscape Campaign Perf","target":"MedscapeCampaignPerformancePage"},{"action":"HCP365 Analytics","target":"HCP365AnalyticsPage"},{"action":"Collections","target":"CollectionsPage"},{"action":"Smart Actions","target":"SmartActionsPage"},{"action":"HCP365 Data Mapping","target":"HCP365DataMappingPage"},{"action":"Destinations","target":"DestinationsPage"},{"action":"Analytics Chatbot","target":"AnalyticsChatbotPage"},{"action":"Targeting Templates","target":"TargetingTemplatesPage"},{"action":"Creative Library","target":"CreativeLibraryPage"},{"action":"Media Planner","target":"MediaPlannerPage"},{"action":"Campaign Settings","target":"CampaignSettingsPage"},{"action":"Campaign Reporting","target":"CampaignReportingSubmenu"},{"action":"HCP365 Reports","target":"HCP365ReportsSubmenu"},{"action":"Knowledge Base","target":"KnowledgeBasePage"},{"action":"Customer Support","target":"CustomerSupportPage"},{"action":"Audience Marketplace","target":"AudienceMarketplacePage"},{"action":"Administration","target":"AdministrationPage"}]},
+  "CampaignReportingSubmenu":{"module":"shared","edges":[{"action":"Run a Report","target":"RunReportPage"},{"action":"Report Templates","target":"ReportTemplatesPage"},{"action":"Scheduled Reports","target":"ScheduledReportsPage"},{"action":"Generated Reports","target":"GeneratedReportsPage"}]},
+  "HCP365ReportsSubmenu":{"module":"shared","framework_gap":true,"edges":[{"action":"Run","target":"HCP365ReportsRunPage"}]},
+  "CampaignDashboard":{"module":"life","landing":true,"has_mega_menu":true,"edges":[{"action":"Open campaign","target":"CampaignDetailsPage"}]},
+  "CampaignDetailsPage":{"module":"life","has_mega_menu":true,"edges":[{"action":"Line Item","target":"LineItemDetailsPage"},{"action":"Tactic","target":"TacticDetailsPage"}]},
+  "LineItemDetailsPage":{"module":"life","has_mega_menu":true,"edges":[{"action":"Tactic","target":"TacticDetailsPage"}]},
+  "TacticDetailsPage":{"module":"life","has_mega_menu":true,"edges":[{"action":"Settings","target":"TacticSettingsPage"}]},
+  "TacticSettingsPage":{"module":"life","has_mega_menu":true,"edges":[]},
+  "NPIListsPage":{"module":"life","has_mega_menu":true,"edges":[{"action":"Static","target":"NPIStaticListPage"},{"action":"Smart","target":"NPISmartListPage"},{"action":"Auto-Imported","target":"NPIAutoImportedListPage"},{"action":"Medscape","target":"NPIMedscapeListPage"},{"action":"Open existing","target":"NPIListDetailPage"}]},
+  "NPIStaticListPage":{"module":"life","edges":[]},
+  "NPISmartListPage":{"module":"life","edges":[]},
+  "NPIAutoImportedListPage":{"module":"life","edges":[]},
+  "NPIMedscapeListPage":{"module":"life","edges":[]},
+  "NPIListDetailPage":{"module":"life","edges":[]},
+  "PixelsPage":{"module":"life","has_mega_menu":true,"edges":[{"action":"Add Pixel","target":"PixelCreatePanel"}]},
+  "PixelCreatePanel":{"module":"life","edges":[]},
+  "TargetingTemplatesPage":{"module":"life","edges":[]},
+  "CreativeLibraryPage":{"module":"life","edges":[]},
+  "CuratedMarketsPage":{"module":"life","edges":[]},
+  "RunReportPage":{"module":"life","edges":[]},
+  "ReportTemplatesPage":{"module":"life","edges":[]},
+  "ScheduledReportsPage":{"module":"life","edges":[]},
+  "GeneratedReportsPage":{"module":"life","edges":[]},
+  "DomainAndAppListsPage":{"module":"life","edges":[]},
+  "KeywordListsPage":{"module":"life","edges":[]},
+  "IPAddressListsPage":{"module":"life","edges":[]},
+  "EmailListsPage":{"module":"life","edges":[]},
+  "DealsPage":{"module":"life","framework_gap":true,"edges":[]},
+  "DealGroupsPage":{"module":"life","framework_gap":true,"edges":[]},
+  "TagManagerPage":{"module":"life","framework_gap":true,"edges":[]},
+  "PersonalizationAPIPage":{"module":"life","framework_gap":true,"edges":[]},
+  "IBIQDashboardsPage":{"module":"life","framework_gap":true,"edges":[]},
+  "MedscapeOnePage":{"module":"life","framework_gap":true,"edges":[]},
+  "MedscapeOneMedAffairsPage":{"module":"life","framework_gap":true,"edges":[]},
+  "MedscapeCampaignPerformancePage":{"module":"life","framework_gap":true,"edges":[]},
+  "HCP365AnalyticsPage":{"module":"life","framework_gap":true,"edges":[]},
+  "CollectionsPage":{"module":"life","framework_gap":true,"edges":[]},
+  "HCP365DataMappingPage":{"module":"life","framework_gap":true,"edges":[]},
+  "DestinationsPage":{"module":"life","framework_gap":true,"edges":[]},
+  "AnalyticsChatbotPage":{"module":"life","framework_gap":true,"edges":[]},
+  "MediaPlannerPage":{"module":"life","framework_gap":true,"edges":[]},
+  "CampaignSettingsPage":{"module":"life","framework_gap":true,"edges":[]},
+  "MedscapeAffinityPage":{"module":"life","framework_gap":true,"edges":[]},
+  "HCP365ReportsRunPage":{"module":"life","framework_gap":true,"edges":[]},
+  "KnowledgeBasePage":{"module":"utility","framework_gap":true,"edges":[]},
+  "CustomerSupportPage":{"module":"utility","framework_gap":true,"edges":[]},
+  "AudienceMarketplacePage":{"module":"utility","framework_gap":true,"edges":[]},
+  "AdministrationPage":{"module":"admin","has_mega_menu":true,"edges":[{"action":"Segments","target":"AdminSegmentsPage"},{"action":"Accounts","target":"AccountsPage"},{"action":"Users","target":"AdminUsersPage"},{"action":"Advertisers","target":"AdvertiserListPage"},{"action":"Setup","target":"SetupPage"},{"action":"Lists","target":"AdminListsPage"},{"action":"Dashboards","target":"AdminDashboardsPage"}]},
+  "AdminSegmentsPage":{"module":"admin","framework_gap":true,"edges":[{"action":"AM Audiences","target":"AdminAMAudiencesPage"},{"action":"New Segment","target":"AdminNewSegmentPage"},{"action":"Bulk Segment","target":"AdminBulkSegmentCreationPage"},{"action":"Manage Providers","target":"AdminManageDataProvidersPage"}]},
+  "AdminAMAudiencesPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AdminNewSegmentPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AdminBulkSegmentCreationPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AdminManageDataProvidersPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AccountsPage":{"module":"admin","edges":[{"action":"Select account","target":"AccountDetailPage"},{"action":"New Account","target":"AdminNewAccountPage"},{"action":"New Group","target":"AdminNewAccountGroupPage"},{"action":"Life Fees","target":"AdminAccountLifeFeesPage"},{"action":"Smartlist Fees","target":"AdminAccountSmartlistFeesPage"},{"action":"Komodo Fees","target":"AdminAccountKomodoFeesPage"}]},
+  "AdminNewAccountPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AdminNewAccountGroupPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AdminAccountLifeFeesPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AdminAccountSmartlistFeesPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AdminAccountKomodoFeesPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AccountDetailPage":{"module":"admin","edges":[{"action":"Details","target":"AccountDetailsTab"},{"action":"Advertisers","target":"AccountAdvertiserPage"},{"action":"Reporting","target":"AccountReportingPage"},{"action":"Users","target":"AccountUserPage"},{"action":"Life Settings","target":"AccountLifeSettingsPanel"},{"action":"Studio Settings","target":"AccountStudioSettingsPanel"}]},
+  "AccountDetailsTab":{"module":"admin","edges":[]},
+  "AccountAdvertiserPage":{"module":"admin","edges":[{"action":"Global Signals","target":"AccountAdvertiserGlobalSignals"}]},
+  "AccountAdvertiserGlobalSignals":{"module":"admin","edges":[]},
+  "AccountReportingPage":{"module":"admin","edges":[{"action":"Add Destination","target":"AddDestinationPanel"}]},
+  "AddDestinationPanel":{"module":"admin","edges":[]},
+  "AccountUserPage":{"module":"admin","edges":[]},
+  "AccountLifeSettingsPanel":{"module":"admin","edges":[]},
+  "AccountStudioSettingsPanel":{"module":"admin","edges":[]},
+  "AdminUsersPage":{"module":"admin","framework_gap":true,"edges":[{"action":"External","target":"AdminExternalUsersPage"},{"action":"Internal","target":"AdminInternalUsersPage"},{"action":"New User","target":"AdminNewUserPage"}]},
+  "AdminExternalUsersPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AdminInternalUsersPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AdminNewUserPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AdvertiserListPage":{"module":"admin","edges":[{"action":"New Advertiser","target":"AdminNewAdvertiserPage"}]},
+  "AdminNewAdvertiserPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "SetupPage":{"module":"admin","edges":[{"action":"Alerts","target":"SetupAlertsPage"},{"action":"Loaders","target":"SetupLoadersPage"},{"action":"Curated Markets","target":"SetupCuratedMarketsPage"},{"action":"Marketplace","target":"SetupLifeMarketplaceDealsPage"},{"action":"Endemics","target":"SetupEndemicsPage"},{"action":"Global Fees","target":"SetupGlobalFeesPage"},{"action":"Adaptive Opt","target":"SetupAdaptiveOptimizationPage"},{"action":"Global Settings","target":"SetupGlobalSettingsPage"}]},
+  "SetupAlertsPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "SetupLoadersPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "SetupCuratedMarketsPage":{"module":"admin","edges":[]},
+  "SetupLifeMarketplaceDealsPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "SetupEndemicsPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "SetupGlobalFeesPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "SetupAdaptiveOptimizationPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "SetupGlobalSettingsPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AdminListsPage":{"module":"admin","framework_gap":true,"edges":[{"action":"Keywords","target":"AdminKeywordListsPage"},{"action":"Domain/App","target":"AdminDomainAppListsPage"},{"action":"NPI","target":"AdminNPIListsPage"}]},
+  "AdminKeywordListsPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AdminDomainAppListsPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AdminNPIListsPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AdminDashboardsPage":{"module":"admin","framework_gap":true,"edges":[{"action":"Life Looker","target":"AdminLifeLookerViewsPage"},{"action":"HCP365 Looker","target":"AdminHCP365LookerViewsPage"},{"action":"IBIQ","target":"AdminIBIQDashboardsPage"},{"action":"Medscape","target":"AdminMedscapeDashboardsPage"}]},
+  "AdminLifeLookerViewsPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AdminHCP365LookerViewsPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AdminIBIQDashboardsPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "AdminMedscapeDashboardsPage":{"module":"admin","framework_gap":true,"edges":[]},
+  "StudioDashboard":{"module":"studio","landing":true,"has_mega_menu":true,"edges":[{"action":"Create Workspace","target":"WorkspaceTypeSelection"},{"action":"Open workspace","target":"WorkspaceView"}]},
+  "WorkspaceTypeSelection":{"module":"studio","edges":[{"action":"HCP Explorer","target":"HCPExplorerWorkspace"},{"action":"Expansion","target":"ExpansionWorkspace"},{"action":"Brand Explorer","target":"BrandExplorerWorkspace"},{"action":"DTC Explorer","target":"DTCExplorerWorkspace"}]},
+  "WorkspaceView":{"module":"studio","edges":[]},
+  "HCPExplorerWorkspace":{"module":"studio","edges":[]},
+  "ExpansionWorkspace":{"module":"studio","edges":[]},
+  "BrandExplorerWorkspace":{"module":"studio","edges":[]},
+  "DTCExplorerWorkspace":{"module":"studio","edges":[]},
+  "HCPLanding":{"module":"hcp","landing":true,"has_mega_menu":true,"edges":[{"action":"Smart Actions","target":"SmartActionsPage"}]},
+  "SmartActionsPage":{"module":"hcp","edges":[{"action":"Add","target":"SmartActionCreatePage"}]},
+  "SmartActionCreatePage":{"module":"hcp","edges":[]},
+  "HCP365Dashboard":{"module":"hcp365","landing":true,"framework_gap":true,"edges":[]},
+  "AudienceManagerPage":{"module":"audience_manager","landing":true,"framework_gap":true,"edges":[]},
+  "FabricPage":{"module":"fabric","landing":true,"framework_gap":true,"edges":[]}
+};
+
+const MC={
+  life:{c:'--life',bg:'--life-bg',label:'Life'},
+  studio:{c:'--studio',bg:'--studio-bg',label:'Studio'},
+  hcp:{c:'--hcp',bg:'--hcp-bg',label:'HCP'},
+  hcp365:{c:'--hcp365',bg:'--hcp365-bg',label:'HCP365'},
+  admin:{c:'--admin',bg:'--admin-bg',label:'Admin'},
+  shared:{c:'--shared',bg:'--shared-bg',label:'Shared'},
+  auth:{c:'--auth',bg:'--auth-bg',label:'Auth'},
+  utility:{c:'--utility',bg:'--utility-bg',label:'Utility'},
+  audience_manager:{c:'--am',bg:'--am-bg',label:'AM'},
+  fabric:{c:'--fabric',bg:'--fabric-bg',label:'Fabric'},
+};
+
+const legend=document.getElementById('legend');
+for(const[k,v]of Object.entries(MC)){
+  const d=document.createElement('div');d.className='leg-item';
+  d.innerHTML=`<div class="leg-dot" style="background:var(${v.bg});border-color:var(${v.c});"></div>${v.label}`;
+  legend.appendChild(d);
+}
+let nc=0,ec=0,gc=0;
+for(const v of Object.values(GRAPH)){nc++;ec+=(v.edges||[]).length;if(v.framework_gap)gc++;}
+document.getElementById('stats').textContent=`${nc} nodes · ${ec} edges · ${gc} gaps`;
+
+const treeWrap=document.getElementById('tree-wrap');
+const placed=new Set();
+const allToggles=[];
+
+function sn(n){return n.replace(/Page$/,'').replace(/Panel$/,'').replace(/Tab$/,'').replace(/([a-z])([A-Z])/g,'$1 $2').replace(/([A-Z]+)([A-Z][a-z])/g,'$1 $2');}
+
+function build(name,ancestors){
+  const d=GRAPH[name];if(!d)return null;
+  const isRef=placed.has(name);
+  const m=MC[d.module]||MC.auth;
+  const edges=(d.edges||[]).filter(e=>GRAPH[e.target]&&!ancestors.has(e.target));
+  const hasKids=!isRef&&edges.length>0;
+
+  placed.add(name);
+
+  const node=document.createElement('div');node.className='node';node.dataset.name=name;
+
+  const card=document.createElement('div');
+  card.className='card'+(d.framework_gap?' gap':'')+(isRef?' ref':'');
+  card.style.borderColor=`var(${m.c})`;card.style.background=`var(${m.bg})`;
+
+  if(hasKids){const t=document.createElement('span');t.className='tog';t.textContent='+';card.appendChild(t);}
+
+  const nm=document.createElement('span');nm.className='nm';nm.style.color=`var(${m.c})`;nm.textContent=sn(name);
+  card.appendChild(nm);
+
+  if(d.framework_gap){const b=document.createElement('span');b.className='bdg';b.style.background='var(--admin-bg)';b.style.color='var(--admin)';b.textContent='GAP';card.appendChild(b);}
+  if(d.landing){const b=document.createElement('span');b.className='bdg';b.style.background=`var(${m.bg})`;b.style.color=`var(${m.c})`;b.style.border=`1px solid var(${m.c})`;b.textContent='LANDING';card.appendChild(b);}
+  if(hasKids){const c=document.createElement('span');c.className='cnt';c.textContent=edges.length;card.appendChild(c);}
+  if(isRef){const r=document.createElement('span');r.style.cssText='font-size:9px;color:var(--text-3)';r.textContent='↗';card.appendChild(r);}
+
+  node.appendChild(card);
+
+  if(hasKids){
+    const arm=document.createElement('div');arm.className='arm';
+    node.appendChild(arm);
+
+    const col=document.createElement('div');col.className='children-col collapsed';
+    const newAnc=new Set(ancestors);newAnc.add(name);
+
+    for(const e of edges){
+      const row=document.createElement('div');row.className='child-row';
+      const rail=document.createElement('div');rail.className='rail';
+      rail.title=e.action;
+      row.appendChild(rail);
+      const child=build(e.target,newAnc);
+      if(child)row.appendChild(child);
+      col.appendChild(row);
+    }
+    node.appendChild(col);
+
+    let open=false;
+    const toggle=()=>{
+      if(isRef)return;
+      open=!open;
+      col.classList.toggle('collapsed',!open);
+      const t=card.querySelector('.tog');if(t)t.textContent=open?'−':'+';
+    };
+    card.addEventListener('click',toggle);
+    allToggles.push({expand:()=>{if(!open)toggle();},collapse:()=>{if(open)toggle();}});
+  }
+  return node;
+}
+
+treeWrap.appendChild(build('LoginPage',new Set()));
+
+document.getElementById('expand-all').addEventListener('click',()=>allToggles.forEach(t=>t.expand()));
+document.getElementById('collapse-all').addEventListener('click',()=>{for(let i=allToggles.length-1;i>=0;i--)allToggles[i].collapse();});
+
+document.getElementById('search').addEventListener('input',function(){
+  const q=this.value.toLowerCase().trim();
+  treeWrap.querySelectorAll('.card').forEach(c=>c.classList.remove('hl'));
+  if(!q)return;
+  treeWrap.querySelectorAll('.card').forEach(c=>{
+    const n=c.closest('.node')?.dataset.name||'';
+    if(n.toLowerCase().includes(q)||sn(n).toLowerCase().includes(q)){
+      c.classList.add('hl');
+      let w=c.closest('.children-col');
+      while(w){
+        if(w.classList.contains('collapsed')){
+          w.classList.remove('collapsed');
+          const pt=w.closest('.node')?.querySelector(':scope>.card .tog');
+          if(pt)pt.textContent='−';
+        }
+        w=w.parentElement?.closest('.children-col');
+      }
+    }
+  });
+});
+</script>

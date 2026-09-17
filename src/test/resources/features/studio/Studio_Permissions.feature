@@ -1,5 +1,4 @@
 Feature: Enable Studio permissions for an account,advertiser and external users
-
   1. This Feature verifies the ability to enable Studio permissions for an account and external users.
   2. It includes scenarios for both internal users and external users, ensuring that the Studio permissions can be granted and verified correctly.
   3. It covers logging in, navigating through accounts, advertisers, and users, enabling permissions, and confirming that the external user can see the assigned Studio permissions in the workspace after logging in.
@@ -18,7 +17,7 @@ Feature: Enable Studio permissions for an account,advertiser and external users
     Then User should not be able to see the studio permission for that account
     Examples:
       | ACCOUNT_NAME |
-      | 100Plus      |
+      |      100Plus |
 
   @regression
   Scenario Outline: Enable Studio permissions for an External User
@@ -36,11 +35,10 @@ Feature: Enable Studio permissions for an account,advertiser and external users
     And "Studio" application is logged in successfully with Account "<ACCOUNT_NAME>"
     When User selects the workspace type "<WORKSPACE_TYPE>"
     And User selects "<ADVERTISER>" from the Studio Workspace Advertiser dropdown
-    And  External user selects the workspace from the dashboard
+    And External user selects the workspace from the dashboard
     Then External user should be able to see the "<STUDIO_PERMISSIONS>" permission in the workspace
     Examples:
       | USER_NAME | STUDIO_PERMISSIONS | ACCOUNT_NAME | ADVERTISER_PERMISSIONS | WORKSPACE_TYPE | ADVERTISER |
       | hmtdemo   | MOMENTS            | HMT Demo     | MOMENTS                | HCP Explorer   | Demo W2O   |
       | hmtdemo   | IB HEALTH          | HMT Demo     | IB HEALTH              | HCP Explorer   | Demo W2O   |
       | hmtdemo   | CLAIMS DATA        | HMT Demo     | CLAIMS DATA            | HCP Explorer   | Demo W2O   |
-

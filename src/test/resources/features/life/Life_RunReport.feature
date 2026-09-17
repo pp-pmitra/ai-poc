@@ -92,9 +92,8 @@ Feature: LIFE Regression - Run Report fields verification and report generation
       | TEMPLATE       | ADVERTISER     | CAMPAIGN_INITIALS | LINE_ITEM_INITIALS | TACTIC_INITIALS | CREATIVE_INITIALS | TIME_ZONE                       | REPORT_FORMATS                                                             |
       | AutoTemplate20 | 01- Advertiser | CreativeCampaign  | CreativeLine       | CreativeTactic  | Creative          | (GMT+05:30) India Standard Time | CSV, Excel, Pipe Delimited CSV, Pipe Delimited TXT, Tab Delimited TXT, TSV |
 
-
   @regression
-  Scenario Outline:  Validate One time report section's field verification and generate One time report using Template and Custom Dates option from Run Now
+  Scenario Outline: Validate One time report section's field verification and generate One time report using Template and Custom Dates option from Run Now
     When User navigates to run report from mega menu of the life application
     And Verify Run Report panel should be opened
     And User should be able to select template "<TEMPLATE>" from the dropdown
@@ -124,7 +123,7 @@ Feature: LIFE Regression - Run Report fields verification and report generation
       | AutoTemplate20 | 01- Advertiser | CreativeCampaign  | CreativeLine       | CreativeTactic  | Creative          | (GMT+05:30) India Standard Time | CSV, Excel, Pipe Delimited CSV, Pipe Delimited TXT, Tab Delimited TXT, TSV |
 
   @regression
-  Scenario Outline:  Validate One time report section's field verification and generate One time report using a Pick Dimensions/Metrics and Life Time option from Run Now
+  Scenario Outline: Validate One time report section's field verification and generate One time report using a Pick Dimensions/Metrics and Life Time option from Run Now
     When User navigates to run report from mega menu of the life application
     And Verify Run Report panel should be opened
     When User clicks on "Pick Dimensions/Metrics" link
@@ -150,7 +149,7 @@ Feature: LIFE Regression - Run Report fields verification and report generation
       | 01- Advertiser | CreativeCampaign  | CreativeLine       | CreativeTactic  | Creative          | Advertiser Name, Campaign Name, LineItem Name, Tactic Name | Impressions, Clicks | (GMT+05:30) India Standard Time |
 
   @regression
-  Scenario Outline:  Validate One time report section's field verification and generate One time report by entering Tactic and Flight option from Run Now
+  Scenario Outline: Validate One time report section's field verification and generate One time report by entering Tactic and Flight option from Run Now
     Then User searches the Campaign "<CAMPAIGN_NAME>", navigates to LineItem and fetches the flight details
     When User navigates to run report from mega menu of the life application
     And Verify Run Report panel should be opened
@@ -268,7 +267,7 @@ Feature: LIFE Regression - Run Report fields verification and report generation
     And Confirms that the report panel retains the entered data
     Examples:
       | TEMPLATE       | ADVERTISER     | CAMPAIGN_INITIALS | LINE_ITEM_INITIALS | TACTIC_INITIALS | CREATIVE_INITIALS | TIME_ZONE                       | DESTINATION_NAME | DESTINATION_TYPE | HOST                | PORT | SERVER_PATH                    |
-      | AutoTemplate20 | 01- Advertiser | CreativeCampaign  | CreativeLine       | CreativeTactic  | Creative          | (GMT+05:30) India Standard Time | Run_Destination_ | SFTP             | ma2-qa-automation01 | 22   | /home/NPIAutoImport/Automation |
+      | AutoTemplate20 | 01- Advertiser | CreativeCampaign  | CreativeLine       | CreativeTactic  | Creative          | (GMT+05:30) India Standard Time | Run_Destination_ | SFTP             | ma2-qa-automation01 |   22 | /home/NPIAutoImport/Automation |
 
   @regression
   Scenario Outline: Deletion of Custom Destination Row from the Admin Account

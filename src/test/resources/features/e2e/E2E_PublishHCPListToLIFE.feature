@@ -26,7 +26,7 @@ Feature: Create and Publish HCP Explorer Workspace in Studio and Verify in LIFE
       | FilterName      | Option                                                        |
       | NPI Age         | Below 25, 25 to 35, 35 to 45, 45 to 55, 55 to 65, 65 or Above |
       | NPI Gender      | Female, Male, Unknown                                         |
-      | Graduation Year | 1900-2025                                                     |
+      | Graduation Year |                                                     1900-2025 |
     And User clicks on Ok and closes the filter popup
     #3
     Then Verify that the applied filters are displayed correctly
@@ -108,7 +108,7 @@ Feature: Create and Publish HCP Explorer Workspace in Studio and Verify in LIFE
       | FilterName      | Option                                                        |
       | Patient Age     | Below 25, 25 to 35, 35 to 45, 45 to 55, 55 to 65, 65 or Above |
       | Patient Gender  | Female, Male, Unknown                                         |
-      | Graduation Year | 1900-2025                                                     |
+      | Graduation Year |                                                     1900-2025 |
     And User clicks on Ok and closes the filter popup
     And Fetch and verify that NPI details are refined
     And User hovers over the dashboard filters, selects the region with maximum NPIs and clicks on it

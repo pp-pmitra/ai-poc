@@ -58,7 +58,7 @@ Feature: LIFE Regression - Schedule Report fields verification and report genera
       | ScheduleReport | (GMT+05:30) India Standard Time |
 
   @regression
-  Scenario Outline:Verify fields under Email tab in Schedule Report's Delivery Method section
+  Scenario Outline: Verify fields under Email tab in Schedule Report's Delivery Method section
     And Verify that "Email" tab is selected as Delivery method by default
     When User clicks on "Email" tab as Delivery Method
     Then Verify Deliver to Users field is available
@@ -244,4 +244,4 @@ Feature: LIFE Regression - Schedule Report fields verification and report genera
     And Verify the report panel retains the entered data
     Examples:
       | REPORT_NAME    | TEMPLATE       | TACTIC_INITIALS | FREQUENCY_VALUE | TIME_ZONE                       | REPORTING_PERIOD | DESTINATION_NAME | DESTINATION_TYPE | HOST                | PORT | SERVER_PATH                    |
-      | ScheduleReport | AutoTemplate20 | CreativeTactic  | Monthly         | (GMT+05:30) India Standard Time | Month to Date    | Run_Destination_ | SFTP             | ma2-qa-automation01 | 22   | /home/NPIAutoImport/Automation |
+      | ScheduleReport | AutoTemplate20 | CreativeTactic  | Monthly         | (GMT+05:30) India Standard Time | Month to Date    | Run_Destination_ | SFTP             | ma2-qa-automation01 |   22 | /home/NPIAutoImport/Automation |

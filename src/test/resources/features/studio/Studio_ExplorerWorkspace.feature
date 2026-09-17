@@ -26,10 +26,9 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
       | FilterName           | Option                                                                                                                  |
       | NPI Age              | Below 25, 25 to 35, 35 to 45, 45 to 55, 55 to 65, 65 or Above                                                           |
       | NPI Gender           | Female, Male, Unknown                                                                                                   |
-      | Graduation Year      | 1900-2025                                                                                                               |
+      | Graduation Year      |                                                                                                               1900-2025 |
       | Net Worth            | Less than $50٫000, $100٫000 to $249٫999, $250٫000 to $499٫999, $500٫000 or above                                        |
       | Number of Patients   | Below 5, 6 to 20, 21 to 50, 51 to 100, 101 to 200, 201 to 300, 301 to 400, 401 to 500, 501 to 1000, 1001 or above       |
-      #| Reachable Audience   | Yes                                                                                                                     |
       | Patient Age          | Below 25, 25 to 35, 35 to 45, 45 to 55, 55 to 65, 65 or Above                                                           |
       | Patient Gender       | Female, Male, Unknown                                                                                                   |
       | Years Practiced      | Below 5, 5 to 10, 10 to 15, 15 to 20, 20 to 25, 25 to 30, 30 to 35, 35 to 40, 40 to 45, 45 to 50, 50 or Above           |
@@ -37,7 +36,6 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
       | State                | New                                                                                                                     |
       | Profession           | Physician                                                                                                               |
       | Specialty            | Foot & Ankle Surgery, Internal Medicine                                                                                 |
-      #| NPI List Name      | Large file test                                                                                                         |
       | Medical School       | New York College                                                                                                        |
       | Patient Facility     | Arizona Autism United٫ Inc.                                                                                             |
       | Prescriptions        | .Insulin Aspart Protamine And Insulin Aspart                                                                            |
@@ -46,6 +44,8 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
       | Procedures           | Abatacept injection                                                                                                     |
       | IAB                  | Travel                                                                                                                  |
       | MeSH                 | Anatomy                                                                                                                 |
+      #| Reachable Audience   | Yes                                                                                                                     |
+      #| NPI List Name      | Large file test                                                                                                         |
     And User clicks on Ok and closes the filter popup
     Then Verify that the applied filters are displayed correctly
     And User saves the "HCP Explorer" workspace
@@ -96,10 +96,9 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
       | FilterName         | Option                                                                                                                  |
       | NPI Age            | Below 25, 25 to 35, 35 to 45, 45 to 55, 55 to 65, 65 or Above                                                           |
       | NPI Gender         | Female, Male, Unknown                                                                                                   |
-      | Graduation Year    | 1900-2025                                                                                                               |
+      | Graduation Year    |                                                                                                               1900-2025 |
       | Net Worth          | Less than $50٫000, $100٫000 to $249٫999, $250٫000 to $499٫999, $500٫000 or above                                        |
       | Number of Patients | Below 5, 6 to 20, 21 to 50, 51 to 100, 101 to 200, 201 to 300, 301 to 400, 401 to 500, 501 to 1000, 1001 or above       |
-      #| Reachable Audience | Yes                                                                                                                     |
       | Patient Age        | Below 25, 25 to 35, 35 to 45, 45 to 55, 55 to 65, 65 or Above                                                           |
       | Patient Gender     | Female, Male, Unknown                                                                                                   |
       | Years Practiced    | Below 5, 5 to 10, 10 to 15, 15 to 20, 20 to 25, 25 to 30, 30 to 35, 35 to 40, 40 to 45, 45 to 50, 50 or Above           |
@@ -107,8 +106,9 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
       | State              | New                                                                                                                     |
       | Profession         | Physician                                                                                                               |
       | Specialty          | Foot & Ankle Surgery, Internal Medicine                                                                                 |
-      #| NPI List Name      | Large file test                                                                                                         |
       | Medical School     | New York College                                                                                                        |
+      #| Reachable Audience | Yes                                                                                                                     |
+      #| NPI List Name      | Large file test                                                                                                         |
     And Navigate to workspace dashboard
     And User searches the workspace created to perform Actions from More menu
     And User selects the "Delete" option by clicking More Actions menu
@@ -209,14 +209,14 @@ Feature: HCP Explorer Workspace creation in Studio using filters, AI Configurato
     And Verify that advertiser field is disabled and displayed in "rgba(34, 34, 34, 0.55)" after saving the workspace
     And User applies "Clinical" filter, selects filter options as below and verifies the clinical recency filter is updated correctly
       | FilterName           | Option                                                  | Recency  |
-      | Prescriptions        | 100％ Mineral Sunscreen                                  | 1 Month  |
-      | Prescribing behavior | 100％ Mineral Broad Spectrum Sunscreen Spf 30            | 3 Months |
+      | Prescriptions        |                                 100％ Mineral Sunscreen |  1 Month |
+      | Prescribing behavior |           100％ Mineral Broad Spectrum Sunscreen Spf 30 | 3 Months |
       | Diagnoses            | Maternal care for face٫ brow and chin presentation٫ oth | 6 Months |
-      | Procedures           | Removal of face wrinkles                                | 1 Year   |
+      | Procedures           | Removal of face wrinkles                                |   1 Year |
     And User applies "Contextual" filter, selects filter options as below and verifies the clinical recency filter is updated correctly
       | FilterName | Option               | Recency |
-      | IAB        | Arts & Entertainment | 1 Day   |
-      | MeSH       | Anatomy              | 1 Week  |
+      | IAB        | Arts & Entertainment |   1 Day |
+      | MeSH       | Anatomy              |  1 Week |
     And User saves the "HCP Explorer" workspace
     Then Verify the "HCP Explorer" Workspace is saved
     And Navigate to workspace dashboard

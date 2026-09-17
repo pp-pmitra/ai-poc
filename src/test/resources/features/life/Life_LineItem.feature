@@ -34,7 +34,7 @@ Feature: LIFE Regression - Line Item Management
     And Verify error message if user fails to add impression cap value when the checkboxes are selected and tries to save the line item page
     Examples:
       | LINE_ITEM  | BUDGET |
-      | Line_Item_ | 200    |
+      | Line_Item_ |    200 |
 
   @regression
   Scenario Outline: Add multiple flights to a line item and verify Flights tab after deleting some entries
@@ -49,7 +49,7 @@ Feature: LIFE Regression - Line Item Management
     Then User should see the remaining flights listed under the Flights section
     Examples:
       | LINE_ITEM  | BUDGET | NUMBER_OF_FLIGHTS |
-      | Line_Item_ | 200    | 3                 |
+      | Line_Item_ |    200 |                 3 |
 
   @regression
   Scenario Outline: Add sequential flights to a line item and verify Flights tab after deleting some entries
@@ -66,7 +66,7 @@ Feature: LIFE Regression - Line Item Management
     Then User should see the remaining flights listed under the Flights section
     Examples:
       | LINE_ITEM  | BUDGET | NUMBER_OF_MONTHS |
-      | Line_Item_ | 200    | 4                |
+      | Line_Item_ |    200 |                4 |
 
   @regression
   Scenario Outline: Perform create, modify, duplicate, delete, and toggle operations on line items using Bulk Edit Mode and verify data integrity after duplication
@@ -121,7 +121,7 @@ Feature: LIFE Regression - Line Item Management
     Then Verify that the line item details are updated successfully and reflected on the Line Item page
     Examples:
       | LINE_NAME | LINE_BUDGET | UPDATED_LINE_BUDGET |
-      | Line      | 500         | 505.00              |
+      | Line      |         500 |              505.00 |
 
   @regression
   Scenario Outline: Create new custom field in Line Item details page and verify its availability in all the new and existing line items under all Campaigns of the selected account
@@ -138,4 +138,18 @@ Feature: LIFE Regression - Line Item Management
     Then User deletes the custom field and verify its removed from new "line item"
     Examples:
       | LINE_ITEM  | CUSTOM_NAME  | LINE_BUDGET |
-      | Line_Item_ | Custom_Field | 50          |
+      | Line_Item_ | Custom_Field |          50 |
+
+  # Source: ET-25081
+  @todo
+  Scenario: Create a line item using the new Open AI line item type
+    And User clicks on Create Campaign
+    When User enters the campaign details as "01- Advertiser" "Auto" "Regular" "20000" and saves the campaign
+    Then Verify campaign details are saved and user is navigated to the line item page
+  # Framework Gap: Requires an "Open AI" entry in the line item type list in LifeSteps.java / pages/life (new line item type, not yet implemented)
+    When User opens the line item type list and selects "Open AI"
+    And User enters the line item name "OAI Test LI 01", a flight of 2026-10-01 to 2026-10-31 and a flight budget of 3000
+    And User saves the line item
+    Then The line item is saved with type Open AI and reloads showing type Open AI after the page is refreshed
+  # Framework Gap: Requires a non-Open-AI line item regression check confirming Even is unaffected outside this line item type
+    Then Verify a non-Open-AI line item is unaffected by the new Even budget distribution option
