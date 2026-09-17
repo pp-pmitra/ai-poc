@@ -139,3 +139,17 @@ Feature: LIFE Regression - Line Item Management
     Examples:
       | LINE_ITEM  | CUSTOM_NAME  | LINE_BUDGET |
       | Line_Item_ | Custom_Field |          50 |
+
+  # Source: ET-25081
+  @todo
+  Scenario: Create a line item using the new Open AI line item type
+    And User clicks on Create Campaign
+    When User enters the campaign details as "01- Advertiser" "Auto" "Regular" "20000" and saves the campaign
+    Then Verify campaign details are saved and user is navigated to the line item page
+  # Framework Gap: Requires an "Open AI" entry in the line item type list in LifeSteps.java / pages/life (new line item type, not yet implemented)
+    When User opens the line item type list and selects "Open AI"
+    And User enters the line item name "OAI Test LI 01", a flight of 2026-10-01 to 2026-10-31 and a flight budget of 3000
+    And User saves the line item
+    Then The line item is saved with type Open AI and reloads showing type Open AI after the page is refreshed
+  # Framework Gap: Requires a non-Open-AI line item regression check confirming Even is unaffected outside this line item type
+    Then Verify a non-Open-AI line item is unaffected by the new Even budget distribution option

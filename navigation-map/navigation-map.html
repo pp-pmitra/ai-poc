@@ -1,0 +1,797 @@
+<!--
+  PulsePoint Platform — Navigation Map (Single Source of Truth)
+  =============================================================
+  This file serves TWO purposes:
+  1. VISUAL: Open in a browser to see the interactive node diagram
+  2. DATA:  Skills (iDesign, iAutomate, scenario-dev) read the JSON
+           block below (id="nav-graph") for path-finding
+
+  HOW SKILLS USE THIS FILE:
+    Read this file → extract JSON between <script id="nav-graph"> tags
+    → parse it → trace paths between nodes → look up implementations
+    from src/main/java/pages/ and src/test/java/stepdefinitions/
+
+  STRUCTURE:
+    Each key is a node (page/state). Fields:
+      module         = which platform module (life, studio, hcp, admin, etc.)
+      has_mega_menu  = true if hamburger menu is accessible from this page
+      framework_gap  = true if no page object / step definition exists yet
+      landing        = true if this is the module's default entry page
+      note           = optional context about the page
+      edges[]        = navigation actions FROM this node
+        action       = human-readable description of the action
+        target       = destination node name
+
+  PATH-FINDING:
+    1. Check if A has a direct edge to B → use it (one hop)
+    2. If not, and A has_mega_menu → go A → MegaMenu → B (two hops)
+    3. If B is nested → follow intermediate nodes: A → MegaMenu → Parent → B
+-->
+
+<script type="application/json" id="nav-graph">
+{
+  "LoginPage": {
+    "module": "auth",
+    "edges": [
+      {"action": "Enter credentials and click Login", "target": "AdminLanding"}
+    ]
+  },
+  "AdminLanding": {
+    "module": "admin",
+    "edges": [
+      {"action": "Click Buying Platform / Life link", "target": "CampaignDashboard"},
+      {"action": "Click Signal link", "target": "HCPLanding"}
+    ]
+  },
+
+  "MegaMenu": {
+    "module": "shared",
+    "note": "Opened by clicking the hamburger icon. Left sidebar switches modules; center/right area has categorized page links.",
+    "edges": [
+      {"action": "Click Campaigns", "target": "CampaignDashboard"},
+      {"action": "Click HCP365", "target": "HCP365Dashboard"},
+      {"action": "Click Studio", "target": "StudioDashboard"},
+      {"action": "Click Audience Manager", "target": "AudienceManagerPage"},
+      {"action": "Click Fabric", "target": "FabricPage"},
+      {"action": "Click Signal", "target": "HCPLanding"},
+      {"action": "Click NPI Lists", "target": "NPIListsPage"},
+      {"action": "Click Domain & App Lists", "target": "DomainAndAppListsPage"},
+      {"action": "Click Keyword Lists", "target": "KeywordListsPage"},
+      {"action": "Click IP Address Lists", "target": "IPAddressListsPage"},
+      {"action": "Click Email Lists", "target": "EmailListsPage"},
+      {"action": "Click Deals", "target": "DealsPage"},
+      {"action": "Click Deal Groups", "target": "DealGroupsPage"},
+      {"action": "Click Curated Markets", "target": "CuratedMarketsPage"},
+      {"action": "Click Pixels", "target": "PixelsPage"},
+      {"action": "Click Tag Manager", "target": "TagManagerPage"},
+      {"action": "Click Personalization API", "target": "PersonalizationAPIPage"},
+      {"action": "Click IBIQ Dashboards", "target": "IBIQDashboardsPage"},
+      {"action": "Click MedscapeOne", "target": "MedscapeOnePage"},
+      {"action": "Click Medscape One MedAffairs", "target": "MedscapeOneMedAffairsPage"},
+      {"action": "Click Medscape Campaign Performance", "target": "MedscapeCampaignPerformancePage"},
+      {"action": "Click HCP365 Analytics", "target": "HCP365AnalyticsPage"},
+      {"action": "Click Collections", "target": "CollectionsPage"},
+      {"action": "Click Smart Actions", "target": "SmartActionsPage"},
+      {"action": "Click HCP365 Data Mapping", "target": "HCP365DataMappingPage"},
+      {"action": "Click Destinations", "target": "DestinationsPage"},
+      {"action": "Click Analytics Chatbot", "target": "AnalyticsChatbotPage"},
+      {"action": "Click Targeting Templates", "target": "TargetingTemplatesPage"},
+      {"action": "Click Creative Library", "target": "CreativeLibraryPage"},
+      {"action": "Click Media Planner", "target": "MediaPlannerPage"},
+      {"action": "Click Campaign Settings", "target": "CampaignSettingsPage"},
+      {"action": "Expand Campaign Reporting", "target": "CampaignReportingSubmenu"},
+      {"action": "Click HCP365 Reports (expand)", "target": "HCP365ReportsSubmenu"},
+      {"action": "Click Knowledge Base", "target": "KnowledgeBasePage"},
+      {"action": "Click Customer Support", "target": "CustomerSupportPage"},
+      {"action": "Click Audience Marketplace", "target": "AudienceMarketplacePage"},
+      {"action": "Click Administration", "target": "AdministrationPage"}
+    ]
+  },
+
+  "CampaignReportingSubmenu": {
+    "module": "shared",
+    "edges": [
+      {"action": "Click Run a Report", "target": "RunReportPage"},
+      {"action": "Click Report Templates", "target": "ReportTemplatesPage"},
+      {"action": "Click Scheduled Reports", "target": "ScheduledReportsPage"},
+      {"action": "Click Generated Reports", "target": "GeneratedReportsPage"}
+    ]
+  },
+  "HCP365ReportsSubmenu": {
+    "module": "shared",
+    "framework_gap": true,
+    "edges": [
+      {"action": "Click Run", "target": "HCP365ReportsRunPage"}
+    ]
+  },
+
+  "CampaignDashboard": {
+    "module": "life",
+    "landing": true,
+    "has_mega_menu": true,
+    "edges": [
+      {"action": "Search and open a campaign", "target": "CampaignDetailsPage"}
+    ]
+  },
+  "CampaignDetailsPage": {
+    "module": "life",
+    "has_mega_menu": true,
+    "edges": [
+      {"action": "Click Line Item tile", "target": "LineItemDetailsPage"},
+      {"action": "Navigate to Tactic from dashboard view", "target": "TacticDetailsPage"},
+      {"action": "Click breadcrumb to go back to dashboard", "target": "CampaignDashboard"}
+    ]
+  },
+  "LineItemDetailsPage": {
+    "module": "life",
+    "has_mega_menu": true,
+    "note": "Tabs: Details, Overview, Flights, Conversions, Media Insights, Tactics",
+    "edges": [
+      {"action": "Click Tactic tile", "target": "TacticDetailsPage"},
+      {"action": "Click breadcrumb back to dashboard", "target": "CampaignDashboard"}
+    ]
+  },
+  "TacticDetailsPage": {
+    "module": "life",
+    "has_mega_menu": true,
+    "edges": [
+      {"action": "Click Settings tab", "target": "TacticSettingsPage"},
+      {"action": "Click campaign tile to go back to dashboard", "target": "CampaignDashboard"}
+    ]
+  },
+  "TacticSettingsPage": {
+    "module": "life",
+    "has_mega_menu": true,
+    "note": "Channel selection, targeting rules, PMP deals",
+    "edges": [
+      {"action": "Back to dashboard", "target": "CampaignDashboard"}
+    ]
+  },
+
+  "NPIListsPage": {
+    "module": "life",
+    "has_mega_menu": true,
+    "edges": [
+      {"action": "Create New List > Static List", "target": "NPIStaticListPage"},
+      {"action": "Create New List > Smart List", "target": "NPISmartListPage"},
+      {"action": "Create New List > Auto-Imported List", "target": "NPIAutoImportedListPage"},
+      {"action": "Create New List > Medscape List", "target": "NPIMedscapeListPage"},
+      {"action": "Search and open an existing list", "target": "NPIListDetailPage"}
+    ]
+  },
+  "NPIStaticListPage": {"module": "life", "has_mega_menu": true, "edges": [{"action": "Back to NPI Lists", "target": "NPIListsPage"}]},
+  "NPISmartListPage": {"module": "life", "has_mega_menu": true, "edges": [{"action": "Back to NPI Lists", "target": "NPIListsPage"}]},
+  "NPIAutoImportedListPage": {"module": "life", "has_mega_menu": true, "edges": [{"action": "Back to NPI Lists", "target": "NPIListsPage"}]},
+  "NPIMedscapeListPage": {"module": "life", "has_mega_menu": true, "edges": [{"action": "Back to NPI Lists", "target": "NPIListsPage"}]},
+  "NPIListDetailPage": {"module": "life", "has_mega_menu": true, "edges": [{"action": "Back to NPI Lists", "target": "NPIListsPage"}]},
+  "NPIAttributesListPage": {"module": "life", "has_mega_menu": true, "edges": [{"action": "Back to NPI Lists", "target": "NPIListsPage"}]},
+
+  "PixelsPage": {
+    "module": "life",
+    "has_mega_menu": true,
+    "note": "Tabs: Retargeting, Smart, Conversion",
+    "edges": [{"action": "Click Add Pixel", "target": "PixelCreatePanel"}]
+  },
+  "PixelCreatePanel": {"module": "life", "has_mega_menu": true, "edges": []},
+  "TargetingTemplatesPage": {"module": "life", "has_mega_menu": true, "edges": []},
+  "CreativeLibraryPage": {"module": "life", "has_mega_menu": true, "edges": []},
+  "CuratedMarketsPage": {"module": "life", "has_mega_menu": true, "edges": []},
+  "RunReportPage": {"module": "life", "has_mega_menu": true, "edges": []},
+  "ReportTemplatesPage": {"module": "life", "has_mega_menu": true, "edges": []},
+  "ScheduledReportsPage": {"module": "life", "has_mega_menu": true, "edges": []},
+  "GeneratedReportsPage": {"module": "life", "has_mega_menu": true, "edges": []},
+  "PMPDealsPage": {"module": "life", "has_mega_menu": true, "note": "Accessed from Tactic Settings. Different from standalone DealsPage.", "edges": []},
+  "DomainAndAppListsPage": {"module": "life", "has_mega_menu": true, "edges": []},
+  "KeywordListsPage": {"module": "life", "has_mega_menu": true, "edges": []},
+  "IPAddressListsPage": {"module": "life", "has_mega_menu": true, "edges": []},
+  "EmailListsPage": {"module": "life", "has_mega_menu": true, "edges": []},
+
+  "DealsPage": {"module": "life", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "DealGroupsPage": {"module": "life", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "TagManagerPage": {"module": "life", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "PersonalizationAPIPage": {"module": "life", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "IBIQDashboardsPage": {"module": "life", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "MedscapeOnePage": {"module": "life", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "MedscapeOneMedAffairsPage": {"module": "life", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "MedscapeCampaignPerformancePage": {"module": "life", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "HCP365AnalyticsPage": {"module": "life", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "CollectionsPage": {"module": "life", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "HCP365DataMappingPage": {"module": "life", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "DestinationsPage": {"module": "life", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "AnalyticsChatbotPage": {"module": "life", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "MediaPlannerPage": {"module": "life", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "CampaignSettingsPage": {"module": "life", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "MedscapeAffinityPage": {"module": "life", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "HCP365ReportsRunPage": {"module": "life", "has_mega_menu": true, "framework_gap": true, "edges": []},
+
+  "KnowledgeBasePage": {"module": "utility", "framework_gap": true, "edges": []},
+  "CustomerSupportPage": {"module": "utility", "framework_gap": true, "edges": []},
+  "AudienceMarketplacePage": {"module": "utility", "framework_gap": true, "edges": []},
+
+  "AdministrationPage": {
+    "module": "admin",
+    "has_mega_menu": true,
+    "note": "Seven top-level tabs: Segments, Accounts, Users, Advertisers, Setup, Lists, Dashboards.",
+    "edges": [
+      {"action": "Click Segments tab", "target": "AdminSegmentsPage"},
+      {"action": "Click Accounts tab", "target": "AccountsPage"},
+      {"action": "Click Users tab", "target": "AdminUsersPage"},
+      {"action": "Click Advertisers tab", "target": "AdvertiserListPage"},
+      {"action": "Click Setup tab", "target": "SetupPage"},
+      {"action": "Click Lists tab", "target": "AdminListsPage"},
+      {"action": "Click Dashboards tab", "target": "AdminDashboardsPage"},
+      {"action": "Click PulsePoint logo to go back to Life", "target": "CampaignDashboard"}
+    ]
+  },
+
+  "AdminSegmentsPage": {
+    "module": "admin", "has_mega_menu": true, "framework_gap": true,
+    "note": "Sub-tabs: Segments, AM Audiences. Actions: New Segment, Bulk Segment Creation, Manage Data Providers.",
+    "edges": [
+      {"action": "Click AM Audiences sub-tab", "target": "AdminAMAudiencesPage"},
+      {"action": "Click New Segment", "target": "AdminNewSegmentPage"},
+      {"action": "Click Bulk Segment Creation", "target": "AdminBulkSegmentCreationPage"},
+      {"action": "Click Manage Data Providers", "target": "AdminManageDataProvidersPage"}
+    ]
+  },
+  "AdminAMAudiencesPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "AdminNewSegmentPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "AdminBulkSegmentCreationPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "AdminManageDataProvidersPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+
+  "AccountsPage": {
+    "module": "admin", "has_mega_menu": true,
+    "note": "Sub-tabs: Details, Life Fees, Smartlist Fees, Komodo Fees. Actions: New Account, New Account Group, Export.",
+    "edges": [
+      {"action": "Search and select an account", "target": "AccountDetailPage"},
+      {"action": "Click New Account", "target": "AdminNewAccountPage"},
+      {"action": "Click New Account Group", "target": "AdminNewAccountGroupPage"},
+      {"action": "Click Life Fees sub-tab", "target": "AdminAccountLifeFeesPage"},
+      {"action": "Click Smartlist Fees sub-tab", "target": "AdminAccountSmartlistFeesPage"},
+      {"action": "Click Komodo Fees sub-tab", "target": "AdminAccountKomodoFeesPage"}
+    ]
+  },
+  "AdminNewAccountPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "AdminNewAccountGroupPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "AdminAccountLifeFeesPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "AdminAccountSmartlistFeesPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "AdminAccountKomodoFeesPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+
+  "AccountDetailPage": {
+    "module": "admin", "has_mega_menu": true,
+    "note": "Four sub-tabs: Details, Advertisers, Reporting, Users.",
+    "edges": [
+      {"action": "Click Details tab", "target": "AccountDetailsTab"},
+      {"action": "Click Advertisers sub-tab (account-level)", "target": "AccountAdvertiserPage"},
+      {"action": "Click Reporting tab", "target": "AccountReportingPage"},
+      {"action": "Click Users tab", "target": "AccountUserPage"},
+      {"action": "Open Life Settings panel", "target": "AccountLifeSettingsPanel"},
+      {"action": "Open Studio Settings panel", "target": "AccountStudioSettingsPanel"},
+      {"action": "Back to Life", "target": "CampaignDashboard"}
+    ]
+  },
+  "AccountDetailsTab": {"module": "admin", "has_mega_menu": true, "edges": []},
+  "AccountAdvertiserPage": {"module": "admin", "has_mega_menu": true, "edges": [{"action": "Click Global Signals sub-tab", "target": "AccountAdvertiserGlobalSignals"}]},
+  "AccountAdvertiserGlobalSignals": {"module": "admin", "has_mega_menu": true, "edges": []},
+  "AccountReportingPage": {"module": "admin", "has_mega_menu": true, "edges": [{"action": "Click Add Destination", "target": "AddDestinationPanel"}]},
+  "AddDestinationPanel": {"module": "admin", "has_mega_menu": true, "edges": []},
+  "AccountUserPage": {"module": "admin", "has_mega_menu": true, "edges": []},
+  "AccountLifeSettingsPanel": {"module": "admin", "has_mega_menu": true, "edges": []},
+  "AccountStudioSettingsPanel": {"module": "admin", "has_mega_menu": true, "edges": []},
+
+  "AdminUsersPage": {
+    "module": "admin", "has_mega_menu": true, "framework_gap": true,
+    "note": "Sub-tabs: External Users, Internal Users. Action: New User.",
+    "edges": [
+      {"action": "Click External Users sub-tab", "target": "AdminExternalUsersPage"},
+      {"action": "Click Internal Users sub-tab", "target": "AdminInternalUsersPage"},
+      {"action": "Click New User", "target": "AdminNewUserPage"}
+    ]
+  },
+  "AdminExternalUsersPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "AdminInternalUsersPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "AdminNewUserPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+
+  "AdvertiserListPage": {
+    "module": "admin", "has_mega_menu": true,
+    "note": "Top-level Advertiser list. Action: New Advertiser.",
+    "edges": [
+      {"action": "Click New Advertiser", "target": "AdminNewAdvertiserPage"},
+      {"action": "Back to Accounts tab", "target": "AccountsPage"}
+    ]
+  },
+  "AdminNewAdvertiserPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+
+  "SetupPage": {
+    "module": "admin", "has_mega_menu": true,
+    "note": "Eight sub-tabs: Alerts, Loaders, Curated Markets, Life Marketplace Deals, Endemics, Global Fees, Adaptive Optimization, Global Settings.",
+    "edges": [
+      {"action": "Click Alerts sub-tab", "target": "SetupAlertsPage"},
+      {"action": "Click Loaders sub-tab", "target": "SetupLoadersPage"},
+      {"action": "Click Curated Markets sub-tab", "target": "SetupCuratedMarketsPage"},
+      {"action": "Click Life Marketplace Deals sub-tab", "target": "SetupLifeMarketplaceDealsPage"},
+      {"action": "Click Endemics sub-tab", "target": "SetupEndemicsPage"},
+      {"action": "Click Global Fees sub-tab", "target": "SetupGlobalFeesPage"},
+      {"action": "Click Adaptive Optimization sub-tab", "target": "SetupAdaptiveOptimizationPage"},
+      {"action": "Click Global Settings sub-tab", "target": "SetupGlobalSettingsPage"},
+      {"action": "Back to Life", "target": "CampaignDashboard"}
+    ]
+  },
+  "SetupAlertsPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "note": "Alert types: Life Alert, HCP365 Alert, Studio Alert.", "edges": []},
+  "SetupLoadersPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "SetupCuratedMarketsPage": {"module": "admin", "has_mega_menu": true, "edges": []},
+  "SetupLifeMarketplaceDealsPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "SetupEndemicsPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "SetupGlobalFeesPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "SetupAdaptiveOptimizationPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "SetupGlobalSettingsPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+
+  "AdminListsPage": {
+    "module": "admin", "has_mega_menu": true, "framework_gap": true,
+    "note": "Shared Lists management. Sub-tabs: Keyword Lists, Domain/App Lists, NPI Lists.",
+    "edges": [
+      {"action": "Click Keyword Lists sub-tab", "target": "AdminKeywordListsPage"},
+      {"action": "Click Domain/App Lists sub-tab", "target": "AdminDomainAppListsPage"},
+      {"action": "Click NPI Lists sub-tab", "target": "AdminNPIListsPage"}
+    ]
+  },
+  "AdminKeywordListsPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "AdminDomainAppListsPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "AdminNPIListsPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+
+  "AdminDashboardsPage": {
+    "module": "admin", "has_mega_menu": true, "framework_gap": true,
+    "note": "Looker dashboard configuration. Sub-tabs: Life Looker Views, HCP365 Looker Views, IBIQ Dashboards, Medscape.",
+    "edges": [
+      {"action": "Click Life Looker Views sub-tab", "target": "AdminLifeLookerViewsPage"},
+      {"action": "Click HCP365 Looker Views sub-tab", "target": "AdminHCP365LookerViewsPage"},
+      {"action": "Click IBIQ Dashboards sub-tab", "target": "AdminIBIQDashboardsPage"},
+      {"action": "Click Medscape sub-tab", "target": "AdminMedscapeDashboardsPage"}
+    ]
+  },
+  "AdminLifeLookerViewsPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "AdminHCP365LookerViewsPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "AdminIBIQDashboardsPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "AdminMedscapeDashboardsPage": {"module": "admin", "has_mega_menu": true, "framework_gap": true, "edges": []},
+
+  "StudioDashboard": {
+    "module": "studio", "landing": true, "has_mega_menu": true,
+    "note": "Workspace list. Rendered inside an iframe.",
+    "edges": [
+      {"action": "Click Create New Workspace", "target": "WorkspaceTypeSelection"},
+      {"action": "Click on a workspace by name", "target": "WorkspaceView"}
+    ]
+  },
+  "WorkspaceTypeSelection": {
+    "module": "studio", "has_mega_menu": true,
+    "edges": [
+      {"action": "Select HCP Explorer", "target": "HCPExplorerWorkspace"},
+      {"action": "Select HCP Audience Expansion", "target": "ExpansionWorkspace"},
+      {"action": "Select Brand Explorer", "target": "BrandExplorerWorkspace"},
+      {"action": "Select DTC Explorer", "target": "DTCExplorerWorkspace"},
+      {"action": "Click back arrow", "target": "StudioDashboard"}
+    ]
+  },
+  "WorkspaceView": {"module": "studio", "has_mega_menu": true, "edges": [{"action": "Click back arrow and confirm exit", "target": "StudioDashboard"}]},
+  "HCPExplorerWorkspace": {"module": "studio", "has_mega_menu": true, "edges": []},
+  "ExpansionWorkspace": {"module": "studio", "has_mega_menu": true, "edges": []},
+  "BrandExplorerWorkspace": {"module": "studio", "has_mega_menu": true, "edges": []},
+  "DTCExplorerWorkspace": {"module": "studio", "has_mega_menu": true, "edges": []},
+
+  "HCPLanding": {"module": "hcp", "landing": true, "has_mega_menu": true, "edges": []},
+  "SmartActionsPage": {
+    "module": "hcp", "has_mega_menu": true,
+    "note": "Tabs: Audience (NPI Lists), Action, Response",
+    "edges": [{"action": "Click Add Smart Action", "target": "SmartActionCreatePage"}]
+  },
+  "SmartActionCreatePage": {"module": "hcp", "has_mega_menu": true, "edges": []},
+
+  "HCP365Dashboard": {"module": "hcp365", "landing": true, "has_mega_menu": true, "framework_gap": true, "note": "Tabs: Overview, Search, Media, Email, Social", "edges": []},
+  "AudienceManagerPage": {"module": "audience_manager", "landing": true, "has_mega_menu": true, "framework_gap": true, "edges": []},
+  "FabricPage": {"module": "fabric", "landing": true, "has_mega_menu": true, "framework_gap": true, "edges": []}
+}
+</script>
+
+<title>PulsePoint Navigation — Full Node Diagram</title>
+<style>
+  :root {
+    --bg: #ffffff; --bg-2: #f6f7f9; --bg-3: #ebedf0; --text: #1a1a2e; --text-2: #6b7280; --text-3:#9ca3af;
+    --border: #dde1e8; --accent: #2563eb; --accent-bg: #eff4ff;
+    --life: #2563eb; --life-bg: #eff4ff; --life-sec: #dbeafe;
+    --studio: #7c3aed; --studio-bg: #f5f3ff; --studio-sec: #ede9fe;
+    --hcp: #0891b2; --hcp-bg: #ecfeff; --hcp-sec: #cffafe;
+    --hcp365: #0d9488; --hcp365-bg: #f0fdfa; --hcp365-sec: #ccfbf1;
+    --admin: #dc2626; --admin-bg: #fef2f2; --admin-sec: #fee2e2;
+    --shared: #ea580c; --shared-bg: #fff7ed; --shared-sec: #ffedd5;
+    --auth: #64748b; --auth-bg: #f8fafc; --auth-sec: #e2e8f0;
+    --utility: #78716c; --utility-bg: #fafaf9; --utility-sec: #e7e5e4;
+    --am: #c026d3; --am-bg: #fdf4ff; --am-sec: #fae8ff;
+    --fabric: #16a34a; --fabric-bg: #f0fdf4; --fabric-sec: #dcfce7;
+  }
+  @media(prefers-color-scheme:dark){:root{
+    --bg:#0f1117;--bg-2:#181b28;--bg-3:#222639;--text:#e5e7eb;--text-2:#9ca3af;--text-3:#6b7280;
+    --border:#2d3348;--accent:#60a5fa;--accent-bg:#1e2a4a;
+    --life:#60a5fa;--life-bg:#141e33;--life-sec:#1a2744;
+    --studio:#a78bfa;--studio-bg:#1c1635;--studio-sec:#2a1f4e;
+    --hcp:#22d3ee;--hcp-bg:#0c1f25;--hcp-sec:#0e2a30;
+    --hcp365:#2dd4bf;--hcp365-bg:#0c1f1c;--hcp365-sec:#0e2926;
+    --admin:#f87171;--admin-bg:#1f1212;--admin-sec:#2a1616;
+    --shared:#fb923c;--shared-bg:#1f170c;--shared-sec:#2a1e10;
+    --auth:#94a3b8;--auth-bg:#151820;--auth-sec:#1a1e2a;
+    --utility:#a8a29e;--utility-bg:#19181a;--utility-sec:#1f1e1c;
+    --am:#e879f9;--am-bg:#1c0f22;--am-sec:#2a142e;
+    --fabric:#4ade80;--fabric-bg:#0c1f14;--fabric-sec:#0f2a1e;
+  }}
+  :root[data-theme="light"]{
+    --bg:#ffffff;--bg-2:#f6f7f9;--bg-3:#ebedf0;--text:#1a1a2e;--text-2:#6b7280;--text-3:#9ca3af;
+    --border:#dde1e8;--accent:#2563eb;--accent-bg:#eff4ff;
+    --life:#2563eb;--life-bg:#eff4ff;--life-sec:#dbeafe;
+    --studio:#7c3aed;--studio-bg:#f5f3ff;--studio-sec:#ede9fe;
+    --hcp:#0891b2;--hcp-bg:#ecfeff;--hcp-sec:#cffafe;
+    --hcp365:#0d9488;--hcp365-bg:#f0fdfa;--hcp365-sec:#ccfbf1;
+    --admin:#dc2626;--admin-bg:#fef2f2;--admin-sec:#fee2e2;
+    --shared:#ea580c;--shared-bg:#fff7ed;--shared-sec:#ffedd5;
+    --auth:#64748b;--auth-bg:#f8fafc;--auth-sec:#e2e8f0;
+    --utility:#78716c;--utility-bg:#fafaf9;--utility-sec:#e7e5e4;
+    --am:#c026d3;--am-bg:#fdf4ff;--am-sec:#fae8ff;
+    --fabric:#16a34a;--fabric-bg:#f0fdf4;--fabric-sec:#dcfce7;
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f1117;--bg-2:#181b28;--bg-3:#222639;--text:#e5e7eb;--text-2:#9ca3af;--text-3:#6b7280;
+    --border:#2d3348;--accent:#60a5fa;--accent-bg:#1e2a4a;
+    --life:#60a5fa;--life-bg:#141e33;--life-sec:#1a2744;
+    --studio:#a78bfa;--studio-bg:#1c1635;--studio-sec:#2a1f4e;
+    --hcp:#22d3ee;--hcp-bg:#0c1f25;--hcp-sec:#0e2a30;
+    --hcp365:#2dd4bf;--hcp365-bg:#0c1f1c;--hcp365-sec:#0e2926;
+    --admin:#f87171;--admin-bg:#1f1212;--admin-sec:#2a1616;
+    --shared:#fb923c;--shared-bg:#1f170c;--shared-sec:#2a1e10;
+    --auth:#94a3b8;--auth-bg:#151820;--auth-sec:#1a1e2a;
+    --utility:#a8a29e;--utility-bg:#19181a;--utility-sec:#1f1e1c;
+    --am:#e879f9;--am-bg:#1c0f22;--am-sec:#2a142e;
+    --fabric:#4ade80;--fabric-bg:#0c1f14;--fabric-sec:#0f2a1e;
+  }
+
+  html,body{background:var(--bg);color:var(--text);margin:0;padding:0;height:100%;overflow:hidden;}
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;}
+
+  #header{padding:10px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg);z-index:10;position:relative;}
+  #header h1{font-size:15px;font-weight:700;margin:0;}
+  #header .stats{font-size:12px;color:var(--text-2);}
+  #legend{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .leg-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text-2);cursor:pointer;}
+  .leg-dot{width:10px;height:10px;border-radius:3px;border:1.5px solid;}
+
+  #canvas-wrap{position:relative;width:100%;height:calc(100% - 46px - 32px);overflow:hidden;cursor:grab;}
+  #canvas-wrap.dragging{cursor:grabbing;}
+  canvas{position:absolute;top:0;left:0;}
+
+  #infobar{height:32px;border-top:1px solid var(--border);background:var(--bg-2);display:flex;align-items:center;padding:0 16px;font-size:12px;color:var(--text-2);gap:12px;overflow:hidden;white-space:nowrap;}
+  #infobar .ib-name{font-weight:700;color:var(--text);}
+  #infobar .ib-mod{color:var(--text-2);}
+  #infobar .ib-gap{color:var(--admin);font-weight:600;}
+  #infobar .ib-edges{color:var(--text-2);overflow:hidden;text-overflow:ellipsis;}
+
+  #controls{position:absolute;bottom:46px;right:14px;display:flex;gap:5px;z-index:10;}
+  #controls button{width:30px;height:30px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  #controls button:hover{background:var(--bg-2);}
+
+  #search-wrap{position:absolute;top:10px;left:10px;z-index:10;}
+  #search{width:180px;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;outline:none;}
+  #search:focus{border-color:var(--accent);}
+  #search::placeholder{color:var(--text-3);}
+</style>
+
+<div id="header">
+  <div><h1>PulsePoint Platform — Navigation Node Diagram</h1><span class="stats" id="stats"></span></div>
+  <div id="legend"></div>
+</div>
+<div id="canvas-wrap">
+  <canvas id="c"></canvas>
+  <div id="search-wrap"><input id="search" type="text" placeholder="Search nodes..."></div>
+  <div id="controls">
+    <button id="zin" title="Zoom in">+</button>
+    <button id="zout" title="Zoom out">&minus;</button>
+    <button id="zfit" title="Fit all">&#x26F6;</button>
+  </div>
+</div>
+<div id="infobar"><span style="color:var(--text-3);">Hover a node to see details</span></div>
+
+<script>
+// Load graph data from the embedded JSON block
+const NAV_DATA = JSON.parse(document.getElementById('nav-graph').textContent);
+
+// Convert to compact rendering format (m=module, mega=has_mega_menu, gap=framework_gap, edges with t=target, a=action)
+const GRAPH = {};
+for (const [name, node] of Object.entries(NAV_DATA)) {
+  GRAPH[name] = {
+    m: node.module,
+    mega: node.has_mega_menu ? 1 : 0,
+    gap: node.framework_gap ? 1 : 0,
+    edges: (node.edges || []).map(e => ({ t: e.target, a: e.action }))
+  };
+}
+
+const MC={
+  life:{c:'--life',bg:'--life-bg',sec:'--life-sec',label:'Life / Campaigns'},
+  studio:{c:'--studio',bg:'--studio-bg',sec:'--studio-sec',label:'Studio'},
+  hcp:{c:'--hcp',bg:'--hcp-bg',sec:'--hcp-sec',label:'HCP / Signal'},
+  hcp365:{c:'--hcp365',bg:'--hcp365-bg',sec:'--hcp365-sec',label:'HCP365'},
+  admin:{c:'--admin',bg:'--admin-bg',sec:'--admin-sec',label:'Administration'},
+  shared:{c:'--shared',bg:'--shared-bg',sec:'--shared-sec',label:'Shared / Menu'},
+  auth:{c:'--auth',bg:'--auth-bg',sec:'--auth-sec',label:'Auth'},
+  utility:{c:'--utility',bg:'--utility-bg',sec:'--utility-sec',label:'Utility'},
+  audience_manager:{c:'--am',bg:'--am-bg',sec:'--am-sec',label:'Audience Mgr'},
+  fabric:{c:'--fabric',bg:'--fabric-bg',sec:'--fabric-sec',label:'Fabric'},
+};
+
+const legend=document.getElementById('legend');
+for(const[k,v]of Object.entries(MC)){
+  const d=document.createElement('div');d.className='leg-item';
+  d.innerHTML=`<div class="leg-dot" style="background:var(${v.bg});border-color:var(${v.c});"></div>${v.label}`;
+  legend.appendChild(d);
+}
+
+// ===== LAYOUT =====
+const NW=130,NH=30,GX=14,GY=12;
+const nodes={};
+
+function row(names,x0,y0){names.forEach((n,i)=>{nodes[n]={x:x0+i*(NW+GX),y:y0,w:NW,h:NH};});}
+
+// === TOP: Auth + MegaMenu ===
+const TOP=30;
+nodes['LoginPage']={x:40,y:TOP,w:NW,h:NH};
+nodes['AdminLanding']={x:40+NW+GX,y:TOP,w:NW,h:NH};
+nodes['MegaMenu']={x:420,y:TOP,w:170,h:40};
+nodes['CampaignReportingSubmenu']={x:640,y:TOP-2,w:155,h:NH};
+nodes['HCP365ReportsSubmenu']={x:640,y:TOP+NH+GY-2,w:155,h:NH};
+
+// === LEFT COLUMN: Life Module ===
+const LIFE_Y=TOP+70;
+const LX=40;
+
+row(['CampaignDashboard','CampaignDetailsPage','LineItemDetailsPage','TacticDetailsPage','TacticSettingsPage'],LX,LIFE_Y);
+
+const NPI_Y=LIFE_Y+NH+GY+20;
+row(['NPIListsPage','NPIStaticListPage','NPISmartListPage','NPIAutoImportedListPage'],LX,NPI_Y);
+row(['NPIMedscapeListPage','NPIListDetailPage','NPIAttributesListPage'],LX,NPI_Y+NH+GY);
+
+const OTH_Y=NPI_Y+(NH+GY)*2+20;
+row(['PixelsPage','PixelCreatePanel','TargetingTemplatesPage','CreativeLibraryPage','CuratedMarketsPage'],LX,OTH_Y);
+row(['DomainAndAppListsPage','KeywordListsPage','IPAddressListsPage','EmailListsPage','PMPDealsPage'],LX,OTH_Y+NH+GY);
+
+const RPT_Y=OTH_Y+(NH+GY)*2+20;
+row(['RunReportPage','ReportTemplatesPage','ScheduledReportsPage','GeneratedReportsPage'],LX,RPT_Y);
+
+const GAP_Y=RPT_Y+NH+GY+20;
+row(['DealsPage','DealGroupsPage','TagManagerPage','PersonalizationAPIPage','IBIQDashboardsPage'],LX,GAP_Y);
+row(['MedscapeOnePage','MedscapeOneMedAffairsPage','MedscapeCampaignPerformancePage','HCP365AnalyticsPage','CollectionsPage'],LX,GAP_Y+NH+GY);
+row(['HCP365DataMappingPage','DestinationsPage','AnalyticsChatbotPage','MediaPlannerPage','CampaignSettingsPage'],LX,GAP_Y+(NH+GY)*2);
+row(['HCP365ReportsRunPage','MedscapeAffinityPage'],LX,GAP_Y+(NH+GY)*3);
+
+const UTL_Y=GAP_Y+(NH+GY)*3+20;
+row(['KnowledgeBasePage','CustomerSupportPage','AudienceMarketplacePage'],LX,UTL_Y);
+
+// === RIGHT COLUMN ===
+const RX=850;
+
+const STU_Y=LIFE_Y;
+row(['StudioDashboard','WorkspaceTypeSelection','WorkspaceView'],RX,STU_Y);
+row(['HCPExplorerWorkspace','ExpansionWorkspace','BrandExplorerWorkspace','DTCExplorerWorkspace'],RX,STU_Y+NH+GY);
+
+const HCP_Y=STU_Y+(NH+GY)*2+30;
+row(['HCPLanding','SmartActionsPage','SmartActionCreatePage'],RX,HCP_Y);
+
+const MOD_Y=HCP_Y+NH+GY+30;
+row(['HCP365Dashboard','AudienceManagerPage','FabricPage'],RX,MOD_Y);
+
+// Administration — all 7 tabs
+const ADM_Y=MOD_Y+NH+GY+30;
+row(['AdministrationPage'],RX,ADM_Y);
+
+const SEG_Y=ADM_Y+NH+GY+10;
+row(['AdminSegmentsPage','AdminAMAudiencesPage','AdminNewSegmentPage','AdminBulkSegmentCreationPage'],RX,SEG_Y);
+row(['AdminManageDataProvidersPage'],RX,SEG_Y+NH+GY);
+
+const ACC_Y=SEG_Y+(NH+GY)*2+10;
+row(['AccountsPage','AdminNewAccountPage','AdminNewAccountGroupPage','AdminAccountLifeFeesPage'],RX,ACC_Y);
+row(['AdminAccountSmartlistFeesPage','AdminAccountKomodoFeesPage','AccountDetailPage'],RX,ACC_Y+NH+GY);
+row(['AccountDetailsTab','AccountAdvertiserPage','AccountAdvertiserGlobalSignals','AccountReportingPage'],RX,ACC_Y+(NH+GY)*2);
+row(['AddDestinationPanel','AccountUserPage','AccountLifeSettingsPanel','AccountStudioSettingsPanel'],RX,ACC_Y+(NH+GY)*3);
+
+const USR_Y=ACC_Y+(NH+GY)*4+10;
+row(['AdminUsersPage','AdminExternalUsersPage','AdminInternalUsersPage','AdminNewUserPage'],RX,USR_Y);
+
+const ADV_Y=USR_Y+NH+GY+10;
+row(['AdvertiserListPage','AdminNewAdvertiserPage'],RX,ADV_Y);
+
+const STP_Y=ADV_Y+NH+GY+10;
+row(['SetupPage','SetupAlertsPage','SetupLoadersPage','SetupCuratedMarketsPage'],RX,STP_Y);
+row(['SetupLifeMarketplaceDealsPage','SetupEndemicsPage','SetupGlobalFeesPage','SetupAdaptiveOptimizationPage'],RX,STP_Y+NH+GY);
+row(['SetupGlobalSettingsPage'],RX,STP_Y+(NH+GY)*2);
+
+const LST_Y=STP_Y+(NH+GY)*3+10;
+row(['AdminListsPage','AdminKeywordListsPage','AdminDomainAppListsPage','AdminNPIListsPage'],RX,LST_Y);
+
+const DSH_Y=LST_Y+NH+GY+10;
+row(['AdminDashboardsPage','AdminLifeLookerViewsPage','AdminHCP365LookerViewsPage','AdminIBIQDashboardsPage'],RX,DSH_Y);
+row(['AdminMedscapeDashboardsPage'],RX,DSH_Y+NH+GY);
+
+// Stats
+let nc=0,ec=0,gc=0;
+for(const[k,v]of Object.entries(GRAPH)){nc++;ec+=v.edges.length;if(v.gap)gc++;}
+document.getElementById('stats').textContent=`${nc} nodes · ${ec} edges · ${gc} framework gaps`;
+
+// ===== SECTIONS =====
+const SECTIONS=[
+  {label:'AUTH',x:30,y:TOP-10,w:280,h:50,mod:'auth'},
+  {label:'MEGA MENU',x:410,y:TOP-12,w:190,h:58,mod:'shared'},
+  {label:'REPORTING SUBMENUS',x:630,y:TOP-12,w:175,h:NH*2+GY+20,mod:'shared'},
+  {label:'LIFE — Campaign Drill-Down',x:LX-10,y:LIFE_Y-18,w:(NW+GX)*5+6,h:NH+26,mod:'life'},
+  {label:'LIFE — NPI Lists',x:LX-10,y:NPI_Y-18,w:(NW+GX)*4+6,h:(NH+GY)*2+16,mod:'life'},
+  {label:'LIFE — Pages',x:LX-10,y:OTH_Y-18,w:(NW+GX)*5+6,h:(NH+GY)*2+16,mod:'life'},
+  {label:'LIFE — Reporting',x:LX-10,y:RPT_Y-18,w:(NW+GX)*4+6,h:NH+26,mod:'life'},
+  {label:'LIFE — Framework Gaps',x:LX-10,y:GAP_Y-18,w:(NW+GX)*5+6,h:(NH+GY)*4+16,mod:'life'},
+  {label:'UTILITY',x:LX-10,y:UTL_Y-18,w:(NW+GX)*3+6,h:NH+26,mod:'utility'},
+  {label:'STUDIO',x:RX-10,y:STU_Y-18,w:(NW+GX)*4+6,h:(NH+GY)*2+16,mod:'studio'},
+  {label:'HCP / SIGNAL',x:RX-10,y:HCP_Y-18,w:(NW+GX)*3+6,h:NH+26,mod:'hcp'},
+  {label:'MODULE LANDINGS',x:RX-10,y:MOD_Y-18,w:(NW+GX)*3+6,h:NH+26,mod:'hcp365'},
+  {label:'ADMIN — Hub',x:RX-10,y:ADM_Y-18,w:(NW+GX)*1+6,h:NH+26,mod:'admin'},
+  {label:'ADMIN — Segments',x:RX-10,y:SEG_Y-18,w:(NW+GX)*4+6,h:(NH+GY)*2+16,mod:'admin'},
+  {label:'ADMIN — Accounts',x:RX-10,y:ACC_Y-18,w:(NW+GX)*4+6,h:(NH+GY)*4+16,mod:'admin'},
+  {label:'ADMIN — Users',x:RX-10,y:USR_Y-18,w:(NW+GX)*4+6,h:NH+26,mod:'admin'},
+  {label:'ADMIN — Advertisers',x:RX-10,y:ADV_Y-18,w:(NW+GX)*2+6,h:NH+26,mod:'admin'},
+  {label:'ADMIN — Setup',x:RX-10,y:STP_Y-18,w:(NW+GX)*4+6,h:(NH+GY)*3+16,mod:'admin'},
+  {label:'ADMIN — Lists',x:RX-10,y:LST_Y-18,w:(NW+GX)*4+6,h:NH+26,mod:'admin'},
+  {label:'ADMIN — Dashboards',x:RX-10,y:DSH_Y-18,w:(NW+GX)*4+6,h:(NH+GY)*2+16,mod:'admin'},
+];
+
+// ===== CANVAS =====
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+const wrap=document.getElementById('canvas-wrap');
+const infobar=document.getElementById('infobar');
+
+let scale=1,panX=0,panY=0,dpr=window.devicePixelRatio||1;
+let hoveredNode=null,searchTerm='';
+
+function resize(){
+  const r=wrap.getBoundingClientRect();
+  canvas.width=r.width*dpr;canvas.height=r.height*dpr;
+  canvas.style.width=r.width+'px';canvas.style.height=r.height+'px';
+  draw();
+}
+window.addEventListener('resize',resize);
+
+function gs(p){return getComputedStyle(document.documentElement).getPropertyValue(p).trim();}
+
+function draw(){
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.save();ctx.translate(panX,panY);ctx.scale(scale,scale);
+
+  for(const s of SECTIONS){
+    const mc=MC[s.mod];
+    ctx.fillStyle=gs(mc.bg);ctx.strokeStyle=gs(mc.c);
+    ctx.lineWidth=1;ctx.globalAlpha=0.4;ctx.setLineDash([]);
+    ctx.beginPath();ctx.roundRect(s.x,s.y,s.w,s.h,8);ctx.fill();
+    ctx.globalAlpha=0.2;ctx.stroke();
+    ctx.globalAlpha=0.5;ctx.fillStyle=gs(mc.c);
+    ctx.font='600 9px -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif';
+    ctx.textAlign='left';ctx.textBaseline='top';
+    ctx.fillText(s.label,s.x+8,s.y+4);
+    ctx.globalAlpha=1;
+  }
+
+  for(const[name,data]of Object.entries(GRAPH)){
+    const src=nodes[name];if(!src)continue;
+    for(const e of data.edges){
+      const tgt=nodes[e.t];if(!tgt)continue;
+      const hl=hoveredNode&&(hoveredNode===name||hoveredNode===e.t);
+      const dim=hoveredNode&&!hl;
+      ctx.globalAlpha=dim?0.04:(hl?0.9:0.15);
+      ctx.strokeStyle=hl?gs('--accent'):gs('--border');
+      ctx.lineWidth=hl?1.6:0.7;ctx.setLineDash([]);
+      const sx=src.x+src.w/2,sy=src.y+src.h/2;
+      const tx=tgt.x+tgt.w/2,ty=tgt.y+tgt.h/2;
+      const dx=tx-sx,dy=ty-sy,dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist>300){
+        const mx=(sx+tx)/2,my=(sy+ty)/2,ox=-dy*0.08,oy=dx*0.08;
+        ctx.beginPath();ctx.moveTo(sx,sy);ctx.quadraticCurveTo(mx+ox,my+oy,tx,ty);ctx.stroke();
+      }else{ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(tx,ty);ctx.stroke();}
+      const angle=Math.atan2(ty-sy,tx-sx);
+      const ar=Math.min(tgt.w,tgt.h)/2+2;
+      const ax=tx-Math.cos(angle)*ar,ay=ty-Math.sin(angle)*ar;
+      ctx.fillStyle=ctx.strokeStyle;ctx.beginPath();
+      ctx.moveTo(ax,ay);
+      ctx.lineTo(ax-5*Math.cos(angle-0.4),ay-5*Math.sin(angle-0.4));
+      ctx.lineTo(ax-5*Math.cos(angle+0.4),ay-5*Math.sin(angle+0.4));
+      ctx.closePath();ctx.fill();
+      if(hl&&hoveredNode===name){
+        ctx.globalAlpha=0.85;ctx.fillStyle=gs('--text');
+        ctx.font='500 8px -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif';
+        ctx.textAlign='center';ctx.textBaseline='bottom';
+        ctx.fillText(e.a,(sx+tx)/2,(sy+ty)/2-4);
+      }
+    }
+  }
+  ctx.globalAlpha=1;
+
+  for(const[name,data]of Object.entries(GRAPH)){
+    const pos=nodes[name];if(!pos)continue;
+    const mc=MC[data.m];const modC=gs(mc.c),modBg=gs(mc.bg);
+    const isH=hoveredNode===name;
+    const isConn=hoveredNode&&GRAPH[hoveredNode]&&GRAPH[hoveredNode].edges.some(e=>e.t===name);
+    const isSrc=hoveredNode&&data.edges.some(e=>e.t===hoveredNode);
+    const hl=isH||isConn||isSrc;
+    const dim=(hoveredNode&&!hl)||(searchTerm&&!name.toLowerCase().includes(searchTerm));
+    ctx.globalAlpha=dim?0.1:1;ctx.fillStyle=modBg;ctx.strokeStyle=modC;
+    ctx.lineWidth=isH?2.5:(name==='MegaMenu'?2:1.2);
+    ctx.setLineDash(data.gap?[4,3]:[]);
+    ctx.beginPath();ctx.roundRect(pos.x,pos.y,pos.w,pos.h,5);ctx.fill();ctx.stroke();
+    ctx.setLineDash([]);ctx.fillStyle=modC;
+    ctx.font=`${isH?'600':'500'} ${name==='MegaMenu'?'11px':'9.5px'} -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    let lbl=name.replace(/Page$/,'').replace(/Panel$/,'').replace(/Submenu$/,' ▸');
+    if(lbl.length>18)lbl=lbl.substring(0,17)+'…';
+    ctx.fillText(lbl,pos.x+pos.w/2,pos.y+pos.h/2);
+  }
+  ctx.globalAlpha=1;ctx.restore();
+}
+
+function hitTest(mx,my){
+  const x=(mx-panX)/scale,y=(my-panY)/scale;
+  for(const[n,p]of Object.entries(nodes)){if(x>=p.x&&x<=p.x+p.w&&y>=p.y&&y<=p.y+p.h)return n;}
+  return null;
+}
+
+let dragging=false,dragStart=null;
+wrap.addEventListener('mousedown',e=>{dragging=true;dragStart={x:e.clientX-panX,y:e.clientY-panY};wrap.classList.add('dragging');});
+window.addEventListener('mousemove',e=>{
+  if(dragging){panX=e.clientX-dragStart.x;panY=e.clientY-dragStart.y;draw();return;}
+  const rect=canvas.getBoundingClientRect();
+  const hit=hitTest(e.clientX-rect.left,e.clientY-rect.top);
+  if(hit!==hoveredNode){
+    hoveredNode=hit;draw();
+    if(hit){
+      const data=GRAPH[hit];const mc=MC[data.m];
+      let parts=[];
+      parts.push(`<span class="ib-name">${hit}</span>`);
+      parts.push(`<span class="ib-mod">${mc.label}${data.mega?' · mega_menu':''}${data.gap?' · <span class="ib-gap">framework_gap</span>':''}</span>`);
+      if(data.edges.length){
+        const edgeStr=data.edges.map(ed=>`${ed.t} (${ed.a})`).join(', ');
+        parts.push(`<span class="ib-edges">Out: ${edgeStr}</span>`);
+      }
+      infobar.innerHTML=parts.join('<span style="color:var(--border);">|</span>');
+    }else{infobar.innerHTML='<span style="color:var(--text-3);">Hover a node to see details</span>';}
+  }
+});
+window.addEventListener('mouseup',()=>{dragging=false;wrap.classList.remove('dragging');});
+
+wrap.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const rect=canvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  const f=e.deltaY<0?1.12:0.89;
+  const ns=Math.max(0.2,Math.min(5,scale*f));
+  panX=mx-(mx-panX)*(ns/scale);panY=my-(my-panY)*(ns/scale);
+  scale=ns;draw();
+},{passive:false});
+
+document.getElementById('zin').addEventListener('click',()=>{scale=Math.min(5,scale*1.3);draw();});
+document.getElementById('zout').addEventListener('click',()=>{scale=Math.max(0.2,scale*0.77);draw();});
+document.getElementById('zfit').addEventListener('click',()=>{
+  let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
+  for(const p of Object.values(nodes)){x0=Math.min(x0,p.x);y0=Math.min(y0,p.y);x1=Math.max(x1,p.x+p.w);y1=Math.max(y1,p.y+p.h);}
+  const r=wrap.getBoundingClientRect(),gw=x1-x0+80,gh=y1-y0+80;
+  scale=Math.min(r.width/gw,r.height/gh,2);
+  panX=(r.width-gw*scale)/2-x0*scale+40*scale;
+  panY=(r.height-gh*scale)/2-y0*scale+40*scale;
+  draw();
+});
+
+document.getElementById('search').addEventListener('input',e=>{searchTerm=e.target.value.toLowerCase();draw();});
+
+resize();
+document.getElementById('zfit').click();
+</script>
