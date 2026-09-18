@@ -85,7 +85,7 @@ public class Workspace {
                 WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Publish"));
         this.WORKSPACE_CREATED_ALERT = WORKSPACE_FRAME.locator(
                 "//p[contains(text(),'Workspace created successfully') or contains(text(),'Workspace saved successfully')]");
-        this.WEBHOOK_ICON = WORKSPACE_FRAME.locator("div[data-tour-id='hcp-workspace-actions-container']>button"); 
+        this.WEBHOOK_ICON = WORKSPACE_FRAME.locator("div[data-tour-id='hcp-workspace-actions-container']>button");
         this.WEBHOOK_TOGGLE_BUTTON = WORKSPACE_FRAME.locator("div[role='dialog'] ds-toggle button");
         this.WEBHOOK_PANEL_TITLE = WORKSPACE_FRAME.locator("//div[@role='dialog']//ds-typography[contains(text(),'Webhook') and @role='heading']");
         this.WEBHOOK_CANCEL_BUTTON = WORKSPACE_FRAME.locator("//button[@type='button']/div[contains(text(),'Cancel')]");

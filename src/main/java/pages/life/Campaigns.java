@@ -766,6 +766,4 @@ public class Campaigns {
     public String getPageUrl() {
         return page.url();
     }
-
-
 }
