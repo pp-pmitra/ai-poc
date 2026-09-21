@@ -159,8 +159,8 @@ public class Accounts {
                 page.locator("//div[@class='bsHeaderContainer']//div[contains(text(),'Studio Settings')]");
         this.WORKSPACE_PERMISSION_TOGGLE_BUTTON = page.locator(
                 "//div[@class='secondtablewrapper']//div[contains(@class,'toggle-wrapper-withLabel')]//sui-checkbox");
-        this.STUDIO_SETTINGS_PANEL_CANCEL_BUTTON = page.locator(
-                "//app-genomestudio-workspace//button[contains(@class,'cancelbtn') and contains(text(),'Cancel')]");
+        this.STUDIO_SETTINGS_PANEL_CANCEL_BUTTON = page.locator("app-ds-button-wrapper")
+    .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Cancel").setExact(true));
         this.LIFE_SETTINGS_PANEL_CANCEL_BUTTON =
                 page.locator("//app-account-fee//button[contains(@class,'cancelbtn') and contains(text(),'Cancel')]");
         this.ERROR_ALERT = page.locator("//div[@aria-label='Error while saving.']");

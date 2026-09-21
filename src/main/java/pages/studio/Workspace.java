@@ -66,8 +66,7 @@ public class Workspace {
                 .filter(new Locator.FilterOptions().setHasText("Studio"))
                 .nth(3);
         this.FLY_PAGE_BUTTON = WORKSPACE_FRAME
-                .locator("//div[@role='group']/following-sibling::div//button")
-                .first();
+                .locator("div[data-tour-id='npi-list-header-button']>button");
         this.PUBLISH_NPI = WORKSPACE_FRAME.getByRole(
                 AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Publish NPI List"));
         this.PUBLISHED_NPI = WORKSPACE_FRAME.getByRole(
@@ -86,16 +85,14 @@ public class Workspace {
                 WORKSPACE_FRAME.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Publish"));
         this.WORKSPACE_CREATED_ALERT = WORKSPACE_FRAME.locator(
                 "//p[contains(text(),'Workspace created successfully') or contains(text(),'Workspace saved successfully')]");
-        this.WEBHOOK_ICON = WORKSPACE_FRAME.locator(
-                "(//div[@role='group']/following-sibling::div//button)[3]"); // no unique identifier is available hence
-        // index needs to be provided
-        this.WEBHOOK_TOGGLE_BUTTON = WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'Webhook')]/parent::div/following-sibling::div//span[contains(@class,'MuiButtonBase-root')]");
+        this.WEBHOOK_ICON = WORKSPACE_FRAME.locator("div[data-tour-id='hcp-workspace-actions-container']>button");
+        this.WEBHOOK_TOGGLE_BUTTON = WORKSPACE_FRAME.locator("div[role='dialog'] ds-toggle button");
         this.WEBHOOK_PANEL_TITLE = WORKSPACE_FRAME.locator("//div[@role='dialog']//ds-typography[contains(text(),'Webhook') and @role='heading']");
         this.WEBHOOK_CANCEL_BUTTON = WORKSPACE_FRAME.locator("//button[@type='button']/div[contains(text(),'Cancel')]");
         this.URL_TEXTAREA = WORKSPACE_FRAME.locator("//textarea[@name='url']");
         this.BODY_TEXTAREA = WORKSPACE_FRAME.locator("//textarea[@name='body']");
         this.PARAM = WORKSPACE_FRAME.locator("//ul[contains(@role,'menu')]//ds-typography");
-        this.WEBHOOK_BUTTONS = WORKSPACE_FRAME.locator("//button[contains(@class,'ButtonItem-sc')]");
+        this.WEBHOOK_BUTTONS = WORKSPACE_FRAME.locator("ds-tab-switch");
         this.WEBHOOK_SUCCESS_ALERT = WORKSPACE_FRAME.locator("//p[contains(text(),'Webhook setup successfully')]");
         this.WEBHOOK_SAVE_BUTTON = WORKSPACE_FRAME.locator("//button[@type='submit']");
         this.INLINE_ERROR_MESSAGE = WORKSPACE_FRAME.locator(
@@ -116,7 +113,7 @@ public class Workspace {
                 .locator(
                         "//h3[contains(text(),'Identified NPIs')]/ancestor::div[contains(@class,'kpi-visualization')]//span");
         this.RETROFIT_CHECKBOX = WORKSPACE_FRAME.getByRole(AriaRole.CHECKBOX, new FrameLocator.GetByRoleOptions().setName("Retrofit NPIs"));
-        this.NPI_ENGAGING_TEXT = WORKSPACE_FRAME.locator("//p[contains(text(),'NPIs engaging on or')]");
+        this.NPI_ENGAGING_TEXT = WORKSPACE_FRAME.locator("//ds-typography[contains(text(),'NPIs engaging on or')]");
         this.HCP_WORKSPACE_FILTER_CHECKBOX = WORKSPACE_FRAME.getByRole(
                 AriaRole.CHECKBOX, new FrameLocator.GetByRoleOptions().setName("HCP Explorer"));
         this.EXISTING_WORKSPACE = WORKSPACE_FRAME.locator("//tr[1]/td[1]//span");
@@ -125,7 +122,7 @@ public class Workspace {
         this.PUBLISH_LOADER = WORKSPACE_FRAME.locator(
                 "//div[contains(@data-tour-id,'hcp-workspace-actions-container')]/div[contains(@data-testid, 'loading-spinner')]");
         this.NPI_LIST_PULLOUT_MENU = WORKSPACE_FRAME.locator("//ul[@data-tour-id='npi-list-pullout-menu']");
-        this.OK_BUTTON = WORKSPACE_FRAME.locator("//div[contains(text(),'OK')]");
+        this.OK_BUTTON = WORKSPACE_FRAME.locator("ul[data-tour-id='npi-list-pullout-menu'] > div div:text-is('OK')");
         this.NPI_PUBLISH_ALERT = WORKSPACE_FRAME.locator("//p[contains(text(), 'NPI list published successfully')]");
         this.SAVE_WORKSPACE = WORKSPACE_FRAME.locator("//button[contains(@data-tour-id,'save-workspace-button')]");
     }
@@ -198,11 +195,11 @@ public class Workspace {
 
     public String verifyWebhookToggleButton() {
         WEBHOOK_PANEL_TITLE.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        if (WEBHOOK_TOGGLE_BUTTON.getAttribute("class").contains("Mui-disabled")) {
+        if (WEBHOOK_TOGGLE_BUTTON.isDisabled()) {
             return "Disabled";
         } else {
             WEBHOOK_TOGGLE_BUTTON.click();
-            if (WEBHOOK_TOGGLE_BUTTON.getAttribute("class").contains("Mui-checked")) return "Enabled";
+            if (WEBHOOK_TOGGLE_BUTTON.isEnabled()) return "Enabled";
         }
         return " ";
     }
@@ -212,15 +209,7 @@ public class Workspace {
     }
 
     public void clickRequestOrContentButton(String buttonName) {
-        for (int i = 0; i < WEBHOOK_BUTTONS.count(); i++) {
-            if (WEBHOOK_BUTTONS.nth(i).innerText().contains(buttonName)
-                    && WEBHOOK_BUTTONS.nth(i).getAttribute("aria-pressed").contains("true")) {
-                break;
-            } else if (WEBHOOK_BUTTONS.nth(i).innerText().contains(buttonName)) {
-                WEBHOOK_BUTTONS.nth(i).click();
-                break;
-            }
-        }
+        WEBHOOK_BUTTONS.getByRole(AriaRole.TAB, new Locator.GetByRoleOptions().setName(buttonName).setExact(true)).click();
     }
 
     public void addURL(String url) {
@@ -347,8 +336,9 @@ public class Workspace {
     }
 
     public void clickNPIRetentionOption(String option) {
-        Locator retentionXpath = WORKSPACE_FRAME.locator(String.format("//button[contains(@value,'%s')]", option));
-        retentionXpath.click();
+        Locator retentionCssLocator = WORKSPACE_FRAME.locator("ds-tab-switch")
+                                                .getByRole(AriaRole.TAB, new Locator.GetByRoleOptions().setName(option).setExact(true));
+        retentionCssLocator.click();
     }
 
     public void clickPublishedButton() {
@@ -357,7 +347,7 @@ public class Workspace {
 
     public boolean verifyListTypeAfterPublished(String listType) {
         return WORKSPACE_FRAME
-                .locator(String.format("//p[contains(text(),'%s')]", listType))
+                .locator(String.format("//ds-typography[contains(text(),'%s')]", listType))
                 .isVisible();
     }
 

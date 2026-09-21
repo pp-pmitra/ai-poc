@@ -982,7 +982,7 @@ public class TacticSettings {
     }
 
     public String verifyRuleOption() {
-        return FETCH_TARGET_RULE_OPTIONS.locator("ds-typography").innerText();
+        return FETCH_TARGET_RULE_OPTIONS.locator("ds-typography").first().innerText();
     }
 
     public BigDecimal getTacticBaseBidPrice() {
