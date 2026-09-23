@@ -73,18 +73,30 @@ jobs:
         env:
           GH_TOKEN: ${{ env.REPO_TOKEN }}
 
-      - name: Write Google Drive OAuth credentials file
+      - name: Write Google Drive OAuth files
         env:
-          GDRIVE_OAUTH_JSON: ${{ secrets.GDRIVE_OAUTH_CREDENTIALS_JSON }}
+          GDRIVE_OAUTH_CREDS_JSON: ${{ secrets.GDRIVE_OAUTH_CREDENTIALS_JSON }}
+          GDRIVE_TOKENS_JSON: ${{ secrets.GDRIVE_TOKENS_JSON }}
         run: |
-          cat > "${RUNNER_TEMP}/gdrive_oauth.json" <<< "$GDRIVE_OAUTH_JSON"
+          cat > "${RUNNER_TEMP}/gcp-oauth.keys.json" <<< "$GDRIVE_OAUTH_CREDS_JSON"
+          cat > "${RUNNER_TEMP}/tokens.json" <<< "$GDRIVE_TOKENS_JSON"
+
+      - name: Sanity-check Google Drive credential files
+        run: |
+          for f in "${RUNNER_TEMP}/gcp-oauth.keys.json" "${RUNNER_TEMP}/tokens.json"; do
+            if ! python3 -m json.tool "$f" > /dev/null 2>&1; then
+              echo "::error::$f is not valid JSON (size: $(wc -c < "$f") bytes) — the matching secret is likely empty or unset."
+              exit 1
+            fi
+          done
 
       - name: Render MCP server config
         env:
           JIRA_URL: ${{ secrets.JIRA_URL }}
           JIRA_USERNAME: ${{ secrets.JIRA_USERNAME }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-          GDRIVE_OAUTH_PATH: ${{ runner.temp }}/gdrive_oauth.json
+          GDRIVE_CREDS_PATH: ${{ runner.temp }}/gcp-oauth.keys.json
+          GDRIVE_TOKEN_PATH: ${{ runner.temp }}/tokens.json
         run: |
           cat > mcp-config.json <<EOF
           {
@@ -93,7 +105,8 @@ jobs:
                 "command": "npx",
                 "args": ["-y", "@piotr-agier/google-drive-mcp"],
                 "env": {
-                  "GOOGLE_DRIVE_OAUTH_CREDENTIALS": "${GDRIVE_OAUTH_PATH}"
+                  "GOOGLE_DRIVE_OAUTH_CREDENTIALS": "${GDRIVE_CREDS_PATH}",
+                  "GOOGLE_DRIVE_MCP_TOKEN_PATH": "${GDRIVE_TOKEN_PATH}"
                 }
               },
               "atlassian": {
