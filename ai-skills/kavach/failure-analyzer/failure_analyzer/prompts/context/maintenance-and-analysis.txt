@@ -1,0 +1,9 @@
+General maintenance context for test failure analysis.
+
+Common failure patterns in this codebase:
+- XPath locators break when the app adds ng-star-inserted, mat- prefix classes, or restructures DOM
+- Calendar/date pickers use sui-calendar-* components; disabled dates cannot be clicked
+- Bulk Edit Mode operations involve checkbox selection followed by action buttons
+- API calls to BuyerProxy.ashx are central to data loading; -1 status means the call never completed
+- AssertionErrors on expected/actual text often mean the app's UI text was updated
+- TimeoutErrors on innerText/waitForSelector often mean the element was never rendered

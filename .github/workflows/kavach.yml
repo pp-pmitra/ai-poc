@@ -1,0 +1,171 @@
+name: Kavach Live-Replay Failure Diagnosis
+
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: "Which app the failing scenarios belong to"
+        required: true
+        type: choice
+        options: [life, studio]
+        default: life
+      environment:
+        description: "Target environment for login"
+        required: true
+        type: choice
+        options: [Demo, Pre-release]
+        default: Demo
+      user_type:
+        description: "Internal or External login (Life only; ignored for Studio)"
+        required: false
+        type: choice
+        options: [Internal, External]
+        default: Internal
+      cucumber_tags:
+        description: "Cucumber tag filter for the run that produces the failures to diagnose, e.g. @regression"
+        required: true
+        type: string
+      hold_seconds:
+        description: "How long the auth bootstrap holds the browser open (seconds)"
+        required: false
+        type: string
+        default: "3600"
+
+permissions:
+  contents: read
+
+jobs:
+  run-kavach:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      CDP_PORT: ${{ inputs.app == 'studio' && '9224' || '9223' }}
+      MCP_CONFIG: ${{ inputs.app == 'studio' && '.claude/mcp-ci-studio.json' || '.claude/mcp-ci-life.json' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Set up Node (Claude Code CLI + Playwright MCP)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Set up Python (failure-analyzer scripts)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Claude Code CLI
+        run: |
+          npm install -g @anthropic-ai/claude-code@latest
+          claude --version
+          claude update || true
+          claude --version
+
+      - name: Install Playwright browsers
+        run: npx -y playwright install --with-deps chromium
+
+      - name: Run the target Cucumber suite (produces cucumber.json + failures, if any)
+        continue-on-error: true
+        run: mvn -B -ntp test -Dcucumber.filter.tags="${{ inputs.cucumber_tags }}"
+
+      - name: Extract failures for replay (mechanical, no LLM)
+        run: |
+          cd ai-skills/kavach/failure-analyzer
+          python3 list_failures.py
+
+      - name: Start Life auth bootstrap
+        if: ${{ inputs.app == 'life' }}
+        run: |
+          nohup mvn -B -ntp test -Dtest=LifeAuthStateBootstrapTest \
+            -Dauth.environment="${{ inputs.environment }}" \
+            -Dauth.userType="${{ inputs.user_type }}" \
+            -Dauth.holdSeconds="${{ inputs.hold_seconds }}" \
+            > life-bootstrap.log 2>&1 &
+          echo "BOOTSTRAP_PID=$!" >> "$GITHUB_ENV"
+
+      - name: Start Studio auth bootstrap
+        if: ${{ inputs.app == 'studio' }}
+        run: |
+          nohup mvn -B -ntp test -Dtest=StudioAuthStateBootstrapTest \
+            -Dauth.holdForCdp=true \
+            -Dauth.holdSeconds="${{ inputs.hold_seconds }}" \
+            > studio-bootstrap.log 2>&1 &
+          echo "BOOTSTRAP_PID=$!" >> "$GITHUB_ENV"
+
+      - name: Wait for CDP endpoint to come up
+        run: |
+          for i in $(seq 1 60); do
+            if nc -z localhost "$CDP_PORT"; then
+              echo "CDP endpoint on port $CDP_PORT is up."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::CDP endpoint on port $CDP_PORT never came up. See bootstrap log."
+          cat life-bootstrap.log studio-bootstrap.log 2>/dev/null || true
+          exit 1
+
+      - name: Run Kavach live replay
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          claude -p "/kavach" \
+            --mcp-config "$MCP_CONFIG" \
+            --strict-mcp-config \
+            --permission-mode auto \
+            --allowedTools "Bash(*),Read,Write(*),Edit(*),Grep,Glob,mcp__playwright__browser_navigate,mcp__playwright__browser_tabs,mcp__playwright__browser_snapshot,mcp__playwright__browser_evaluate,mcp__playwright__browser_click,mcp__playwright__browser_fill_form,mcp__playwright__browser_type,mcp__playwright__browser_press_key,mcp__playwright__browser_wait_for,mcp__playwright__browser_run_code_unsafe,mcp__playwright__browser_take_screenshot,mcp__playwright__browser_close,mcp__playwright__browser_select_option,mcp__playwright__browser_hover,mcp__playwright__browser_find" \
+            --model claude-opus-5-5 \
+            --output-format text \
+            2>&1 | tee kavach-run.log
+
+      - name: Release the auth bootstrap
+        if: always()
+        run: |
+          touch ".claude/auth/${{ inputs.app }}-cdp-done"
+          sleep 5
+          kill "$BOOTSTRAP_PID" 2>/dev/null || true
+
+      - name: Verify Kavach produced a verdict report
+        if: always()
+        run: |
+          {
+            echo "### Kavach run summary"
+            echo '```'
+            tail -n 80 kavach-run.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          shopt -s nullglob
+          verdicts=(ai-skills/kavach/failure-analyzer/history/replay-verdict-*.md)
+          if [ ${#verdicts[@]} -eq 0 ]; then
+            echo "::error::Kavach did not produce a verdict report under ai-skills/kavach/failure-analyzer/history/. It likely hit PLAYWRIGHT_TOOL_REJECTED, CDP_ENDPOINT_DEAD, or another halting condition. See the log above."
+            exit 1
+          fi
+
+      - name: Upload verdict report + receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kavach-verdict
+          path: |
+            ai-skills/kavach/failure-analyzer/history/replay-verdict-*.md
+            ai-skills/kavach/failure-analyzer/history/**/combined-receipts.json
+            target/cucumber-reports/**
+
+      - name: Upload run transcript
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kavach-run-log
+          path: |
+            kavach-run.log
+            life-bootstrap.log
+            studio-bootstrap.log

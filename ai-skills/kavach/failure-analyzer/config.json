@@ -1,0 +1,43 @@
+{
+  "environment": "Demo",
+  "llm": {
+    "provider": "claudeCode",
+    "model": "claude-sonnet-4-6",
+    "ollamaBaseUrl": "http://localhost:11434",
+    "apiKeyEnv": "ANTHROPIC_API_KEY",
+    "sendScreenshots": true,
+    "timeoutMs": 180000,
+    "concurrency": 5
+  },
+  "paths": {
+    "cucumberJson": "../../../target/cucumber-reports/cucumber.json",
+    "tracesDir": "../../../target",
+    "featuresRoot": "../../../src/test/resources/features",
+    "outputDir": "../../../target/bug-reports"
+  },
+  "workItem": {
+    "defaultType": "maintenanceStory",
+    "errorTypes": ["AssertionError", "TimeoutError", "PlaywrightException"]
+  },
+  "analysis": {
+    "assertionStrategy": "hybrid"
+  },
+  "traces": {
+    "minMatchScore": 0.4,
+    "correlationBufferMs": 2000
+  },
+  "jira": {
+    "enabled": false,
+    "baseUrl": "",
+    "project": "QA",
+    "issueType": "Story",
+    "issueTypeMap": {},
+    "emailEnv": "JIRA_EMAIL",
+    "apiTokenEnv": "JIRA_API_TOKEN",
+    "labels": ["ai-generated"],
+    "priorityNames": {},
+    "defaultPriority": "Normal",
+    "componentMap": {}
+  },
+  "environmentInfo": {}
+}

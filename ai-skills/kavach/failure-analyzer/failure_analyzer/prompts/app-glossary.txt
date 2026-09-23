@@ -1,0 +1,18 @@
+Life Platform — Key Terms
+
+Campaign: Top-level entity. Has a budget, flight dates, and advertiser. Contains Line Items.
+Line Item: A delivery unit within a Campaign. Has its own budget, flight dates, cost model, and Tactics.
+Tactic: A targeting configuration within a Line Item. Specifies audience targeting rules.
+Bulk Edit Mode: UI mode allowing multiple line items to be enabled/disabled/deleted simultaneously.
+Flight: A time-bounded budget window within a Line Item.
+Cost Model: How the line item is priced — Fixed CPM, CPM, CPC, etc.
+Pacing Mode: How budget is spent over time — Even, ASAP, Ahead.
+Budget Distribution: How budget is allocated — Dollars, Percentage, Priority.
+NPI List: National Provider Identifier list — used for HCP (Healthcare Professional) targeting.
+Smart List: A curated audience list (e.g. Diagnosis Code, Medical Procedure Code) used in NPI targeting.
+DTC Workspace: Direct-to-Consumer workspace — consumer-facing targeting context.
+HCP Explorer: Healthcare Professional targeting workspace.
+Run Report: Feature that generates a report for a line item using a saved template.
+Schedule Report: Feature that schedules a recurring report for a line item.
+Targeting Rules: Audience, Geography, Contextual, and other targeting dimensions applied to a Tactic.
+Deal Group / Deal Groups: A grouping of private marketplace deals for inventory targeting.

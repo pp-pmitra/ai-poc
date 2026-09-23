@@ -1,0 +1,21 @@
+Life Platform — Campaign, Line Item, NPI, and Report context.
+
+UI PATTERNS:
+- Campaign creation flow: Create Campaign → Line Item page → Add Tactics → Save
+- Line Item types: Display, Audio, Video, Native Display, Native Video, DOOH, Search Extension
+- Each line item has: Overview, Details, Flights, Conversion, Tactics, Media Insights tabs
+- Bulk Edit Mode: select multiple line items via checkboxes, then use dropdown actions (Enable/Disable/Delete/Duplicate)
+- Reports: Run Report opens a panel; Pick Dimensions/Metrics link opens the dimension/metric selector
+- NPI Lists: Created via file upload (Plain List or List with Attributes); matched by name in Smart Lists
+
+KNOWN FRAGILE AREAS:
+- Date pickers (sui-calendar-*): always navigate to correct month before selecting a date; disabled dates cannot be clicked
+- Dimension/Metric dropdowns in Run Report: data loads asynchronously from BuyerProxy.ashx; clicking too early yields empty list
+- Line item name XPaths use dynamic text — name must match exactly including auto-generated suffix
+- Bulk Edit Mode status verification (Enabled/Disabled label) uses //label[contains(text(),'Disabled')] which can be stale if DOM reorders
+- NPI list upload: API call to BuyerProxy.ashx?action=importList; -1 status = upload API not ready
+
+COMMON ROOT CAUSES:
+- "Template's Dimension values are not available" → BuyerProxy.ashx API returned -1 before dropdown populated
+- "LineItem_* not found" → dynamic name suffix mismatch or line item not yet rendered
+- "Cannot be saved without valid flight details" → date picker clicked on disabled date
