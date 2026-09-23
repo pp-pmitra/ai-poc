@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
-      REPO_TOKEN: ${{ secrets.SUTRA_PAT || secrets.GITHUB_TOKEN }}
+      REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout target repository
         uses: actions/checkout@v4
