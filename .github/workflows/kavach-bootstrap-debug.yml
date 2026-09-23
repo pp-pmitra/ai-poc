@@ -1,0 +1,112 @@
+name: Kavach Auth Bootstrap Debug
+
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: "Which app's bootstrap to test"
+        required: true
+        type: choice
+        options: [life, studio]
+        default: life
+      environment:
+        description: "Target environment for login (Life only; ignored for Studio)"
+        required: true
+        type: choice
+        options: [Demo, Pre-release]
+        default: Demo
+      user_type:
+        description: "Internal or External login (Life only; ignored for Studio)"
+        required: false
+        type: choice
+        options: [Internal, External]
+        default: Internal
+      headless:
+        description: "Run Chromium headless"
+        required: false
+        type: boolean
+        default: true
+      hold_seconds:
+        description: "How long to hold the browser open once CDP is ready (seconds) — short by default since this is just for debugging"
+        required: false
+        type: string
+        default: "60"
+
+permissions:
+  contents: read
+
+jobs:
+  debug-bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CDP_PORT: ${{ inputs.app == 'studio' && '9224' || '9223' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Start Life auth bootstrap
+        if: ${{ inputs.app == 'life' }}
+        run: |
+          nohup mvn -B -ntp test -Dtest=LifeAuthStateBootstrapTest \
+            -Dauth.environment="${{ inputs.environment }}" \
+            -Dauth.userType="${{ inputs.user_type }}" \
+            -Dauth.holdSeconds="${{ inputs.hold_seconds }}" \
+            -Dauth.headless="${{ inputs.headless }}" \
+            > life-bootstrap.log 2>&1 &
+          echo "BOOTSTRAP_PID=$!" >> "$GITHUB_ENV"
+
+      - name: Start Studio auth bootstrap
+        if: ${{ inputs.app == 'studio' }}
+        run: |
+          nohup mvn -B -ntp test -Dtest=StudioAuthStateBootstrapTest \
+            -Dauth.holdForCdp=true \
+            -Dauth.holdSeconds="${{ inputs.hold_seconds }}" \
+            -Dauth.headless="${{ inputs.headless }}" \
+            > studio-bootstrap.log 2>&1 &
+          echo "BOOTSTRAP_PID=$!" >> "$GITHUB_ENV"
+
+      - name: Wait for CDP endpoint to come up
+        run: |
+          for i in $(seq 1 60); do
+            if nc -z localhost "$CDP_PORT"; then
+              echo "CDP endpoint on port $CDP_PORT is up."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::CDP endpoint on port $CDP_PORT never came up."
+          exit 1
+
+      - name: Dump bootstrap + Chromium subprocess logs
+        if: always()
+        run: |
+          echo "--- life-bootstrap.log / studio-bootstrap.log (mvn wrapper) ---"
+          cat life-bootstrap.log studio-bootstrap.log 2>/dev/null || true
+          echo "--- target/*-cdp-*.log (raw Chromium subprocess stdout/stderr) ---"
+          cat target/life-cdp-*.log target/studio-cdp-*.log 2>/dev/null || true
+
+      - name: Release the auth bootstrap
+        if: always()
+        run: |
+          touch ".claude/auth/${{ inputs.app }}-cdp-done"
+          sleep 5
+          kill "$BOOTSTRAP_PID" 2>/dev/null || true
+
+      - name: Upload debug logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bootstrap-debug-logs
+          path: |
+            life-bootstrap.log
+            studio-bootstrap.log
+            target/life-cdp-*.log
+            target/studio-cdp-*.log
