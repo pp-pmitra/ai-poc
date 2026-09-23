@@ -57,7 +57,11 @@ jobs:
         run: pip install uv
 
       - name: Install Claude Code CLI
-        run: npm install -g @anthropic-ai/claude-code
+        run: |
+          npm install -g @anthropic-ai/claude-code@latest
+          claude --version
+          claude update || true
+          claude --version
 
       - name: Configure git identity
         run: |
