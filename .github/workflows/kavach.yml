@@ -37,6 +37,12 @@ permissions:
 jobs:
   run-kavach:
     runs-on: ubuntu-latest
+    # Pinned to match pom.xml's com.microsoft.playwright version exactly (1.50.0), so the
+    # browser + OS deps baked into this image are guaranteed to satisfy what the Java
+    # driver actually launches — avoids ubuntu-latest's rolling OS release drifting out of
+    # sync with a pinned Playwright version's own dependency-detection tables.
+    container:
+      image: mcr.microsoft.com/playwright:v1.50.0-noble
     timeout-minutes: 90
     env:
       CDP_PORT: ${{ inputs.app == 'studio' && '9224' || '9223' }}
@@ -51,6 +57,11 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: maven
+
+      - name: Install Maven
+        run: |
+          apt-get update
+          apt-get install -y maven
 
       - name: Set up Node (Claude Code CLI + Playwright MCP)
         uses: actions/setup-node@v4
@@ -68,9 +79,6 @@ jobs:
           claude --version
           claude update || true
           claude --version
-
-      - name: Install Playwright browsers
-        run: npx -y playwright install --with-deps chromium
 
       - name: Run the target Cucumber suite (produces cucumber.json + failures, if any)
         continue-on-error: true
@@ -107,9 +115,10 @@ jobs:
           echo "BOOTSTRAP_PID=$!" >> "$GITHUB_ENV"
 
       - name: Wait for CDP endpoint to come up
+        shell: bash
         run: |
           for i in $(seq 1 60); do
-            if nc -z localhost "$CDP_PORT"; then
+            if (echo > "/dev/tcp/localhost/$CDP_PORT") 2>/dev/null; then
               echo "CDP endpoint on port $CDP_PORT is up."
               exit 0
             fi
@@ -144,6 +153,7 @@ jobs:
 
       - name: Verify Kavach produced a verdict report
         if: always()
+        shell: bash
         run: |
           {
             echo "### Kavach run summary"
