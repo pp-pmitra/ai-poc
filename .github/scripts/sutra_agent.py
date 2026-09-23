@@ -142,7 +142,6 @@ Synthesize the Gherkin coverage following all Sutra rules and return the JSON pa
     response = anthropic_client.messages.create(
         model="claude-3-7-sonnet-20250219",
         max_tokens=4000,
-        temperature=0.2,
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_prompt}],
     )
