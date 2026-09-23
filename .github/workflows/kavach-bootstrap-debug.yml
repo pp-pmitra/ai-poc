@@ -52,6 +52,11 @@ jobs:
           java-version: "21"
           cache: maven
 
+      - name: Install Playwright browser + OS deps (Java driver, not Node's)
+        run: |
+          mvn -B -ntp -q dependency:build-classpath -Dmdep.outputFile=/tmp/playwright-cp.txt
+          java -cp "$(cat /tmp/playwright-cp.txt)" com.microsoft.playwright.CLI install --with-deps chromium
+
       - name: Start Life auth bootstrap
         if: ${{ inputs.app == 'life' }}
         run: |
