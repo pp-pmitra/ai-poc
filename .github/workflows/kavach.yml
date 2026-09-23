@@ -116,7 +116,10 @@ jobs:
             sleep 5
           done
           echo "::error::CDP endpoint on port $CDP_PORT never came up. See bootstrap log."
+          echo "--- life-bootstrap.log / studio-bootstrap.log (mvn wrapper) ---"
           cat life-bootstrap.log studio-bootstrap.log 2>/dev/null || true
+          echo "--- target/*-cdp-*.log (raw Chromium subprocess stdout/stderr) ---"
+          cat target/life-cdp-*.log target/studio-cdp-*.log 2>/dev/null || true
           exit 1
 
       - name: Run Kavach live replay
