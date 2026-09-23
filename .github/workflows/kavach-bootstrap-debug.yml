@@ -85,6 +85,7 @@ jobs:
           echo "BOOTSTRAP_PID=$!" >> "$GITHUB_ENV"
 
       - name: Wait for CDP endpoint to come up
+        shell: bash
         run: |
           for i in $(seq 1 60); do
             if (echo > "/dev/tcp/localhost/$CDP_PORT") 2>/dev/null; then
