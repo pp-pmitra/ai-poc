@@ -76,9 +76,9 @@ jobs:
         continue-on-error: true
         run: |
           if [ -n "${{ inputs.cucumber_tags }}" ]; then
-            mvn -B -ntp test -Dcucumber.filter.tags="${{ inputs.cucumber_tags }}"
+            mvn -B -ntp test -Dtest=TestRunner -Dcucumber.filter.tags="${{ inputs.cucumber_tags }}"
           else
-            mvn -B -ntp test
+            mvn -B -ntp test -Dtest=TestRunner
           fi
 
       - name: Extract failures for replay (mechanical, no LLM)
