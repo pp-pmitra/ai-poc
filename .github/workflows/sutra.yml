@@ -1,0 +1,145 @@
+name: Sutra BDD Scenario Generator
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_repo:
+        description: "owner/repo Sutra operates on (skill's Fixed Configuration: pulsepointinc/qa-automation)"
+        required: true
+        default: "pulsepointinc/qa-automation"
+        type: string
+      source_type:
+        description: "Input source"
+        required: true
+        type: choice
+        options: [jira, sheet, doc, sheet_and_doc]
+      source_ref:
+        description: "Jira key (QA-1498), Sheet name/URL, or Doc name/URL — space-separate for sheet_and_doc"
+        required: true
+        type: string
+      restrict_to:
+        description: "Optional: restrict to a single ticket/tab (e.g. ET-24713) instead of the whole sheet/doc"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  run-sutra:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      REPO_TOKEN: ${{ secrets.SUTRA_PAT || secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.target_repo }}
+          token: ${{ env.REPO_TOKEN }}
+          fetch-depth: 0
+
+      - name: Fetch all remote branches (for Sutra_NNN resolution)
+        run: git fetch --all
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Set up Python (for mcp-atlassian via uvx, and STEP 5's column-width script)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Configure git identity
+        run: |
+          git config --global user.name "sutra-bot"
+          git config --global user.email "sutra-bot@users.noreply.github.com"
+
+      - name: Authenticate gh CLI
+        run: gh auth setup-git
+        env:
+          GH_TOKEN: ${{ env.REPO_TOKEN }}
+
+      - name: Write Google service account key file
+        run: |
+          echo "${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON_B64 }}" | base64 -d > "${RUNNER_TEMP}/gdrive-service-account.json"
+
+      - name: Render MCP server config
+        env:
+          JIRA_URL: ${{ secrets.JIRA_URL }}
+          JIRA_USERNAME: ${{ secrets.JIRA_USERNAME }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          GDRIVE_KEY_PATH: ${{ runner.temp }}/gdrive-service-account.json
+        run: |
+          cat > mcp-config.json <<EOF
+          {
+            "mcpServers": {
+              "google-drive": {
+                "command": "npx",
+                "args": ["-y", "@piotr-agier/google-drive-mcp"],
+                "env": {
+                  "GOOGLE_APPLICATION_CREDENTIALS": "${GDRIVE_KEY_PATH}"
+                }
+              },
+              "atlassian": {
+                "command": "uvx",
+                "args": ["mcp-atlassian@2.0.0"],
+                "env": {
+                  "JIRA_URL": "${JIRA_URL}",
+                  "JIRA_USERNAME": "${JIRA_USERNAME}",
+                  "JIRA_API_TOKEN": "${JIRA_API_TOKEN}"
+                }
+              }
+            }
+          }
+          EOF
+
+      - name: Run Sutra
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GH_TOKEN: ${{ env.REPO_TOKEN }}
+          SOURCE_TYPE: ${{ inputs.source_type }}
+          SOURCE_REF: ${{ inputs.source_ref }}
+          RESTRICT_TO: ${{ inputs.restrict_to }}
+        run: |
+          PROMPT="/sutra ${SOURCE_TYPE}: ${SOURCE_REF}"
+          if [ -n "$RESTRICT_TO" ]; then
+            PROMPT="$PROMPT (restrict to ${RESTRICT_TO} only)"
+          fi
+          claude -p "$PROMPT" \
+            --mcp-config mcp-config.json \
+            --allowedTools "Bash,Read,Write,Edit,Glob,Grep,mcp__google-drive__*,mcp__atlassian__*" \
+            --permission-mode bypassPermissions \
+            --model claude-opus-5-5 \
+            --output-format text \
+            2>&1 | tee sutra-run.log
+
+      - name: Verify Sutra produced a PR (surface Halting Conditions)
+        if: always()
+        run: |
+          {
+            echo "### Sutra run summary"
+            echo '```'
+            tail -n 80 sutra-run.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          if ! grep -qE "https://github\.com/[^ ]+/pull/[0-9]+" sutra-run.log; then
+            echo "::error::No PR URL found in Sutra's output — it likely hit a Halting Condition instead of completing STEP 6. See the log above."
+            exit 1
+          fi
+
+      - name: Upload run transcript
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sutra-run-log
+          path: sutra-run.log
