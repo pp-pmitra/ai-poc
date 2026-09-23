@@ -32,7 +32,6 @@ jobs:
     timeout-minutes: 90
     env:
       REPO_TOKEN: ${{ secrets.GH_TOKEN || secrets.SUTRA_PAT || secrets.GITHUB_TOKEN }}
-      CLAUDE_CONFIG_DIR: ${{ runner.temp }}/claude-config
     steps:
       - name: Validate target repository
         env:
@@ -57,6 +56,8 @@ jobs:
           path: target-repo
 
       - name: Install Sutra skill
+        env:
+          CLAUDE_CONFIG_DIR: ${{ runner.temp }}/claude-config
         run: |
           mkdir -p "$CLAUDE_CONFIG_DIR/skills/sutra"
           cp sutra-source/.claude/skills/sutra/SKILL.md \
@@ -181,6 +182,7 @@ jobs:
       - name: Run Sutra
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_CONFIG_DIR: ${{ runner.temp }}/claude-config
           GH_TOKEN: ${{ env.REPO_TOKEN }}
           SOURCE_TYPE: ${{ inputs.source_type }}
           SOURCE_REF: ${{ inputs.source_ref }}
