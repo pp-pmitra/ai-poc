@@ -35,6 +35,11 @@ final class AuthHoldUtil {
         command.add("--user-data-dir=" + profileDir.toAbsolutePath());
         command.add("--no-first-run");
         command.add("--no-default-browser-check");
+        if ("root".equals(System.getProperty("user.name"))) {
+            // Chromium's sandbox refuses to initialize as root (e.g. inside a Docker
+            // container running as root by default) unless explicitly disabled.
+            command.add("--no-sandbox");
+        }
         if (headless) {
             command.add("--headless=new");
             command.add("--disable-gpu");
