@@ -7,10 +7,6 @@ on:
         description: 'Jira Ticket ID (e.g., ET-25052)'
         required: true
         type: string
-      requirements_text:
-        description: 'Requirements / Acceptance Criteria / Matrix Text'
-        required: true
-        type: string
 
 jobs:
   sutra-generate:
@@ -46,7 +42,6 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           JIRA_TICKET_ID: ${{ inputs.jira_ticket_id }}
-          REQUIREMENTS_TEXT: ${{ inputs.requirements_text }}
         run: |
           python .github/scripts/sutra_agent.py
 
