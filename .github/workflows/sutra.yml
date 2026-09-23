@@ -69,16 +69,18 @@ jobs:
         env:
           GH_TOKEN: ${{ env.REPO_TOKEN }}
 
-      - name: Write Google service account key file
+      - name: Write Google Drive OAuth credentials file
+        env:
+          GDRIVE_OAUTH_JSON: ${{ secrets.GDRIVE_OAUTH_CREDENTIALS_JSON }}
         run: |
-          echo "${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON_B64 }}" | base64 -d > "${RUNNER_TEMP}/gdrive-service-account.json"
+          cat > "${RUNNER_TEMP}/gdrive_oauth.json" <<< "$GDRIVE_OAUTH_JSON"
 
       - name: Render MCP server config
         env:
           JIRA_URL: ${{ secrets.JIRA_URL }}
           JIRA_USERNAME: ${{ secrets.JIRA_USERNAME }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-          GDRIVE_KEY_PATH: ${{ runner.temp }}/gdrive-service-account.json
+          GDRIVE_OAUTH_PATH: ${{ runner.temp }}/gdrive_oauth.json
         run: |
           cat > mcp-config.json <<EOF
           {
@@ -87,7 +89,7 @@ jobs:
                 "command": "npx",
                 "args": ["-y", "@piotr-agier/google-drive-mcp"],
                 "env": {
-                  "GOOGLE_APPLICATION_CREDENTIALS": "${GDRIVE_KEY_PATH}"
+                  "GOOGLE_DRIVE_OAUTH_CREDENTIALS": "${GDRIVE_OAUTH_PATH}"
                 }
               },
               "atlassian": {
