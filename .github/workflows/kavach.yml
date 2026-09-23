@@ -93,6 +93,7 @@ jobs:
             -Dauth.environment="${{ inputs.environment }}" \
             -Dauth.userType="${{ inputs.user_type }}" \
             -Dauth.holdSeconds="${{ inputs.hold_seconds }}" \
+            -Dauth.headless=true \
             > life-bootstrap.log 2>&1 &
           echo "BOOTSTRAP_PID=$!" >> "$GITHUB_ENV"
 
