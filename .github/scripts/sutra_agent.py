@@ -235,6 +235,10 @@ and return the JSON payload.
     response = anthropic_client.messages.create(
         model="claude-sonnet-5",
         max_tokens=8192,
+        # Sonnet 5 enables adaptive thinking by default. This request needs
+        # machine-readable JSON, so reserve the output budget for the answer
+        # instead of allowing thinking blocks to consume all max_tokens.
+        thinking={"type": "disabled"},
         system=SYSTEM_PROMPT,
         messages=[
             {
@@ -261,7 +265,8 @@ and return the JSON payload.
 
         raise ValueError(
             "Claude response contained no text block. "
-            f"Received block types: {block_types}"
+            f"Received block types: {block_types}. "
+            f"Stop reason: {response.stop_reason}"
         )
 
     raw_text = "\n".join(text_blocks).strip()
