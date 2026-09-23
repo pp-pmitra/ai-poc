@@ -190,6 +190,14 @@ jobs:
           if [ -n "$RESTRICT_TO" ]; then
             PROMPT="$PROMPT (restrict to ${RESTRICT_TO} only)"
           fi
+          PROMPT="$PROMPT
+
+          This is a non-interactive workflow_dispatch run, which authorizes the
+          connector fetch for the supplied source. Complete the delivery without
+          pausing for another approval. Create any generated PR against main.
+          After verifying a created PR, print exactly SUTRA_PR_URL=<verified URL>
+          on its own line. If every item is Duplicate or Blocked and no file
+          change is needed, print exactly SUTRA_NO_CHANGES=<concise reason>."
           claude -p "$PROMPT" \
             --mcp-config "${RUNNER_TEMP}/mcp-config.json" \
             --allowedTools "Bash,Read,Write,Edit,Glob,Grep,mcp__google-drive__*,mcp__atlassian__*" \
