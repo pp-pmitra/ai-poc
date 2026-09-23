@@ -1,0 +1,296 @@
+"""
+Scans all .feature files and uses the LLM to generate descriptions for new or
+changed ones. Updates the FEATURE FILES section of app-glossary.txt in place.
+
+Usage:
+  python failure-analyzer/refresh_glossary.py          -- process only new/changed
+  python failure-analyzer/refresh_glossary.py --all    -- reprocess every feature file
+"""
+
+import asyncio
+import hashlib
+import json
+import re
+import sys
+from pathlib import Path
+
+from failure_analyzer.config import load_config
+from failure_analyzer.llm.connector_factory import create_connector
+
+FEATURES_ROOT = Path(__file__).parent.parent.parent.parent / "src" / "test" / "resources" / "features"
+STEPDEFS_ROOT = Path(__file__).parent.parent.parent.parent / "src" / "test" / "java" / "stepdefinitions"
+GLOSSARY_FILE = Path(__file__).parent / "failure_analyzer" / "prompts" / "app-glossary.txt"
+MANIFEST_FILE = Path(__file__).parent / "history" / "glossary-manifest.json"
+
+SECTION_START = "--- FEATURE FILES (auto-generated) ---"
+SECTION_END = "--- END FEATURE FILES ---"
+
+MODULE_STEPDEFS = {
+    "life": "LifeSteps.java",
+    "hcp": "HcpSteps.java",
+    "studio": "StudioSteps.java",
+    "api": "ApiSteps.java",
+}
+
+
+def find_feature_files(directory: Path) -> list[Path]:
+    if not directory.exists():
+        return []
+    return sorted(directory.rglob("*.feature"))
+
+
+def file_hash(file_path: Path) -> str:
+    return hashlib.sha256(file_path.read_bytes()).hexdigest()[:12]
+
+
+def load_manifest() -> dict:
+    if not MANIFEST_FILE.exists():
+        return {}
+    try:
+        return json.loads(MANIFEST_FILE.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def save_manifest(manifest: dict) -> None:
+    MANIFEST_FILE.parent.mkdir(parents=True, exist_ok=True)
+    MANIFEST_FILE.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+
+
+def detect_module(feature_path: Path) -> str:
+    parts = [p.lower() for p in feature_path.parts]
+    try:
+        features_idx = len(parts) - 1 - parts[::-1].index("features")
+        subdir = parts[features_idx + 1] if features_idx + 1 < len(parts) else ""
+    except ValueError:
+        subdir = ""
+    if subdir == "e2e":
+        return "E2E"
+    for key in MODULE_STEPDEFS:
+        if key in subdir:
+            return key.upper()
+    return "LIFE"
+
+
+def extract_scenario_names(content: str) -> list[str]:
+    return [
+        m.group(1).strip()
+        for m in re.finditer(
+            r"^\s*Scenario(?:\s+Outline)?:\s*(.+)$", content, re.MULTILINE
+        )
+    ]
+
+
+def extract_tags(content: str) -> list[str]:
+    return sorted(set(re.findall(r"@\w+", content)))
+
+
+def get_step_annotations(module: str) -> list[str]:
+    if module == "E2E":
+        files = [STEPDEFS_ROOT / f for f in MODULE_STEPDEFS.values()]
+    else:
+        filename = MODULE_STEPDEFS.get(module.lower(), "LifeSteps.java")
+        files = [STEPDEFS_ROOT / filename]
+
+    annotations: list[str] = []
+    for f in files:
+        if not f.exists():
+            continue
+        content = f.read_text(encoding="utf-8")
+        for m in re.finditer(r'@(?:Given|When|Then)\s*\("([^"]+)"\)', content):
+            annotations.append(m.group(1))
+    return list(dict.fromkeys(annotations))[:120]
+
+
+def build_prompt(
+    feature_content: str, module: str, step_annotations: list[str]
+) -> str:
+    steps_section = ""
+    if step_annotations:
+        steps_list = "\n".join(f"  - {s}" for s in step_annotations)
+        steps_section = (
+            f"\nSTEP DEFINITIONS AVAILABLE IN THIS MODULE:\n{steps_list}"
+        )
+
+    return f"""You are analyzing a Cucumber feature file for PulsePoint — a healthcare advertising platform.
+Products: LIFE (ad campaign DSP/demand-side platform), HCP365 (healthcare professional targeting), Studio (NPI data workspaces), API (REST API endpoints), E2E (cross-product end-to-end workflows).
+
+Detected module from file path: {module}
+
+Analyze the feature file and step definitions below. Respond in EXACTLY this format — no extra text, no markdown:
+
+Module: <LIFE | HCP365 | Studio | API | E2E>
+Summary: <One sentence describing what user flow or UI area this feature tests.>
+Entities: <Comma-separated domain entities tested, e.g.: Campaign, Line Item, NPI List, Pixel>
+
+FEATURE FILE:
+{feature_content}
+{steps_section}"""
+
+
+def parse_response(response: str) -> dict:
+    module_m = re.search(r"^Module:\s*(.+)$", response, re.MULTILINE)
+    summary_m = re.search(r"^Summary:\s*(.+)$", response, re.MULTILINE)
+    entities_m = re.search(r"^Entities:\s*(.+)$", response, re.MULTILINE)
+    return {
+        "module": (module_m.group(1).strip() if module_m else "Unknown"),
+        "summary": (summary_m.group(1).strip() if summary_m else ""),
+        "entities": (entities_m.group(1).strip() if entities_m else ""),
+    }
+
+
+def render_section(manifest: dict) -> str:
+    from datetime import datetime
+
+    lines = [
+        SECTION_START,
+        "(Auto-generated by refresh_glossary.py — do not edit manually.)",
+        f"Last updated: {datetime.now().strftime('%Y-%m-%d')}",
+        "",
+    ]
+
+    by_module: dict[str, list[tuple[str, dict]]] = {}
+    for rel_path, entry in sorted(manifest.items()):
+        mod = entry.get("module", "Unknown")
+        by_module.setdefault(mod, []).append((rel_path, entry))
+
+    for mod in sorted(by_module):
+        lines.append(f"  [{mod}]")
+        for rel_path, entry in by_module[mod]:
+            lines.append(f"  {Path(rel_path).name}")
+            if entry.get("summary"):
+                lines.append(f"    {entry['summary']}")
+            if entry.get("entities"):
+                lines.append(f"    Entities : {entry['entities']}")
+            scenarios = entry.get("scenarios", [])
+            if scenarios:
+                preview = " | ".join(scenarios[:3])
+                more = (
+                    f" ... (+{len(scenarios) - 3} more)"
+                    if len(scenarios) > 3
+                    else ""
+                )
+                lines.append(f"    Scenarios: {preview}{more}")
+            tags = entry.get("tags", [])
+            if tags:
+                lines.append(f"    Tags     : {', '.join(tags)}")
+            lines.append("")
+
+    lines.append(SECTION_END)
+    return "\n".join(lines)
+
+
+def update_glossary(section: str) -> None:
+    if not GLOSSARY_FILE.exists():
+        print(f"  Warning: glossary file not found at {GLOSSARY_FILE}")
+        return
+
+    content = GLOSSARY_FILE.read_text(encoding="utf-8")
+    start_idx = content.find(SECTION_START)
+    end_idx = content.find(SECTION_END)
+
+    if start_idx != -1 and end_idx != -1:
+        content = (
+            content[:start_idx] + section + content[end_idx + len(SECTION_END) :]
+        )
+    else:
+        content = content.rstrip() + "\n\n" + section + "\n"
+
+    GLOSSARY_FILE.write_text(content, encoding="utf-8")
+
+
+async def run():
+    force_all = "--all" in sys.argv
+
+    print("\n======================================")
+    print("  Glossary Refresh — Starting...")
+    print("======================================\n")
+
+    if not FEATURES_ROOT.exists():
+        print(f"Error: features root not found at:\n  {FEATURES_ROOT}")
+        sys.exit(1)
+
+    feature_files = find_feature_files(FEATURES_ROOT)
+    print(f"  Found {len(feature_files)} feature file(s) in {FEATURES_ROOT}\n")
+
+    config = load_config()
+    manifest = load_manifest()
+    llm = create_connector(config.llm)
+    repo_root = Path(__file__).parent.parent.parent.parent
+
+    processed = 0
+    skipped = 0
+    failed = 0
+
+    for feature_path in feature_files:
+        rel_path = str(feature_path.relative_to(repo_root))
+        h = file_hash(feature_path)
+
+        if not force_all and manifest.get(rel_path, {}).get("hash") == h:
+            skipped += 1
+            continue
+
+        feature_content = feature_path.read_text(encoding="utf-8")
+        scenarios = extract_scenario_names(feature_content)
+        tags = extract_tags(feature_content)
+        module = detect_module(feature_path)
+        step_annotations = get_step_annotations(module)
+
+        print(f"  Processing: {feature_path.name} [{module}]")
+
+        summary = ""
+        entities = ""
+        resolved_module = module
+        try:
+            prompt = build_prompt(feature_content, module, step_annotations)
+            response = await llm.generate(prompt)
+            parsed = parse_response(response)
+            resolved_module = parsed["module"]
+            summary = parsed["summary"]
+            entities = parsed["entities"]
+            print(f"    -> {summary or '(no summary generated)'}")
+        except Exception as e:
+            print(f"    LLM failed: {e} — storing without summary")
+            failed += 1
+
+        manifest[rel_path] = {
+            "hash": h,
+            "module": resolved_module,
+            "summary": summary,
+            "entities": entities,
+            "scenarios": scenarios,
+            "tags": tags,
+        }
+        processed += 1
+
+    rel_paths = {str(f.relative_to(repo_root)) for f in feature_files}
+    removed = 0
+    for key in list(manifest.keys()):
+        if key not in rel_paths:
+            del manifest[key]
+            removed += 1
+            print(f"  Removed stale entry: {key}")
+
+    save_manifest(manifest)
+    update_glossary(render_section(manifest))
+
+    print("\n======================================")
+    print("  Summary")
+    print("======================================")
+    print(f"  Processed : {processed} feature file(s)")
+    print(f"  Skipped   : {skipped} (unchanged)")
+    if removed:
+        print(f"  Removed   : {removed} (deleted files)")
+    if failed:
+        print(f"  LLM failed: {failed} (stored without summary)")
+    print(f"  Glossary  : {GLOSSARY_FILE}")
+    print(f"  Manifest  : {MANIFEST_FILE}")
+    print("======================================\n")
+
+
+def main():
+    asyncio.run(run())
+
+
+if __name__ == "__main__":
+    main()

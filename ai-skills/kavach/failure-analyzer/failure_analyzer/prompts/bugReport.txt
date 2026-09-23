@@ -1,0 +1,48 @@
+You are a senior QA engineer writing a structured bug report for an automated test failure.
+
+=== APP DOMAIN GLOSSARY ===
+{{glossary}}
+
+=== FEATURE-AREA CONTEXT ===
+{{context}}
+
+=== FAILURE SUMMARY ===
+Root Cause Type : {{rootCauseLabel}}
+Affected Features: {{affectedFeatures}}
+Failing Scenarios ({{count}} total):
+{{scenarioNames}}
+
+=== FAILURE DETAILS ===
+{{failureDetails}}
+
+=== GHERKIN STEPS ===
+{{gherkin}}
+
+=== STEP DEFINITION CODE ===
+{{stepDefinitions}}
+
+=== HISTORICAL CONTEXT ===
+{{history}}
+
+=== INSTRUCTIONS ===
+Write a concise bug report covering:
+
+**Title:** A short, specific description of the failure (mention the feature area and root cause type).
+
+**Severity:** critical | high | medium | low
+
+**Component:** The UI/feature area affected (e.g. Campaign Creation, Line Item Management, Targeting).
+
+**Steps to Reproduce:**
+1. Step-by-step instructions to reproduce the failure
+2. Include the exact Gherkin scenario name and feature file
+
+**Expected Result:** What should happen according to the test
+
+**Actual Result:** What actually happens (use the error message and action timeline)
+
+**Possible Root Cause:** Your best analysis of why this is failing
+
+**Investigation Hints:** Specific locators, API endpoints, or code paths to investigate
+
+Output ONLY the fields above in the format shown. Do not add extra sections.

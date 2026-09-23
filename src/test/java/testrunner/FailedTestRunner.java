@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
             "pretty",
             "html:target/cucumber-reports/report.html",
             "json:target/cucumber-reports/cucumber.json",
-            "junit:target/cucumber-reports/Cucumber.xml"
+            "junit:target/cucumber-reports/Cucumber.xml",
+            "hooks.StepTracingPlugin"
         })
 public class FailedTestRunner {}
