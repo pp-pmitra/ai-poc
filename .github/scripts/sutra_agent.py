@@ -271,15 +271,39 @@ and return the JSON payload.
 
     raw_text = "\n".join(text_blocks).strip()
 
-    # Claude has been explicitly instructed to return only JSON,
-    # so parse the complete response instead of extracting JSON
-    # with a regular expression.
+    # Prefer a strict parse, but tolerate explanatory prose or a fenced JSON
+    # block. Models can occasionally add that wrapper despite the prompt.
     try:
         return json.loads(raw_text)
 
     except json.JSONDecodeError as exc:
+        required_keys = {
+            "target_file",
+            "is_append",
+            "gherkin_content",
+            "triage_chat_table",
+            "pr_body",
+        }
+        decoder = json.JSONDecoder()
+
+        for match in re.finditer(r"\{", raw_text):
+            try:
+                candidate, _ = decoder.raw_decode(
+                    raw_text,
+                    match.start(),
+                )
+            except json.JSONDecodeError:
+                continue
+
+            if (
+                isinstance(candidate, dict)
+                and required_keys.issubset(candidate)
+            ):
+                return candidate
+
         raise ValueError(
-            "Failed to parse Claude response as JSON.\n\n"
+            "Failed to find a valid Sutra JSON object in "
+            "Claude's response.\n\n"
             f"Raw response:\n{raw_text}"
         ) from exc
 
