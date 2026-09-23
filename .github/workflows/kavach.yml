@@ -22,8 +22,8 @@ on:
         options: [Internal, External]
         default: Internal
       cucumber_tags:
-        description: "Cucumber tag filter for the run that produces the failures to diagnose, e.g. @regression"
-        required: true
+        description: "Cucumber tag filter for the run that produces the failures to diagnose, e.g. @regression. Leave blank to run whatever TestRunner.java's @CucumberOptions already specifies, untouched."
+        required: false
         type: string
       hold_seconds:
         description: "How long the auth bootstrap holds the browser open (seconds)"
@@ -74,7 +74,12 @@ jobs:
 
       - name: Run the target Cucumber suite (produces cucumber.json + failures, if any)
         continue-on-error: true
-        run: mvn -B -ntp test -Dcucumber.filter.tags="${{ inputs.cucumber_tags }}"
+        run: |
+          if [ -n "${{ inputs.cucumber_tags }}" ]; then
+            mvn -B -ntp test -Dcucumber.filter.tags="${{ inputs.cucumber_tags }}"
+          else
+            mvn -B -ntp test
+          fi
 
       - name: Extract failures for replay (mechanical, no LLM)
         run: |
