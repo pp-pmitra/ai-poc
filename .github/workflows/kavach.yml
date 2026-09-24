@@ -85,8 +85,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: pip
-          cache-dependency-path: .claude/skills/kavach-diagnose/scripts/requirements.txt
+          # No cache: pip here — actions/setup-python's cache option needs a
+          # working `pip` executable to compute a cache key, but the toolcache
+          # Python installed inside this container doesn't have one linked
+          # (ENOENT spawning it directly). `python -m pip install` below
+          # works anyway since it invokes the pip module, not that missing
+          # executable.
 
       - name: Install kavach-diagnose Python dependencies
         run: >-
