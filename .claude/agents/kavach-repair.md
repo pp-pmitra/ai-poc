@@ -7,9 +7,14 @@ tools:
   - Read
   - Grep
   - Glob
-  - Edit
+  - Edit(**/*.feature)
+  - Edit(src/test/java/stepdefinitions/**)
+  - Edit(src/main/java/pages/**)
+  - Edit(kavach-data/history/fix-history.json)
+  - Edit(kavach-data/fix-patterns/**)
   - Bash
-  - Write
+  - Write(kavach-data/history/fix-history.json)
+  - Write(kavach-data/fix-patterns/**)
 skills:
   - kavach-repair
   - kavach-knowledge

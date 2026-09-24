@@ -8,7 +8,7 @@ tools:
   - Grep
   - Glob
   - Bash
-  - Write
+  - Write(kavach-data/**)
   - mcp__playwright__browser_navigate
   - mcp__playwright__browser_navigate_back
   - mcp__playwright__browser_snapshot

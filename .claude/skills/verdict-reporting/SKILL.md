@@ -17,7 +17,7 @@ description: >-
 
 Read `kavach-data/history/triage-results/<triage-timestamp>/combined-receipts.json` (written by the live-replay-diagnosis skill's `validate_replay_receipts.py --triage-manifest` step) — it already unions the failure-triage skill's and the live-replay-diagnosis skill's receipts and accounts for every group in exactly one row, with an `analysisTier` field on each (`tier0_intermittent` | `fix_pattern_cache` | `tier1_deterministic` | `tier1_llm_static` | `tier2_offline_dom` | `tier2_live_replay`) telling you whether that row's evidence came from a live browser or not. This is the single source this skill reads from — don't separately open the two underlying receipt directories or re-derive completeness by hand, that reconciliation is already done.
 
-No narrative/story report (no per-failure prose write-up, no LLM-generated analysis text). Write one structured report to `kavach-data/history/replay-verdict-<YYYY-MM-DD-HHmm>.md`, timestamped to the minute the report is written (24h clock, e.g. `replay-verdict-2026-07-09-1432.md`). Each run gets its own timestamped file — never append to or overwrite a prior run's file, even if run on the same day. Multiple runs per day are expected and each is a distinct, independently referenceable artifact.
+No narrative/story report (no per-failure prose write-up, no LLM-generated analysis text). Write one structured report to `kavach-data/history/replay-verdict-<YYYY-MM-DD-HHmmss>.md`, timestamped to the **second** the report is written (24h clock, e.g. `replay-verdict-2026-07-09-143205.md`) — matching the `triage-results`/`replay-packets` directories' own `%Y-%m-%d-%H%M%S` timestamp convention, not a coarser minute-only one. Each run gets its own timestamped file — never append to or overwrite a prior run's file, even if run on the same day or the same minute. Multiple runs per day (and, rarely, per minute — a retriggered or rerun CI job) are expected; if a file at the computed path already exists, append `-2`, `-3`, … before the `.md` extension until the path is free, rather than overwriting it. Multiple runs per day are expected and each is a distinct, independently referenceable artifact.
 
 ### Structure
 
@@ -80,15 +80,17 @@ Derive mechanically from each row's `analysisTier` in `combined-receipts.json` �
 
 Mechanical, derived from Verdict × Confidence — not a separate judgment call. `fix-history.json` stores machine-format verdict values; map them to display strings here when writing the report:
 
-| Machine value (`combined-receipts.json`) | Display string (report) |
+| Machine value (`fix-history.json`; see note below for `combined-receipts.json`) | Display string (report) |
 |---|---|
 | `script_issue_fix_proposed` | `Script Issue — Fix Proposed` |
-| `script_issue_fix_applied` | `Script Issue — Fix Applied` |
+| `script_issue_fix_applied`* | `Script Issue — Fix Applied` |
 | `confirmed_product_bug` | `Product Bug — Confirmed` |
 | `suspected_product_bug` | `Product Bug — Suspected` |
 | `not_reproduced_intermittent` | `Not Reproduced — Intermittent` |
 | `not_reproduced_passed_live` | `Not Reproduced — Passed Live Replay` |
 | `needs_investigation` | `Needs Investigation` |
+
+\* `script_issue_fix_applied` never appears in `combined-receipts.json` (it is outside the contract schema's `verdict` enum) — it is written only into `fix-history.json`, and only by `kavach-repair`, after this skill's own run has already finished. This row exists so the mapping table stays complete for anyone tracing a `fix-history.json` entry back to a display string; when writing the verdict report itself, only `combined-receipts.json` rows are ever consulted, so this specific value never appears in the report you're producing.
 
 - **🔴 Critical**: `confirmed_product_bug`
 - **🟢 High-confidence script fixes**: `script_issue_fix_proposed` or `script_issue_fix_applied`, any confidence
@@ -110,15 +112,15 @@ Write a full Evidence/Conclusion card only for the representative scenario of ea
 
 **One row per scenario — no bundling, no silent drops.** Every `scenarioName` present in `failures-for-replay.json` gets its own explicit row in exactly one section's table, by full name, even when it shares a `groupId`/root cause with others. Never collapse multiple scenarios into a single row via "(+N more)"/"(+N same-group scenarios)" or reference them only by count or row-number in prose — a reader must be able to find every scenario by name in some table. Same rule for `fix-history.json`: one entry per scenario, never a merged entry covering several scenarios at once.
 
+**Recovering a group's full scenario list when `affectedScenarios` is absent:** a `combined-receipts.json` row only carries `affectedScenarios` when it came from a real worker receipt (per the schema); a missing-receipt fallback row (e.g. a group escalated to live replay whose worker crashed) carries only `scenarioCount` and one `representativeScenario`. For those rows, recover every member scenario's name by filtering `failures-for-replay.json`'s entries for the matching `groupId` — do not open the replay-packets/triage-results directories by hand for this, and do not guess or omit the other members just because `affectedScenarios` is missing from the row.
+
 Before writing the report, count the rows across all four sections against `failures-for-replay.json`'s total failure count and reconcile — every scenario must appear in exactly one row in exactly one section. If the counts don't match, find the missing scenario(s) and add their row(s) (with a real verdict — `Not Reproduced — Intermittent` still counts, silent omission does not) before finishing.
 
 Print the same structure in chat too, but the file is the durable artifact for this run (referenced by scenario name so it can be cross-checked against `fix-history.json` later).
 
 ## Phase 5: Record History & Patterns
 
-Mechanical bookkeeping, still useful — do this directly, no analyzer code needed.
-
-For every failure diagnosed (whether fixed, flagged as a bug, or not reproduced), append an entry to `kavach-data/history/fix-history.json` (create as `[]` if missing). One entry per scenario — never merge several scenarios into one entry (e.g. `"scenarioName": "X (+ 1 same-group scenario)"`); a scenario not individually searchable by its exact name in this file is a bookkeeping bug: **Exception:** scenarios in groups with `blockedReason` (live replay blocked) get no `fix-history.json` entry — nothing was diagnosed, and an entry would wrongly count toward the `attempts >= 2` rule in the failure-triage skill.
+Mechanical bookkeeping, still useful — but never hand-write `fix-history.json` directly (read-whole-file/append-in-memory/write-whole-file-back has no schema check and no protection against two runs finishing close together clobbering each other's writes). Build one entry per failure diagnosed (whether fixed, flagged as a bug, or not reproduced) in the shape below, collect the whole run's entries into one JSON array, and pipe that array through `python3 .claude/skills/kavach-diagnose/scripts/append_fix_history.py`: it validates every entry against the same machine-format enums the contract gate checks (rejecting the whole batch, writing nothing, if any entry is malformed) and appends under an exclusive file lock. One entry per scenario — never merge several scenarios into one entry (e.g. `"scenarioName": "X (+ 1 same-group scenario)"`); a scenario not individually searchable by its exact name in this file is a bookkeeping bug: **Exception:** scenarios in groups with `blockedReason` (live replay blocked) get no `fix-history.json` entry — nothing was diagnosed, and an entry would wrongly count toward the `attempts >= 2` rule in the failure-triage skill.
 
 ```json
 {
@@ -144,11 +146,13 @@ Always write `review` as `{"status": "unreviewed", "reviewedAt": null, "note": n
 
 **`liveVerification` means what its name says — a browser actually observed this.** Write it only for `analysisTier: "tier2_live_replay"` entries, with the real `count()`/state-check outcome. For any Phase-2.5-sourced entry (`tier0_intermittent` | `fix_pattern_cache` | `tier1_deterministic` | `tier1_llm_static` | `tier2_offline_dom`), write `liveVerification: null` — never fabricate `{"elementFound": true, ...}` to satisfy the shape; a downstream reader (script, dashboard, or person) trusts this field as proof a browser ran, and a null here correctly says one didn't.
 
-For every unique `featureFile` touched, ensure `kavach-data/fix-patterns/<derived-name>.md` exists (bootstrap it with a `# <Feature> fix patterns` header + `## Run log` line if missing) and append (never overwrite) any reusable fix pattern discovered under `## Known good fixes` or `## Learned notes` — dedupe against existing entries.
+For every unique `featureFile` touched, derive `<feature-slug>.md` using the exact algorithm in the `kavach-knowledge` skill's Shape section (e.g. `Life_CampaignDashboard.feature` → `life-campaign-dashboard.md`) and ensure `kavach-data/fix-patterns/<feature-slug>.md` exists (bootstrap it with a `# <Feature> fix patterns` header + `## Run log` line if missing). Use this same algorithm every time — a different-looking slug derived here than the one `kavach-repair` looks up later silently orphans the pattern this run just recorded. Append (never overwrite) any reusable fix pattern discovered — dedupe against existing entries per `kavach-knowledge`'s dedup criteria.
 
 ### Clean up build artifacts
 
 After the verdict file is confirmed written, delete the packet/prompt build artifacts from the live-replay directory — they are fully reproducible from `failures-for-replay.json` and accumulate across runs. Keep the `receipts/` subdirectory untouched (those are the source of truth for `validate_replay_receipts.py` and `fix-history.json`):
+
+**Derive `<replay-timestamp>` from this run's own `combined-receipts.json`'s `replayManifest` field** (its path is `kavach-data/history/replay-packets/<replay-timestamp>/manifest.json`) — never from "the most recent directory under `replay-packets/`". This is a destructive `-delete`; guessing the most-recent directory risks deleting a different, concurrently-running batch's still-in-progress packet files instead of this run's own.
 
 ```bash
 find kavach-data/history/replay-packets/<replay-timestamp> \
@@ -156,7 +160,7 @@ find kavach-data/history/replay-packets/<replay-timestamp> \
   -delete
 ```
 
-`-maxdepth 1` ensures only the top-level packet files are removed — the `receipts/` subdirectory is one level deeper and is not touched. If the live-replay-diagnosis skill was skipped entirely (all groups resolved by failure-triage with no live replay), there is no `<replay-timestamp>` directory and this step is a no-op.
+`-maxdepth 1` ensures only the top-level packet files are removed — the `receipts/` subdirectory is one level deeper and is not touched. If `combined-receipts.json`'s `replayManifest` is `null` (the live-replay-diagnosis skill was skipped entirely — all groups resolved by failure-triage with no live replay), there is no `<replay-timestamp>` directory and this step is a no-op.
 
 ## Phase 6: Close Held Browser
 
@@ -170,7 +174,9 @@ touch .claude/auth/life-cdp-done
 touch .claude/auth/studio-cdp-done
 ```
 
-Only touch the marker for the bootstrap actually used in this run. For a mixed Life+Studio batch, finish and close the first app's held browser before starting the second app's bootstrap. If the command exits early before the final report is written, do not touch the done marker automatically unless the user explicitly asks to stop the held browser.
+Only touch the marker for the bootstrap actually used in this run. If the command exits early before the final report is written, do not touch the done marker automatically unless the user explicitly asks to stop the held browser.
+
+**Mixed Life+Studio batch sequencing is not this skill's responsibility.** `.claude/run-mixed-batch.sh` owns starting each app's bootstrap in order and touching each done-marker as it finishes with that app — this skill only ever touches the one marker for whichever single app it was run against. Do not attempt to start a second app's bootstrap from within this skill; it has no tool access to do so, and the wrapper script already handles that ordering.
 
 ## Rules (this skill)
 

@@ -17,34 +17,11 @@ No narrative LLM report-generation step is used here — that step (`failure_ana
 
 ## Reference files
 
-Read in Phase 2 alongside `fix-history.json`. Feature-specific files supplement `_default.md`; they never override it.
+- [`kavach-data/fix-patterns/_default.md`](kavach-data/fix-patterns/_default.md) — cross-feature patterns: dismiss/wait hardening, nested-child-span locator guard, navigation utilities. Read in Phase 2 alongside `fix-history.json` — the only pattern file this skill itself ever reads (see Phase 2's note below on why feature-specific files are deliberately not loaded here).
 
-- [`kavach-data/fix-patterns/_default.md`](kavach-data/fix-patterns/_default.md) — cross-feature patterns: dismiss/wait hardening, nested-child-span locator guard, navigation utilities
-- [`kavach-data/fix-patterns/life-campaign.md`](kavach-data/fix-patterns/life-campaign.md)
-- [`kavach-data/fix-patterns/life-campaign-dashboard.md`](kavach-data/fix-patterns/life-campaign-dashboard.md)
-- [`kavach-data/fix-patterns/life-create-campaign.md`](kavach-data/fix-patterns/life-create-campaign.md)
-- [`kavach-data/fix-patterns/life-create-creative.md`](kavach-data/fix-patterns/life-create-creative.md)
-- [`kavach-data/fix-patterns/life-create-pixel.md`](kavach-data/fix-patterns/life-create-pixel.md)
-- [`kavach-data/fix-patterns/life-create-report-template.md`](kavach-data/fix-patterns/life-create-report-template.md)
-- [`kavach-data/fix-patterns/life-creatives.md`](kavach-data/fix-patterns/life-creatives.md)
-- [`kavach-data/fix-patterns/life-export-download.md`](kavach-data/fix-patterns/life-export-download.md)
-- [`kavach-data/fix-patterns/life-line-item-creation.md`](kavach-data/fix-patterns/life-line-item-creation.md)
-- [`kavach-data/fix-patterns/life-lineitem.md`](kavach-data/fix-patterns/life-lineitem.md)
-- [`kavach-data/fix-patterns/life-npilists.md`](kavach-data/fix-patterns/life-npilists.md)
-- [`kavach-data/fix-patterns/life-pixels.md`](kavach-data/fix-patterns/life-pixels.md)
-- [`kavach-data/fix-patterns/life-pmp.md`](kavach-data/fix-patterns/life-pmp.md)
-- [`kavach-data/fix-patterns/life-reporttemplates.md`](kavach-data/fix-patterns/life-reporttemplates.md)
-- [`kavach-data/fix-patterns/life-runreport.md`](kavach-data/fix-patterns/life-runreport.md)
-- [`kavach-data/fix-patterns/life-schedulereport.md`](kavach-data/fix-patterns/life-schedulereport.md)
-- [`kavach-data/fix-patterns/life-tactic.md`](kavach-data/fix-patterns/life-tactic.md)
-- [`kavach-data/fix-patterns/life-tactic-creation.md`](kavach-data/fix-patterns/life-tactic-creation.md)
-- [`kavach-data/fix-patterns/life-targeting-template-creation.md`](kavach-data/fix-patterns/life-targeting-template-creation.md)
-- [`kavach-data/fix-patterns/life-targetings.md`](kavach-data/fix-patterns/life-targetings.md)
-- [`kavach-data/fix-patterns/life-targetingtemplates.md`](kavach-data/fix-patterns/life-targetingtemplates.md)
-- [`kavach-data/fix-patterns/studio-explorerworkspace.md`](kavach-data/fix-patterns/studio-explorerworkspace.md)
-- [`kavach-data/fix-patterns/life-curatedmarket.md`](kavach-data/fix-patterns/life-curatedmarket.md)
+The full current catalog of feature-specific pattern files lives at `kavach-data/fix-patterns/` and is not duplicated as a static list in this skill — it's read on demand elsewhere (see below), and a hand-maintained copy of the list here would just be one more place for it to drift out of sync with the real directory, as previously happened.
 
-New feature files get their own pattern file bootstrapped by the verdict-reporting skill's history-writing phase (this skill's Phase 2 derivation rule handles discovery).
+New feature files get their own pattern file bootstrapped by the verdict-reporting skill's history-writing phase, using the slug-derivation algorithm in the `kavach-knowledge` skill's Shape section (not a rule in this skill's own Phase 2 — this skill deliberately never loads feature-specific files at all, see Phase 2 below).
 
 ## Phase 1: Gather Failures & Mechanical Signals
 
@@ -78,8 +55,10 @@ Packet/prompt building and live-replay worker execution happen in the live-repla
 Run the no-browser triage tier **before** building any live-replay packets — it decides which `groupId`s actually need the live-replay-diagnosis skill's expensive live replay:
 
 ```
-cd .claude/skills/kavach-diagnose/scripts && python3 triage_workers.py -i history/failures-for-replay.json --fix-history history/fix-history.json -o history/triage-results --repo-root ../../../..
+cd .claude/skills/kavach-diagnose/scripts && python3 triage_workers.py
 ```
+
+No path arguments — `-i`/`--fix-history`/`-o`/`--repo-root` all default to the correct repo-root-relative locations (`<repo-root>/kavach-data/history/...`) computed from the script's own location. Do not pass `-i history/failures-for-replay.json` (or the sibling `--fix-history`/`-o` flags) here: those are relative to the post-`cd` working directory (`.../scripts/`), which has no `history/` subdirectory, and the script crashes immediately with `FileNotFoundError` if given them.
 
 If the script exits non-zero or `escalate-groups.json` is not written under `history/triage-results/<triage-timestamp>/`, stop and print `PHASE_SCRIPT_FAILED: triage_workers.py: <stderr>`. Do not hand off to live-replay-diagnosis without a valid `escalate-groups.json`.
 
@@ -100,13 +79,16 @@ Read `escalate-groups.json` and hand its `groupIds` off to the live-replay-diagn
 
 ## Testing
 
-Before modifying `failure_analyzer/triage/llm_static_triage.py` or `triage_workers.py`, run:
+Before modifying `failure_analyzer/triage/llm_static_triage.py` or `triage_workers.py`, run **both**:
 
 ```bash
 python3 .claude/skills/kavach-diagnose/scripts/tests/test_llm_static_triage.py
+python3 .claude/skills/kavach-diagnose/scripts/tests/test_triage_workers.py
 ```
 
-All assertions must pass. This file's `EnforceTier1VerdictConstraintsTests` class is the hard safety constraint check: it verifies the Phase 2.5 triage tier cannot finalize a `confirmed_product_bug` or `suspected_product_bug` verdict without live replay, enforced by `enforce_tier1_verdict_constraints`. If a change to the triage logic breaks any assertion here, do not ship it — extend this test file's coverage rather than weakening the assertions.
+All assertions must pass. `test_llm_static_triage.py`'s `EnforceTier1VerdictConstraintsTests` class is the hard safety constraint check: it verifies the Phase 2.5 triage tier cannot finalize a `confirmed_product_bug` or `suspected_product_bug` verdict without live replay, enforced by `enforce_tier1_verdict_constraints`. If a change to the triage logic breaks any assertion here, do not ship it — extend this test file's coverage rather than weakening the assertions.
+
+`test_triage_workers.py`'s `DocumentedCliInvocationTests` class is the regression guard for this exact Phase 2.5 command: it asserts `triage_workers.py`'s no-argument defaults resolve under the real repo-root `kavach-data/history/` directory, not a path relative to the `scripts/` directory. This is the class of bug a change to argument parsing or default paths can silently reintroduce — a change to `triage_workers.py`'s CLI/path-handling code is not verified by `test_llm_static_triage.py` alone.
 
 ## Rules (this skill)
 

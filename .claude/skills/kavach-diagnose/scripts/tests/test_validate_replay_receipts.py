@@ -14,6 +14,7 @@ from validate_replay_receipts import combined_summary, validate_receipt
 _VALID_ARTIFACTS = {
     "domStructureChecked": "evaluate(el => el.outerHTML) on the nearby container returned '<div class=\"empty-state\">No campaigns found</div>' — target row absent",
     "staleLocatorRuledOut": "page.locator(\"//button[normalize-space(text())='Lifetime']\").count() -> 0 after trying the corrected normalize-space variant too",
+    "testDataOrEnvironmentRuledOut": "searched for 'AutoSegment747695' in the Demo account — 0 rows returned, confirmed environment is Demo via account switcher",
 }
 
 
@@ -86,6 +87,30 @@ class ValidateReplayReceiptsTests(unittest.TestCase):
         self.assertEqual(verdict, "suspected_product_bug")
         self.assertTrue(any("productBugArtifacts.domStructureChecked" in p for p in problems))
         self.assertTrue(any("productBugArtifacts.staleLocatorRuledOut" in p for p in problems))
+        self.assertTrue(any("productBugArtifacts.testDataOrEnvironmentRuledOut" in p for p in problems))
+
+    def test_confirmed_product_bug_with_placeholder_testdata_artifact_is_downgraded(self):
+        receipt = {
+            "verdict": "confirmed_product_bug",
+            "backgroundMatched": True,
+            "liveReplayPerformed": True,
+            "alternateValidPathFound": False,
+            "productBugGate": {k: True for k in (
+                "userLevelBehaviorReproduced", "targetAffordanceMissingOrBroken",
+                "domStructureChecked", "staleLocatorRuledOut", "testDataOrEnvironmentRuledOut",
+            )},
+            "productBugArtifacts": {
+                "domStructureChecked": _VALID_ARTIFACTS["domStructureChecked"],
+                "staleLocatorRuledOut": _VALID_ARTIFACTS["staleLocatorRuledOut"],
+                "testDataOrEnvironmentRuledOut": "confirmed test data and environment were both fine after checking",
+            },
+            "evidence": ["something"],
+        }
+
+        verdict, problems = validate_receipt(receipt)
+
+        self.assertEqual(verdict, "suspected_product_bug")
+        self.assertTrue(any("productBugArtifacts.testDataOrEnvironmentRuledOut" in p for p in problems))
 
     def test_confirmed_product_bug_with_placeholder_artifacts_is_downgraded(self):
         receipt = {
@@ -205,7 +230,7 @@ class ValidateReplayReceiptsTests(unittest.TestCase):
         verdict, problems = validate_receipt(receipt)
 
         self.assertEqual(verdict, "suspected_product_bug")
-        self.assertTrue(any("doesn't look like a real DOM/count() artifact" in p for p in problems))
+        self.assertTrue(any("doesn't look like a real observed artifact" in p for p in problems))
 
 
 class CombinedSummaryTests(unittest.TestCase):

@@ -23,10 +23,14 @@ REQUIRED_GATE_KEYS = (
 # For `confirmed_product_bug` specifically, a boolean gate claim alone is
 # self-reported by the same worker session that did the replay — nothing
 # independently re-checks it was actually done rather than rushed/eyeballed.
-# These two keys are the most concrete/checkable ones (a real DOM excerpt, a
-# real count()/evaluate() output), so require the *raw* observed text behind
-# the claim, not just `true`, before letting "Critical" stand unchallenged.
-REQUIRED_ARTIFACT_KEYS = ("domStructureChecked", "staleLocatorRuledOut")
+# These three keys are the most concrete/checkable ones (a real DOM excerpt, a
+# real count()/evaluate() output, or a named test-data value actually searched
+# for), so require the *raw* observed text behind the claim, not just `true`,
+# before letting "Critical" stand unchallenged. The other two gate keys
+# (userLevelBehaviorReproduced, targetAffordanceMissingOrBroken) are covered
+# indirectly by the receipt-level `evidence` non-empty check below, since a
+# real user-level reproduction is expected to show up there too.
+REQUIRED_ARTIFACT_KEYS = ("domStructureChecked", "staleLocatorRuledOut", "testDataOrEnvironmentRuledOut")
 MIN_ARTIFACT_LEN = 20
 _PLACEHOLDER_ARTIFACT_RE = re.compile(r"(?i)^(true|false|yes|no|checked|verified|done|n/?a|none|ok)\.?$")
 # A real DOM excerpt or count()/evaluate() output has at least one of these —
@@ -34,6 +38,18 @@ _PLACEHOLDER_ARTIFACT_RE = re.compile(r"(?i)^(true|false|yes|no|checked|verified
 # after a thorough check") passes the length/placeholder checks above but has
 # none of these, so this closes that gap without claiming to prove authenticity.
 _ARTIFACT_SIGNAL_RE = re.compile(r"[<>]|\d|outerHTML|\.count\(|\.evaluate\(|locator\(")
+# testDataOrEnvironmentRuledOut isn't a DOM/locator check — a real one names
+# the specific value searched for and what was found (e.g. "searched
+# 'AutoSegment747695', 0 rows returned" or "environment=Demo confirmed via
+# GET /api/config -> {\"env\":\"demo\"}"), so a digit or a quoted literal is
+# the corresponding real-artifact signal for this key, not the DOM/tool-call
+# syntax the other two keys look for.
+_ENV_ARTIFACT_SIGNAL_RE = re.compile(r"\d|['\"][^'\"]+['\"]")
+_ARTIFACT_SIGNAL_RE_BY_KEY = {
+    "domStructureChecked": _ARTIFACT_SIGNAL_RE,
+    "staleLocatorRuledOut": _ARTIFACT_SIGNAL_RE,
+    "testDataOrEnvironmentRuledOut": _ENV_ARTIFACT_SIGNAL_RE,
+}
 
 REPORT_VERDICT = {
     "script_issue_fix_proposed": "Script Issue — Fix Proposed",
@@ -74,15 +90,16 @@ def _artifact_problems(receipt: dict[str, Any]) -> list[str]:
             problems.append(f"productBugArtifacts.{key} missing or not a string")
             continue
         stripped = value.strip()
+        signal_re = _ARTIFACT_SIGNAL_RE_BY_KEY[key]
         if len(stripped) < MIN_ARTIFACT_LEN or _PLACEHOLDER_ARTIFACT_RE.match(stripped):
             problems.append(
                 f"productBugArtifacts.{key} missing or not a real artifact — must be the actual observed "
-                f"DOM excerpt / count() output, not a boolean restated as text"
+                f"DOM excerpt / count() output / searched value, not a boolean restated as text"
             )
-        elif not _ARTIFACT_SIGNAL_RE.search(stripped):
+        elif not signal_re.search(stripped):
             problems.append(
-                f"productBugArtifacts.{key} doesn't look like a real DOM/count() artifact "
-                f"(no tag, digit, or tool-call signal found) — looks like restated prose, not observed output"
+                f"productBugArtifacts.{key} doesn't look like a real observed artifact "
+                f"(no tag, digit, quoted value, or tool-call signal found) — looks like restated prose, not observed output"
             )
     return problems
 

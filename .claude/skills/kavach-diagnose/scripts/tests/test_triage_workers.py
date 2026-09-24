@@ -1,12 +1,43 @@
 from __future__ import annotations
 
+import argparse
 import sys
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+import triage_workers
 from triage_workers import _frequency_by_scenario
+
+_SCRIPTS_DIR = Path(__file__).resolve().parent.parent
+_REPO_ROOT = _SCRIPTS_DIR.parents[3]
+
+
+class DocumentedCliInvocationTests(unittest.TestCase):
+    """Guards the specific regression class the review found: failure-triage/
+    SKILL.md's Phase 2.5 previously documented `-i`/`--fix-history`/`-o`
+    overrides that were relative paths resolved against the wrong cwd,
+    crashing with FileNotFoundError before any real triage logic ran. The
+    fixed SKILL.md now runs `triage_workers.py` with no path arguments at all
+    and relies entirely on these defaults -- so this test asserts the
+    defaults themselves resolve under the real repo-root `kavach-data/`
+    directory, not a path relative to the scripts/ directory."""
+
+    def test_no_arg_invocation_uses_repo_root_relative_defaults(self):
+        with mock.patch.object(sys, "argv", ["triage_workers.py"]):
+            args = triage_workers.parse_args()
+
+        self.assertEqual(args.input, _REPO_ROOT / "kavach-data" / "history" / "failures-for-replay.json")
+        self.assertEqual(args.fix_history, _REPO_ROOT / "kavach-data" / "history" / "fix-history.json")
+        self.assertEqual(args.out_root, _REPO_ROOT / "kavach-data" / "history" / "triage-results")
+        # None of these should ever be a bare 'history/...' path -- that shape
+        # only resolves correctly if the caller happens to already be sitting
+        # in kavach-data/, which the documented `cd .../scripts && ...`
+        # invocation never is.
+        for path in (args.input, args.fix_history, args.out_root):
+            self.assertTrue(path.is_absolute(), f"{path} must be an absolute, repo-root-anchored default")
 
 
 class FrequencyByScenarioTests(unittest.TestCase):

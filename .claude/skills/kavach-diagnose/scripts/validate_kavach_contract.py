@@ -10,12 +10,20 @@ does not re-derive verdicts or re-run any analysis. Deliberately
 dependency-free (no jsonschema package) so it can run anywhere Python 3 runs,
 matching the style of the other failure-analyzer scripts in this directory.
 
+Because this validator is a hand-rolled re-implementation rather than a real
+jsonschema load, .claude/contracts/kavach-verdict.schema.json is documentation
+that nothing here actually executes — it can silently drift from what this
+file enforces. tests/test_kavach_verdict_schema_equivalence.py is what keeps
+the two in lockstep (asserts the schema's required-key sets and enums equal
+this file's own VALID_*/*_REQUIRED_KEYS constants); if you change an enum or a
+required key here, that test will fail until the schema is updated to match.
+
 The document shape validated here was traced directly from
-validate_replay_receipts.py's actual return values, not from iFix.md's
-Phase 3 worker-receipt spec — those are different shapes. A worker receipt
-has productBugGate/productBugArtifacts booleans; this merged document
-reduces that down to a plain-English gateProblems list per group, which is
-what's actually checked here.
+validate_replay_receipts.py's actual return values, not from the
+live-replay-diagnosis skill's Phase 3 worker-receipt spec — those are
+different shapes. A worker receipt has productBugGate/productBugArtifacts
+booleans; this merged document reduces that down to a plain-English
+gateProblems list per group, which is what's actually checked here.
 
 Usage: python3 validate_kavach_contract.py <combined-receipts.json>
 Exit 0 and prints "OK: N group(s) valid" if the whole document conforms;

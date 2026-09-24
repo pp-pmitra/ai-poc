@@ -40,6 +40,16 @@ on:
         type: string
         default: "50"
 
+# Two overlapping runs would each upload a full (not diffed) snapshot of
+# kavach-data/fix-patterns for open-fix-pattern-pr to lay down on top of a
+# fresh main checkout -- a first run's PR merging while a second, slower run
+# is still in flight would have that second run's stale snapshot silently
+# overwrite the just-merged patterns with no conflict marker. Queue instead
+# of racing.
+concurrency:
+  group: kavach-learned-patterns
+  cancel-in-progress: false
+
 jobs:
   run-kavach:
     runs-on: ubuntu-latest
@@ -51,6 +61,7 @@ jobs:
       contents: read
     outputs:
       contract_valid: ${{ steps.contract.outputs.valid }}
+      boundary_ok: ${{ steps.boundary.outputs.ok }}
       combined_receipts_path: ${{ steps.contract.outputs.combined_receipts_path }}
       verdict_report_path: ${{ steps.verify_verdict.outputs.verdict_report_path }}
       kavach_data_artifact: kavach-data-for-pr-${{ github.run_id }}-${{ github.run_attempt }}
@@ -230,16 +241,21 @@ jobs:
             "The matching auth bootstrap is already logged in and holding a browser open on CDP port ${CDP_PORT}; the Playwright MCP server is already configured to attach to it — never attempt your own login." \
             "Run your full pipeline (failure-triage -> live-replay-diagnosis -> verdict-reporting) end to end and stop once the verdict report and combined-receipts.json are written and validated against .claude/contracts/kavach-verdict.schema.json.")
 
-          # kavach-diagnose's own agent definition never grants Edit, and is
-          # never meant to touch application/test source — Write is scoped
-          # to kavach-data/** to match that invariant at the CLI-invocation
-          # layer too, not just in the agent's own tool list.
+          # kavach-diagnose is never meant to touch application/test source —
+          # both Write and Edit are scoped to kavach-data/** here, matching
+          # the agent definition's own tool list exactly (Write(kavach-data/**)),
+          # plus Edit(kavach-data/**) for editing files this run already wrote.
+          # This --allowedTools string is not the real enforcement boundary on
+          # its own (Bash(*) is unrestricted and could write anywhere via shell
+          # redirection) -- the "Verify repository boundaries" step later in
+          # this job is what actually detects and fails on an out-of-scope
+          # write, and its outcome gates the PR job below (see boundary_ok).
           claude --agent kavach-diagnose \
             --print "${prompt}" \
             --mcp-config "$MCP_CONFIG" \
             --strict-mcp-config \
             --permission-mode dontAsk \
-            --allowedTools "Bash(*),Read,Write(kavach-data/**),Grep,Glob,mcp__playwright__browser_navigate,mcp__playwright__browser_tabs,mcp__playwright__browser_snapshot,mcp__playwright__browser_evaluate,mcp__playwright__browser_click,mcp__playwright__browser_fill_form,mcp__playwright__browser_type,mcp__playwright__browser_press_key,mcp__playwright__browser_wait_for,mcp__playwright__browser_run_code_unsafe,mcp__playwright__browser_take_screenshot,mcp__playwright__browser_close,mcp__playwright__browser_select_option,mcp__playwright__browser_hover,mcp__playwright__browser_find" \
+            --allowedTools "Bash(*),Read,Write(kavach-data/**),Edit(kavach-data/**),Grep,Glob,mcp__playwright__browser_navigate,mcp__playwright__browser_tabs,mcp__playwright__browser_snapshot,mcp__playwright__browser_evaluate,mcp__playwright__browser_click,mcp__playwright__browser_fill_form,mcp__playwright__browser_type,mcp__playwright__browser_press_key,mcp__playwright__browser_wait_for,mcp__playwright__browser_run_code_unsafe,mcp__playwright__browser_take_screenshot,mcp__playwright__browser_close,mcp__playwright__browser_select_option,mcp__playwright__browser_hover,mcp__playwright__browser_find" \
             --model sonnet \
             --max-budget-usd "${MAX_BUDGET_USD}" \
             --no-session-persistence \
@@ -317,12 +333,17 @@ jobs:
           fi
 
       - name: Verify repository boundaries
+        id: boundary
         if: always()
         shell: bash
         run: |
           # kavach-diagnose is only ever allowed to write under target/ (build
           # output), its own scripts/history/ working directory, and
           # kavach-knowledge's fix-patterns/ — never application or test source.
+          # This step's own outcome (boundary_ok) gates open-fix-pattern-pr below
+          # alongside contract_valid -- a boundary violation must never be masked
+          # by an apparently-successful fix-pattern PR appearing right alongside
+          # a failed run-kavach job.
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           changes=$(git status --porcelain --untracked-files=all -- . \
             ':(exclude)target/**' \
@@ -331,8 +352,10 @@ jobs:
           if [ -n "${changes}" ]; then
             echo "::error::Kavach modified files outside its allowed write locations."
             printf '%s\n' "${changes}"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
             exit 1
           fi
+          echo "ok=true" >> "$GITHUB_OUTPUT"
 
       - name: Upload verdict report + receipts
         if: always()
@@ -362,7 +385,7 @@ jobs:
         # job has no push/PR credentials at all (contents: read only); the
         # separate open-fix-pattern-pr job below is the only place those
         # credentials exist, and it only acts on this artifact.
-        if: always() && steps.contract.outputs.valid == 'true'
+        if: always() && steps.contract.outputs.valid == 'true' && steps.boundary.outputs.ok == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: kavach-data-for-pr-${{ github.run_id }}-${{ github.run_attempt }}
@@ -374,7 +397,7 @@ jobs:
 
   open-fix-pattern-pr:
     needs: run-kavach
-    if: always() && needs.run-kavach.outputs.contract_valid == 'true'
+    if: always() && needs.run-kavach.outputs.contract_valid == 'true' && needs.run-kavach.outputs.boundary_ok == 'true'
     runs-on: ubuntu-latest
     # The only job in this workflow with write credentials — split out from
     # run-kavach so that Kavach's own Bash/Write calls (running with an

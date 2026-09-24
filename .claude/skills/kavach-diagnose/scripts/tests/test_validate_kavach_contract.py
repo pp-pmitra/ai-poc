@@ -26,6 +26,7 @@ from validate_kavach_contract import validate_document, validate_group
 _VALID_ARTIFACTS = {
     "domStructureChecked": "evaluate(el => el.outerHTML) on the nearby container returned '<div class=\"empty-state\">No campaigns found</div>' — target row absent",
     "staleLocatorRuledOut": "page.locator(\"//button[normalize-space(text())='Lifetime']\").count() -> 0 after trying the corrected normalize-space variant too",
+    "testDataOrEnvironmentRuledOut": "searched for 'AutoSegment747695' in the Demo account — 0 rows returned, confirmed environment is Demo via account switcher",
 }
 
 
@@ -229,6 +230,12 @@ class ValidatorRejectsRealisticBreakageTests(unittest.TestCase):
         })
         self.assertTrue(any("summaryByGroup" in p for p in problems))
 
+
+# Schema<->validator equivalence tests (required doc/group keys, verdict/
+# tier/confidence enums) live in test_kavach_verdict_schema_equivalence.py,
+# not here — this file previously duplicated that exact coverage in a
+# SchemaEquivalenceTests class; keeping one copy avoids two files silently
+# drifting from each other as well as from the schema.
 
 if __name__ == "__main__":
     unittest.main()
