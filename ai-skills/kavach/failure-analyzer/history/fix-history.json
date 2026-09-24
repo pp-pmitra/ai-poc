@@ -1,0 +1,122 @@
+[
+  {
+    "timestamp": "2026-09-24T06:23:57",
+    "runDate": "2026-09-24",
+    "scenarioName": "Manage a Retargeting Pixel using Javascript pixel type (Create, Edit and Remove) (Example #1)",
+    "featureFile": "src/test/resources/features/life/Life_Pixels.feature",
+    "verdict": "needs_investigation",
+    "confidence": "low",
+    "priority": "needs_investigation",
+    "groupId": "TimeoutError|and \"...\" application is logged in successfully with account \"...\"|locator=page.screenshot|pageObject=Navigation.selectAndClickExternalUserApplicationType|route=/accountmgmt/lifelogin.aspx",
+    "isGroupRepresentative": true,
+    "attempts": 1,
+    "change": null,
+    "liveVerification": {
+      "elementFound": true,
+      "scenarioContinuedPastFixPoint": false
+    },
+    "notes": "Live: the held bootstrap browser and the CI trace both show the server's LifeLogin.aspx ValidatorMessage 'Your login attempt was not successful. Please try again.' Login locators resolve and the postback reaches the server. Cause is Demo internal credentials or account state, not a locator. waitForURL at Navigation.java:224 times out after 120s.",
+    "analysisTier": "tier2_live_replay",
+    "review": {
+      "status": "unreviewed",
+      "reviewedAt": null,
+      "note": null
+    }
+  },
+  {
+    "timestamp": "2026-09-24T06:23:57",
+    "runDate": "2026-09-24",
+    "scenarioName": "Manage a Retargeting Pixel using Image pixel type (Create, Edit and Remove) (Example #1)",
+    "featureFile": "src/test/resources/features/life/Life_Pixels.feature",
+    "verdict": "needs_investigation",
+    "confidence": "low",
+    "priority": "needs_investigation",
+    "groupId": "TimeoutError|and \"...\" application is logged in successfully with account \"...\"|locator=page.screenshot|pageObject=Navigation.selectAndClickExternalUserApplicationType|route=/accountmgmt/lifelogin.aspx",
+    "isGroupRepresentative": false,
+    "attempts": 1,
+    "change": null,
+    "liveVerification": {
+      "elementFound": true,
+      "scenarioContinuedPastFixPoint": false
+    },
+    "notes": "Same root cause as representative 'Manage a Retargeting Pixel using Javascript pixel type (Create, Edit and Remove) (Example #1)': Demo login rejected by server.",
+    "analysisTier": "tier2_live_replay",
+    "review": {
+      "status": "unreviewed",
+      "reviewedAt": null,
+      "note": null
+    }
+  },
+  {
+    "timestamp": "2026-09-24T06:23:57",
+    "runDate": "2026-09-24",
+    "scenarioName": "Manage a Smart Pixel with associated Smart List (Create and Edit) (Example #1)",
+    "featureFile": "src/test/resources/features/life/Life_Pixels.feature",
+    "verdict": "needs_investigation",
+    "confidence": "low",
+    "priority": "needs_investigation",
+    "groupId": "TimeoutError|and \"...\" application is logged in successfully with account \"...\"|locator=page.screenshot|pageObject=Navigation.selectAndClickExternalUserApplicationType|route=/accountmgmt/lifelogin.aspx",
+    "isGroupRepresentative": false,
+    "attempts": 1,
+    "change": null,
+    "liveVerification": {
+      "elementFound": true,
+      "scenarioContinuedPastFixPoint": false
+    },
+    "notes": "Same root cause as representative 'Manage a Retargeting Pixel using Javascript pixel type (Create, Edit and Remove) (Example #1)': Demo login rejected by server.",
+    "analysisTier": "tier2_live_replay",
+    "review": {
+      "status": "unreviewed",
+      "reviewedAt": null,
+      "note": null
+    }
+  },
+  {
+    "timestamp": "2026-09-24T06:23:57",
+    "runDate": "2026-09-24",
+    "scenarioName": "Manage a Smart Pixel without associated Smart List (Create, Edit and Deactivate) (Example #1)",
+    "featureFile": "src/test/resources/features/life/Life_Pixels.feature",
+    "verdict": "needs_investigation",
+    "confidence": "low",
+    "priority": "needs_investigation",
+    "groupId": "TimeoutError|and \"...\" application is logged in successfully with account \"...\"|locator=page.screenshot|pageObject=Navigation.selectAndClickExternalUserApplicationType|route=/accountmgmt/lifelogin.aspx",
+    "isGroupRepresentative": false,
+    "attempts": 1,
+    "change": null,
+    "liveVerification": {
+      "elementFound": true,
+      "scenarioContinuedPastFixPoint": false
+    },
+    "notes": "Same root cause as representative 'Manage a Retargeting Pixel using Javascript pixel type (Create, Edit and Remove) (Example #1)': Demo login rejected by server.",
+    "analysisTier": "tier2_live_replay",
+    "review": {
+      "status": "unreviewed",
+      "reviewedAt": null,
+      "note": null
+    }
+  },
+  {
+    "timestamp": "2026-09-24T06:23:57",
+    "runDate": "2026-09-24",
+    "scenarioName": "Manage a Conversion Pixel (Create, Edit and Remove) (Example #1)",
+    "featureFile": "src/test/resources/features/life/Life_Pixels.feature",
+    "verdict": "needs_investigation",
+    "confidence": "low",
+    "priority": "needs_investigation",
+    "groupId": "TimeoutError|and \"...\" application is logged in successfully with account \"...\"|locator=page.screenshot|pageObject=Navigation.selectAndClickExternalUserApplicationType|route=/accountmgmt/lifelogin.aspx",
+    "isGroupRepresentative": false,
+    "attempts": 1,
+    "change": null,
+    "liveVerification": {
+      "elementFound": true,
+      "scenarioContinuedPastFixPoint": false
+    },
+    "notes": "Same root cause as representative 'Manage a Retargeting Pixel using Javascript pixel type (Create, Edit and Remove) (Example #1)': Demo login rejected by server.",
+    "analysisTier": "tier2_live_replay",
+    "review": {
+      "status": "unreviewed",
+      "reviewedAt": null,
+      "note": null
+    }
+  }
+]
