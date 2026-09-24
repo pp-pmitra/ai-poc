@@ -237,6 +237,49 @@ jobs:
             exit 1
           fi
 
+      - name: Validate combined-receipts.json against the kavach-verdict contract
+        id: contract
+        if: always()
+        shell: bash
+        run: |
+          # This is the hard gate between kavach-diagnose and any downstream
+          # processing (the PR step below, and eventually kavach-imaintain):
+          # resolve exactly one combined-receipts.json, fail if it's missing
+          # or ambiguous, run the deterministic validator against it, and
+          # record the outcome in the job summary before anything is
+          # uploaded or a PR is opened.
+          shopt -s nullglob globstar
+          receipts=(kavach-data/history/**/combined-receipts.json)
+
+          {
+            echo "### Kavach contract validation"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ ${#receipts[@]} -eq 0 ]; then
+            echo "::error::No combined-receipts.json found under kavach-data/history/. Kavach did not produce a validated handoff document."
+            echo "Result: **FAIL** — no combined-receipts.json found." >> "$GITHUB_STEP_SUMMARY"
+            echo "valid=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          if [ ${#receipts[@]} -gt 1 ]; then
+            echo "::error::Found ${#receipts[@]} combined-receipts.json files under kavach-data/history/ — expected exactly one."
+            printf '%s\n' "${receipts[@]}"
+            echo "Result: **FAIL** — ${#receipts[@]} combined-receipts.json files found, expected exactly one." >> "$GITHUB_STEP_SUMMARY"
+            echo "valid=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          receipt="${receipts[0]}"
+          echo "combined_receipts_path=${receipt}" >> "$GITHUB_OUTPUT"
+
+          if python3 .claude/skills/kavach-diagnose/scripts/validate_kavach_contract.py "${receipt}" | tee -a "$GITHUB_STEP_SUMMARY"; then
+            echo "valid=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::${receipt} failed contract validation — see problems above."
+            echo "valid=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
       - name: Verify repository boundaries
         if: always()
         shell: bash
@@ -276,7 +319,11 @@ jobs:
             studio-bootstrap.log
 
       - name: Open PR for kavach's learned fix patterns
-        if: always()
+        # Only ever persist learned fix-patterns/verdict from a run whose
+        # combined-receipts.json actually passed the contract gate above —
+        # an invalid or malformed handoff document must never feed the
+        # fix-pattern cache that later runs and kavach-imaintain trust.
+        if: always() && steps.contract.outputs.valid == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

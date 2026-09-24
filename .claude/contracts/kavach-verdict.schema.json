@@ -1,92 +1,162 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://pulsepoint.example/schemas/kavach-verdict.schema.json",
-  "title": "Kavach combined-receipts row",
-  "description": "One entry in kavach-data/history/triage-results/<timestamp>/combined-receipts.json — the deterministic handoff contract from kavach-diagnose to kavach-imaintain. Mirrors the actual output shape of validate_replay_receipts.py; this schema is the reference, that script is the source of truth for runtime behavior.",
+  "title": "Kavach combined-receipts document",
+  "description": "The full document written by validate_replay_receipts.py's combined_summary() (or validate_manifest() standalone) — the deterministic handoff contract from kavach-diagnose to kavach-imaintain. Traced directly from that script's actual output, not the per-worker receipt shape described in iFix.md's Phase 3 (which has productBugGate/productBugArtifacts booleans that are checked at production time but never copied forward into this merged document — only the resulting gateProblems list is).",
   "type": "object",
   "additionalProperties": true,
-  "required": ["groupId", "verdict", "reportVerdict", "analysisTier", "evidence"],
+  "required": [
+    "totalFailures",
+    "groupCount",
+    "summaryByGroup",
+    "affectedScenariosByVerdict",
+    "distinctIssuesByVerdict",
+    "metrics",
+    "groups"
+  ],
   "properties": {
-    "groupId": {
-      "type": ["string", "null"],
-      "description": "Shared root-cause grouping key (same exception type + normalized step pattern), or null for an ungrouped singleton."
+    "triageManifest": { "type": "string" },
+    "replayManifest": { "type": ["string", "null"] },
+    "manifest": { "type": "string", "description": "Present instead of triageManifest/replayManifest when validate_manifest() ran standalone (no --triage-manifest)." },
+    "totalFailures": { "type": "integer", "minimum": 0 },
+    "groupCount": { "type": "integer", "minimum": 0 },
+    "summaryByGroup": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
     },
-    "verdict": {
-      "enum": [
-        "script_issue_fix_proposed",
-        "confirmed_product_bug",
-        "suspected_product_bug",
-        "not_reproduced_intermittent",
-        "not_reproduced_passed_live",
-        "needs_investigation"
-      ],
-      "description": "Machine-format verdict, post-validation (may differ from originalVerdict if a gate check downgraded it)."
+    "affectedScenariosByVerdict": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
     },
-    "originalVerdict": {
-      "type": "string",
-      "description": "The verdict the diagnosing worker originally claimed, before validate_receipt()'s gate checks."
+    "distinctIssuesByVerdict": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
     },
-    "reportVerdict": {
-      "type": "string",
-      "description": "Human-readable label for the verdict report table, e.g. 'Script Issue — Fix Proposed'."
-    },
-    "analysisTier": {
-      "enum": [
-        "tier0_intermittent",
-        "fix_pattern_cache",
-        "tier1_deterministic",
-        "tier1_llm_static",
-        "tier2_offline_dom",
-        "tier2_live_replay"
-      ],
-      "description": "Whether this row's evidence came from an actual live browser (tier2_live_replay) or a cheaper static/cached tier. kavach-imaintain's own verification (Maven, LocatorProbe) is independent of this and required regardless."
-    },
-    "evidence": {
-      "type": "array",
-      "items": { "type": "string" },
-      "minItems": 1,
-      "description": "Concrete observed evidence (DOM excerpts, count()/evaluate() outputs, error text) — required non-empty for confirmed_product_bug, suspected_product_bug, and not_reproduced_passed_live."
-    },
-    "recommendedAction": {
-      "type": "string",
-      "description": "Free-text description of the proposed fix. There is no structured fixSuggestion object on a kavach receipt by design — kavach-imaintain derives targetFile/targetLine/the concrete patch from this text plus the matching fix-pattern file, never from recommendedAction text alone without a pattern-file match."
-    },
-    "scenarioCount": {
-      "type": "integer",
-      "minimum": 0,
-      "description": "Number of individual scenarios this row's groupId covers."
-    },
-    "distinctIssueCount": {
-      "type": "integer",
-      "minimum": 1,
-      "description": "Number of distinct root causes folded into this groupId (>1 when scenarios sharing a groupId turned out to fail for different reasons, e.g. differing Examples-table data)."
-    },
-    "domStructureChecked": {
-      "type": "string",
-      "minLength": 20,
-      "description": "Required, non-placeholder (must contain a real DOM excerpt or count()/evaluate() output, not just 'true'/'checked') when verdict is confirmed_product_bug."
-    },
-    "staleLocatorRuledOut": {
-      "type": "string",
-      "minLength": 20,
-      "description": "Required, non-placeholder, same rule as domStructureChecked, when verdict is confirmed_product_bug."
-    },
-    "userLevelBehaviorReproduced": { "type": "boolean" },
-    "targetAffordanceMissingOrBroken": { "type": "boolean" },
-    "testDataOrEnvironmentRuledOut": { "type": "boolean" }
-  },
-  "allOf": [
-    {
-      "if": { "properties": { "verdict": { "const": "confirmed_product_bug" } } },
-      "then": {
-        "required": [
-          "userLevelBehaviorReproduced",
-          "targetAffordanceMissingOrBroken",
-          "domStructureChecked",
-          "staleLocatorRuledOut",
-          "testDataOrEnvironmentRuledOut"
-        ]
+    "metrics": {
+      "type": "object",
+      "required": ["totalGroups", "confirmedProductBugGroups", "suspectedProductBugGroups", "falseProductBugDowngrades"],
+      "properties": {
+        "totalGroups": { "type": "integer", "minimum": 0 },
+        "staticResolvedGroups": { "type": "integer", "minimum": 0 },
+        "replayEscalatedGroups": { "type": "integer", "minimum": 0 },
+        "confirmedProductBugGroups": { "type": "integer", "minimum": 0 },
+        "suspectedProductBugGroups": { "type": "integer", "minimum": 0 },
+        "falseProductBugDowngrades": { "type": "integer", "minimum": 0 }
       }
+    },
+    "groups": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/group" }
     }
-  ]
+  },
+  "$defs": {
+    "group": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "groupId",
+        "scenarioCount",
+        "verdict",
+        "reportVerdict",
+        "confidence",
+        "gateProblems",
+        "evidence",
+        "analysisTier"
+      ],
+      "properties": {
+        "groupId": { "type": ["string", "null"] },
+        "representativeScenario": { "type": ["string", "null"] },
+        "affectedScenarios": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Only present when this row came from a real worker receipt (not a missing-receipt fallback row)."
+        },
+        "scenarioCount": { "type": "integer", "minimum": 0 },
+        "distinctIssueCount": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Only present when this row came from a real worker receipt."
+        },
+        "receiptPath": { "type": ["string", "null"] },
+        "verdict": {
+          "enum": [
+            "script_issue_fix_proposed",
+            "confirmed_product_bug",
+            "suspected_product_bug",
+            "not_reproduced_intermittent",
+            "not_reproduced_passed_live",
+            "needs_investigation"
+          ],
+          "description": "Machine-format verdict, post-gate-validation (may differ from originalVerdict if a gate check downgraded it)."
+        },
+        "originalVerdict": {
+          "type": "string",
+          "description": "The verdict the diagnosing worker originally claimed, before validate_receipt()'s gate checks. Only present when this row came from a real worker receipt."
+        },
+        "reportVerdict": {
+          "type": "string",
+          "description": "Human-readable label for the verdict report table, e.g. 'Script Issue — Fix Proposed'."
+        },
+        "confidence": {
+          "enum": ["high", "medium", "low"]
+        },
+        "gateProblems": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Plain-English reasons validate_receipt() downgraded this row's originally-claimed verdict, if any. Empty for a row whose verdict was never downgraded."
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Concrete observed evidence (DOM excerpts, count()/evaluate() outputs, error text)."
+        },
+        "recommendedAction": {
+          "type": "string",
+          "description": "Free-text description of the proposed fix. Only present when this row came from a real worker receipt. There is no structured fixSuggestion object by design — kavach-imaintain derives targetFile/targetLine/the concrete patch from this text plus the matching fix-pattern file, never from recommendedAction text alone without a pattern-file match."
+        },
+        "analysisTier": {
+          "enum": [
+            "tier0_intermittent",
+            "fix_pattern_cache",
+            "tier1_deterministic",
+            "tier1_llm_static",
+            "tier2_offline_dom",
+            "tier2_live_replay"
+          ],
+          "description": "Whether this row's evidence came from an actual live browser (tier2_live_replay) or a cheaper static/cached tier. Only present when this document came from combined_summary() (i.e. validate_replay_receipts.py was invoked with --triage-manifest, which is how the real pipeline always calls it)."
+        },
+        "blockedReason": {
+          "type": ["string", "null"],
+          "description": "Set only on rows affected by a --blocked-reason run (live replay was interrupted)."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "verdict": { "const": "confirmed_product_bug" } } },
+          "then": {
+            "properties": {
+              "gateProblems": {
+                "maxItems": 0,
+                "description": "A row can only carry verdict confirmed_product_bug if validate_receipt() found zero gate problems — any problem downgrades it to suspected_product_bug. A non-empty gateProblems here means the document was hand-edited or the producer's own invariant was violated."
+              },
+              "evidence": { "minItems": 1 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "verdict": { "enum": ["suspected_product_bug", "not_reproduced_passed_live"] }
+            }
+          },
+          "then": {
+            "properties": {
+              "evidence": { "minItems": 1 }
+            }
+          }
+        }
+      ]
+    }
+  }
 }
