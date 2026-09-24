@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pulsepoint.example/schemas/kavach-verdict.schema.json",
+  "title": "Kavach combined-receipts row",
+  "description": "One entry in ai-skills/kavach/failure-analyzer/history/triage-results/<timestamp>/combined-receipts.json — the deterministic handoff contract from kavach-diagnose to kavach-imaintain. Mirrors the actual output shape of validate_replay_receipts.py; this schema is the reference, that script is the source of truth for runtime behavior.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["groupId", "verdict", "reportVerdict", "analysisTier", "evidence"],
+  "properties": {
+    "groupId": {
+      "type": ["string", "null"],
+      "description": "Shared root-cause grouping key (same exception type + normalized step pattern), or null for an ungrouped singleton."
+    },
+    "verdict": {
+      "enum": [
+        "script_issue_fix_proposed",
+        "confirmed_product_bug",
+        "suspected_product_bug",
+        "not_reproduced_intermittent",
+        "not_reproduced_passed_live",
+        "needs_investigation"
+      ],
+      "description": "Machine-format verdict, post-validation (may differ from originalVerdict if a gate check downgraded it)."
+    },
+    "originalVerdict": {
+      "type": "string",
+      "description": "The verdict the diagnosing worker originally claimed, before validate_receipt()'s gate checks."
+    },
+    "reportVerdict": {
+      "type": "string",
+      "description": "Human-readable label for the verdict report table, e.g. 'Script Issue — Fix Proposed'."
+    },
+    "analysisTier": {
+      "enum": [
+        "tier0_intermittent",
+        "fix_pattern_cache",
+        "tier1_deterministic",
+        "tier1_llm_static",
+        "tier2_offline_dom",
+        "tier2_live_replay"
+      ],
+      "description": "Whether this row's evidence came from an actual live browser (tier2_live_replay) or a cheaper static/cached tier. kavach-imaintain's own verification (Maven, LocatorProbe) is independent of this and required regardless."
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Concrete observed evidence (DOM excerpts, count()/evaluate() outputs, error text) — required non-empty for confirmed_product_bug, suspected_product_bug, and not_reproduced_passed_live."
+    },
+    "recommendedAction": {
+      "type": "string",
+      "description": "Free-text description of the proposed fix. There is no structured fixSuggestion object on a kavach receipt by design — kavach-imaintain derives targetFile/targetLine/the concrete patch from this text plus the matching fix-pattern file, never from recommendedAction text alone without a pattern-file match."
+    },
+    "scenarioCount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of individual scenarios this row's groupId covers."
+    },
+    "distinctIssueCount": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Number of distinct root causes folded into this groupId (>1 when scenarios sharing a groupId turned out to fail for different reasons, e.g. differing Examples-table data)."
+    },
+    "domStructureChecked": {
+      "type": "string",
+      "minLength": 20,
+      "description": "Required, non-placeholder (must contain a real DOM excerpt or count()/evaluate() output, not just 'true'/'checked') when verdict is confirmed_product_bug."
+    },
+    "staleLocatorRuledOut": {
+      "type": "string",
+      "minLength": 20,
+      "description": "Required, non-placeholder, same rule as domStructureChecked, when verdict is confirmed_product_bug."
+    },
+    "userLevelBehaviorReproduced": { "type": "boolean" },
+    "targetAffordanceMissingOrBroken": { "type": "boolean" },
+    "testDataOrEnvironmentRuledOut": { "type": "boolean" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "verdict": { "const": "confirmed_product_bug" } } },
+      "then": {
+        "required": [
+          "userLevelBehaviorReproduced",
+          "targetAffordanceMissingOrBroken",
+          "domStructureChecked",
+          "staleLocatorRuledOut",
+          "testDataOrEnvironmentRuledOut"
+        ]
+      }
+    }
+  ]
+}
