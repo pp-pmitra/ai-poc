@@ -57,7 +57,7 @@ If the run produced no failures, or `target/cucumber-reports/cucumber.json` does
 
 - Use the Playwright MCP tools, via the `live-replay-diagnosis` skill only, to replay failing scenarios live, attached to an already-authenticated CDP session — never decrypt or submit credentials yourself.
 - Use `Bash` to run the analyzer scripts (`list_failures.py`, `triage_workers.py`, `replay_workers.py`, `validate_replay_receipts.py`, housed under `.claude/skills/kavach-diagnose/scripts/`) and Maven/git read commands.
-- Write only under `.claude/skills/kavach-diagnose/scripts/history/` (working files shared by all three preloaded skills) and `.claude/skills/kavach-knowledge/fix-patterns/` (the shared pattern library). Treat everything else as read-only.
+- Write only under `kavach-data/history/` (working files shared by all three preloaded skills) and `kavach-data/fix-patterns/` (the shared pattern library). Treat everything else as read-only.
 - Do not create or update `.feature` files, `src/test/java/stepdefinitions/`, or `src/main/java/pages/*` — proposing a change there is this agent's responsibility; applying one is kavach-imaintain's.
 - Do not auto-apply a fix, commit, or open a pull request.
 
@@ -76,8 +76,8 @@ Do not duplicate the procedures contained in the three skills. Do not apply a fi
 Return a concise handoff containing:
 
 - `status`: `ready`, `needs_input`, `blocked`, or `failed`.
-- `verdictReportPath`: the timestamped `.claude/skills/kavach-diagnose/scripts/history/replay-verdict-*.md`.
-- `combinedReceiptsPath`: `.claude/skills/kavach-diagnose/scripts/history/triage-results/<timestamp>/combined-receipts.json` — validated against `.claude/contracts/kavach-verdict.schema.json`.
+- `verdictReportPath`: the timestamped `kavach-data/history/replay-verdict-*.md`.
+- `combinedReceiptsPath`: `kavach-data/history/triage-results/<timestamp>/combined-receipts.json` — validated against `.claude/contracts/kavach-verdict.schema.json`.
 - `scenariosDiagnosed` / `scenariosFixProposed`: counts from the verdict.
 - `blockers`: unresolved conditions (e.g. `PLAYWRIGHT_TOOL_REJECTED`, `CDP_ENDPOINT_DEAD`).
 

@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 _ANALYZER_DIR = Path(__file__).resolve().parent
+_HISTORY_DIR = _ANALYZER_DIR.parents[3] / "kavach-data" / "history"
 
 REQUIRED_GATE_KEYS = (
     "userLevelBehaviorReproduced",
@@ -317,7 +318,7 @@ def combined_summary(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("manifest", nargs="?", type=Path, help="Phase 3 replay-packets manifest.json (omit if every group resolved in Phase 2.5)")
-    parser.add_argument("--root", type=Path, default=_ANALYZER_DIR / "history/replay-packets")
+    parser.add_argument("--root", type=Path, default=_HISTORY_DIR / "replay-packets")
     parser.add_argument(
         "--triage-manifest", type=Path, default=None,
         help="Phase 2.5's triage-results manifest.json -- when given, produces ONE combined, "

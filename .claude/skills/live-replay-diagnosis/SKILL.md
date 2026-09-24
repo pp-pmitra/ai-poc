@@ -84,19 +84,19 @@ If this command starts and the bootstrap is not running, Phase 3's first `browse
 
 ## Phase 3: Per-Group Worker Diagnosis Loop
 
-**Per-group context load (before building the packet):** Read the feature-specific fix-pattern file for this group's `featureFile` now — derive the filename (e.g. `Life_PMP.feature` → `../kavach-knowledge/fix-patterns/life-pmp.md`) and read it if it exists. This is the lazy-load step deferred from the failure-triage skill. Empty or absent files are treated as having no known patterns.
+**Per-group context load (before building the packet):** Read the feature-specific fix-pattern file for this group's `featureFile` now — derive the filename (e.g. `Life_PMP.feature` → `kavach-data/fix-patterns/life-pmp.md`) and read it if it exists. This is the lazy-load step deferred from the failure-triage skill. Empty or absent files are treated as having no known patterns.
 
 Build compact live-replay worker packets **only for the groups the failure-triage skill escalated**:
 
 ```
-python3 .claude/skills/kavach-diagnose/scripts/replay_workers.py --write-runner --only-groups .claude/skills/kavach-diagnose/scripts/history/triage-results/<triage-timestamp>/escalate-groups.json
+python3 .claude/skills/kavach-diagnose/scripts/replay_workers.py --write-runner --only-groups kavach-data/history/triage-results/<triage-timestamp>/escalate-groups.json
 ```
 
 If the script exits non-zero or `manifest.json` is not written under `history/replay-packets/<replay-timestamp>/`, stop and print `PHASE_SCRIPT_FAILED: replay_workers.py: <stderr>`. Do not proceed to worker execution without a valid manifest.
 
-This writes `.claude/skills/kavach-diagnose/scripts/history/replay-packets/<replay-timestamp>/manifest.json` (a **freshly generated timestamp, distinct from `<triage-timestamp>`** — don't reuse the failure-triage skill's triage timestamp here), one `group-*.json` packet, one `group-*.prompt.md` prompt, and `run-workers.sh` — same mechanical packet builder as before (redacted, page text capped, small code-context windows), just scoped to fewer groups. If running unattended, pass the same Claude/MCP flags via repeated `--claude-arg`, for example:
+This writes `kavach-data/history/replay-packets/<replay-timestamp>/manifest.json` (a **freshly generated timestamp, distinct from `<triage-timestamp>`** — don't reuse the failure-triage skill's triage timestamp here), one `group-*.json` packet, one `group-*.prompt.md` prompt, and `run-workers.sh` — same mechanical packet builder as before (redacted, page text capped, small code-context windows), just scoped to fewer groups. If running unattended, pass the same Claude/MCP flags via repeated `--claude-arg`, for example:
 ```
-python3 .claude/skills/kavach-diagnose/scripts/replay_workers.py --write-runner --only-groups .claude/skills/kavach-diagnose/scripts/history/triage-results/<triage-timestamp>/escalate-groups.json \
+python3 .claude/skills/kavach-diagnose/scripts/replay_workers.py --write-runner --only-groups kavach-data/history/triage-results/<triage-timestamp>/escalate-groups.json \
   --claude-arg --mcp-config --claude-arg .claude/mcp-ci-life.json \
   --claude-arg --strict-mcp-config \
   --claude-arg --permission-mode --claude-arg auto \
@@ -106,12 +106,12 @@ Run the generated `run-workers.sh` serially by default. Use at most two browser 
 
 After workers finish, produce ONE consolidated, completeness-checked receipt set spanning both the failure-triage skill's triage and this skill's live replay — pass both manifests explicitly so there's no ambiguity about which timestamp goes where:
 ```
-python3 .claude/skills/kavach-diagnose/scripts/validate_replay_receipts.py .claude/skills/kavach-diagnose/scripts/history/replay-packets/<replay-timestamp>/manifest.json \
-  --triage-manifest .claude/skills/kavach-diagnose/scripts/history/triage-results/<triage-timestamp>/manifest.json
+python3 .claude/skills/kavach-diagnose/scripts/validate_replay_receipts.py kavach-data/history/replay-packets/<replay-timestamp>/manifest.json \
+  --triage-manifest kavach-data/history/triage-results/<triage-timestamp>/manifest.json
 ```
 If the script exits non-zero or `combined-receipts.json` is not written, stop and print `PHASE_SCRIPT_FAILED: validate_replay_receipts.py: <stderr>`. The verdict-reporting skill cannot proceed without this file.
 
-This writes `.claude/skills/kavach-diagnose/scripts/history/triage-results/<triage-timestamp>/combined-receipts.json` and mechanically:
+This writes `kavach-data/history/triage-results/<triage-timestamp>/combined-receipts.json` and mechanically:
 - downgrades any `confirmed_product_bug` receipt that did not prove every product-bug gate condition (from either phase — the failure-triage skill's receipts are re-validated here too, not trusted blindly, even though they already can't carry a forbidden verdict);
 - assigns `analysisTier: "tier2_live_replay"` to every Phase-3-sourced row automatically (the failure-triage skill's rows already carry their own `analysisTier`);
 - accounts for every group the failure-triage skill's manifest recorded (resolved or escalated) in exactly one row, with a `needs_investigation` fallback for any escalated group whose Phase 3 receipt is missing — this IS the verdict-reporting skill's row-completeness check, already done by the time you read `combined-receipts.json`, not something to redo by hand.

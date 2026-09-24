@@ -15,9 +15,9 @@ description: >-
 
 ## Phase 4: Write Verdict Report
 
-Read `.claude/skills/kavach-diagnose/scripts/history/triage-results/<triage-timestamp>/combined-receipts.json` (written by the live-replay-diagnosis skill's `validate_replay_receipts.py --triage-manifest` step) — it already unions the failure-triage skill's and the live-replay-diagnosis skill's receipts and accounts for every group in exactly one row, with an `analysisTier` field on each (`tier0_intermittent` | `fix_pattern_cache` | `tier1_deterministic` | `tier1_llm_static` | `tier2_offline_dom` | `tier2_live_replay`) telling you whether that row's evidence came from a live browser or not. This is the single source this skill reads from — don't separately open the two underlying receipt directories or re-derive completeness by hand, that reconciliation is already done.
+Read `kavach-data/history/triage-results/<triage-timestamp>/combined-receipts.json` (written by the live-replay-diagnosis skill's `validate_replay_receipts.py --triage-manifest` step) — it already unions the failure-triage skill's and the live-replay-diagnosis skill's receipts and accounts for every group in exactly one row, with an `analysisTier` field on each (`tier0_intermittent` | `fix_pattern_cache` | `tier1_deterministic` | `tier1_llm_static` | `tier2_offline_dom` | `tier2_live_replay`) telling you whether that row's evidence came from a live browser or not. This is the single source this skill reads from — don't separately open the two underlying receipt directories or re-derive completeness by hand, that reconciliation is already done.
 
-No narrative/story report (no per-failure prose write-up, no LLM-generated analysis text). Write one structured report to `.claude/skills/kavach-diagnose/scripts/history/replay-verdict-<YYYY-MM-DD-HHmm>.md`, timestamped to the minute the report is written (24h clock, e.g. `replay-verdict-2026-07-09-1432.md`). Each run gets its own timestamped file — never append to or overwrite a prior run's file, even if run on the same day. Multiple runs per day are expected and each is a distinct, independently referenceable artifact.
+No narrative/story report (no per-failure prose write-up, no LLM-generated analysis text). Write one structured report to `kavach-data/history/replay-verdict-<YYYY-MM-DD-HHmm>.md`, timestamped to the minute the report is written (24h clock, e.g. `replay-verdict-2026-07-09-1432.md`). Each run gets its own timestamped file — never append to or overwrite a prior run's file, even if run on the same day. Multiple runs per day are expected and each is a distinct, independently referenceable artifact.
 
 ### Structure
 
@@ -118,7 +118,7 @@ Print the same structure in chat too, but the file is the durable artifact for t
 
 Mechanical bookkeeping, still useful — do this directly, no analyzer code needed.
 
-For every failure diagnosed (whether fixed, flagged as a bug, or not reproduced), append an entry to `.claude/skills/kavach-diagnose/scripts/history/fix-history.json` (create as `[]` if missing). One entry per scenario — never merge several scenarios into one entry (e.g. `"scenarioName": "X (+ 1 same-group scenario)"`); a scenario not individually searchable by its exact name in this file is a bookkeeping bug: **Exception:** scenarios in groups with `blockedReason` (live replay blocked) get no `fix-history.json` entry — nothing was diagnosed, and an entry would wrongly count toward the `attempts >= 2` rule in the failure-triage skill.
+For every failure diagnosed (whether fixed, flagged as a bug, or not reproduced), append an entry to `kavach-data/history/fix-history.json` (create as `[]` if missing). One entry per scenario — never merge several scenarios into one entry (e.g. `"scenarioName": "X (+ 1 same-group scenario)"`); a scenario not individually searchable by its exact name in this file is a bookkeeping bug: **Exception:** scenarios in groups with `blockedReason` (live replay blocked) get no `fix-history.json` entry — nothing was diagnosed, and an entry would wrongly count toward the `attempts >= 2` rule in the failure-triage skill.
 
 ```json
 {
@@ -144,14 +144,14 @@ Always write `review` as `{"status": "unreviewed", "reviewedAt": null, "note": n
 
 **`liveVerification` means what its name says — a browser actually observed this.** Write it only for `analysisTier: "tier2_live_replay"` entries, with the real `count()`/state-check outcome. For any Phase-2.5-sourced entry (`tier0_intermittent` | `fix_pattern_cache` | `tier1_deterministic` | `tier1_llm_static` | `tier2_offline_dom`), write `liveVerification: null` — never fabricate `{"elementFound": true, ...}` to satisfy the shape; a downstream reader (script, dashboard, or person) trusts this field as proof a browser ran, and a null here correctly says one didn't.
 
-For every unique `featureFile` touched, ensure `../kavach-knowledge/fix-patterns/<derived-name>.md` exists (bootstrap it with a `# <Feature> fix patterns` header + `## Run log` line if missing) and append (never overwrite) any reusable fix pattern discovered under `## Known good fixes` or `## Learned notes` — dedupe against existing entries.
+For every unique `featureFile` touched, ensure `kavach-data/fix-patterns/<derived-name>.md` exists (bootstrap it with a `# <Feature> fix patterns` header + `## Run log` line if missing) and append (never overwrite) any reusable fix pattern discovered under `## Known good fixes` or `## Learned notes` — dedupe against existing entries.
 
 ### Clean up build artifacts
 
 After the verdict file is confirmed written, delete the packet/prompt build artifacts from the live-replay directory — they are fully reproducible from `failures-for-replay.json` and accumulate across runs. Keep the `receipts/` subdirectory untouched (those are the source of truth for `validate_replay_receipts.py` and `fix-history.json`):
 
 ```bash
-find .claude/skills/kavach-diagnose/scripts/history/replay-packets/<replay-timestamp> \
+find kavach-data/history/replay-packets/<replay-timestamp> \
   -maxdepth 1 \( -name "*.prompt.md" -o -name "*.json" -o -name "run-workers.sh" \) \
   -delete
 ```

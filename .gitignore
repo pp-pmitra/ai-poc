@@ -13,3 +13,10 @@ __pycache__/
 /kavach-run.log
 /life-bootstrap.log
 /studio-bootstrap.log
+# kavach-data/history/ is Kavach's runtime working directory — only
+# fix-history.json is meant to persist (committed via kavach.yml's PR step);
+# everything else here is regenerable per run.
+kavach-data/history/failures-for-replay.json
+kavach-data/history/replay-verdict-*.md
+kavach-data/history/replay-packets/
+kavach-data/history/triage-results/

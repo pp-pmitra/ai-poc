@@ -227,9 +227,9 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
           shopt -s nullglob
-          verdicts=(.claude/skills/kavach-diagnose/scripts/history/replay-verdict-*.md)
+          verdicts=(kavach-data/history/replay-verdict-*.md)
           if [ ${#verdicts[@]} -eq 0 ]; then
-            echo "::error::Kavach did not produce a verdict report under .claude/skills/kavach-diagnose/scripts/history/. It likely hit PLAYWRIGHT_TOOL_REJECTED, CDP_ENDPOINT_DEAD, or another halting condition. See the log above."
+            echo "::error::Kavach did not produce a verdict report under kavach-data/history/. It likely hit PLAYWRIGHT_TOOL_REJECTED, CDP_ENDPOINT_DEAD, or another halting condition. See the log above."
             exit 1
           fi
 
@@ -242,8 +242,8 @@ jobs:
           # kavach-knowledge's fix-patterns/ — never application or test source.
           changes=$(git status --porcelain --untracked-files=all -- . \
             ':(exclude)target/**' \
-            ':(exclude).claude/skills/kavach-diagnose/scripts/history/**' \
-            ':(exclude).claude/skills/kavach-knowledge/fix-patterns/**')
+            ':(exclude)kavach-data/history/**' \
+            ':(exclude)kavach-data/fix-patterns/**')
           if [ -n "${changes}" ]; then
             echo "::error::Kavach modified files outside its allowed write locations."
             printf '%s\n' "${changes}"
@@ -256,8 +256,8 @@ jobs:
         with:
           name: kavach-verdict
           path: |
-            .claude/skills/kavach-diagnose/scripts/history/replay-verdict-*.md
-            .claude/skills/kavach-diagnose/scripts/history/**/combined-receipts.json
+            kavach-data/history/replay-verdict-*.md
+            kavach-data/history/**/combined-receipts.json
             target/cucumber-reports/**
 
       - name: Upload run transcript
@@ -297,17 +297,17 @@ jobs:
           git config --global user.name "kavach-bot"
           git config --global user.email "kavach-bot@users.noreply.github.com"
 
-          if git diff --quiet -- .claude/skills/kavach-knowledge/fix-patterns .claude/skills/kavach-diagnose/scripts/history/fix-history.json; then
+          if git diff --quiet -- kavach-data/fix-patterns kavach-data/history/fix-history.json; then
             echo "No fix-pattern/history changes to commit."
             exit 0
           fi
 
           BRANCH="kavach/learned-patterns-$(date -u +%Y%m%d-%H%M%S)"
           git checkout -b "$BRANCH"
-          git add .claude/skills/kavach-knowledge/fix-patterns .claude/skills/kavach-diagnose/scripts/history/fix-history.json
+          git add kavach-data/fix-patterns kavach-data/history/fix-history.json
           git commit -m "Kavach: update learned fix patterns from $(date -u +%Y-%m-%d) run"
           git push origin "$BRANCH"
 
           gh pr create --base main --head "$BRANCH" \
             --title "Kavach: update learned fix patterns ($(date -u +%Y-%m-%d))" \
-            --body "Automated update to \`.claude/skills/kavach-knowledge/fix-patterns/*.md\` and \`fix-history.json\` from this run's Phase 5. Bookkeeping only — no application or test source files are touched by this PR."
+            --body "Automated update to \`kavach-data/fix-patterns/*.md\` and \`fix-history.json\` from this run's Phase 5. Bookkeeping only — no application or test source files are touched by this PR."

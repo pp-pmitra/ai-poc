@@ -26,10 +26,11 @@ from failure_analyzer.packet_utils import (
 )
 
 _ANALYZER_DIR = Path(__file__).resolve().parent
+_HISTORY_DIR = _ANALYZER_DIR.parents[3] / "kavach-data" / "history"
 _REPO_ROOT = _ANALYZER_DIR.parent
 
-DEFAULT_INPUT = _ANALYZER_DIR / "history/failures-for-replay.json"
-DEFAULT_OUT_ROOT = _ANALYZER_DIR / "history/replay-packets"
+DEFAULT_INPUT = _HISTORY_DIR / "failures-for-replay.json"
+DEFAULT_OUT_ROOT = _HISTORY_DIR / "replay-packets"
 DEFAULT_PAGE_TEXT_CAP = 1200
 
 __all__ = [
