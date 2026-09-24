@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Validate a combined-receipts.json file against the kavach-verdict contract.
 
-This is the deterministic gate kavach-orchestrator runs after kavach-diagnose
-and before ever considering a handoff to kavach-imaintain — the same role
-Netra's validate-analysis.py plays for its own contract. It re-checks the
+This is the deterministic gate kavach.yml runs after kavach-diagnose and
+before ever considering a handoff to kavach-repair — the same role Netra's
+validate-analysis.py plays for its own contract. It re-checks the
 *shape* of the already-written combined-receipts.json document (produced by
 validate_replay_receipts.py's combined_summary()/validate_manifest()); it
 does not re-derive verdicts or re-run any analysis. Deliberately

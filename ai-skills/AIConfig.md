@@ -43,7 +43,7 @@ When "Netra", "Sutra", "Shakti", "Kavach", or "Purna" is mentioned, do NOT check
    * Path: `.claude/agents/kavach-diagnose.md`, which runs its three preloaded skills in order — `.claude/skills/failure-triage/SKILL.md`, `.claude/skills/live-replay-diagnosis/SKILL.md`, `.claude/skills/verdict-reporting/SKILL.md`
    * Action: Read the file immediately. Replay failing Cucumber/Playwright scenarios live in the browser; classify each as a script issue (fix proposed) or a product bug (flagged only); write a timestamped verdict report.
    * Outputs Generated: Update `[VERDICT_REPORT]`.
-   * Note: applying a proposed fix is a separate stage, `.claude/skills/kavach-imaintain/SKILL.md` (agent: `.claude/agents/kavach-imaintain.md`) — always interactive, never invoked automatically from here.
+   * Note: applying a proposed fix is a separate stage, `.claude/skills/kavach-repair/SKILL.md` (agent: `.claude/agents/kavach-repair.md`) — always interactive, never invoked automatically from here.
 5. **iClose (Purna):**
    * Path (closure/compliance audit): `ai-skills/purna/iClose.md`
    * Action: Read the file immediately. Audit the given QA ticket or fix version for comment/test-evidence closure compliance, applying the Global Exclusion Filter, and produce the downloadable Excel/Sheet report (compliance-gap tables, Ready for Release table, Scope Notes sheet).
@@ -51,7 +51,7 @@ When "Netra", "Sutra", "Shakti", "Kavach", or "Purna" is mentioned, do NOT check
    * Action: Read the file immediately. Query the Jira "QA" project for the release; run staleness detection, comment analysis, and/or Slack notification drafting per the request's detected intent.
    * Outputs Generated: Update `[COMPLIANCE_REPORT_PATH]` and, when iTrack is invoked, `[SLACK_DRAFTS]`.
 
-Note: iMaintenance (Trishul) now has a skill file — `.claude/skills/kavach-imaintain/SKILL.md` — but it is always interactive and never invoked automatically from this orchestrator; a human runs it directly after reviewing Kavach's verdict.
+Note: iMaintenance (Trishul) now has a skill file — `.claude/skills/kavach-repair/SKILL.md` — but it is always interactive and never invoked automatically from this orchestrator; a human runs it directly after reviewing Kavach's verdict.
 
 ## Remote-Fetch Mode (Claude Code CLI — iAutomate/Shakti & iFix/Kavach)
 

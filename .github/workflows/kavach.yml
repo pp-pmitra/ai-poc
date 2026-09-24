@@ -269,7 +269,7 @@ jobs:
         shell: bash
         run: |
           # This is the hard gate between kavach-diagnose and any downstream
-          # processing (the PR job below, and eventually kavach-imaintain):
+          # processing (the PR job below, and eventually kavach-repair):
           # resolve exactly one combined-receipts.json, fail if it's missing
           # or ambiguous, run the deterministic validator against it, and
           # record the outcome in the job summary before anything is
@@ -348,7 +348,7 @@ jobs:
         # Only ever hand off fix-patterns/verdict from a run whose
         # combined-receipts.json actually passed the contract gate above —
         # an invalid or malformed handoff document must never feed the
-        # fix-pattern cache that later runs and kavach-imaintain trust. This
+        # fix-pattern cache that later runs and kavach-repair trust. This
         # job has no push/PR credentials at all (contents: read only); the
         # separate open-fix-pattern-pr job below is the only place those
         # credentials exist, and it only acts on this artifact.
@@ -391,7 +391,7 @@ jobs:
           # Kavach only ever writes these three things (fix-patterns/*.md,
           # fix-history.json, and its own timestamped verdict report) — never
           # application or test source. Those require human approval and go
-          # through kavach-imaintain's own PR instead. This just persists the
+          # through kavach-repair's own PR instead. This just persists the
           # pattern-cache learning and verdict report that would otherwise be
           # silently discarded when the runner is destroyed — committing the
           # verdict report means it's readable directly on GitHub, no artifact

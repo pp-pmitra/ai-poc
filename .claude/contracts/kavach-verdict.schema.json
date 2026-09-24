@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://pulsepoint.example/schemas/kavach-verdict.schema.json",
   "title": "Kavach combined-receipts document",
-  "description": "The full document written by validate_replay_receipts.py's combined_summary() (or validate_manifest() standalone) — the deterministic handoff contract from kavach-diagnose to kavach-imaintain. Traced directly from that script's actual output, not the per-worker receipt shape described in iFix.md's Phase 3 (which has productBugGate/productBugArtifacts booleans that are checked at production time but never copied forward into this merged document — only the resulting gateProblems list is).",
+  "description": "The full document written by validate_replay_receipts.py's combined_summary() (or validate_manifest() standalone) — the deterministic handoff contract from kavach-diagnose to kavach-repair. Traced directly from that script's actual output, not the per-worker receipt shape described in iFix.md's Phase 3 (which has productBugGate/productBugArtifacts booleans that are checked at production time but never copied forward into this merged document — only the resulting gateProblems list is).",
   "type": "object",
   "additionalProperties": true,
   "required": [
@@ -113,7 +113,7 @@
         },
         "recommendedAction": {
           "type": "string",
-          "description": "Free-text description of the proposed fix. Only present when this row came from a real worker receipt. There is no structured fixSuggestion object by design — kavach-imaintain derives targetFile/targetLine/the concrete patch from this text plus the matching fix-pattern file, never from recommendedAction text alone without a pattern-file match."
+          "description": "Free-text description of the proposed fix. Only present when this row came from a real worker receipt. There is no structured fixSuggestion object by design — kavach-repair derives targetFile/targetLine/the concrete patch from this text plus the matching fix-pattern file, never from recommendedAction text alone without a pattern-file match."
         },
         "analysisTier": {
           "enum": [

@@ -1,20 +1,20 @@
 ---
-name: kavach-imaintain
+name: kavach-repair
 description: >-
   Applies kavach-diagnose's proposed script fixes to Cucumber/Java
   page-object files, verifies each fix passes Maven three times, and
   raises a single PR per run. Invoke after kavach-diagnose has produced
   a verdict containing script_issue_fix_proposed entries, or in
-  isolation mode (IMAINTENANCE_MODE=isolation or IMAINTENANCE_TARGET
+  isolation mode (KAVACH_REPAIR_MODE=isolation or KAVACH_REPAIR_TARGET
   set, no receipt file) to apply a known fix pattern from a live Maven
   observation pass. Never diagnoses unknown failures — kavach-diagnose
   does that. Never commits without a Maven green. Always interactive;
   never runs unattended.
 ---
 
-# iMaintenance — Apply and Verify kavach Script Fixes
+# kavach-repair — Apply and Verify kavach Script Fixes
 
-<!-- Canonical procedure for the kavach-imaintain skill, consumed by .claude/agents/kavach-imaintain.md. -->
+<!-- Canonical procedure for the kavach-repair skill, consumed by .claude/agents/kavach-repair.md. -->
 
 ## Contents
 - [Phase 0.5: Isolation mode input normalisation](#phase-05--isolation-mode-input-normalisation)
@@ -27,16 +27,16 @@ description: >-
 - [Phase 6: Fix-history update and summary](#phase-6--fix-history-update-and-summary)
 
 
-**TOOL USE: Bash, Read, Write, Edit, Grep, and Glob are pre-approved. No Playwright browser tools are used in this skill — all verification is Maven-only. Never call `mcp__playwright__*` tools from iMaintenance.** `src/main/java/utils/LocatorProbe.java` is a Maven-only diagnostic helper (checks candidate locators live via non-waiting `count()`/`isVisible()`) — see Phase 3.1 for when and how to use it.
+**TOOL USE: Bash, Read, Write, Edit, Grep, and Glob are pre-approved. No Playwright browser tools are used in this skill — all verification is Maven-only. Never call `mcp__playwright__*` tools from kavach-repair.** `src/main/java/utils/LocatorProbe.java` is a Maven-only diagnostic helper (checks candidate locators live via non-waiting `count()`/`isVisible()`) — see Phase 3.1 for when and how to use it.
 
 **NON-INTERACTIVE ABORT (runs before everything else, including mode detection):** If stdin is not a TTY or `CI=true` is set in the environment, print exactly:
 ```
-IMAINTENANCE_ABORT: This skill requires interactive confirmation and cannot run unattended.
-Review kavach-diagnose's verdict output manually, then invoke /kavach-imaintain from an interactive session.
+KAVACH_REPAIR_ABORT: This skill requires interactive confirmation and cannot run unattended.
+Review kavach-diagnose's verdict output manually, then invoke /kavach-repair from an interactive session.
 ```
 Then exit 1. Do not detect mode. Do not run Phase 0.5. Do not read any files.
 
-iMaintenance reads kavach's verdict output, applies each proposed script fix to the relevant Java page-object or step-definition file, verifies end-to-end with Maven (three runs), and commits passing fixes to a branch for PR review. It never auto-applies without a Maven green. It never converts an infrastructure failure to a `test_failed` verdict.
+kavach-repair reads kavach's verdict output, applies each proposed script fix to the relevant Java page-object or step-definition file, verifies end-to-end with Maven (three runs), and commits passing fixes to a branch for PR review. It never auto-applies without a Maven green. It never converts an infrastructure failure to a `test_failed` verdict.
 
 This skill runs as six phases in order. Phases 1–2 run once (setup). Phase 3 loops once per candidate. Phase 3.5 runs after each Phase 3 pass. Phases 4–6 run once (close out).
 
@@ -45,9 +45,9 @@ This skill runs as six phases in order. Phases 1–2 run once (setup). Phase 3 l
 Detect mode at startup — do not ask the user:
 
 - **Interactive** — the default mode. Phase 1 pauses after printing the discovery table and waits for explicit confirmation before touching any files. Phase 3.5 offers a cascade-fix attempt before continuing.
-- **Isolation** — `IMAINTENANCE_MODE=isolation` or `IMAINTENANCE_TARGET` is set and no `combined-receipts.json` is present. Phase 0.5 runs first to derive a synthetic receipt from a live Maven observation pass. **Always interactive** — isolation mode never runs unattended. All interactive confirmation gates apply: Phase 1 pauses for approval, Phase 0.5.3 pauses to show the matched pattern before proceeding, and Phase 3.5 offers a cascade-fix attempt. Pattern-matching only — no Playwright.
+- **Isolation** — `KAVACH_REPAIR_MODE=isolation` or `KAVACH_REPAIR_TARGET` is set and no `combined-receipts.json` is present. Phase 0.5 runs first to derive a synthetic receipt from a live Maven observation pass. **Always interactive** — isolation mode never runs unattended. All interactive confirmation gates apply: Phase 1 pauses for approval, Phase 0.5.3 pauses to show the matched pattern before proceeding, and Phase 3.5 offers a cascade-fix attempt. Pattern-matching only — no Playwright.
 
-iMaintenance never runs unattended. There is no headless or CI mode — do not detect or act on `CI=true` or `IMAINTENANCE_MODE=headless`.
+kavach-repair never runs unattended. There is no headless or CI mode — do not detect or act on `CI=true` or `KAVACH_REPAIR_MODE=headless`.
 
 Print the detected mode at startup: `Mode: INTERACTIVE` or `Mode: ISOLATION (interactive)`.
 
@@ -97,12 +97,12 @@ Runs **only when mode is `isolation`**. Skip in interactive mode.
 
 ### 0.5.1 Resolve input
 
-Read `IMAINTENANCE_TARGET` (env var) or the `--target` CLI argument. Accept either form:
+Read `KAVACH_REPAIR_TARGET` (env var) or the `--target` CLI argument. Accept either form:
 
 - A Cucumber tag: `@TC_12345` or `@LifeCampaignDashboard`
 - A repo-relative feature file path: `automation-tests/src/test/resources/features/Life_Campaign.feature`
 
-If neither is set, print `ISOLATION_NO_TARGET: set IMAINTENANCE_TARGET or pass --target` and exit 1.
+If neither is set, print `ISOLATION_NO_TARGET: set KAVACH_REPAIR_TARGET or pass --target` and exit 1.
 
 Derive `<module>`, `<featureTag>`, and `<scenarioTag>` using the same rules as Phase 2 step 4.
 
@@ -243,7 +243,7 @@ Edit `targetFile` to apply the prepared patch. Prefer surgical edits (change onl
 
 **A fix confirmed against one live failure snapshot is not confirmed for every code path that locator serves.** If a locator is used across multiple conditional branches (e.g. a delete-confirmation button that appears in a "can be deleted" modal in one case and a "can't be removed" modal in another), a fix that only accounts for the DOM structure seen in the first failure can break the *other* branch on the very next run. Before finalizing, check the page-object method's other call sites and, if the scenario exercises multiple branches, verify against each one live — don't stop at the first green run if the same locator field serves more than one UI state.
 
-**Use `utils.LocatorProbe` for live disambiguation when static analysis alone is inconclusive** (e.g. `.count()`/`.isVisible()` on several candidate selectors, checked non-destructively before the real action runs). It exists specifically because kavach's static, receipt-time diagnosis and iMaintenance's live verification can disagree, and re-running the whole scenario per hypothesis is expensive. Two caveats learned the hard way:
+**Use `utils.LocatorProbe` for live disambiguation when static analysis alone is inconclusive** (e.g. `.count()`/`.isVisible()` on several candidate selectors, checked non-destructively before the real action runs). It exists specifically because kavach's static, receipt-time diagnosis and kavach-repair's live verification can disagree, and re-running the whole scenario per hypothesis is expensive. Two caveats learned the hard way:
 - **Timing matters.** A probe call inserted at the wrong point (e.g. immediately after a click, before an async render settles) can report a false "0 matches" that has nothing to do with the real locator being wrong — the element just hadn't rendered yet. If a probe result and a `page-source.html` snapshot disagree, trust the live failure snapshot's timing (captured at the actual moment Playwright's own action timeout expired) over an ad-hoc probe placed earlier in the flow.
 - **Always remove the probe call once the fix is confirmed.** It's a diagnostic scaffold, not part of the shipped fix — leaving it in adds an extra round-trip to every future run of that method and pollutes `target/imaintenance-probe/` with stale files.
 
@@ -251,7 +251,7 @@ Edit `targetFile` to apply the prepared patch. Prefer surgical edits (change onl
 
 **Do not conclude "stale test data" from a single live search-miss inside a long, multi-step scenario — that conclusion is unverified until checked in isolation.** A search that returns 0 results deep inside a scenario that has already run many prior actions (many tactics, many rule-value searches, growing DOM/state) can fail simply because the app or its search/typeahead has slowed down under accumulated load — not because the value is missing. This looks identical to genuine stale data from a single check: same symptom (0 results, `isElementVisible()`'s poll budget exhausted), different cause. The tell that distinguishes them: **rerun the same scenario (or the same candidate) more than once and watch where it fails.** If the failing value is different each time, and each run's failure point is *later* in the scenario than the previous run's (not just different at random), that's the signature of session-degradation flakiness, not N independent missing values — a real "AutoSegment747695 doesn't exist" bug would fail on that exact value every time, at the same point, not on a different value further along on the next attempt. Confirm this pattern (at least two runs, failure point strictly advancing) before writing anything off as data; if confirmed, the fix belongs in the search-and-select helper (a longer or adaptive wait/retry budget for later iterations, not a fixed one-size poll), not in the test data or a locator. Only treat a miss as genuine stale data if the *same* value fails at the *same* point on repeated isolated runs (e.g. that one row/tactic run alone, with nothing preceding it) — that isolation test is the actual evidence; a single in-context miss is not.
 
-**Fast way to run that isolation test on a scenario with a large inline DataTable** (a single step whose `DataTable` has many rows processed in one long-running session — as opposed to a Cucumber `Examples:` table, which Cucumber already runs as separate scenario instances): temporarily comment out the DataTable rows that already passed, leaving only the row at and after the one that failed, and re-run. This turns a 5-minute, 8-row run into a run that starts right at the suspect row, so each diagnostic iteration is fast instead of paying the full setup cost every time. Once confident every remaining row passes on its own, **uncomment every row before finalizing or committing** — a `.feature` file left with rows commented out for diagnostic convenience is not a valid end state, and this file-editing is inside iMaintenance's allowed scope (`.feature` files) only for this temporary purpose, not as a permanent test-data reduction.
+**Fast way to run that isolation test on a scenario with a large inline DataTable** (a single step whose `DataTable` has many rows processed in one long-running session — as opposed to a Cucumber `Examples:` table, which Cucumber already runs as separate scenario instances): temporarily comment out the DataTable rows that already passed, leaving only the row at and after the one that failed, and re-run. This turns a 5-minute, 8-row run into a run that starts right at the suspect row, so each diagnostic iteration is fast instead of paying the full setup cost every time. Once confident every remaining row passes on its own, **uncomment every row before finalizing or committing** — a `.feature` file left with rows commented out for diagnostic convenience is not a valid end state, and this file-editing is inside kavach-repair's allowed scope (`.feature` files) only for this temporary purpose, not as a permanent test-data reduction.
 
 **Watch for JUnit's `assertEquals(message, expected, actual)` parameter order when reading a failure message.** The `expected:<...>` / `was:<...>` text in the failure output reflects that order — not the semantic meaning of the local variable names in the calling code. A variable named `actualFoo` can be passed as the *expected* argument. Misreading this once cost an entire fix cycle diagnosing the wrong locator in a real session (the "expected" side, from a variable named `actualAdvertiserList`, was actually clean; the real bug was in the variable serving as `actual`). Before proposing a fix based on an assertion failure, check the exact call site's argument order, not just the variable names.
 
@@ -416,7 +416,7 @@ This is the same file and array kavach appends to (see the verdict-reporting ski
 }
 ```
 
-Set `liveVerification: null` and `analysisTier: null` for all iMaintenance entries — live-browser replay and tiered diagnosis are kavach's responsibility, not iMaintenance's.
+Set `liveVerification: null` and `analysisTier: null` for all kavach-repair entries — live-browser replay and tiered diagnosis are kavach's responsibility, not kavach-repair's.
 
 **Verdict values (machine format — never display strings):**
 
@@ -436,7 +436,7 @@ For each `script_issue_fix_applied` entry: append the fix as a **Known good fix*
 ### Summary table
 
 ```
-iMaintenance run — <run-date>
+kavach-repair run — <run-date>
 Mode: <INTERACTIVE|ISOLATION (interactive)>
 Branch: imaintenance/<run-date>
 PR: <url or "not opened">
@@ -464,7 +464,7 @@ PR: <url or "not opened">
 - Never run Phase 3.5's cascade check without first seeing `passed` from Phase 3.3.
 - Never batch multiple fixes into one commit.
 - Never call `mcp__playwright__*` tools — all verification is Maven-only.
-- Never skip the Phase 0.5.3 match-confirmation gate (isolation) or the Phase 1 discovery-table confirmation (both modes). iMaintenance is always interactive — no environment variable overrides this.
+- Never skip the Phase 0.5.3 match-confirmation gate (isolation) or the Phase 1 discovery-table confirmation (both modes). kavach-repair is always interactive — no environment variable overrides this.
 - Never skip reading `fix-history.json` in Phase 1. The skip conditions prevent repeating documented dead-end approaches.
 - A fix that caused a cascade regression must appear at the top of the PR body under ⚠️, not buried in the applied list.
 - Before re-applying a patch for a candidate with a prior `infrastructure_inconclusive` entry, confirm the broken pattern is still present in `targetFile` (Phase 2 step 3). If the patch was already applied in a prior run (pattern absent), skip Phase 3.1 and proceed directly to Phase 3.2. Never double-apply a patch.

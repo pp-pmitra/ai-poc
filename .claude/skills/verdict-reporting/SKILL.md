@@ -5,13 +5,13 @@ description: >-
   diagnosis skill's combined receipts, appends fix-history and
   fix-pattern bookkeeping, cleans up build artifacts, and closes the
   held CDP browser. Final stage of the kavach-diagnose agent's
-  pipeline — produces the artifact kavach-imaintain (or a human)
+  pipeline — produces the artifact kavach-repair (or a human)
   consumes next.
 ---
 
 # Verdict Reporting
 
-<!-- Third and final stage of the kavach-diagnose agent's pipeline. Consumes combined-receipts.json from the live-replay-diagnosis skill; its output (the verdict report + updated fix-history.json) is what kavach-imaintain or a human acts on next. -->
+<!-- Third and final stage of the kavach-diagnose agent's pipeline. Consumes combined-receipts.json from the live-replay-diagnosis skill; its output (the verdict report + updated fix-history.json) is what kavach-repair or a human acts on next. -->
 
 ## Phase 4: Write Verdict Report
 
@@ -176,4 +176,4 @@ Only touch the marker for the bootstrap actually used in this run. For a mixed L
 
 - **Row completeness is mandatory, not optional.** Every scenario the failure-triage skill extracted must appear in exactly one row in exactly one section — reconcile counts before finishing (Phase 4's Row completeness subsection above).
 - **Never fabricate `liveVerification`.** Write it only for `analysisTier: "tier2_live_replay"` entries; everything else gets `liveVerification: null`.
-- Run `graphify update .` after any applied fix so the graph stays current (relevant once kavach-imaintain has actually applied fixes from this report).
+- Run `graphify update .` after any applied fix so the graph stays current (relevant once kavach-repair has actually applied fixes from this report).

@@ -2,9 +2,9 @@
 name: kavach-knowledge
 description: >-
   The persistent, cross-run body of knowledge shared by kavach-diagnose
-  and kavach-imaintain: known-good fix patterns per feature. Not a
+  and kavach-repair: known-good fix patterns per feature. Not a
   procedure — nothing invokes this skill directly. Both kavach-diagnose
-  (writes) and kavach-imaintain (reads, and also writes when it applies
+  (writes) and kavach-repair (reads, and also writes when it applies
   a fix) declare it as a preloaded dependency.
 ---
 
@@ -20,9 +20,9 @@ This skill describes the one part of Kavach's output that is never disposable: k
 ## Read/write contract
 
 - **kavach-diagnose** reads `_default.md` in its `failure-triage` skill (always) and the feature-specific file lazily in its `live-replay-diagnosis` skill (only for a group that actually escalates to live replay, once its `featureFile` is known). Its `verdict-reporting` skill writes to `## Known good fixes`/`## Learned notes`, appending only — never overwrite an existing entry, and bootstrap a new feature file if one doesn't exist yet.
-- **kavach-imaintain** reads both `_default.md` and the feature-specific file in its Phase 2, to derive a concrete patch (`targetFile`/`targetLine`/the edit itself) from a receipt's free-text `recommendedAction` — a receipt never carries a structured fix suggestion by design, so a pattern-file match is required before any patch is attempted; without one, the candidate is recorded `needs_investigation` and skipped, never guessed. It also appends a `## Known good fixes` entry itself, in its Phase 6, for every fix it successfully applied and verified.
+- **kavach-repair** reads both `_default.md` and the feature-specific file in its Phase 2, to derive a concrete patch (`targetFile`/`targetLine`/the edit itself) from a receipt's free-text `recommendedAction` — a receipt never carries a structured fix suggestion by design, so a pattern-file match is required before any patch is attempted; without one, the candidate is recorded `needs_investigation` and skipped, never guessed. It also appends a `## Known good fixes` entry itself, in its Phase 6, for every fix it successfully applied and verified.
 - Both agents dedupe against existing entries before appending — never write a near-duplicate of a pattern already recorded.
 
 ## Why this survives across CI runs
 
-Unlike a typical agent's disposable per-run output, this is the whole point of the fix-pattern cache: a symptom kavach-diagnose or kavach-imaintain has already solved once should be recognized cheaply (no live browser, no LLM call) the next time it appears. `kavach.yml`'s "Open PR for kavach's learned fix patterns" step commits any changes under this directory to a reviewable branch after each CI run specifically so this knowledge accumulates instead of being discarded when the runner is destroyed.
+Unlike a typical agent's disposable per-run output, this is the whole point of the fix-pattern cache: a symptom kavach-diagnose or kavach-repair has already solved once should be recognized cheaply (no live browser, no LLM call) the next time it appears. `kavach.yml`'s "Open PR for kavach's learned fix patterns" step commits any changes under this directory to a reviewable branch after each CI run specifically so this knowledge accumulates instead of being discarded when the runner is destroyed.

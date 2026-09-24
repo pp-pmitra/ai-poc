@@ -237,7 +237,7 @@ Classification rules:
 
 Once diagnosis is complete for a failure classified `Script Issue — Fix Proposed`: show the user the exact proposed change (file, line, before → after) and your live-verification evidence (the `count`/`visible` check output). Wait for the user's go-ahead before editing `src/main/java/pages/...`, `src/test/java/stepdefinitions/...`, or `.feature` files. Only edit those three categories of file — never application source code.
 
-If the user approves multiple fixes at once, apply them together. If a fix is approved and applied (by kavach-imaintain) before the verdict-reporting skill's report is written, flip that scenario's Verdict to `Script Issue — Fix Applied` for the report. The receipt remains `script_issue_fix_proposed` — do not update it after a fix is applied; The verdict-reporting skill's report-writing step is what upgrades the display verdict.
+If the user approves multiple fixes at once, apply them together. If a fix is approved and applied (by kavach-repair) before the verdict-reporting skill's report is written, flip that scenario's Verdict to `Script Issue — Fix Applied` for the report. The receipt remains `script_issue_fix_proposed` — do not update it after a fix is applied; The verdict-reporting skill's report-writing step is what upgrades the display verdict.
 
 ### 3.5 Optional final confirmation via Maven
 
@@ -245,8 +245,8 @@ Live replay is the primary diagnostic and is normally sufficient (a corrected lo
 
 ## Rules (this skill)
 
-- **Never auto-apply.** Present every proposed fix (diagnosis + before/after + live-verification evidence) and wait for approval before editing files — that approval and the actual edit both happen in kavach-imaintain, never here.
+- **Never auto-apply.** Present every proposed fix (diagnosis + before/after + live-verification evidence) and wait for approval before editing files — that approval and the actual edit both happen in kavach-repair, never here.
 - **Live replay only, always faithful.** Background → every scenario step in order → failing step. No `pageUrl` shortcuts, no reusing an unrelated existing record as a stand-in for the scenario's own setup steps.
 - **Reference-first, snapshot-last.** Drive every step through its existing page-object locator; don't `browser_snapshot`/DOM-dump a step just to see where you are. Only fall back to a snapshot for the failing step, and only once a targeted `count()`/`.evaluate()` check on the existing locator already looks wrong.
 - **2-attempt cap on live diagnosis** — clears within 2 → `Script Issue — Fix Proposed`; still fails with a sound locator → `Product Bug — Confirmed`/`Suspected`; genuinely inconclusive → `Needs Investigation`.
-- **Only these files may ever be edited, and only after approval, by kavach-imaintain — never by this skill directly:** `.feature` files, `src/test/java/stepdefinitions/`, `src/main/java/pages/`.
+- **Only these files may ever be edited, and only after approval, by kavach-repair — never by this skill directly:** `.feature` files, `src/test/java/stepdefinitions/`, `src/main/java/pages/`.

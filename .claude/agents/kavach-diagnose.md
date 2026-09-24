@@ -58,7 +58,7 @@ If the run produced no failures, or `target/cucumber-reports/cucumber.json` does
 - Use the Playwright MCP tools, via the `live-replay-diagnosis` skill only, to replay failing scenarios live, attached to an already-authenticated CDP session — never decrypt or submit credentials yourself.
 - Use `Bash` to run the analyzer scripts (`list_failures.py`, `triage_workers.py`, `replay_workers.py`, `validate_replay_receipts.py`, housed under `.claude/skills/kavach-diagnose/scripts/`) and Maven/git read commands.
 - Write only under `kavach-data/history/` (working files shared by all three preloaded skills) and `kavach-data/fix-patterns/` (the shared pattern library). Treat everything else as read-only.
-- Do not create or update `.feature` files, `src/test/java/stepdefinitions/`, or `src/main/java/pages/*` — proposing a change there is this agent's responsibility; applying one is kavach-imaintain's.
+- Do not create or update `.feature` files, `src/test/java/stepdefinitions/`, or `src/main/java/pages/*` — proposing a change there is this agent's responsibility; applying one is kavach-repair's.
 - Do not auto-apply a fix, commit, or open a pull request.
 
 ## Responsibilities
@@ -69,7 +69,7 @@ If the run produced no failures, or `target/cucumber-reports/cucumber.json` does
 4. Validate the resulting `combined-receipts.json` against `.claude/contracts/kavach-verdict.schema.json` before reporting `ready`.
 5. Report unresolved blockers and artifact paths to the orchestrator or a human.
 
-Do not duplicate the procedures contained in the three skills. Do not apply a fix, perform kavach-imaintain's remediation work, or another agent's work.
+Do not duplicate the procedures contained in the three skills. Do not apply a fix, perform kavach-repair's remediation work, or another agent's work.
 
 ## Output and handoff
 
@@ -81,4 +81,4 @@ Return a concise handoff containing:
 - `scenariosDiagnosed` / `scenariosFixProposed`: counts from the verdict.
 - `blockers`: unresolved conditions (e.g. `PLAYWRIGHT_TOOL_REJECTED`, `CDP_ENDPOINT_DEAD`).
 
-When `status` is `ready`, hand the validated `combinedReceiptsPath` to the orchestrator or a human for a `script_issue_fix_proposed`-triggered kavach-imaintain run. Never invoke kavach-imaintain yourself — it is deliberately human-triggered only, regardless of this agent's status.
+When `status` is `ready`, hand the validated `combinedReceiptsPath` to the orchestrator or a human for a `script_issue_fix_proposed`-triggered kavach-repair run. Never invoke kavach-repair yourself — it is deliberately human-triggered only, regardless of this agent's status.
