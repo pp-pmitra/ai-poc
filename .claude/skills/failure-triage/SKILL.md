@@ -19,36 +19,36 @@ No narrative LLM report-generation step is used here — that step (`failure_ana
 
 Read in Phase 2 alongside `fix-history.json`. Feature-specific files supplement `_default.md`; they never override it.
 
-- [`../kavach-knowledge/fix-patterns/_default.md`](../kavach-knowledge/fix-patterns/_default.md) — cross-feature patterns: dismiss/wait hardening, nested-child-span locator guard, navigation utilities
-- [`../kavach-knowledge/fix-patterns/life-campaign.md`](../kavach-knowledge/fix-patterns/life-campaign.md)
-- [`../kavach-knowledge/fix-patterns/life-campaign-dashboard.md`](../kavach-knowledge/fix-patterns/life-campaign-dashboard.md)
-- [`../kavach-knowledge/fix-patterns/life-create-campaign.md`](../kavach-knowledge/fix-patterns/life-create-campaign.md)
-- [`../kavach-knowledge/fix-patterns/life-create-creative.md`](../kavach-knowledge/fix-patterns/life-create-creative.md)
-- [`../kavach-knowledge/fix-patterns/life-create-pixel.md`](../kavach-knowledge/fix-patterns/life-create-pixel.md)
-- [`../kavach-knowledge/fix-patterns/life-create-report-template.md`](../kavach-knowledge/fix-patterns/life-create-report-template.md)
-- [`../kavach-knowledge/fix-patterns/life-creatives.md`](../kavach-knowledge/fix-patterns/life-creatives.md)
-- [`../kavach-knowledge/fix-patterns/life-export-download.md`](../kavach-knowledge/fix-patterns/life-export-download.md)
-- [`../kavach-knowledge/fix-patterns/life-line-item-creation.md`](../kavach-knowledge/fix-patterns/life-line-item-creation.md)
-- [`../kavach-knowledge/fix-patterns/life-lineitem.md`](../kavach-knowledge/fix-patterns/life-lineitem.md)
-- [`../kavach-knowledge/fix-patterns/life-npilists.md`](../kavach-knowledge/fix-patterns/life-npilists.md)
-- [`../kavach-knowledge/fix-patterns/life-pixels.md`](../kavach-knowledge/fix-patterns/life-pixels.md)
-- [`../kavach-knowledge/fix-patterns/life-pmp.md`](../kavach-knowledge/fix-patterns/life-pmp.md)
-- [`../kavach-knowledge/fix-patterns/life-reporttemplates.md`](../kavach-knowledge/fix-patterns/life-reporttemplates.md)
-- [`../kavach-knowledge/fix-patterns/life-runreport.md`](../kavach-knowledge/fix-patterns/life-runreport.md)
-- [`../kavach-knowledge/fix-patterns/life-schedulereport.md`](../kavach-knowledge/fix-patterns/life-schedulereport.md)
-- [`../kavach-knowledge/fix-patterns/life-tactic.md`](../kavach-knowledge/fix-patterns/life-tactic.md)
-- [`../kavach-knowledge/fix-patterns/life-tactic-creation.md`](../kavach-knowledge/fix-patterns/life-tactic-creation.md)
-- [`../kavach-knowledge/fix-patterns/life-targeting-template-creation.md`](../kavach-knowledge/fix-patterns/life-targeting-template-creation.md)
-- [`../kavach-knowledge/fix-patterns/life-targetings.md`](../kavach-knowledge/fix-patterns/life-targetings.md)
-- [`../kavach-knowledge/fix-patterns/life-targetingtemplates.md`](../kavach-knowledge/fix-patterns/life-targetingtemplates.md)
-- [`../kavach-knowledge/fix-patterns/studio-explorerworkspace.md`](../kavach-knowledge/fix-patterns/studio-explorerworkspace.md)
-- [`../kavach-knowledge/fix-patterns/life-curatedmarket.md`](../kavach-knowledge/fix-patterns/life-curatedmarket.md)
+- [`kavach-data/fix-patterns/_default.md`](kavach-data/fix-patterns/_default.md) — cross-feature patterns: dismiss/wait hardening, nested-child-span locator guard, navigation utilities
+- [`kavach-data/fix-patterns/life-campaign.md`](kavach-data/fix-patterns/life-campaign.md)
+- [`kavach-data/fix-patterns/life-campaign-dashboard.md`](kavach-data/fix-patterns/life-campaign-dashboard.md)
+- [`kavach-data/fix-patterns/life-create-campaign.md`](kavach-data/fix-patterns/life-create-campaign.md)
+- [`kavach-data/fix-patterns/life-create-creative.md`](kavach-data/fix-patterns/life-create-creative.md)
+- [`kavach-data/fix-patterns/life-create-pixel.md`](kavach-data/fix-patterns/life-create-pixel.md)
+- [`kavach-data/fix-patterns/life-create-report-template.md`](kavach-data/fix-patterns/life-create-report-template.md)
+- [`kavach-data/fix-patterns/life-creatives.md`](kavach-data/fix-patterns/life-creatives.md)
+- [`kavach-data/fix-patterns/life-export-download.md`](kavach-data/fix-patterns/life-export-download.md)
+- [`kavach-data/fix-patterns/life-line-item-creation.md`](kavach-data/fix-patterns/life-line-item-creation.md)
+- [`kavach-data/fix-patterns/life-lineitem.md`](kavach-data/fix-patterns/life-lineitem.md)
+- [`kavach-data/fix-patterns/life-npilists.md`](kavach-data/fix-patterns/life-npilists.md)
+- [`kavach-data/fix-patterns/life-pixels.md`](kavach-data/fix-patterns/life-pixels.md)
+- [`kavach-data/fix-patterns/life-pmp.md`](kavach-data/fix-patterns/life-pmp.md)
+- [`kavach-data/fix-patterns/life-reporttemplates.md`](kavach-data/fix-patterns/life-reporttemplates.md)
+- [`kavach-data/fix-patterns/life-runreport.md`](kavach-data/fix-patterns/life-runreport.md)
+- [`kavach-data/fix-patterns/life-schedulereport.md`](kavach-data/fix-patterns/life-schedulereport.md)
+- [`kavach-data/fix-patterns/life-tactic.md`](kavach-data/fix-patterns/life-tactic.md)
+- [`kavach-data/fix-patterns/life-tactic-creation.md`](kavach-data/fix-patterns/life-tactic-creation.md)
+- [`kavach-data/fix-patterns/life-targeting-template-creation.md`](kavach-data/fix-patterns/life-targeting-template-creation.md)
+- [`kavach-data/fix-patterns/life-targetings.md`](kavach-data/fix-patterns/life-targetings.md)
+- [`kavach-data/fix-patterns/life-targetingtemplates.md`](kavach-data/fix-patterns/life-targetingtemplates.md)
+- [`kavach-data/fix-patterns/studio-explorerworkspace.md`](kavach-data/fix-patterns/studio-explorerworkspace.md)
+- [`kavach-data/fix-patterns/life-curatedmarket.md`](kavach-data/fix-patterns/life-curatedmarket.md)
 
 New feature files get their own pattern file bootstrapped by the verdict-reporting skill's history-writing phase (this skill's Phase 2 derivation rule handles discovery).
 
 ## Phase 1: Gather Failures & Mechanical Signals
 
-1. If `.claude/skills/kavach-diagnose/scripts/history/failures-for-replay.json` doesn't exist or is older than the latest `target/cucumber-reports/cucumber.json`, generate it first:
+1. If `kavach-data/history/failures-for-replay.json` doesn't exist or is older than the latest `target/cucumber-reports/cucumber.json`, generate it first:
    ```
    cd .claude/skills/kavach-diagnose/scripts && python3 list_failures.py
    ```
@@ -66,9 +66,9 @@ Packet/prompt building and live-replay worker execution happen in the live-repla
 
 ## Phase 2: Load History & Fix Patterns
 
-- Read `../kavach-knowledge/fix-patterns/_default.md` (always needed — cross-feature patterns apply to every run). If the file is missing or empty (0 bytes or only a header line), treat it as having no patterns and continue — no prompt, no stop.
+- Read `kavach-data/fix-patterns/_default.md` (always needed — cross-feature patterns apply to every run). If the file is missing or empty (0 bytes or only a header line), treat it as having no patterns and continue — no prompt, no stop.
 - **Do not load feature-specific pattern files here.** They are loaded on demand by the live-replay-diagnosis skill, one per escalated group, when that group's `featureFile` is known. Loading all 24 pattern files upfront wastes context on features not present in this run. The full list of available pattern files is in this skill's Reference files section above.
-- Read `.claude/skills/kavach-diagnose/scripts/history/fix-history.json` (every fix attempted before, with `verdict`/`confidence`/`attempts`/`change`/`liveVerification`/`analysisTier`/`notes`) — reuse an approach whose entry has `verdict: "script_issue_fix_applied"` and `liveVerification.scenarioContinuedPastFixPoint: true`; never repeat an approach where the same scenario has `attempts >= 2` and any verdict other than `"script_issue_fix_applied"` — that's the signal a prior fix didn't hold.
+- Read `kavach-data/history/fix-history.json` (every fix attempted before, with `verdict`/`confidence`/`attempts`/`change`/`liveVerification`/`analysisTier`/`notes`) — reuse an approach whose entry has `verdict: "script_issue_fix_applied"` and `liveVerification.scenarioContinuedPastFixPoint: true`; never repeat an approach where the same scenario has `attempts >= 2` and any verdict other than `"script_issue_fix_applied"` — that's the signal a prior fix didn't hold.
 - **If `fix-history.json` is missing, empty (0 bytes), or contains only `[]`:** treat it as empty history and continue immediately — no approval prompt, no git-restore attempt, no pause. Write `[]` to the file if it is missing entirely (the verdict-reporting skill's Phase 5 will append to it). An empty history is a valid starting state; the only reason to stop is if the file exists but contains malformed non-JSON content, in which case flag the parse error and stop.
 - **Don't trust a prior fix as already live just because it was applied.** Before treating it as done, check the actual source file at the recorded line — `git log -p -- <file>` if unsure whether it was ever committed. History entries record what a session *intended* to apply; they aren't proof it survived (an apply can be skipped, reverted, or lost to an uncommitted session). If a failure recurs, check the real code first rather than re-diagnosing from scratch or wrongly assuming the app itself broke again.
 - Print a summary table of all failures: scenario, feature file, failed step, whether it has prior history (✅ fixed before / ⚠️ prior fix failed / — none).
@@ -91,7 +91,7 @@ This is mechanical for most groups and makes only a handful of small, **text-onl
 
 **Hard safety constraint, enforced in code (`enforce_tier1_verdict_constraints` in `llm_static_triage.py`) and independently re-checked again by the verdict-reporting skill, via `validate_replay_receipts.py`'s combined-summary step:** this phase can never itself finalize `confirmed_product_bug` / `suspected_product_bug` / `not_reproduced_passed_live` — none of those are provable without a live replay actually happening. It only ever finalizes `not_reproduced_intermittent`, `needs_investigation`, or `script_issue_fix_proposed` (and only the last one with a diff whose literal "before" text is mechanically re-verified against the actual source file — never a fabricated fix). Anything it isn't confident about gets `needsLiveReplay: true` and falls through to the live-replay-diagnosis skill untouched.
 
-This writes `.claude/skills/kavach-diagnose/scripts/history/triage-results/<triage-timestamp>/`:
+This writes `kavach-data/history/triage-results/<triage-timestamp>/`:
 - `manifest.json` — every group, whether it was resolved here (including a `receiptPath` per resolved group, so the verdict-reporting skill's aggregator can find it directly).
 - `receipts/*.receipt.json` — same shape as the live-replay-diagnosis skill's worker receipts, tagged with an additive `analysisTier` field. Only 5 of the 6 possible values can appear here (`tier0_intermittent` | `fix_pattern_cache` | `tier1_deterministic` | `tier1_llm_static` | `tier2_offline_dom`) — `tier2_live_replay` is assigned later, by the verdict-reporting skill, only to rows sourced from the live-replay-diagnosis skill.
 - `escalate-groups.json` — the `groupIds` this phase could not resolve; **only these are handed off to the live-replay-diagnosis skill**.

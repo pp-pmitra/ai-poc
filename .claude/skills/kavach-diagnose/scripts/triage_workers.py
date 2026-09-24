@@ -45,11 +45,12 @@ from failure_analyzer.triage.static_classifier import classify, disposition
 from replay_workers import group_failures
 
 _ANALYZER_DIR = Path(__file__).resolve().parent
+_HISTORY_DIR = _ANALYZER_DIR.parents[3] / "kavach-data" / "history"
 _REPO_ROOT = _ANALYZER_DIR.parent
 
-DEFAULT_INPUT = _ANALYZER_DIR / "history/failures-for-replay.json"
-DEFAULT_FIX_HISTORY = _ANALYZER_DIR / "history/fix-history.json"
-DEFAULT_OUT_ROOT = _ANALYZER_DIR / "history/triage-results"
+DEFAULT_INPUT = _HISTORY_DIR / "failures-for-replay.json"
+DEFAULT_FIX_HISTORY = _HISTORY_DIR / "fix-history.json"
+DEFAULT_OUT_ROOT = _HISTORY_DIR / "triage-results"
 DEFAULT_BATCH_SIZE = 6
 
 REPORT_VERDICT = {

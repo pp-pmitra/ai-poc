@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
-DEFAULT_FIX_HISTORY = Path(__file__).resolve().parent / "history/fix-history.json"
+DEFAULT_FIX_HISTORY = Path(__file__).resolve().parents[4] / "kavach-data" / "history" / "fix-history.json"
 
 _PRODUCT_BUG_VERDICTS = {"Product Bug — Confirmed", "Product Bug — Suspected"}
 _CONFIRMED_PRODUCT_BUG_VERDICT = "Product Bug — Confirmed"

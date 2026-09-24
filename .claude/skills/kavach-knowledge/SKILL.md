@@ -10,12 +10,12 @@ description: >-
 
 # Kavach Knowledge
 
-This directory holds the one part of Kavach's output that is never disposable: known-good fixes for specific broken locators/patterns, organized per feature. Everything else either agent produces (verdict reports, receipts, `fix-history.json`) lives under `kavach-diagnose`'s own `history/` working directory — this skill is deliberately narrower, just the pattern library, because it's the one artifact both agents read *and* write, so it can't live inside either one's own folder without creating a cross-agent dependency on internal layout.
+This skill describes the one part of Kavach's output that is never disposable: known-good fixes for specific broken locators/patterns, organized per feature. The actual data lives at repo-root `kavach-data/fix-patterns/` — deliberately outside `.claude/`, since both agents' sandboxed Bash/Write calls can only write outside that directory (`.claude/` is bind-mounted read-only inside the `--agent` sandbox). Everything else either agent produces (verdict reports, receipts, `fix-history.json`) lives under `kavach-data/history/` instead — this skill is deliberately narrower, just the pattern library, because it's the one artifact both agents read *and* write, so it can't live inside either one's own folder without creating a cross-agent dependency on internal layout.
 
 ## Shape
 
-- `fix-patterns/_default.md` — cross-feature patterns (dismiss/wait hardening, nested-child-span locator guard, navigation utilities, shadow-DOM CSS-over-XPath guidance). Always read, by both agents, for every candidate — supplements but never overrides a feature-specific file.
-- `fix-patterns/<feature-slug>.md` — one file per feature that has ever needed a fix (e.g. `Life_PMP.feature` → `life-pmp.md`). Structure: a `# <Feature> fix patterns` header, a `## Run log` line, then accumulated entries under `## Known good fixes` and `## Learned notes`.
+- `kavach-data/fix-patterns/_default.md` — cross-feature patterns (dismiss/wait hardening, nested-child-span locator guard, navigation utilities, shadow-DOM CSS-over-XPath guidance). Always read, by both agents, for every candidate — supplements but never overrides a feature-specific file.
+- `kavach-data/fix-patterns/<feature-slug>.md` — one file per feature that has ever needed a fix (e.g. `Life_PMP.feature` → `life-pmp.md`). Structure: a `# <Feature> fix patterns` header, a `## Run log` line, then accumulated entries under `## Known good fixes` and `## Learned notes`.
 
 ## Read/write contract
 

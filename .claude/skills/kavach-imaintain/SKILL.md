@@ -54,36 +54,36 @@ Print the detected mode at startup: `Mode: INTERACTIVE` or `Mode: ISOLATION (int
 ## Input sources
 
 - **Primary:** `combined-receipts.json` written by kavach's Phase 3 (`validate_replay_receipts.py`). Contains one receipt per `groupId` with machine-format `verdict`, free-text `recommendedAction`, and free-text `evidence`. There is no structured `fixSuggestion` object on a kavach receipt — Phase 2 derives `targetFile`/`targetLine`/the patch itself from `recommendedAction` plus the matching fix-pattern file, the same way isolation mode already does (Phase 0.5.2).
-- **Fix-pattern files:** `../kavach-knowledge/fix-patterns/` — the same files kavach uses. Read the feature-specific file plus `_default.md` for every candidate.
-- **Fix history:** `.claude/skills/kavach-diagnose/scripts/history/fix-history.json` — the same file kavach writes (see the verdict-reporting skill's schema). Cross-referenced in Phase 1 to skip candidates already tried with ≥ 2 failed attempts.
+- **Fix-pattern files:** `kavach-data/fix-patterns/` — the same files kavach uses. Read the feature-specific file plus `_default.md` for every candidate.
+- **Fix history:** `kavach-data/history/fix-history.json` — the same file kavach writes (see the verdict-reporting skill's schema). Cross-referenced in Phase 1 to skip candidates already tried with ≥ 2 failed attempts.
 
 If `combined-receipts.json` is not found and mode is **not** `isolation`, check the kavach Phase 4 markdown report for the run date and ask the user to confirm the path before exiting. In isolation mode, `combined-receipts.json` is never required — Phase 0.5 synthesises the receipt.
 
 ## Reference files
 
-- [`../kavach-knowledge/fix-patterns/_default.md`](../kavach-knowledge/fix-patterns/_default.md)
-- [`../kavach-knowledge/fix-patterns/life-campaign.md`](../kavach-knowledge/fix-patterns/life-campaign.md)
-- [`../kavach-knowledge/fix-patterns/life-campaign-dashboard.md`](../kavach-knowledge/fix-patterns/life-campaign-dashboard.md)
-- [`../kavach-knowledge/fix-patterns/life-create-campaign.md`](../kavach-knowledge/fix-patterns/life-create-campaign.md)
-- [`../kavach-knowledge/fix-patterns/life-create-creative.md`](../kavach-knowledge/fix-patterns/life-create-creative.md)
-- [`../kavach-knowledge/fix-patterns/life-create-pixel.md`](../kavach-knowledge/fix-patterns/life-create-pixel.md)
-- [`../kavach-knowledge/fix-patterns/life-create-report-template.md`](../kavach-knowledge/fix-patterns/life-create-report-template.md)
-- [`../kavach-knowledge/fix-patterns/life-creatives.md`](../kavach-knowledge/fix-patterns/life-creatives.md)
-- [`../kavach-knowledge/fix-patterns/life-export-download.md`](../kavach-knowledge/fix-patterns/life-export-download.md)
-- [`../kavach-knowledge/fix-patterns/life-line-item-creation.md`](../kavach-knowledge/fix-patterns/life-line-item-creation.md)
-- [`../kavach-knowledge/fix-patterns/life-lineitem.md`](../kavach-knowledge/fix-patterns/life-lineitem.md)
-- [`../kavach-knowledge/fix-patterns/life-npilists.md`](../kavach-knowledge/fix-patterns/life-npilists.md)
-- [`../kavach-knowledge/fix-patterns/life-pixels.md`](../kavach-knowledge/fix-patterns/life-pixels.md)
-- [`../kavach-knowledge/fix-patterns/life-pmp.md`](../kavach-knowledge/fix-patterns/life-pmp.md)
-- [`../kavach-knowledge/fix-patterns/life-reporttemplates.md`](../kavach-knowledge/fix-patterns/life-reporttemplates.md)
-- [`../kavach-knowledge/fix-patterns/life-runreport.md`](../kavach-knowledge/fix-patterns/life-runreport.md)
-- [`../kavach-knowledge/fix-patterns/life-schedulereport.md`](../kavach-knowledge/fix-patterns/life-schedulereport.md)
-- [`../kavach-knowledge/fix-patterns/life-tactic.md`](../kavach-knowledge/fix-patterns/life-tactic.md)
-- [`../kavach-knowledge/fix-patterns/life-tactic-creation.md`](../kavach-knowledge/fix-patterns/life-tactic-creation.md)
-- [`../kavach-knowledge/fix-patterns/life-targeting-template-creation.md`](../kavach-knowledge/fix-patterns/life-targeting-template-creation.md)
-- [`../kavach-knowledge/fix-patterns/life-targetings.md`](../kavach-knowledge/fix-patterns/life-targetings.md)
-- [`../kavach-knowledge/fix-patterns/life-targetingtemplates.md`](../kavach-knowledge/fix-patterns/life-targetingtemplates.md)
-- [`../kavach-knowledge/fix-patterns/studio-explorerworkspace.md`](../kavach-knowledge/fix-patterns/studio-explorerworkspace.md)
+- [`kavach-data/fix-patterns/_default.md`](kavach-data/fix-patterns/_default.md)
+- [`kavach-data/fix-patterns/life-campaign.md`](kavach-data/fix-patterns/life-campaign.md)
+- [`kavach-data/fix-patterns/life-campaign-dashboard.md`](kavach-data/fix-patterns/life-campaign-dashboard.md)
+- [`kavach-data/fix-patterns/life-create-campaign.md`](kavach-data/fix-patterns/life-create-campaign.md)
+- [`kavach-data/fix-patterns/life-create-creative.md`](kavach-data/fix-patterns/life-create-creative.md)
+- [`kavach-data/fix-patterns/life-create-pixel.md`](kavach-data/fix-patterns/life-create-pixel.md)
+- [`kavach-data/fix-patterns/life-create-report-template.md`](kavach-data/fix-patterns/life-create-report-template.md)
+- [`kavach-data/fix-patterns/life-creatives.md`](kavach-data/fix-patterns/life-creatives.md)
+- [`kavach-data/fix-patterns/life-export-download.md`](kavach-data/fix-patterns/life-export-download.md)
+- [`kavach-data/fix-patterns/life-line-item-creation.md`](kavach-data/fix-patterns/life-line-item-creation.md)
+- [`kavach-data/fix-patterns/life-lineitem.md`](kavach-data/fix-patterns/life-lineitem.md)
+- [`kavach-data/fix-patterns/life-npilists.md`](kavach-data/fix-patterns/life-npilists.md)
+- [`kavach-data/fix-patterns/life-pixels.md`](kavach-data/fix-patterns/life-pixels.md)
+- [`kavach-data/fix-patterns/life-pmp.md`](kavach-data/fix-patterns/life-pmp.md)
+- [`kavach-data/fix-patterns/life-reporttemplates.md`](kavach-data/fix-patterns/life-reporttemplates.md)
+- [`kavach-data/fix-patterns/life-runreport.md`](kavach-data/fix-patterns/life-runreport.md)
+- [`kavach-data/fix-patterns/life-schedulereport.md`](kavach-data/fix-patterns/life-schedulereport.md)
+- [`kavach-data/fix-patterns/life-tactic.md`](kavach-data/fix-patterns/life-tactic.md)
+- [`kavach-data/fix-patterns/life-tactic-creation.md`](kavach-data/fix-patterns/life-tactic-creation.md)
+- [`kavach-data/fix-patterns/life-targeting-template-creation.md`](kavach-data/fix-patterns/life-targeting-template-creation.md)
+- [`kavach-data/fix-patterns/life-targetings.md`](kavach-data/fix-patterns/life-targetings.md)
+- [`kavach-data/fix-patterns/life-targetingtemplates.md`](kavach-data/fix-patterns/life-targetingtemplates.md)
+- [`kavach-data/fix-patterns/studio-explorerworkspace.md`](kavach-data/fix-patterns/studio-explorerworkspace.md)
 
 ---
 
@@ -187,7 +187,7 @@ Do not attempt a fix. Do not open a browser. Do not create a branch.
 ## Phase 1 — Discovery
 
 1. Read `combined-receipts.json`. Collect all receipts where `verdict == "script_issue_fix_proposed"`. *(In isolation mode, skip this step — use the synthetic receipt from Phase 0.5 as the candidate list.)*
-2. Read `.claude/skills/kavach-diagnose/scripts/history/fix-history.json`. For each candidate apply the skip rules:
+2. Read `kavach-data/history/fix-history.json`. For each candidate apply the skip rules:
    - **Skip** if any prior entry for this `groupId` has `verdict == "script_issue_fix_applied"`. Confirm with `git log` that the commit is reachable on main before skipping.
    - **Skip** if `attempts >= 2` and no prior entry has `verdict == "script_issue_fix_applied"` (exhausted attempts, no point retrying).
 
@@ -211,8 +211,8 @@ Do not attempt a fix. Do not open a browser. Do not create a branch.
 
 For each candidate:
 
-1. Read `../kavach-knowledge/fix-patterns/_default.md` (cross-feature patterns — read once here, applies to all candidates).
-2. Read the feature-specific fix-pattern file for this candidate: derive from the feature slug (e.g. `Life_CampaignDashboard` → `../kavach-knowledge/fix-patterns/life-campaign-dashboard.md`) and read it if it exists. Empty or missing files are treated as having no known patterns. The full list of available pattern files is in the kavach-knowledge skill's Reference files section.
+1. Read `kavach-data/fix-patterns/_default.md` (cross-feature patterns — read once here, applies to all candidates).
+2. Read the feature-specific fix-pattern file for this candidate: derive from the feature slug (e.g. `Life_CampaignDashboard` → `kavach-data/fix-patterns/life-campaign-dashboard.md`) and read it if it exists. Empty or missing files are treated as having no known patterns. The full list of available pattern files is in the kavach-knowledge skill's Reference files section.
 3. Read the receipt's `recommendedAction` and `evidence`. There is no structured `fixSuggestion` field on a kavach receipt — match the broken locator/exception described there against the fix-pattern file(s) just read (the same match-against-pattern-file approach isolation mode uses, Phase 0.5.2) to derive `targetFile`, `targetLine` (approximate), and the concrete patch. If no pattern-file entry matches closely enough to derive a concrete patch, record as `needs_investigation` and skip — do not guess at a fix from `recommendedAction` text alone.
 4. Open `targetFile`. Confirm the broken locator or code pattern is still present at or near `targetLine`. If the file has changed and the pattern is gone, record as `source_drift` and skip — do not attempt the fix.
    **Note for `infrastructure_inconclusive` retry:** if a prior run left `targetFile` in its edited state (patch applied but not committed), the broken pattern may already be absent. In that case the patch is already applied — skip Phase 3.1 and proceed directly to Phase 3.2 spotless check with the file as-is. Do not re-apply the patch to a file that already has it.
