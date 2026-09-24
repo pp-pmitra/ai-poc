@@ -53,6 +53,12 @@ jobs:
     # sync with a pinned Playwright version's own dependency-detection tables.
     container:
       image: mcr.microsoft.com/playwright:v1.50.0-noble
+      # Claude Code's --agent mode sandboxes its own Bash calls via bubblewrap,
+      # which needs to create a Linux user namespace. Docker blocks that by
+      # default (seccomp + missing capability) — Netra/Sutra never hit this
+      # because their CI runs directly on a bare ubuntu-latest VM, not nested
+      # inside a container. These options let bubblewrap actually work here.
+      options: --cap-add=SYS_ADMIN --security-opt seccomp=unconfined --security-opt apparmor=unconfined
     timeout-minutes: 90
     env:
       CDP_PORT: ${{ inputs.app == 'studio' && '9224' || '9223' }}
