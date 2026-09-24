@@ -6,8 +6,6 @@ description: >-
   procedure — nothing invokes this skill directly. Both kavach-diagnose
   (writes) and kavach-imaintain (reads, and also writes when it applies
   a fix) declare it as a preloaded dependency.
-allowed-tools: Read Write(.claude/skills/kavach-knowledge/**) Grep Glob
-user-invocable: false
 ---
 
 # Kavach Knowledge
@@ -21,7 +19,7 @@ This directory holds the one part of Kavach's output that is never disposable: k
 
 ## Read/write contract
 
-- **kavach-diagnose** reads `_default.md` in its Phase 2 (always) and the feature-specific file lazily in Phase 3 (only for a group that actually escalates to live replay, once its `featureFile` is known). It writes to `## Known good fixes`/`## Learned notes` in its Phase 5, appending only — never overwrite an existing entry, and bootstrap a new feature file if one doesn't exist yet.
+- **kavach-diagnose** reads `_default.md` in its `failure-triage` skill (always) and the feature-specific file lazily in its `live-replay-diagnosis` skill (only for a group that actually escalates to live replay, once its `featureFile` is known). Its `verdict-reporting` skill writes to `## Known good fixes`/`## Learned notes`, appending only — never overwrite an existing entry, and bootstrap a new feature file if one doesn't exist yet.
 - **kavach-imaintain** reads both `_default.md` and the feature-specific file in its Phase 2, to derive a concrete patch (`targetFile`/`targetLine`/the edit itself) from a receipt's free-text `recommendedAction` — a receipt never carries a structured fix suggestion by design, so a pattern-file match is required before any patch is attempted; without one, the candidate is recorded `needs_investigation` and skipped, never guessed. It also appends a `## Known good fixes` entry itself, in its Phase 6, for every fix it successfully applied and verified.
 - Both agents dedupe against existing entries before appending — never write a near-duplicate of a pattern already recorded.
 

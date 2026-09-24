@@ -10,10 +10,10 @@
     "concurrency": 5
   },
   "paths": {
-    "cucumberJson": "../../../target/cucumber-reports/cucumber.json",
-    "tracesDir": "../../../target",
-    "featuresRoot": "../../../src/test/resources/features",
-    "outputDir": "../../../target/bug-reports"
+    "cucumberJson": "../../../../target/cucumber-reports/cucumber.json",
+    "tracesDir": "../../../../target",
+    "featuresRoot": "../../../../src/test/resources/features",
+    "outputDir": "../../../../target/bug-reports"
   },
   "workItem": {
     "defaultType": "maintenanceStory",
