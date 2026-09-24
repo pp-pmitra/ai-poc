@@ -67,8 +67,6 @@ If `combined-receipts.json` is not found and mode is **not** `isolation`, check 
 
 ---
 
----
-
 ## Phase 0.5 — Isolation mode input normalisation
 
 Runs **only when mode is `isolation`**. Skip in interactive mode.
@@ -454,4 +452,4 @@ PR: <url or "not opened">
 - Never skip the Phase 0.5.3 match-confirmation gate (isolation) or the Phase 1 discovery-table confirmation (both modes). kavach-repair is always interactive — no environment variable overrides this.
 - Never skip reading `fix-history.json` in Phase 1. The skip conditions prevent repeating documented dead-end approaches.
 - A fix that caused a cascade regression must appear at the top of the PR body under ⚠️, not buried in the applied list.
-- Before re-applying a patch for a candidate with a prior `infrastructure_inconclusive` entry, confirm the broken pattern is still present in `targetFile` (Phase 2 step 3). If the patch was already applied in a prior run (pattern absent), skip Phase 3.1 and proceed directly to Phase 3.2. Never double-apply a patch.
+- Before re-applying a patch for a candidate with a prior `infrastructure_inconclusive` entry, confirm the broken pattern is still present in `targetFile` (Phase 2 step 4). If the patch was already applied in a prior run (pattern absent), skip Phase 3.1 and proceed directly to Phase 3.2. Never double-apply a patch.
