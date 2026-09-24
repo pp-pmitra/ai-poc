@@ -74,7 +74,7 @@ jobs:
       - name: Install Maven
         run: |
           apt-get update
-          apt-get install -y maven
+          apt-get install -y maven lsb-release
 
       - name: Set up Node (Claude Code CLI + Playwright MCP)
         uses: actions/setup-node@v4
