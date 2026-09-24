@@ -23,7 +23,7 @@ from failure_analyzer.parsers.trace_parser import enrich_failures_with_traces
 from failure_analyzer.grouping.failure_grouper import group_failures, normalize_step
 
 DEFAULT_OUTPUT = "history/failures-for-replay.json"
-DEFAULT_ARTIFACT_DIR = Path("../../../target/failure-artifacts")
+DEFAULT_ARTIFACT_DIR = Path("../../../../target/failure-artifacts")
 
 # A Background failure is only worth calling "likely flaky timing" when a
 # MAJORITY of this feature's other Background executions succeeded this run.

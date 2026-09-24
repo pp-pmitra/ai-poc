@@ -26,10 +26,10 @@ class LLMConfig:
 
 @dataclass
 class PathsConfig:
-    cucumber_json: str = "../../../target/cucumber-reports/cucumber.json"
-    traces_dir: str = "../../../target"
-    features_root: str = "../../../src/test/resources/features"
-    output_dir: str = "../../../target/bug-reports"
+    cucumber_json: str = "../../../../target/cucumber-reports/cucumber.json"
+    traces_dir: str = "../../../../target"
+    features_root: str = "../../../../src/test/resources/features"
+    output_dir: str = "../../../../target/bug-reports"
 
 
 @dataclass
@@ -107,10 +107,10 @@ def load_config(config_path: Path | None = None) -> Config:
 
     paths_raw = raw.get("paths", {})
     paths = PathsConfig(
-        cucumber_json=paths_raw.get("cucumberJson", "../../../target/cucumber-reports/cucumber.json"),
-        traces_dir=paths_raw.get("tracesDir", "../../../target"),
-        features_root=paths_raw.get("featuresRoot", "../../../src/test/resources/features"),
-        output_dir=paths_raw.get("outputDir", "../../../target/bug-reports"),
+        cucumber_json=paths_raw.get("cucumberJson", "../../../../target/cucumber-reports/cucumber.json"),
+        traces_dir=paths_raw.get("tracesDir", "../../../../target"),
+        features_root=paths_raw.get("featuresRoot", "../../../../src/test/resources/features"),
+        output_dir=paths_raw.get("outputDir", "../../../../target/bug-reports"),
     )
 
     wi_raw = raw.get("workItem", {})

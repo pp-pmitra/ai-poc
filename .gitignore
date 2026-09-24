@@ -10,3 +10,6 @@ __pycache__/
 .pytest_cache/
 .claude/auth/
 .claude/settings.json
+/kavach-run.log
+/life-bootstrap.log
+/studio-bootstrap.log

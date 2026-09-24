@@ -40,7 +40,7 @@ When "Netra", "Sutra", "Shakti", "Kavach", or "Purna" is mentioned, do NOT check
      * Feature file name (e.g. `Life_Deal_Platform.feature`) — scan that file for every `@todo`-tagged scenario and run all of them, in file order.
    * Resolve which of the three the input is by matching it against the feature files first (exact `.feature` filename match), then tags (leading `@`), then falling back to a scenario-title match. If ambiguous or no match is found, ask which scenario/tag/feature was meant rather than guessing.
 4. **iFix (Kavach):**
-   * Path: `.claude/skills/kavach-diagnose/SKILL.md` (agent: `.claude/agents/kavach-diagnose.md`)
+   * Path: `.claude/agents/kavach-diagnose.md`, which runs its three preloaded skills in order — `.claude/skills/failure-triage/SKILL.md`, `.claude/skills/live-replay-diagnosis/SKILL.md`, `.claude/skills/verdict-reporting/SKILL.md`
    * Action: Read the file immediately. Replay failing Cucumber/Playwright scenarios live in the browser; classify each as a script issue (fix proposed) or a product bug (flagged only); write a timestamped verdict report.
    * Outputs Generated: Update `[VERDICT_REPORT]`.
    * Note: applying a proposed fix is a separate stage, `.claude/skills/kavach-imaintain/SKILL.md` (agent: `.claude/agents/kavach-imaintain.md`) — always interactive, never invoked automatically from here.
@@ -66,7 +66,7 @@ Resolution rule: when a repo link is supplied this way, it is authoritative — 
    * `ref` (branch) from the segment after `/tree/`, if present; otherwise use the repository's default branch.
 2. Fetch the skill file at the fixed path for that agent, on that `owner/repo`/`ref`:
    * Shakti: `ai-skills/shakti/iAutomate.md`
-   * Kavach: `.claude/skills/kavach-diagnose/SKILL.md`
+   * Kavach: `.claude/agents/kavach-diagnose.md` (and its three preloaded skills, see above)
 3. Read the fetched content and execute it exactly as written, substituting the given scenario/tag/feature for `[GHERKIN_FEATURES]` (Shakti — resolved per the Accepted-input rules above) or the failing-run reference (Kavach).
 4. Any further file the skill instructs you to read (glue files, POM classes, feature files, other skill files) is fetched from the same `owner/repo`/`ref` via the GitHub connector — never assumed to exist locally, never guessed at. If the GitHub connector is unavailable or the fetch fails (bad link, missing branch, 404), stop and report the failure; do not fall back to local disk silently and do not fabricate file content.
 5. Commits/PRs this stage produces (per its own skill file) go to the same `owner/repo` via the GitHub connector, not to a local git working tree.

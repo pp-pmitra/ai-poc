@@ -10,8 +10,6 @@ description: >-
   observation pass. Never diagnoses unknown failures — kavach-diagnose
   does that. Never commits without a Maven green. Always interactive;
   never runs unattended.
-allowed-tools: Bash(*) Read Write(*) Edit Grep Glob
-user-invocable: true
 ---
 
 # iMaintenance — Apply and Verify kavach Script Fixes
@@ -57,7 +55,7 @@ Print the detected mode at startup: `Mode: INTERACTIVE` or `Mode: ISOLATION (int
 
 - **Primary:** `combined-receipts.json` written by kavach's Phase 3 (`validate_replay_receipts.py`). Contains one receipt per `groupId` with machine-format `verdict`, free-text `recommendedAction`, and free-text `evidence`. There is no structured `fixSuggestion` object on a kavach receipt — Phase 2 derives `targetFile`/`targetLine`/the patch itself from `recommendedAction` plus the matching fix-pattern file, the same way isolation mode already does (Phase 0.5.2).
 - **Fix-pattern files:** `../kavach-knowledge/fix-patterns/` — the same files kavach uses. Read the feature-specific file plus `_default.md` for every candidate.
-- **Fix history:** `.claude/skills/kavach-diagnose/history/fix-history.json` — the same file kavach writes (see the kavach-diagnose skill's schema). Cross-referenced in Phase 1 to skip candidates already tried with ≥ 2 failed attempts.
+- **Fix history:** `.claude/skills/kavach-diagnose/scripts/history/fix-history.json` — the same file kavach writes (see the verdict-reporting skill's schema). Cross-referenced in Phase 1 to skip candidates already tried with ≥ 2 failed attempts.
 
 If `combined-receipts.json` is not found and mode is **not** `isolation`, check the kavach Phase 4 markdown report for the run date and ask the user to confirm the path before exiting. In isolation mode, `combined-receipts.json` is never required — Phase 0.5 synthesises the receipt.
 
@@ -189,7 +187,7 @@ Do not attempt a fix. Do not open a browser. Do not create a branch.
 ## Phase 1 — Discovery
 
 1. Read `combined-receipts.json`. Collect all receipts where `verdict == "script_issue_fix_proposed"`. *(In isolation mode, skip this step — use the synthetic receipt from Phase 0.5 as the candidate list.)*
-2. Read `.claude/skills/kavach-diagnose/history/fix-history.json`. For each candidate apply the skip rules:
+2. Read `.claude/skills/kavach-diagnose/scripts/history/fix-history.json`. For each candidate apply the skip rules:
    - **Skip** if any prior entry for this `groupId` has `verdict == "script_issue_fix_applied"`. Confirm with `git log` that the commit is reachable on main before skipping.
    - **Skip** if `attempts >= 2` and no prior entry has `verdict == "script_issue_fix_applied"` (exhausted attempts, no point retrying).
 
@@ -392,7 +390,7 @@ If there are no passing fixes (all candidates failed or were skipped), do not pu
 
 ### fix-history.json — one entry per candidate
 
-This is the same file and array kavach appends to (see the kavach-diagnose skill's schema) — the top-level fields below match kavach's field names exactly so the shared ≥2-failed-attempts skip logic in Phase 1 can read entries from either writer. Everything specific to fix-application (as opposed to diagnosis) lives under `imaintenanceDetail`.
+This is the same file and array kavach appends to (see the verdict-reporting skill's schema) — the top-level fields below match kavach's field names exactly so the shared ≥2-failed-attempts skip logic in Phase 1 can read entries from either writer. Everything specific to fix-application (as opposed to diagnosis) lives under `imaintenanceDetail`.
 
 ```json
 {
