@@ -21,6 +21,10 @@ on:
         type: choice
         options: [Internal, External]
         default: Internal
+      feature_path:
+        description: "Feature file or directory to run, e.g. src/test/resources/features/life/Life_Pixels.feature. Leave blank to run whatever TestRunner.java's @CucumberOptions already specifies, untouched."
+        required: false
+        type: string
       cucumber_tags:
         description: "Cucumber tag filter for the run that produces the failures to diagnose, e.g. @regression. Leave blank to run whatever TestRunner.java's @CucumberOptions already specifies, untouched."
         required: false
@@ -84,11 +88,14 @@ jobs:
       - name: Run the target Cucumber suite (produces cucumber.json + failures, if any)
         continue-on-error: true
         run: |
-          if [ -n "${{ inputs.cucumber_tags }}" ]; then
-            mvn -B -ntp test -Dtest=TestRunner -Dcucumber.filter.tags="${{ inputs.cucumber_tags }}"
-          else
-            mvn -B -ntp test -Dtest=TestRunner
+          set -- mvn -B -ntp test -Dtest=TestRunner
+          if [ -n "${{ inputs.feature_path }}" ]; then
+            set -- "$@" -Dcucumber.features="${{ inputs.feature_path }}"
           fi
+          if [ -n "${{ inputs.cucumber_tags }}" ]; then
+            set -- "$@" -Dcucumber.filter.tags="${{ inputs.cucumber_tags }}"
+          fi
+          "$@"
 
       - name: Extract failures for replay (mechanical, no LLM)
         run: |
