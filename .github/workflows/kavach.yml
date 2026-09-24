@@ -182,7 +182,11 @@ jobs:
       - name: Run Kavach live replay
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          CLAUDE_CODE_SUBPROCESS_ENV_SCRUB: "1"
+          # CLAUDE_CODE_SUBPROCESS_ENV_SCRUB dropped: it forces permission-mode
+          # back to default at startup (prints a warning) unless --allowedTools
+          # is explicit — which we already always pass — so it added a
+          # confusing warning with no functional benefit here. No need to
+          # match Netra/Sutra's exact env vars where one doesn't earn its keep.
           CLAUDE_CODE_SKIP_PROMPT_HISTORY: "1"
           CLAUDE_CODE_MCP_ALLOWLIST_ENV: "1"
         run: |
@@ -240,6 +244,7 @@ jobs:
           # kavach-diagnose is only ever allowed to write under target/ (build
           # output), its own scripts/history/ working directory, and
           # kavach-knowledge's fix-patterns/ — never application or test source.
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           changes=$(git status --porcelain --untracked-files=all -- . \
             ':(exclude)target/**' \
             ':(exclude)kavach-data/history/**' \
