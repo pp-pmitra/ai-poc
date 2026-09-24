@@ -1,6 +1,34 @@
+---
+name: kavach-diagnose
+description: >-
+  Replays failing Cucumber/Playwright scenarios live in the browser,
+  classifies each as a script issue (fix proposed) or a product bug
+  (flagged only), and writes a validated verdict. Consumed by the
+  kavach-diagnose agent (.claude/agents/kavach-diagnose.md); reads and
+  appends to the kavach-knowledge skill's fix-patterns. Never applies
+  fixes, never touches application or test source — that is
+  kavach-imaintain's job.
+allowed-tools: >-
+  Bash(*) Read Write(.claude/skills/kavach-diagnose/**) Grep Glob
+  mcp__playwright__browser_navigate mcp__playwright__browser_navigate_back
+  mcp__playwright__browser_snapshot mcp__playwright__browser_click
+  mcp__playwright__browser_type mcp__playwright__browser_fill_form
+  mcp__playwright__browser_press_key mcp__playwright__browser_hover
+  mcp__playwright__browser_drag mcp__playwright__browser_drop
+  mcp__playwright__browser_select_option mcp__playwright__browser_find
+  mcp__playwright__browser_wait_for mcp__playwright__browser_evaluate
+  mcp__playwright__browser_run_code_unsafe mcp__playwright__browser_handle_dialog
+  mcp__playwright__browser_file_upload mcp__playwright__browser_emulate_media
+  mcp__playwright__browser_resize mcp__playwright__browser_tabs
+  mcp__playwright__browser_take_screenshot mcp__playwright__browser_console_messages
+  mcp__playwright__browser_network_requests mcp__playwright__browser_network_request
+  mcp__playwright__browser_close
+user-invocable: true
+---
+
 # Analyze Failures
 
-<!-- kavach canonical instruction body. Entry point: .claude/skills/kavach/SKILL.md -->
+<!-- Canonical procedure for the kavach-diagnose skill, consumed by .claude/agents/kavach-diagnose.md. -->
 
 ## Contents
 - [Phase 0: Confirm CDP Bootstrap](#phase-0-confirm-cdp-bootstrap-is-running)
@@ -46,30 +74,30 @@ This command runs as seven phases, in order. Phase 2.5 is a cheap triage pass th
 
 Read in Phase 2 alongside `fix-history.json`. Feature-specific files supplement `_default.md`; they never override it.
 
-- [`fix-patterns/_default.md`](fix-patterns/_default.md) — cross-feature patterns: dismiss/wait hardening, nested-child-span locator guard, navigation utilities
-- [`fix-patterns/life-campaign.md`](fix-patterns/life-campaign.md)
-- [`fix-patterns/life-campaign-dashboard.md`](fix-patterns/life-campaign-dashboard.md)
-- [`fix-patterns/life-create-campaign.md`](fix-patterns/life-create-campaign.md)
-- [`fix-patterns/life-create-creative.md`](fix-patterns/life-create-creative.md)
-- [`fix-patterns/life-create-pixel.md`](fix-patterns/life-create-pixel.md)
-- [`fix-patterns/life-create-report-template.md`](fix-patterns/life-create-report-template.md)
-- [`fix-patterns/life-creatives.md`](fix-patterns/life-creatives.md)
-- [`fix-patterns/life-export-download.md`](fix-patterns/life-export-download.md)
-- [`fix-patterns/life-line-item-creation.md`](fix-patterns/life-line-item-creation.md)
-- [`fix-patterns/life-lineitem.md`](fix-patterns/life-lineitem.md)
-- [`fix-patterns/life-npilists.md`](fix-patterns/life-npilists.md)
-- [`fix-patterns/life-pixels.md`](fix-patterns/life-pixels.md)
-- [`fix-patterns/life-pmp.md`](fix-patterns/life-pmp.md)
-- [`fix-patterns/life-reporttemplates.md`](fix-patterns/life-reporttemplates.md)
-- [`fix-patterns/life-runreport.md`](fix-patterns/life-runreport.md)
-- [`fix-patterns/life-schedulereport.md`](fix-patterns/life-schedulereport.md)
-- [`fix-patterns/life-tactic.md`](fix-patterns/life-tactic.md)
-- [`fix-patterns/life-tactic-creation.md`](fix-patterns/life-tactic-creation.md)
-- [`fix-patterns/life-targeting-template-creation.md`](fix-patterns/life-targeting-template-creation.md)
-- [`fix-patterns/life-targetings.md`](fix-patterns/life-targetings.md)
-- [`fix-patterns/life-targetingtemplates.md`](fix-patterns/life-targetingtemplates.md)
-- [`fix-patterns/studio-explorerworkspace.md`](fix-patterns/studio-explorerworkspace.md)
-- [`fix-patterns/life-curatedmarket.md`](fix-patterns/life-curatedmarket.md)
+- [`../kavach-knowledge/fix-patterns/_default.md`](../kavach-knowledge/fix-patterns/_default.md) — cross-feature patterns: dismiss/wait hardening, nested-child-span locator guard, navigation utilities
+- [`../kavach-knowledge/fix-patterns/life-campaign.md`](../kavach-knowledge/fix-patterns/life-campaign.md)
+- [`../kavach-knowledge/fix-patterns/life-campaign-dashboard.md`](../kavach-knowledge/fix-patterns/life-campaign-dashboard.md)
+- [`../kavach-knowledge/fix-patterns/life-create-campaign.md`](../kavach-knowledge/fix-patterns/life-create-campaign.md)
+- [`../kavach-knowledge/fix-patterns/life-create-creative.md`](../kavach-knowledge/fix-patterns/life-create-creative.md)
+- [`../kavach-knowledge/fix-patterns/life-create-pixel.md`](../kavach-knowledge/fix-patterns/life-create-pixel.md)
+- [`../kavach-knowledge/fix-patterns/life-create-report-template.md`](../kavach-knowledge/fix-patterns/life-create-report-template.md)
+- [`../kavach-knowledge/fix-patterns/life-creatives.md`](../kavach-knowledge/fix-patterns/life-creatives.md)
+- [`../kavach-knowledge/fix-patterns/life-export-download.md`](../kavach-knowledge/fix-patterns/life-export-download.md)
+- [`../kavach-knowledge/fix-patterns/life-line-item-creation.md`](../kavach-knowledge/fix-patterns/life-line-item-creation.md)
+- [`../kavach-knowledge/fix-patterns/life-lineitem.md`](../kavach-knowledge/fix-patterns/life-lineitem.md)
+- [`../kavach-knowledge/fix-patterns/life-npilists.md`](../kavach-knowledge/fix-patterns/life-npilists.md)
+- [`../kavach-knowledge/fix-patterns/life-pixels.md`](../kavach-knowledge/fix-patterns/life-pixels.md)
+- [`../kavach-knowledge/fix-patterns/life-pmp.md`](../kavach-knowledge/fix-patterns/life-pmp.md)
+- [`../kavach-knowledge/fix-patterns/life-reporttemplates.md`](../kavach-knowledge/fix-patterns/life-reporttemplates.md)
+- [`../kavach-knowledge/fix-patterns/life-runreport.md`](../kavach-knowledge/fix-patterns/life-runreport.md)
+- [`../kavach-knowledge/fix-patterns/life-schedulereport.md`](../kavach-knowledge/fix-patterns/life-schedulereport.md)
+- [`../kavach-knowledge/fix-patterns/life-tactic.md`](../kavach-knowledge/fix-patterns/life-tactic.md)
+- [`../kavach-knowledge/fix-patterns/life-tactic-creation.md`](../kavach-knowledge/fix-patterns/life-tactic-creation.md)
+- [`../kavach-knowledge/fix-patterns/life-targeting-template-creation.md`](../kavach-knowledge/fix-patterns/life-targeting-template-creation.md)
+- [`../kavach-knowledge/fix-patterns/life-targetings.md`](../kavach-knowledge/fix-patterns/life-targetings.md)
+- [`../kavach-knowledge/fix-patterns/life-targetingtemplates.md`](../kavach-knowledge/fix-patterns/life-targetingtemplates.md)
+- [`../kavach-knowledge/fix-patterns/studio-explorerworkspace.md`](../kavach-knowledge/fix-patterns/studio-explorerworkspace.md)
+- [`../kavach-knowledge/fix-patterns/life-curatedmarket.md`](../kavach-knowledge/fix-patterns/life-curatedmarket.md)
 
 New feature files get their own pattern file bootstrapped by Phase 5 (Phase 2's derivation rule handles discovery).
 
@@ -118,9 +146,9 @@ If this command starts and the bootstrap is not running, Phase 3's first `browse
 
 ## Phase 1: Gather Failures & Mechanical Signals
 
-1. If `ai-skills/kavach/failure-analyzer/history/failures-for-replay.json` doesn't exist or is older than the latest `target/cucumber-reports/cucumber.json`, generate it first:
+1. If `.claude/skills/kavach-diagnose/history/failures-for-replay.json` doesn't exist or is older than the latest `target/cucumber-reports/cucumber.json`, generate it first:
    ```
-   cd ai-skills/kavach/failure-analyzer && python3 list_failures.py
+   cd .claude/skills/kavach-diagnose && python3 list_failures.py
    ```
    If the script exits non-zero or `failures-for-replay.json` is not written, stop and print `PHASE_SCRIPT_FAILED: list_failures.py: <stderr>`. Do not attempt to reconstruct the output manually.
 
@@ -136,9 +164,9 @@ Packet/prompt building and live-replay worker execution no longer happen uncondi
 
 ## Phase 2: Load History & Fix Patterns
 
-- Read `fix-patterns/_default.md` (always needed — cross-feature patterns apply to every run). If the file is missing or empty (0 bytes or only a header line), treat it as having no patterns and continue — no prompt, no stop.
+- Read `../kavach-knowledge/fix-patterns/_default.md` (always needed — cross-feature patterns apply to every run). If the file is missing or empty (0 bytes or only a header line), treat it as having no patterns and continue — no prompt, no stop.
 - **Do not load feature-specific pattern files here.** They are loaded on demand in Phase 3, one per escalated group, when that group's `featureFile` is known. Loading all 24 pattern files upfront wastes context on features not present in this run. The full list of available pattern files is in the SKILL.md entry point's Reference files section.
-- Read `ai-skills/kavach/failure-analyzer/history/fix-history.json` (every fix attempted before, with `verdict`/`confidence`/`attempts`/`change`/`liveVerification`/`analysisTier`/`notes`) — reuse an approach whose entry has `verdict: "script_issue_fix_applied"` and `liveVerification.scenarioContinuedPastFixPoint: true`; never repeat an approach where the same scenario has `attempts >= 2` and any verdict other than `"script_issue_fix_applied"` — that's the signal a prior fix didn't hold.
+- Read `.claude/skills/kavach-diagnose/history/fix-history.json` (every fix attempted before, with `verdict`/`confidence`/`attempts`/`change`/`liveVerification`/`analysisTier`/`notes`) — reuse an approach whose entry has `verdict: "script_issue_fix_applied"` and `liveVerification.scenarioContinuedPastFixPoint: true`; never repeat an approach where the same scenario has `attempts >= 2` and any verdict other than `"script_issue_fix_applied"` — that's the signal a prior fix didn't hold.
 - **If `fix-history.json` is missing, empty (0 bytes), or contains only `[]`:** treat it as empty history and continue immediately — no approval prompt, no git-restore attempt, no pause. Write `[]` to the file if it is missing entirely (Phase 5 will append to it). An empty history is a valid starting state; the only reason to stop is if the file exists but contains malformed non-JSON content, in which case flag the parse error and stop.
 - **Don't trust a prior fix as already live just because it was applied.** Before treating it as done, check the actual source file at the recorded line — `git log -p -- <file>` if unsure whether it was ever committed. History entries record what a session *intended* to apply; they aren't proof it survived (an apply can be skipped, reverted, or lost to an uncommitted session). If a failure recurs, check the real code first rather than re-diagnosing from scratch or wrongly assuming the app itself broke again.
 - Print a summary table of all failures: scenario, feature file, failed step, whether it has prior history (✅ fixed before / ⚠️ prior fix failed / — none).
@@ -148,7 +176,7 @@ Packet/prompt building and live-replay worker execution no longer happen uncondi
 Run the no-browser triage tier **before** building any live-replay packets — it decides which `groupId`s actually need Phase 3's expensive live replay:
 
 ```
-cd ai-skills/kavach/failure-analyzer && python3 triage_workers.py -i history/failures-for-replay.json --fix-history history/fix-history.json -o history/triage-results --repo-root ../../..
+cd .claude/skills/kavach-diagnose && python3 triage_workers.py -i history/failures-for-replay.json --fix-history history/fix-history.json -o history/triage-results --repo-root ../../..
 ```
 
 If the script exits non-zero or `escalate-groups.json` is not written under `history/triage-results/<triage-timestamp>/`, stop and print `PHASE_SCRIPT_FAILED: triage_workers.py: <stderr>`. Do not proceed to Phase 3 without a valid `escalate-groups.json`.
@@ -161,7 +189,7 @@ This is mechanical for most groups and makes only a handful of small, **text-onl
 
 **Hard safety constraint, enforced in code (`enforce_tier1_verdict_constraints` in `llm_static_triage.py`) and independently re-checked again at Phase 4 (below) by `validate_replay_receipts.py`'s combined-summary step:** this phase can never itself finalize `confirmed_product_bug` / `suspected_product_bug` / `not_reproduced_passed_live` — none of those are provable without a live replay actually happening. It only ever finalizes `not_reproduced_intermittent`, `needs_investigation`, or `script_issue_fix_proposed` (and only the last one with a diff whose literal "before" text is mechanically re-verified against the actual source file — never a fabricated fix). Anything it isn't confident about gets `needsLiveReplay: true` and falls through to Phase 3 untouched.
 
-This writes `ai-skills/kavach/failure-analyzer/history/triage-results/<triage-timestamp>/`:
+This writes `.claude/skills/kavach-diagnose/history/triage-results/<triage-timestamp>/`:
 - `manifest.json` — every group, whether it was resolved here (including a `receiptPath` per resolved group, so Phase 4's aggregator can find it directly).
 - `receipts/*.receipt.json` — same shape as Phase 3's worker receipts, tagged with an additive `analysisTier` field. Only 5 of the 6 possible values can appear here (`tier0_intermittent` | `fix_pattern_cache` | `tier1_deterministic` | `tier1_llm_static` | `tier2_offline_dom`) — `tier2_live_replay` is assigned later, by Phase 4, only to Phase-3-sourced rows.
 - `escalate-groups.json` — the `groupIds` this phase could not resolve; **only these go into Phase 3**.
@@ -170,19 +198,19 @@ Read `escalate-groups.json` and carry its `groupIds` forward into Phase 3.
 
 ## Phase 3: Per-Group Worker Diagnosis Loop
 
-**Per-group context load (before building the packet):** Read the feature-specific fix-pattern file for this group's `featureFile` now — derive the filename (e.g. `Life_PMP.feature` → `fix-patterns/life-pmp.md`) and read it if it exists. This is the lazy-load step deferred from Phase 2. Empty or absent files are treated as having no known patterns.
+**Per-group context load (before building the packet):** Read the feature-specific fix-pattern file for this group's `featureFile` now — derive the filename (e.g. `Life_PMP.feature` → `../kavach-knowledge/fix-patterns/life-pmp.md`) and read it if it exists. This is the lazy-load step deferred from Phase 2. Empty or absent files are treated as having no known patterns.
 
 Build compact live-replay worker packets **only for the groups Phase 2.5 escalated**:
 
 ```
-python3 ai-skills/kavach/failure-analyzer/replay_workers.py --write-runner --only-groups failure-analyzer/history/triage-results/<triage-timestamp>/escalate-groups.json
+python3 .claude/skills/kavach-diagnose/replay_workers.py --write-runner --only-groups .claude/skills/kavach-diagnose/history/triage-results/<triage-timestamp>/escalate-groups.json
 ```
 
 If the script exits non-zero or `manifest.json` is not written under `history/replay-packets/<replay-timestamp>/`, stop and print `PHASE_SCRIPT_FAILED: replay_workers.py: <stderr>`. Do not proceed to worker execution without a valid manifest.
 
-This writes `ai-skills/kavach/failure-analyzer/history/replay-packets/<replay-timestamp>/manifest.json` (a **freshly generated timestamp, distinct from `<triage-timestamp>`** — don't reuse Phase 2.5's timestamp here), one `group-*.json` packet, one `group-*.prompt.md` prompt, and `run-workers.sh` — same mechanical packet builder as before (redacted, page text capped, small code-context windows), just scoped to fewer groups. If running unattended, pass the same Claude/MCP flags via repeated `--claude-arg`, for example:
+This writes `.claude/skills/kavach-diagnose/history/replay-packets/<replay-timestamp>/manifest.json` (a **freshly generated timestamp, distinct from `<triage-timestamp>`** — don't reuse Phase 2.5's timestamp here), one `group-*.json` packet, one `group-*.prompt.md` prompt, and `run-workers.sh` — same mechanical packet builder as before (redacted, page text capped, small code-context windows), just scoped to fewer groups. If running unattended, pass the same Claude/MCP flags via repeated `--claude-arg`, for example:
 ```
-python3 ai-skills/kavach/failure-analyzer/replay_workers.py --write-runner --only-groups failure-analyzer/history/triage-results/<triage-timestamp>/escalate-groups.json \
+python3 .claude/skills/kavach-diagnose/replay_workers.py --write-runner --only-groups .claude/skills/kavach-diagnose/history/triage-results/<triage-timestamp>/escalate-groups.json \
   --claude-arg --mcp-config --claude-arg .claude/mcp-ci-life.json \
   --claude-arg --strict-mcp-config \
   --claude-arg --permission-mode --claude-arg auto \
@@ -192,12 +220,12 @@ Run the generated `run-workers.sh` serially by default. Use at most two browser 
 
 After workers finish, produce ONE consolidated, completeness-checked receipt set spanning both Phase 2.5 and Phase 3 — pass both manifests explicitly so there's no ambiguity about which timestamp goes where:
 ```
-python3 ai-skills/kavach/failure-analyzer/validate_replay_receipts.py ai-skills/kavach/failure-analyzer/history/replay-packets/<replay-timestamp>/manifest.json \
-  --triage-manifest ai-skills/kavach/failure-analyzer/history/triage-results/<triage-timestamp>/manifest.json
+python3 .claude/skills/kavach-diagnose/validate_replay_receipts.py .claude/skills/kavach-diagnose/history/replay-packets/<replay-timestamp>/manifest.json \
+  --triage-manifest .claude/skills/kavach-diagnose/history/triage-results/<triage-timestamp>/manifest.json
 ```
 If the script exits non-zero or `combined-receipts.json` is not written, stop and print `PHASE_SCRIPT_FAILED: validate_replay_receipts.py: <stderr>`. Phase 4 cannot proceed without this file.
 
-This writes `ai-skills/kavach/failure-analyzer/history/triage-results/<triage-timestamp>/combined-receipts.json` and mechanically:
+This writes `.claude/skills/kavach-diagnose/history/triage-results/<triage-timestamp>/combined-receipts.json` and mechanically:
 - downgrades any `confirmed_product_bug` receipt that did not prove every product-bug gate condition (from either phase — Phase 2.5's receipts are re-validated here too, not trusted blindly, even though they already can't carry a forbidden verdict);
 - assigns `analysisTier: "tier2_live_replay"` to every Phase-3-sourced row automatically (Phase 2.5 rows already carry their own `analysisTier`);
 - accounts for every group Phase 2.5's manifest recorded (resolved or escalated) in exactly one row, with a `needs_investigation` fallback for any escalated group whose Phase 3 receipt is missing — this IS Phase 4's row-completeness check, already done by the time you read `combined-receipts.json`, not something to redo by hand.
@@ -245,7 +273,7 @@ Live replay can be blocked for reasons outside the script under test: dead/unrea
 2. Groups already diagnosed live before the block keep their real receipts. Every remaining escalated group gets no receipt (or, if you write one, `verdict: "needs_investigation"`, `liveReplayPerformed: false` and a `blockedReason` field with the same string).
 3. Run the validator with the reason so it lands on every receipt-less escalated group:
    ```
-   python3 ai-skills/kavach/failure-analyzer/validate_replay_receipts.py <replay-manifest> \
+   python3 .claude/skills/kavach-diagnose/validate_replay_receipts.py <replay-manifest> \
      --triage-manifest <triage-manifest> --blocked-reason "<reason>"
    ```
    (If Phase 3 never produced a replay manifest, omit the positional manifest argument.) Blocked groups come out as `needs_investigation` with `blockedReason` set; Phase 2.5-resolved groups keep their verdicts, so their fix proposals are still reported.
@@ -331,9 +359,9 @@ Live replay is the primary diagnostic and is normally sufficient (a corrected lo
 
 ## Phase 4: Write Verdict Report
 
-Read `ai-skills/kavach/failure-analyzer/history/triage-results/<triage-timestamp>/combined-receipts.json` (written by Phase 3's `validate_replay_receipts.py --triage-manifest` step) — it already unions Phase 2.5's and Phase 3's receipts and accounts for every group in exactly one row, with an `analysisTier` field on each (`tier0_intermittent` | `fix_pattern_cache` | `tier1_deterministic` | `tier1_llm_static` | `tier2_offline_dom` | `tier2_live_replay`) telling you whether that row's evidence came from a live browser or not. This is the single source Phase 4 reads from — don't separately open the two underlying receipt directories or re-derive completeness by hand, that reconciliation is already done.
+Read `.claude/skills/kavach-diagnose/history/triage-results/<triage-timestamp>/combined-receipts.json` (written by Phase 3's `validate_replay_receipts.py --triage-manifest` step) — it already unions Phase 2.5's and Phase 3's receipts and accounts for every group in exactly one row, with an `analysisTier` field on each (`tier0_intermittent` | `fix_pattern_cache` | `tier1_deterministic` | `tier1_llm_static` | `tier2_offline_dom` | `tier2_live_replay`) telling you whether that row's evidence came from a live browser or not. This is the single source Phase 4 reads from — don't separately open the two underlying receipt directories or re-derive completeness by hand, that reconciliation is already done.
 
-No narrative/story report (no per-failure prose write-up, no LLM-generated analysis text). Write one structured report to `ai-skills/kavach/failure-analyzer/history/replay-verdict-<YYYY-MM-DD-HHmm>.md`, timestamped to the minute the report is written (24h clock, e.g. `replay-verdict-2026-07-09-1432.md`). Each run gets its own timestamped file — never append to or overwrite a prior run's file, even if run on the same day. Multiple runs per day are expected and each is a distinct, independently referenceable artifact.
+No narrative/story report (no per-failure prose write-up, no LLM-generated analysis text). Write one structured report to `.claude/skills/kavach-diagnose/history/replay-verdict-<YYYY-MM-DD-HHmm>.md`, timestamped to the minute the report is written (24h clock, e.g. `replay-verdict-2026-07-09-1432.md`). Each run gets its own timestamped file — never append to or overwrite a prior run's file, even if run on the same day. Multiple runs per day are expected and each is a distinct, independently referenceable artifact.
 
 ### Structure
 
@@ -434,7 +462,7 @@ Print the same structure in chat too, but the file is the durable artifact for t
 
 Mechanical bookkeeping, still useful — do this directly, no analyzer code needed.
 
-For every failure diagnosed (whether fixed, flagged as a bug, or not reproduced), append an entry to `ai-skills/kavach/failure-analyzer/history/fix-history.json` (create as `[]` if missing). One entry per scenario — never merge several scenarios into one entry (e.g. `"scenarioName": "X (+ 1 same-group scenario)"`); a scenario not individually searchable by its exact name in this file is a bookkeeping bug: **Exception:** scenarios in groups with `blockedReason` (live replay blocked) get no `fix-history.json` entry — nothing was diagnosed, and an entry would wrongly count toward the `attempts >= 2` rule in Phase 2.
+For every failure diagnosed (whether fixed, flagged as a bug, or not reproduced), append an entry to `.claude/skills/kavach-diagnose/history/fix-history.json` (create as `[]` if missing). One entry per scenario — never merge several scenarios into one entry (e.g. `"scenarioName": "X (+ 1 same-group scenario)"`); a scenario not individually searchable by its exact name in this file is a bookkeeping bug: **Exception:** scenarios in groups with `blockedReason` (live replay blocked) get no `fix-history.json` entry — nothing was diagnosed, and an entry would wrongly count toward the `attempts >= 2` rule in Phase 2.
 
 ```json
 {
@@ -456,18 +484,18 @@ For every failure diagnosed (whether fixed, flagged as a bug, or not reproduced)
 }
 ```
 
-Always write `review` as `{"status": "unreviewed", "reviewedAt": null, "note": null}` for a new entry — never pre-fill it as `"agreed"`. It exists so a human can later spot-check verdicts and mark whether the analyzer got it right; see `ai-skills/kavach/failure-analyzer/review_verdicts.py` (`mark`/`report` subcommands) for that separate, human-driven step. This command never marks its own entries reviewed.
+Always write `review` as `{"status": "unreviewed", "reviewedAt": null, "note": null}` for a new entry — never pre-fill it as `"agreed"`. It exists so a human can later spot-check verdicts and mark whether the analyzer got it right; see `.claude/skills/kavach-diagnose/review_verdicts.py` (`mark`/`report` subcommands) for that separate, human-driven step. This command never marks its own entries reviewed.
 
 **`liveVerification` means what its name says — a browser actually observed this.** Write it only for `analysisTier: "tier2_live_replay"` entries, with the real `count()`/state-check outcome. For any Phase-2.5-sourced entry (`tier0_intermittent` | `fix_pattern_cache` | `tier1_deterministic` | `tier1_llm_static` | `tier2_offline_dom`), write `liveVerification: null` — never fabricate `{"elementFound": true, ...}` to satisfy the shape; a downstream reader (script, dashboard, or person) trusts this field as proof a browser ran, and a null here correctly says one didn't.
 
-For every unique `featureFile` touched, ensure `fix-patterns/<derived-name>.md` exists (bootstrap it with a `# <Feature> fix patterns` header + `## Run log` line if missing) and append (never overwrite) any reusable fix pattern discovered under `## Known good fixes` or `## Learned notes` — dedupe against existing entries.
+For every unique `featureFile` touched, ensure `../kavach-knowledge/fix-patterns/<derived-name>.md` exists (bootstrap it with a `# <Feature> fix patterns` header + `## Run log` line if missing) and append (never overwrite) any reusable fix pattern discovered under `## Known good fixes` or `## Learned notes` — dedupe against existing entries.
 
 ### Clean up build artifacts
 
 After the verdict file is confirmed written, delete the packet/prompt build artifacts from the live-replay directory — they are fully reproducible from `failures-for-replay.json` and accumulate across runs. Keep the `receipts/` subdirectory untouched (those are the source of truth for `validate_replay_receipts.py` and `fix-history.json`):
 
 ```bash
-find ai-skills/kavach/failure-analyzer/history/replay-packets/<replay-timestamp> \
+find .claude/skills/kavach-diagnose/history/replay-packets/<replay-timestamp> \
   -maxdepth 1 \( -name "*.prompt.md" -o -name "*.json" -o -name "run-workers.sh" \) \
   -delete
 ```
@@ -493,7 +521,7 @@ Only touch the marker for the bootstrap actually used in this run. For a mixed L
 Before modifying `failure_analyzer/triage/llm_static_triage.py` or `triage_workers.py`, run:
 
 ```bash
-python3 ai-skills/kavach/failure-analyzer/tests/test_llm_static_triage.py
+python3 .claude/skills/kavach-diagnose/tests/test_llm_static_triage.py
 ```
 
 All assertions must pass. This file's `EnforceTier1VerdictConstraintsTests` class is the hard safety constraint check: it verifies the Phase 2.5 triage tier cannot finalize a `confirmed_product_bug` or `suspected_product_bug` verdict without live replay, enforced by `enforce_tier1_verdict_constraints`. If a change to the triage logic breaks any assertion here, do not ship it — extend this test file's coverage rather than weakening the assertions.

@@ -8,7 +8,8 @@ tools:
   - Grep
   - Glob
   - Bash(*)
-  - Write(ai-skills/kavach/**)
+  - Write(.claude/skills/kavach-diagnose/**)
+  - Write(.claude/skills/kavach-knowledge/**)
   - mcp__playwright__browser_navigate
   - mcp__playwright__browser_navigate_back
   - mcp__playwright__browser_snapshot
@@ -36,6 +37,9 @@ tools:
   - mcp__playwright__browser_close
 mcpServers:
   - playwright
+skills:
+  - kavach-diagnose
+  - kavach-knowledge
 ---
 
 # Kavach Diagnose Agent
@@ -51,21 +55,21 @@ If the run produced no failures, or `target/cucumber-reports/cucumber.json` does
 ## Tools and permissions
 
 - Use the Playwright MCP tools to replay failing scenarios live, attached to an already-authenticated CDP session — never decrypt or submit credentials yourself.
-- Use `Bash(*)` to run the failure-analyzer's own scripts (`list_failures.py`, `triage_workers.py`, `replay_workers.py`, `validate_replay_receipts.py`) and Maven/git read commands.
-- `Write` is scoped to `ai-skills/kavach/**` only — this agent may append to `fix-history.json`, `fix-patterns/*.md`, and its own `history/` working files, and nothing else. It never edits `.feature` files, `stepdefinitions/`, or `src/main/java/pages/*` — proposing a change there is this agent's job; applying one is kavach-imaintain's.
+- Use `Bash(*)` to run the kavach-diagnose skill's own scripts (`list_failures.py`, `triage_workers.py`, `replay_workers.py`, `validate_replay_receipts.py`) and Maven/git read commands.
+- `Write` is scoped to `.claude/skills/kavach-diagnose/**` (its own `history/` working files) and `.claude/skills/kavach-knowledge/**` (`fix-patterns/*.md`) only — nothing else. It never edits `.feature` files, `stepdefinitions/`, or `src/main/java/pages/*` — proposing a change there is this agent's job; applying one is kavach-imaintain's.
 - Never auto-apply a fix, never commit, never open a pull request.
 
 ## Responsibilities
 
-Follow `ai-skills/kavach/iFix.md` in full and exactly — its five phases (mechanical extraction, cheap triage, live-replay escalation, verdict report, history/pattern bookkeeping) are the canonical procedure and are not duplicated here.
+Follow the `kavach-diagnose` skill (`.claude/skills/kavach-diagnose/SKILL.md`) in full and exactly — its five phases (mechanical extraction, cheap triage, live-replay escalation, verdict report, history/pattern bookkeeping) are the canonical procedure and are not duplicated here.
 
 ## Output and handoff
 
 Return a concise handoff containing:
 
 - `status`: `ready`, `needs_input`, `blocked`, or `failed`.
-- `verdictReportPath`: the timestamped `ai-skills/kavach/failure-analyzer/history/replay-verdict-*.md`.
-- `combinedReceiptsPath`: `ai-skills/kavach/failure-analyzer/history/triage-results/<timestamp>/combined-receipts.json` — the structured contract, validated against `.claude/contracts/kavach-verdict.schema.json` (run `python3 ai-skills/kavach/failure-analyzer/validate_kavach_contract.py <path>` before reporting `ready`).
+- `verdictReportPath`: the timestamped `.claude/skills/kavach-diagnose/history/replay-verdict-*.md`.
+- `combinedReceiptsPath`: `.claude/skills/kavach-diagnose/history/triage-results/<timestamp>/combined-receipts.json` — the structured contract, validated against `.claude/contracts/kavach-verdict.schema.json` (run `python3 .claude/skills/kavach-diagnose/validate_kavach_contract.py <path>` before reporting `ready`).
 - `scenariosDiagnosed` / `scenariosFixProposed`: counts from the verdict.
 - `blockers`: unresolved conditions (e.g. `PLAYWRIGHT_TOOL_REJECTED`, `CDP_ENDPOINT_DEAD`).
 

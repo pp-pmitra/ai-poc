@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://pulsepoint.example/schemas/kavach-verdict.schema.json",
   "title": "Kavach combined-receipts row",
-  "description": "One entry in ai-skills/kavach/failure-analyzer/history/triage-results/<timestamp>/combined-receipts.json — the deterministic handoff contract from kavach-diagnose to kavach-imaintain. Mirrors the actual output shape of validate_replay_receipts.py; this schema is the reference, that script is the source of truth for runtime behavior.",
+  "description": "One entry in .claude/skills/kavach-diagnose/history/triage-results/<timestamp>/combined-receipts.json — the deterministic handoff contract from kavach-diagnose to kavach-imaintain. Mirrors the actual output shape of validate_replay_receipts.py; this schema is the reference, that script is the source of truth for runtime behavior.",
   "type": "object",
   "additionalProperties": true,
   "required": ["groupId", "verdict", "reportVerdict", "analysisTier", "evidence"],

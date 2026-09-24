@@ -73,7 +73,7 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Set up Python (failure-analyzer scripts)
+      - name: Set up Python (kavach-diagnose scripts)
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -99,7 +99,7 @@ jobs:
 
       - name: Extract failures for replay (mechanical, no LLM)
         run: |
-          cd ai-skills/kavach/failure-analyzer
+          cd .claude/skills/kavach-diagnose
           python3 list_failures.py
 
       - name: Start Life auth bootstrap
@@ -143,7 +143,7 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          claude -p "/kavach" \
+          claude -p "/kavach-diagnose" \
             --mcp-config "$MCP_CONFIG" \
             --strict-mcp-config \
             --permission-mode auto \
@@ -171,9 +171,9 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
           shopt -s nullglob
-          verdicts=(ai-skills/kavach/failure-analyzer/history/replay-verdict-*.md)
+          verdicts=(.claude/skills/kavach-diagnose/history/replay-verdict-*.md)
           if [ ${#verdicts[@]} -eq 0 ]; then
-            echo "::error::Kavach did not produce a verdict report under ai-skills/kavach/failure-analyzer/history/. It likely hit PLAYWRIGHT_TOOL_REJECTED, CDP_ENDPOINT_DEAD, or another halting condition. See the log above."
+            echo "::error::Kavach did not produce a verdict report under .claude/skills/kavach-diagnose/history/. It likely hit PLAYWRIGHT_TOOL_REJECTED, CDP_ENDPOINT_DEAD, or another halting condition. See the log above."
             exit 1
           fi
 
@@ -183,8 +183,8 @@ jobs:
         with:
           name: kavach-verdict
           path: |
-            ai-skills/kavach/failure-analyzer/history/replay-verdict-*.md
-            ai-skills/kavach/failure-analyzer/history/**/combined-receipts.json
+            .claude/skills/kavach-diagnose/history/replay-verdict-*.md
+            .claude/skills/kavach-diagnose/history/**/combined-receipts.json
             target/cucumber-reports/**
 
       - name: Upload run transcript
@@ -204,7 +204,7 @@ jobs:
         run: |
           # Kavach's Phase 5 only ever appends to these two bookkeeping files
           # (fix-patterns/*.md, fix-history.json) — never application or test
-          # source. Those require human approval and go through imaintenance's
+          # source. Those require human approval and go through kavach-imaintain's
           # own PR instead. This just persists the pattern-cache learning that
           # would otherwise be silently discarded when the runner is destroyed.
           if ! command -v git >/dev/null || ! command -v gh >/dev/null; then
@@ -224,17 +224,17 @@ jobs:
           git config --global user.name "kavach-bot"
           git config --global user.email "kavach-bot@users.noreply.github.com"
 
-          if git diff --quiet -- ai-skills/kavach/fix-patterns ai-skills/kavach/failure-analyzer/history/fix-history.json; then
+          if git diff --quiet -- .claude/skills/kavach-knowledge/fix-patterns .claude/skills/kavach-diagnose/history/fix-history.json; then
             echo "No fix-pattern/history changes to commit."
             exit 0
           fi
 
           BRANCH="kavach/learned-patterns-$(date -u +%Y%m%d-%H%M%S)"
           git checkout -b "$BRANCH"
-          git add ai-skills/kavach/fix-patterns ai-skills/kavach/failure-analyzer/history/fix-history.json
+          git add .claude/skills/kavach-knowledge/fix-patterns .claude/skills/kavach-diagnose/history/fix-history.json
           git commit -m "Kavach: update learned fix patterns from $(date -u +%Y-%m-%d) run"
           git push origin "$BRANCH"
 
           gh pr create --base main --head "$BRANCH" \
             --title "Kavach: update learned fix patterns ($(date -u +%Y-%m-%d))" \
-            --body "Automated update to \`ai-skills/kavach/fix-patterns/*.md\` and \`fix-history.json\` from this run's Phase 5. Bookkeeping only — no application or test source files are touched by this PR."
+            --body "Automated update to \`.claude/skills/kavach-knowledge/fix-patterns/*.md\` and \`fix-history.json\` from this run's Phase 5. Bookkeeping only — no application or test source files are touched by this PR."

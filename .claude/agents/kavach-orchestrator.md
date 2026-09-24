@@ -44,7 +44,7 @@ If the scope or intended stage is unclear, return `needs_input` with the exact m
 4. When it returns `ready`, verify `combinedReceiptsPath` exists and validate it:
 
    ```bash
-   python3 ai-skills/kavach/failure-analyzer/validate_kavach_contract.py <combinedReceiptsPath>
+   python3 .claude/skills/kavach-diagnose/validate_kavach_contract.py <combinedReceiptsPath>
    ```
 
 5. Do not regenerate or repair a failed validation — report it as a blocker.

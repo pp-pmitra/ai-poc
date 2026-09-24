@@ -5,3 +5,8 @@ node_modules/
 .playwright-mcp/
 .target/
 target/
+__pycache__/
+*.pyc
+.pytest_cache/
+.claude/auth/
+.claude/settings.json
