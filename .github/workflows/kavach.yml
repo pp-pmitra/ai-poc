@@ -182,7 +182,11 @@ jobs:
       - name: Run Kavach live replay
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          CLAUDE_CODE_SUBPROCESS_ENV_SCRUB: "1"
+          # CLAUDE_CODE_SUBPROCESS_ENV_SCRUB dropped: it forces permission-mode
+          # back to default at startup (prints a warning) unless --allowedTools
+          # is explicit — which we already always pass — so it added a
+          # confusing warning with no functional benefit here. No need to
+          # match Netra/Sutra's exact env vars where one doesn't earn its keep.
           CLAUDE_CODE_SKIP_PROMPT_HISTORY: "1"
           CLAUDE_CODE_MCP_ALLOWLIST_ENV: "1"
         run: |
