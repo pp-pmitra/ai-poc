@@ -16,14 +16,14 @@ the actual source of truth. The flow is two commands:
 
 1. **Mechanical extraction** (`list_failures.py`, no LLM, no tokens) parses
    `target/cucumber-reports/cucumber.json` + Playwright trace data into
-   `failure-analyzer/history/failures-for-replay.json`. Each failure is
+   `history/failures-for-replay.json`. Each failure is
    enriched with two same-run reliability signals — `stepReliability` and
    `backgroundReliability` — that flag a step as "likely intermittent" if it
    passed elsewhere in the same run most of the time, and a `groupId` that
    clusters failures sharing the same exception + step pattern so only one
    representative per group needs a full replay.
-2. **History/pattern lookup** — reads `.claude/fix-patterns/*.md` and
-   `failure-analyzer/history/fix-history.json` so it never repeats an
+2. **History/pattern lookup** — reads `../kavach-knowledge/fix-patterns/*.md` and
+   `history/fix-history.json` so it never repeats an
    approach already known to fail, and reuses one already known to work.
 3. **Per-group worker diagnosis loop** — `replay_workers.py` turns each
    `groupId` into a compact, redacted worker packet and prompt. Each packet is
@@ -34,8 +34,8 @@ the actual source of truth. The flow is two commands:
    reproduced**, and every proposed fix is presented (file, line, before →
    after, live-verification evidence) — nothing is edited yet.
 5. Writes a timestamped verdict table to
-   `failure-analyzer/history/replay-verdict-<YYYY-MM-DD-HHmm>.md` and appends
-   one entry per scenario to `failure-analyzer/history/fix-history.json`.
+   `history/replay-verdict-<YYYY-MM-DD-HHmm>.md` and appends
+   one entry per scenario to `history/fix-history.json`.
 6. After the verdict report and history writes are complete, the command
    touches the matching CDP done marker (`.claude/auth/life-cdp-done` or
    `.claude/auth/studio-cdp-done`) so the held browser closes cleanly.
@@ -135,8 +135,8 @@ claude -p '/auto-fix "Studio Explorer Workspace"' \
 ```
 
 Both commands are safe to run unattended this way: `/analyze-failure` only
-proposes changes (nothing is written outside `failure-analyzer/history/` and
-`.claude/fix-patterns/`), and `/auto-fix` only commits a fix after its own
+proposes changes (nothing is written outside `history/` and
+`../kavach-knowledge/fix-patterns/`), and `/auto-fix` only commits a fix after its own
 `mvn test` run for that scenario passes, reverting otherwise. `/auto-fix`
 doesn't touch a browser, so its `--allowedTools` doesn't need the Playwright
 entries.
@@ -147,7 +147,7 @@ These are the mechanical pieces the commands above call; they can also be
 run directly for debugging:
 
 ```bash
-cd failure-analyzer
+cd .claude/skills/kavach-diagnose
 
 # Mechanical failure extraction only (no LLM) — same thing /analyze-failure
 # runs in Phase 1.
@@ -179,6 +179,6 @@ python3 refresh_glossary.py [--all]
 | `history/replay-packets/` | Generated redacted worker packets, prompts, receipts, and manifests |
 | `history/fix-history.json` | Every fix ever attempted, one entry per scenario |
 | `history/replay-verdict-*.md` | One timestamped verdict table per `/analyze-failure` run |
-| `../.claude/fix-patterns/*.md` | Known-good fix patterns, one file per feature |
+| `../kavach-knowledge/fix-patterns/*.md` | Known-good fix patterns, one file per feature |
 | `config.json` | LLM provider/model, paths, Jira settings (Jira reporting currently disabled) |
 | `failure_analyzer/` | Python package: parsers, trace correlation, grouping, LLM connectors — mostly infra for the retired report-generation pipeline; `parsers`/`grouping`/`config` are still used by `list_failures.py` |
