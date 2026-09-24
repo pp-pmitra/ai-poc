@@ -165,6 +165,15 @@ jobs:
           cat target/life-cdp-*.log target/studio-cdp-*.log 2>/dev/null || true
           exit 1
 
+      - name: Make workspace writable for bubblewrap sandbox
+        run: |
+          # --agent mode's bubblewrap sandbox runs its Bash subprocess as an
+          # effective UID that isn't necessarily root, even though the outer
+          # step runs as root in this container — and it tries to create a
+          # .gitconfig at the repo root as part of its own setup. Loosen
+          # permissions on this throwaway CI checkout so that succeeds.
+          chmod -R a+rwX "$GITHUB_WORKSPACE"
+
       - name: Run Kavach live replay
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
