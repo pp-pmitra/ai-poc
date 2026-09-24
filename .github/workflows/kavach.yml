@@ -40,13 +40,20 @@ on:
         type: string
         default: "50"
 
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
   run-kavach:
     runs-on: ubuntu-latest
+    # Read-only: this job never needs to push or open a PR. Only the
+    # open-fix-pattern-pr job below (which needs a validated handoff first)
+    # gets contents:write/pull-requests:write, so a compromised or buggy
+    # prompt/tool call here can't push anything even if it tried.
+    permissions:
+      contents: read
+    outputs:
+      contract_valid: ${{ steps.contract.outputs.valid }}
+      combined_receipts_path: ${{ steps.contract.outputs.combined_receipts_path }}
+      verdict_report_path: ${{ steps.verify_verdict.outputs.verdict_report_path }}
+      kavach_data_artifact: kavach-data-for-pr-${{ github.run_id }}-${{ github.run_attempt }}
     # Pinned to match pom.xml's com.microsoft.playwright version exactly (1.50.0), so the
     # browser + OS deps baked into this image are guaranteed to satisfy what the Java
     # driver actually launches — avoids ubuntu-latest's rolling OS release drifting out of
@@ -71,6 +78,19 @@ jobs:
       # Pinned to the exact Claude Code CLI version pulsepointinc/qa-automation's
       # own Netra/Sutra CI workflows validated --agent + sandbox behavior against.
       CLAUDE_CODE_VERSION: "2.1.281"
+      APP_NAME: ${{ inputs.app }}
+      TARGET_ENVIRONMENT: ${{ inputs.environment }}
+      AUTH_USER_TYPE: ${{ inputs.user_type }}
+      # feature_path/cucumber_tags/hold_seconds/max_budget_usd are freeform
+      # string inputs (unlike app/environment/user_type, which are `choice`
+      # inputs GitHub restricts to fixed enum values). Passed through env:
+      # here rather than interpolated directly into run: script text below,
+      # so a value containing shell metacharacters is just an inert string,
+      # never spliced into the script before the shell parses it.
+      FEATURE_PATH: ${{ inputs.feature_path }}
+      CUCUMBER_TAGS: ${{ inputs.cucumber_tags }}
+      AUTH_HOLD_SECONDS: ${{ inputs.hold_seconds }}
+      MAX_BUDGET_USD: ${{ inputs.max_budget_usd }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -120,11 +140,11 @@ jobs:
         continue-on-error: true
         run: |
           set -- mvn -B -ntp test -Dtest=TestRunner
-          if [ -n "${{ inputs.feature_path }}" ]; then
-            set -- "$@" -Dcucumber.features="${{ inputs.feature_path }}"
+          if [ -n "${FEATURE_PATH}" ]; then
+            set -- "$@" -Dcucumber.features="${FEATURE_PATH}"
           fi
-          if [ -n "${{ inputs.cucumber_tags }}" ]; then
-            set -- "$@" -Dcucumber.filter.tags="${{ inputs.cucumber_tags }}"
+          if [ -n "${CUCUMBER_TAGS}" ]; then
+            set -- "$@" -Dcucumber.filter.tags="${CUCUMBER_TAGS}"
           fi
           "$@"
 
@@ -137,9 +157,9 @@ jobs:
         if: ${{ inputs.app == 'life' }}
         run: |
           nohup mvn -B -ntp test -Dtest=LifeAuthStateBootstrapTest \
-            -Dauth.environment="${{ inputs.environment }}" \
-            -Dauth.userType="${{ inputs.user_type }}" \
-            -Dauth.holdSeconds="${{ inputs.hold_seconds }}" \
+            -Dauth.environment="${TARGET_ENVIRONMENT}" \
+            -Dauth.userType="${AUTH_USER_TYPE}" \
+            -Dauth.holdSeconds="${AUTH_HOLD_SECONDS}" \
             -Dauth.headless=true \
             > life-bootstrap.log 2>&1 &
           echo "BOOTSTRAP_PID=$!" >> "$GITHUB_ENV"
@@ -149,7 +169,7 @@ jobs:
         run: |
           nohup mvn -B -ntp test -Dtest=StudioAuthStateBootstrapTest \
             -Dauth.holdForCdp=true \
-            -Dauth.holdSeconds="${{ inputs.hold_seconds }}" \
+            -Dauth.holdSeconds="${AUTH_HOLD_SECONDS}" \
             > studio-bootstrap.log 2>&1 &
           echo "BOOTSTRAP_PID=$!" >> "$GITHUB_ENV"
 
@@ -196,18 +216,22 @@ jobs:
           fi
 
           prompt=$(printf '%s\n' \
-            "Diagnose the failures from the Cucumber run that just completed for the ${{ inputs.app }} app (environment: ${{ inputs.environment }})." \
+            "Diagnose the failures from the Cucumber run that just completed for the ${APP_NAME} app (environment: ${TARGET_ENVIRONMENT})." \
             "The matching auth bootstrap is already logged in and holding a browser open on CDP port ${CDP_PORT}; the Playwright MCP server is already configured to attach to it — never attempt your own login." \
             "Run your full pipeline (failure-triage -> live-replay-diagnosis -> verdict-reporting) end to end and stop once the verdict report and combined-receipts.json are written and validated against .claude/contracts/kavach-verdict.schema.json.")
 
+          # kavach-diagnose's own agent definition never grants Edit, and is
+          # never meant to touch application/test source — Write is scoped
+          # to kavach-data/** to match that invariant at the CLI-invocation
+          # layer too, not just in the agent's own tool list.
           claude --agent kavach-diagnose \
             --print "${prompt}" \
             --mcp-config "$MCP_CONFIG" \
             --strict-mcp-config \
             --permission-mode dontAsk \
-            --allowedTools "Bash(*),Read,Write(*),Edit(*),Grep,Glob,mcp__playwright__browser_navigate,mcp__playwright__browser_tabs,mcp__playwright__browser_snapshot,mcp__playwright__browser_evaluate,mcp__playwright__browser_click,mcp__playwright__browser_fill_form,mcp__playwright__browser_type,mcp__playwright__browser_press_key,mcp__playwright__browser_wait_for,mcp__playwright__browser_run_code_unsafe,mcp__playwright__browser_take_screenshot,mcp__playwright__browser_close,mcp__playwright__browser_select_option,mcp__playwright__browser_hover,mcp__playwright__browser_find" \
+            --allowedTools "Bash(*),Read,Write(kavach-data/**),Grep,Glob,mcp__playwright__browser_navigate,mcp__playwright__browser_tabs,mcp__playwright__browser_snapshot,mcp__playwright__browser_evaluate,mcp__playwright__browser_click,mcp__playwright__browser_fill_form,mcp__playwright__browser_type,mcp__playwright__browser_press_key,mcp__playwright__browser_wait_for,mcp__playwright__browser_run_code_unsafe,mcp__playwright__browser_take_screenshot,mcp__playwright__browser_close,mcp__playwright__browser_select_option,mcp__playwright__browser_hover,mcp__playwright__browser_find" \
             --model sonnet \
-            --max-budget-usd "${{ inputs.max_budget_usd }}" \
+            --max-budget-usd "${MAX_BUDGET_USD}" \
             --no-session-persistence \
             --output-format text \
             2>&1 | tee kavach-run.log
@@ -215,11 +239,12 @@ jobs:
       - name: Release the auth bootstrap
         if: always()
         run: |
-          touch ".claude/auth/${{ inputs.app }}-cdp-done"
+          touch ".claude/auth/${APP_NAME}-cdp-done"
           sleep 5
           kill "$BOOTSTRAP_PID" 2>/dev/null || true
 
       - name: Verify Kavach produced a verdict report
+        id: verify_verdict
         if: always()
         shell: bash
         run: |
@@ -236,6 +261,7 @@ jobs:
             echo "::error::Kavach did not produce a verdict report under kavach-data/history/. It likely hit PLAYWRIGHT_TOOL_REJECTED, CDP_ENDPOINT_DEAD, or another halting condition. See the log above."
             exit 1
           fi
+          echo "verdict_report_path=${verdicts[0]}" >> "$GITHUB_OUTPUT"
 
       - name: Validate combined-receipts.json against the kavach-verdict contract
         id: contract
@@ -243,7 +269,7 @@ jobs:
         shell: bash
         run: |
           # This is the hard gate between kavach-diagnose and any downstream
-          # processing (the PR step below, and eventually kavach-imaintain):
+          # processing (the PR job below, and eventually kavach-imaintain):
           # resolve exactly one combined-receipts.json, fail if it's missing
           # or ambiguous, run the deterministic validator against it, and
           # record the outcome in the job summary before anything is
@@ -302,7 +328,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: kavach-verdict
+          name: kavach-verdict-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             kavach-data/history/replay-verdict-*.md
             kavach-data/history/**/combined-receipts.json
@@ -312,20 +338,55 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: kavach-run-log
+          name: kavach-run-log-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             kavach-run.log
             life-bootstrap.log
             studio-bootstrap.log
 
-      - name: Open PR for kavach's learned fix patterns
-        # Only ever persist learned fix-patterns/verdict from a run whose
+      - name: Upload learned fix-patterns for the PR job
+        # Only ever hand off fix-patterns/verdict from a run whose
         # combined-receipts.json actually passed the contract gate above —
         # an invalid or malformed handoff document must never feed the
-        # fix-pattern cache that later runs and kavach-imaintain trust.
+        # fix-pattern cache that later runs and kavach-imaintain trust. This
+        # job has no push/PR credentials at all (contents: read only); the
+        # separate open-fix-pattern-pr job below is the only place those
+        # credentials exist, and it only acts on this artifact.
         if: always() && steps.contract.outputs.valid == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: kavach-data-for-pr-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            kavach-data/fix-patterns
+            kavach-data/history/fix-history.json
+            kavach-data/history/replay-verdict-*.md
+          if-no-files-found: error
+
+  open-fix-pattern-pr:
+    needs: run-kavach
+    if: always() && needs.run-kavach.outputs.contract_valid == 'true'
+    runs-on: ubuntu-latest
+    # The only job in this workflow with write credentials — split out from
+    # run-kavach so that Kavach's own Bash/Write calls (running with an
+    # LLM-driven, sandboxed but still untrusted prompt loop) never execute
+    # anywhere near a token that can push or open a PR.
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download learned fix-patterns from run-kavach
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.run-kavach.outputs.kavach_data_artifact }}
+          path: .
+
+      - name: Open PR for kavach's learned fix patterns
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           # Kavach only ever writes these three things (fix-patterns/*.md,
           # fix-history.json, and its own timestamped verdict report) — never
@@ -335,20 +396,6 @@ jobs:
           # silently discarded when the runner is destroyed — committing the
           # verdict report means it's readable directly on GitHub, no artifact
           # download needed.
-          if ! command -v git >/dev/null || ! command -v gh >/dev/null; then
-            apt-get update
-            command -v git >/dev/null || apt-get install -y git
-            if ! command -v gh >/dev/null; then
-              apt-get install -y wget
-              wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /usr/share/keyrings/githubcli-archive-keyring.gpg > /dev/null
-              chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
-              echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-              apt-get update
-              apt-get install -y gh
-            fi
-          fi
-
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config --global user.name "kavach-bot"
           git config --global user.email "kavach-bot@users.noreply.github.com"
 
@@ -363,12 +410,25 @@ jobs:
             exit 0
           fi
 
-          BRANCH="kavach/learned-patterns-$(date -u +%Y%m%d-%H%M%S)"
-          git checkout -b "$BRANCH"
+          # Branch name is keyed only on run_id (not run_attempt), so a retry
+          # of this job reuses and force-updates the same branch/PR instead
+          # of opening a duplicate one.
+          BRANCH="kavach/learned-patterns-run-${{ github.run_id }}"
+          git checkout -B "$BRANCH"
           git add kavach-data/fix-patterns kavach-data/history/fix-history.json kavach-data/history/replay-verdict-*.md
           git commit -m "Kavach: update learned fix patterns from $(date -u +%Y-%m-%d) run"
-          git push origin "$BRANCH"
+          git push --force-with-lease origin "$BRANCH"
+
+          existing_pr=$(gh pr list --base main --head "$BRANCH" --state open --json number --jq '.[0].number')
+          if [ -n "${existing_pr}" ]; then
+            echo "PR #${existing_pr} already open for ${BRANCH}; branch push above updated it."
+            exit 0
+          fi
+
+          body=$(printf '%s\n\n%s' \
+            "Automated update to \`kavach-data/fix-patterns/*.md\`, \`fix-history.json\`, and this run's \`replay-verdict-*.md\` report. Bookkeeping only — no application or test source files are touched by this PR." \
+            "Originating run: ${RUN_URL}")
 
           gh pr create --base main --head "$BRANCH" \
             --title "Kavach: update learned fix patterns ($(date -u +%Y-%m-%d))" \
-            --body "Automated update to \`kavach-data/fix-patterns/*.md\`, \`fix-history.json\`, and this run's \`replay-verdict-*.md\` report. Bookkeeping only — no application or test source files are touched by this PR."
+            --body "${body}"
