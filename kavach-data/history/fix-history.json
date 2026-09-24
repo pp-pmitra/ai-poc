@@ -1,0 +1,65 @@
+[
+  {
+    "timestamp": "2026-09-24T13:21:10Z",
+    "runDate": "2026-09-24",
+    "scenarioName": "Manage a Smart Pixel with associated Smart List (Create and Edit) (Example #1)",
+    "featureFile": "src/test/resources/features/life/Life_Pixels.feature",
+    "verdict": "not_reproduced_intermittent",
+    "confidence": "high",
+    "priority": "needs_investigation",
+    "groupId": "TimeoutError|then verify the \"...\" gets updated successfully|locator=//div[contains(@title,'01- advertiser smart pixel 114_edited')]|pageObject=Pixels.getCreatedPixel|route=/buyer/|network=401 get /ssemanager/buyer/lifessehandler.ashx?token=ywrtawnxmtoxnzkwmzqxmzanodeyojmwmjenndflzduynmfi",
+    "isGroupRepresentative": true,
+    "attempts": 1,
+    "change": null,
+    "liveVerification": null,
+    "notes": "stepReliability showed passed 3 / failed 1 (rate 0.75) elsewhere this same run — mechanically classified likely-intermittent, no live replay spent.",
+    "analysisTier": "tier0_intermittent",
+    "review": { "status": "unreviewed", "reviewedAt": null, "note": null }
+  },
+  {
+    "timestamp": "2026-09-24T13:21:10Z",
+    "runDate": "2026-09-24",
+    "scenarioName": "Manage a Smart Pixel without associated Smart List (Create, Edit and Deactivate) (Example #1)",
+    "featureFile": "src/test/resources/features/life/Life_Pixels.feature",
+    "verdict": "script_issue_fix_proposed",
+    "confidence": "high",
+    "priority": "high_confidence_script_fix",
+    "groupId": "TimeoutError|when user deactivates the created pixel|locator=//span[text()='deactivate']|pageObject=SmartPixel.deactivatePixel|route=/buyer/|network=401 get /ssemanager/buyer/lifessehandler.ashx?token=ywrtawnxmtoxnzkwmzqxnjanntknomynzgmymzunmzqnmgfj",
+    "isGroupRepresentative": true,
+    "attempts": 1,
+    "change": {
+      "file": "src/main/java/pages/life/SmartPixel.java",
+      "line": 36,
+      "description": "Deactivate confirmation button label now lives inside a ds-button open shadow root; the old exact-text XPath against a light-DOM <span> never matches. Switch to a shadow-piercing CSS locator scoped to the confirmation modal.",
+      "before": "this.DEACTIVATE_PIXEL_BUTTON = page.locator(\"//span[text()='Deactivate']\");",
+      "after": "this.DEACTIVATE_PIXEL_BUTTON = page.locator(\"div.ui.modal.tiny ds-button[variant='primary'] button\");"
+    },
+    "liveVerification": { "elementFound": true, "scenarioContinuedPastFixPoint": true },
+    "notes": "Cleared on first live attempt; success toast + modal-close both confirmed live via Playwright.",
+    "analysisTier": "tier2_live_replay",
+    "review": { "status": "unreviewed", "reviewedAt": null, "note": null }
+  },
+  {
+    "timestamp": "2026-09-24T13:21:10Z",
+    "runDate": "2026-09-24",
+    "scenarioName": "Manage a Conversion Pixel (Create, Edit and Remove) (Example #1)",
+    "featureFile": "src/test/resources/features/life/Life_Pixels.feature",
+    "verdict": "script_issue_fix_proposed",
+    "confidence": "high",
+    "priority": "high_confidence_script_fix",
+    "groupId": "TimeoutError|when user tries to save the conversion pixel without entering any details, an error message should be displayed|locator=//button[contains(@class,'cancel secondary button') and normalize-space(text())=|pageObject=Pixels.clickCancelButton|route=/buyer/|network=401 get /ssemanager/buyer/lifessehandler.ashx?token=ywrtawnxmtoxnzkwmzqxnzynnzywojcyynunnjuxnwzmzjmy",
+    "isGroupRepresentative": true,
+    "attempts": 1,
+    "change": {
+      "file": "src/main/java/pages/life/Pixels.java",
+      "line": 58,
+      "description": "The Cancel button was migrated to the app-ds-button-wrapper design-system component (same as Save); the old class+text XPath no longer matches any element on the Conversion Pixel form. Switch to the same attribute-based locator pattern already used for SAVE_BUTTON.",
+      "before": "this.CANCEL_BUTTON = page.locator(\n                \"//button[contains(@class,'cancel secondary button') and normalize-space(text())='Cancel']\");",
+      "after": "this.CANCEL_BUTTON = page.locator(\"//app-ds-button-wrapper[@label='Cancel']\");"
+    },
+    "liveVerification": { "elementFound": true, "scenarioContinuedPastFixPoint": true },
+    "notes": "Cleared on first live attempt; corrected locator resolved and clicking it reset the creation form as expected.",
+    "analysisTier": "tier2_live_replay",
+    "review": { "status": "unreviewed", "reviewedAt": null, "note": null }
+  }
+]
