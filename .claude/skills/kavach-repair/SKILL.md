@@ -27,7 +27,7 @@ description: >-
 - [Phase 6: Fix-history update and summary](#phase-6--fix-history-update-and-summary)
 
 
-**TOOL USE: Bash, Read, Write, Edit, Grep, and Glob are pre-approved. No Playwright browser tools are used in this skill — all verification is Maven-only. Never call `mcp__playwright__*` tools from kavach-repair.** `src/main/java/utils/LocatorProbe.java` is a Maven-only diagnostic helper (checks candidate locators live via non-waiting `count()`/`isVisible()`) — see Phase 3.1 for when and how to use it.
+**TOOL USE: Bash, Read, Edit (scoped to `.feature`/`src/test/java/stepdefinitions/**`/`src/main/java/pages/**` plus this skill's own `kavach-data/history/fix-history.json` and `kavach-data/fix-patterns/**`), Grep, and Glob are pre-approved. No Playwright browser tools are used in this skill — all verification is Maven-only. Never call `mcp__playwright__*` tools from kavach-repair.** Write access to `kavach-data/history/fix-history.json` is intentionally NOT part of this skill's own file-editing surface — that file is written only by piping through `append_fix_history.py` (Phase 6), never by a direct `Edit`/`Write` call, to avoid a concurrent-writer race with kavach-diagnose's own appends to the same file. This skill has no `utils.LocatorProbe` or equivalent live-disambiguation helper class available — see Phase 3.1 for the actual, Maven-only disambiguation approach.
 
 **NON-INTERACTIVE ABORT (runs before everything else, including mode detection):** If stdin is not a TTY or `CI=true` is set in the environment, print exactly:
 ```
@@ -90,10 +90,10 @@ Run one Maven pass (observation only — not the three-run verification rule):
 
 ```bash
 mvn test -Dtest=TestRunner -Dcucumber.filter.tags="@<featureTag or scenarioTag>" \
-  -pl <module> -q 2>&1 | tee /tmp/imaintenance-isolation-run.txt
+  -pl <module> -q 2>&1 | tee /tmp/kavach-repair-isolation-run.txt
 ```
 
-Parse `/tmp/imaintenance-isolation-run.txt` for:
+Parse `/tmp/kavach-repair-isolation-run.txt` for:
 
 - **Failing step text** — the `Step ... FAILED` line from the Cucumber/Surefire output
 - **Exception message** — the first `NoSuchElementException` (or similar WebDriver exception) line
@@ -180,10 +180,10 @@ Do not attempt a fix. Do not open a browser. Do not create a branch.
 4. Print `Found <N> candidates. Confirm to proceed? [y/N]` and wait for explicit user confirmation. Exit cleanly on N.
 5. Create working branch:
    ```bash
-   git branch --list "imaintenance/<YYYY-MM-DD>"
+   git branch --list "kavach-repair/<YYYY-MM-DD>"
    ```
-   - **Branch does not exist:** `git checkout -b imaintenance/<YYYY-MM-DD>`.
-   - **Branch already exists** (same-day re-run or resume after failure): `git checkout imaintenance/<YYYY-MM-DD>` and continue — do not create a new branch. Log: `Resuming existing branch imaintenance/<YYYY-MM-DD>`.
+   - **Branch does not exist:** `git checkout -b kavach-repair/<YYYY-MM-DD>`.
+   - **Branch already exists** (same-day re-run or resume after failure): `git checkout kavach-repair/<YYYY-MM-DD>` and continue — do not create a new branch. Log: `Resuming existing branch kavach-repair/<YYYY-MM-DD>`.
 
 ---
 
@@ -214,18 +214,19 @@ Edit `targetFile` to apply the prepared patch. Prefer surgical edits (change onl
 
 **Prefer CSS over XPath by default.** This codebase has an ongoing design-system migration to web components (`ds-button`, `ds-toggle`, tab-switch groups, etc.) that render content inside **open shadow roots**. Playwright's CSS engine pierces open shadow DOM automatically; XPath never does. When rewriting a broken locator, reach for a CSS selector (`page.locator("css...")`, `.filter(new Locator.FilterOptions().setHasText(...))`, `getByRole(...)`) first, and only fall back to XPath when there's a specific reason CSS can't express the match (e.g. text-node-only predicates XPath handles natively). This isn't just style — an XPath rewrite of a locator that's actually broken because of a shadow-root boundary will silently fail again with a *different* symptom (a plain timeout instead of a clear 0-match), costing another full diagnosis cycle.
 
-**When the fix doesn't resolve on the first live run, diagnose from the actual failure artifacts before guessing again.** A Maven test failure captures three things automatically (via `hooks.Hooks.saveFailureArtifacts`, if the target repo's hooks include it) under `target/failure-artifacts/<scenario-slug>/`:
-- `page-source.html` — the full DOM at failure time, including shadow-root content flattened into `<!--[shadow-root]-->...<!--[/shadow-root]-->` markers (so plain-text/regex search finds shadow content that live XPath never could — this is a diagnostic aid, not evidence that XPath would work live)
-- `screenshot.png` — a full-page screenshot at the same moment
-- `failure-context.json` — scenario name, URL, timestamp
+**When the fix doesn't resolve on the first live run, diagnose from the actual failure artifacts before guessing again.** This repo's `hooks.Hooks.java` (`@After("takeScreenshotAndTrace")`) does NOT save a `target/failure-artifacts/<scenario-slug>/{page-source.html,screenshot.png,failure-context.json}` bundle — check for that path first (some target repos' hooks do produce it, and if present it's the richer source), but in this repo the real, always-present artifacts are:
+- `target/trace_<scenario-name-sanitized>.zip` — a full Playwright trace (DOM snapshots, network, console, screenshots at every step) for the failed scenario, written by the same `@After` hook regardless of target-repo variant. Open it with `npx playwright show-trace target/trace_<...>.zip` (interactive) or `unzip -p target/trace_<...>.zip` plus the trace viewer for a specific frame's DOM/screenshot.
+- The screenshot Cucumber attaches to `target/cucumber-reports/cucumber.json` on failure (a base64 PNG embedding under that scenario's `after` hook step) — extractable with the same JSON the kavach-diagnose pipeline already parses.
+
+If neither the `failure-artifacts` directory nor a `target/trace_*.zip` exists for this scenario, say so explicitly in the candidate's outcome (`"note": "no failure artifacts available for this run"`) rather than silently skipping the DOM/screenshot check — a repair without failure evidence should be visibly weaker in the PR, not indistinguishable from one that had it.
 
 **Read both the DOM and the screenshot before proposing a fix — never DOM-only.** A locator returning 0 matches doesn't always mean "stale locator." It can mean the application is legitimately in a different state than kavach's diagnosis assumed — a conditional dialog, a blocked action, a business-rule message. In one session, a "Delete" confirmation locator that returned 0 matches for `Ok`/`Delete Field` turned out to be timing out because the app was correctly showing a *different* dialog ("Custom Field Can't Be Removed" — the field was in use by a campaign) than the one the original locator's `Ok` branch was written for. The DOM alone confirmed the button existed; only the screenshot made clear *why* it was a different button with different semantics, and that the underlying behavior was correct, not broken.
 
 **A fix confirmed against one live failure snapshot is not confirmed for every code path that locator serves.** If a locator is used across multiple conditional branches (e.g. a delete-confirmation button that appears in a "can be deleted" modal in one case and a "can't be removed" modal in another), a fix that only accounts for the DOM structure seen in the first failure can break the *other* branch on the very next run. Before finalizing, check the page-object method's other call sites and, if the scenario exercises multiple branches, verify against each one live — don't stop at the first green run if the same locator field serves more than one UI state.
 
-**Use `utils.LocatorProbe` for live disambiguation when static analysis alone is inconclusive** (e.g. `.count()`/`.isVisible()` on several candidate selectors, checked non-destructively before the real action runs). It exists specifically because kavach's static, receipt-time diagnosis and kavach-repair's live verification can disagree, and re-running the whole scenario per hypothesis is expensive. Two caveats learned the hard way:
-- **Timing matters.** A probe call inserted at the wrong point (e.g. immediately after a click, before an async render settles) can report a false "0 matches" that has nothing to do with the real locator being wrong — the element just hadn't rendered yet. If a probe result and a `page-source.html` snapshot disagree, trust the live failure snapshot's timing (captured at the actual moment Playwright's own action timeout expired) over an ad-hoc probe placed earlier in the flow.
-- **Always remove the probe call once the fix is confirmed.** It's a diagnostic scaffold, not part of the shipped fix — leaving it in adds an extra round-trip to every future run of that method and pollutes `target/imaintenance-probe/` with stale files.
+**For live disambiguation when static analysis alone is inconclusive, use a temporary inline probe, not a dedicated helper class.** There is no `utils.LocatorProbe` (or equivalent) class in this repository, and this skill's `Edit` grant doesn't cover `src/main/java/utils/**` in any case — do not reference or assume one exists. Instead, temporarily add a one-line `System.out.println("PROBE: " + page.locator("<candidate>").count())` (or `.isVisible()`) immediately before the real action in the page-object method under test, run the scenario once via the normal Phase 3.3 Maven invocation to observe the printed count, then remove the line before applying the real fix. Two caveats learned the hard way:
+- **Timing matters.** A probe call inserted at the wrong point (e.g. immediately after a click, before an async render settles) can report a false "0 matches" that has nothing to do with the real locator being wrong — the element just hadn't rendered yet. If a probe result and the trace/DOM snapshot disagree, trust the live failure snapshot's timing (captured at the actual moment Playwright's own action timeout expired) over an ad-hoc probe placed earlier in the flow.
+- **Always remove the probe line once the fix is confirmed and re-run spotless before committing.** It's diagnostic scaffolding, not part of the shipped fix — leaving it in pollutes production test output on every future run of that method, and a stray `System.out.println` will typically also fail `mvn spotless:check`, which is itself a useful backstop against forgetting to remove it.
 
 **A search/lookup returning nothing isn't always a locator bug.** Helper methods like this codebase's `isElementVisible()` (poll a few times, silently move on if never found — by design, not a bug) exist because some values genuinely aren't found. If a rule-adding or item-selection loop silently skips a value and a downstream step then fails on an unrelated locator (e.g. a Save button that never appears because nothing was actually added upstream), the real root cause can be several steps upstream of the reported failure. Trace the actual execution path (temporary probes at each loop iteration, or reading intermediate log output) rather than assuming the locator named in the final stack trace is the one to fix.
 
@@ -311,7 +312,7 @@ For each candidate with verdict `passed` or `applied_with_regression`:
 
 1. Re-run `mvn spotless:check -pl <module> -q` to confirm the file is still clean after any cascade-fix edits.
 2. `git add <targetFile>`
-3. `git commit -m "fix(<featureSlug>): <fixDescription> [imaintenance/<run-date>]"`
+3. `git commit -m "fix(<featureSlug>): <fixDescription> [kavach-repair/<run-date>]"`
 
 **One commit per fix.** Do not batch multiple fixes into one commit — this keeps per-fix revert (`git revert <sha>`) practical for a reviewer who wants to drop one fix from the batch.
 
@@ -322,22 +323,22 @@ Candidates with verdict `test_failed`, `spotless_failed`, `source_drift`, or `in
 ## Phase 5 — Push branch and open PR
 
 ```bash
-git push -u origin imaintenance/<run-date>
+git push -u origin kavach-repair/<run-date>
 ```
 
 If `git push` exits non-zero with "rejected" or "non-fast-forward":
 ```
-PUSH_REJECTED: Remote branch imaintenance/<run-date> already exists with diverged history.
+PUSH_REJECTED: Remote branch kavach-repair/<run-date> already exists with diverged history.
 Do NOT force-push. Resolve manually:
-  git pull --rebase origin imaintenance/<run-date>
+  git pull --rebase origin kavach-repair/<run-date>
 Then re-run Phase 5.
 ```
 Stop immediately. Do not attempt force-push under any circumstances.
 
-Build the PR body and write it to `/tmp/imaintenance-pr-body.md` before opening the PR. Use the Write tool or a heredoc:
+Build the PR body and write it to `/tmp/kavach-repair-pr-body.md` before opening the PR. Use the Write tool or a heredoc:
 
 ```bash
-cat > /tmp/imaintenance-pr-body.md << 'EOF'
+cat > /tmp/kavach-repair-pr-body.md << 'EOF'
 <rendered PR body — all sections below, in order>
 EOF
 ```
@@ -345,13 +346,13 @@ EOF
 Then open the PR — check for an already-open PR on this branch first, since Phase 1 step 5 explicitly allows resuming a same-day branch and a second `gh pr create` on a branch that already has one errors out rather than updating it:
 
 ```bash
-existing_pr=$(gh pr list --head "imaintenance/<run-date>" --state open --json url -q '.[0].url')
+existing_pr=$(gh pr list --head "kavach-repair/<run-date>" --state open --json url -q '.[0].url')
 if [ -n "${existing_pr}" ]; then
   echo "PR already open for this branch — the push above already updated it: ${existing_pr}"
 else
   gh pr create \
     --title "fix: apply <N> script fixes [<run-date>]" \
-    --body "$(cat /tmp/imaintenance-pr-body.md)"
+    --body "$(cat /tmp/kavach-repair-pr-body.md)"
 fi
 ```
 
@@ -375,7 +376,17 @@ If there are no passing fixes (all candidates failed or were skipped), do not pu
 
 ### fix-history.json — one entry per candidate
 
-This is the same file and array kavach appends to (see the verdict-reporting skill's schema) — the top-level fields below match kavach's field names exactly so the shared ≥2-failed-attempts skip logic in Phase 1 can read entries from either writer. Everything specific to fix-application (as opposed to diagnosis) lives under `imaintenanceDetail`.
+This is the same file and array kavach appends to (see the verdict-reporting skill's schema). **Never hand-write or `Edit` `kavach-data/history/fix-history.json` directly** — this skill has no `Write`/`Edit` grant on that file for exactly this reason. Doing a read-whole-file/append-in-memory/write-whole-file-back edit here would reintroduce the exact concurrent-writer race `append_fix_history.py`'s exclusive file lock exists to prevent, since kavach-diagnose's `verdict-reporting` skill can be appending to the same file at close to the same time. Build one JSON entry per candidate below, collect the whole run's entries into one array, and pipe that array through the same validated writer verdict-reporting uses:
+
+```bash
+cat <<'EOF' | python3 .claude/skills/kavach-diagnose/scripts/append_fix_history.py
+[ /* one object per candidate, shape below */ ]
+EOF
+```
+
+If `append_fix_history.py` exits non-zero, stop and print `PHASE_SCRIPT_FAILED: append_fix_history.py: <stderr>` — do not proceed to the summary table below until it succeeds; the run is not complete until this bookkeeping is actually written.
+
+Every field below is required by `append_fix_history.py`'s validation — an entry missing any of them is rejected (the whole batch fails atomically, nothing is written):
 
 ```json
 {
@@ -384,11 +395,15 @@ This is the same file and array kavach appends to (see the verdict-reporting ski
   "scenarioName": "<scenarioId>",
   "featureFile": "<path>",
   "verdict": "<machine-format verdict>",
+  "confidence": "<the originating receipt's confidence — high | medium | low; \"high\" in isolation mode, per Phase 1 step 1>",
+  "priority": "<\"high_confidence_script_fix\" if confidence is high or medium, else \"needs_investigation\">",
   "groupId": "<groupId>",
+  "isGroupRepresentative": true,
   "attempts": "<prior attempts + 1>",
   "liveVerification": null,
   "analysisTier": null,
-  "imaintenanceDetail": {
+  "review": { "status": "unreviewed", "reviewedAt": null, "note": null },
+  "kavachRepairDetail": {
     "targetFile": "<path>",
     "fixApproach": "<the patch derived in Phase 2 step 3, summarised>",
     "commitSha": "<sha or null>",
@@ -401,7 +416,7 @@ This is the same file and array kavach appends to (see the verdict-reporting ski
 }
 ```
 
-Set `liveVerification: null` and `analysisTier: null` for all kavach-repair entries — live-browser replay and tiered diagnosis are kavach's responsibility, not kavach-repair's.
+`isGroupRepresentative` is always `true` here — kavach-repair operates on one candidate (one representative scenario) per receipt, never on a group's other members directly. Set `liveVerification: null` and `analysisTier: null` for all kavach-repair entries — live-browser replay and tiered diagnosis are kavach's responsibility, not kavach-repair's. Always write `review` as `{"status": "unreviewed", "reviewedAt": null, "note": null}` for a new entry, exactly as verdict-reporting does — never pre-fill it, and never mark another run's entries reviewed.
 
 **Verdict values (machine format — never display strings):**
 
@@ -416,14 +431,21 @@ Set `liveVerification: null` and `analysisTier: null` for all kavach-repair entr
 
 ### Fix-pattern update
 
-For each `script_issue_fix_applied` entry: append the fix as a **Known good fix** block to the relevant fix-pattern file (same format kavach's Phase 5 uses). This closes the loop — kavach's Phase 2 cache-hit path will recognise the same locator pattern on the next run.
+For each `script_issue_fix_applied` entry: append the fix as a **Known good fix** block to the relevant fix-pattern file (same format kavach's Phase 5 uses), via the same lock-protected writer kavach's `verdict-reporting` skill uses — **never `Edit` the `.md` file directly**:
+
+```bash
+echo "<the new dated block>" | \
+  python3 .claude/skills/kavach-diagnose/scripts/append_fix_pattern.py <feature-slug>
+```
+
+kavach-diagnose can be appending to the same feature file at close to the same time (its `verdict-reporting` skill writes here too) — a direct `Edit` risks silently losing one writer's entry to a read-modify-write race, the same failure mode `fix-history.json` was fixed against. This closes the loop — kavach's Phase 2 cache-hit path will recognise the same locator pattern on the next run.
 
 ### Summary table
 
 ```
 kavach-repair run — <run-date>
 Mode: <INTERACTIVE|ISOLATION (interactive)>
-Branch: imaintenance/<run-date>
+Branch: kavach-repair/<run-date>
 PR: <url or "not opened">
 
 | Result                    | Count |

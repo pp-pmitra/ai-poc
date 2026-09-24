@@ -1,6 +1,6 @@
 """Cheap, no-browser triage tier inserted between mechanical grouping
-(`list_failures.py`) and live Playwright-MCP replay (`replay_workers.py` /
-`.claude/commands/analyze-failure.md` Phase 3).
+(`list_failures.py`) and live Playwright-MCP replay (`replay_workers.py`,
+driven by the `live-replay-diagnosis` skill's Phase 3).
 
 Every function here is either pure/deterministic or a single text-only LLM
 call with no tool access — nothing in this package can drive a browser. Its

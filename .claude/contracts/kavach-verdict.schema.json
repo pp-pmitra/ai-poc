@@ -5,6 +5,7 @@
   "description": "The full document written by validate_replay_receipts.py's combined_summary() (or validate_manifest() standalone) — the deterministic handoff contract from kavach-diagnose to kavach-repair. Traced directly from that script's actual output, not the per-worker receipt shape described in the live-replay-diagnosis skill's Phase 3 (which has productBugGate/productBugArtifacts booleans that are checked at production time but never copied forward into this merged document — only the resulting gateProblems list is).",
   "type": "object",
   "additionalProperties": true,
+  "$comment": "additionalProperties is deliberately true here (and on the group $def below), mirroring validate_kavach_contract.py's own hand-rolled validator, which likewise never rejects an unknown key. This is a permissiveness choice made consistently on both sides of the contract, not an oversight in one of them — if you tighten one to additionalProperties: false, tighten the other to match, and update test_kavach_verdict_schema_equivalence.py accordingly.",
   "required": [
     "totalFailures",
     "groupCount",

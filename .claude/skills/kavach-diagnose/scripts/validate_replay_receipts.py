@@ -138,6 +138,22 @@ def validate_receipt(receipt: dict[str, Any]) -> tuple[str, list[str]]:
         if problems:
             return "needs_investigation", problems
 
+    # script_issue_fix_proposed is the verdict that most directly leads to a
+    # real code change via kavach-repair, yet previously had no gate at all.
+    # Unlike the product-bug verdicts above, it can legitimately come from a
+    # no-browser Tier-1 pass (deterministic classifier / text-only LLM), so
+    # this deliberately does NOT require liveReplayPerformed the way
+    # suspected_product_bug does — every real producer (disposition(),
+    # enforce_tier1_verdict_constraints(), and the live-replay worker's own
+    # RECEIPT_SCHEMA) always populates `evidence` regardless of tier, so
+    # requiring it here catches a hand-edited or bare-minimum fabricated
+    # receipt without rejecting genuine static-tier resolutions.
+    elif verdict == "script_issue_fix_proposed":
+        if not receipt.get("evidence"):
+            problems.append("evidence was empty")
+        if problems:
+            return "needs_investigation", problems
+
     if verdict not in REPORT_VERDICT:
         return "needs_investigation", [f"unknown verdict {verdict!r}"]
     return verdict, []

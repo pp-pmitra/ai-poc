@@ -134,6 +134,24 @@ class TestAnalyzeOffline:
         assert any("1 node" in e for e in result["evidence"])
         assert any("visible and enabled" in e for e in result["evidence"])
 
+    def test_ambiguous_selector_escalates_instead_of_proposing_a_fix(self, html_artifact):
+        """Multiple DOM matches must never resolve as a confident
+        script_issue_fix_proposed — the ambiguity could be a genuine product
+        bug (duplicate-rendered elements), and this tier is structurally
+        forbidden from confirming that on its own. Regression test for the
+        finding that this path used to bypass that safeguard entirely."""
+        failure = {
+            "scenarioName": "Test scenario",
+            "failureArtifacts": html_artifact,
+            "playwrightCallLog": "locator('//button')",
+            "errorMessage": "Timeout waiting for selector",
+        }
+        result = analyze_offline(failure)
+        assert result is not None
+        assert result["verdict"] == "needs_investigation"
+        assert any("ambiguous" in e.lower() for e in result["evidence"])
+        assert any("product rendering duplicate elements cannot be ruled out" in e for e in result["evidence"])
+
     def test_disabled_element(self, html_artifact):
         failure = {
             "scenarioName": "Test scenario",

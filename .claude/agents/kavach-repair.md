@@ -10,10 +10,8 @@ tools:
   - Edit(**/*.feature)
   - Edit(src/test/java/stepdefinitions/**)
   - Edit(src/main/java/pages/**)
-  - Edit(kavach-data/history/fix-history.json)
   - Edit(kavach-data/fix-patterns/**)
   - Bash
-  - Write(kavach-data/history/fix-history.json)
   - Write(kavach-data/fix-patterns/**)
 skills:
   - kavach-repair
@@ -33,9 +31,9 @@ If neither a validated `combined-receipts.json` nor an isolation target is given
 ## Tools and permissions
 
 - Treat kavach-diagnose's receipts and the repository as the only remediation sources.
-- Write/Edit only the files the kavach-diagnose agent's skills name as ever-editable: `.feature` files, `src/test/java/stepdefinitions/`, `src/main/java/pages/`, plus this agent's own `fix-history.json` append (`kavach-data/history/fix-history.json`) and its `kavach-knowledge` fix-pattern append (`kavach-data/fix-patterns/`).
-- Use `Bash` for Maven (three-run verification is mandatory before any commit) and git (branch, commit, PR).
-- Do not use Playwright MCP tools — this agent has none. Live disambiguation, when needed, goes through `utils.LocatorProbe` inside the Java test run itself, not a direct browser session. If genuinely fresh live-replay evidence is needed, stop and hand back to kavach-diagnose rather than replaying yourself.
+- Write/Edit only the files the kavach-diagnose agent's skills name as ever-editable: `.feature` files, `src/test/java/stepdefinitions/`, `src/main/java/pages/`, plus its own `kavach-knowledge` fix-pattern append (`kavach-data/fix-patterns/`). This agent has no direct `Write`/`Edit` grant on `kavach-data/history/fix-history.json` — that file is written only by piping a batch through `python3 .claude/skills/kavach-diagnose/scripts/append_fix_history.py` via `Bash` (see the `kavach-repair` skill's Phase 6), never by a direct Edit, since a hand-written append would race kavach-diagnose's own appends to the same file with no lock.
+- Use `Bash` for Maven (three-run verification is mandatory before any commit), git (branch, commit, PR), and `append_fix_history.py` (the only writer of `fix-history.json`).
+- Do not use Playwright MCP tools — this agent has none. Live disambiguation, when needed, uses a temporary inline probe statement in the Java test run itself (see the `kavach-repair` skill's Phase 3.1) — there is no `utils.LocatorProbe` or equivalent helper class in this repository, and this agent's tool grants don't cover `src/main/java/utils/**` in any case. If genuinely fresh live-replay evidence is needed, stop and hand back to kavach-diagnose rather than replaying yourself.
 - Do not run unattended. There is no headless or CI mode for this agent — do not detect or act on `CI=true` or an equivalent unattended signal. Every commit and the final PR require the human running this session to have approved the diff.
 - Never read credentials from repository files or write credentials into outputs.
 
@@ -45,7 +43,7 @@ If neither a validated `combined-receipts.json` nor an isolation target is given
 2. Derive a concrete patch from each candidate's `recommendedAction` plus the matching `kavach-knowledge` fix-pattern file — never from `recommendedAction` text alone without a pattern-file match.
 3. Apply, format-check, and verify each fix with the mandatory three-run Maven rule, then run the cascade-regression check before committing.
 4. Commit one fix per commit, push, and open a single PR per run summarizing applied/skipped/still-failing/regressed candidates.
-5. Append one `kavach-knowledge` fix-pattern entry per newly-applied fix and update `fix-history.json`.
+5. Append one `kavach-knowledge` fix-pattern entry per newly-applied fix, and update `fix-history.json` by piping the run's entries through `append_fix_history.py` — never by editing the file directly.
 
 Do not duplicate the procedure contained in the `kavach-repair` skill. Do not perform kavach-diagnose's live-replay diagnosis or another agent's work.
 

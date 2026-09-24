@@ -18,6 +18,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import fcntl
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -99,18 +100,46 @@ def _save(path: Path, fix_history: list[dict[str, Any]]) -> None:
     path.write_text(json.dumps(fix_history, indent=2) + "\n", encoding="utf-8")
 
 
+def mark_locked(path: Path, scenario_name: str, status: str, note: Optional[str]) -> dict[str, Any]:
+    """Read-modify-write `mark` under the same exclusive flock
+    `append_fix_history.py` uses for its own writes to this file. Without
+    this, a `mark` running concurrently with a verdict-reporting run's
+    `append_fix_history.py` append could read the file before the append,
+    then write its own (now stale) in-memory copy back over it — silently
+    discarding the concurrently-appended entries with no error on either
+    side. Holding the lock for the whole read-modify-write, exactly like
+    append_fix_history.py's append_entries(), closes that race.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.touch(exist_ok=True)
+    with open(path, "r+", encoding="utf-8") as f:
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        try:
+            text = f.read()
+            fix_history = json.loads(text) if text.strip() else []
+            entry = find_latest_entry(fix_history, scenario_name)
+            if entry is None:
+                raise LookupError(scenario_name)
+            mark_review(entry, status, note)
+            f.seek(0)
+            f.truncate()
+            f.write(json.dumps(fix_history, indent=2) + "\n")
+            f.flush()
+            return entry
+        finally:
+            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+
+
 def _format_rate(rate: Optional[float]) -> str:
     return "n/a (none reviewed yet)" if rate is None else f"{rate:.0%}"
 
 
 def cmd_mark(args: argparse.Namespace) -> None:
-    fix_history = _load(args.fix_history)
-    entry = find_latest_entry(fix_history, args.scenario_name)
-    if entry is None:
+    try:
+        entry = mark_locked(args.fix_history, args.scenario_name, args.status, args.note)
+    except LookupError:
         print(f"No fix-history entry found for scenario: {args.scenario_name!r}")
         raise SystemExit(1)
-    mark_review(entry, args.status, args.note)
-    _save(args.fix_history, fix_history)
     print(f"Marked {args.scenario_name!r} (verdict: {entry.get('verdict')}) as {args.status!r}.")
 
 

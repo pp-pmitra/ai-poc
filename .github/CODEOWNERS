@@ -1,0 +1,32 @@
+# Code owners for this repository.
+#
+# GitHub requires at least one review from a matching code owner before a
+# pull request touching these paths can be merged — but only once "Require
+# review from Code Owners" is turned on for the applicable branch protection
+# rule under Settings > Branches for `main`. This file alone does not enable
+# that requirement; it only supplies the owners once the rule requires them.
+#
+# Replace the placeholder team/usernames below with the actual maintainers
+# for this repository before relying on this file for enforcement.
+#
+# Order matters: a later matching pattern overrides an earlier one for the
+# same path, so keep the most specific rules last.
+
+# Default owners for everything not matched more specifically below.
+* @pulsepoint/qa-automation-maintainers
+
+# Kavach's own agent/skill definitions, contracts, and CI workflow — the
+# highest-blast-radius paths in this repo, since they control what an
+# automated agent is allowed to read, write, and execute unattended.
+/.claude/agents/            @pulsepoint/qa-automation-maintainers
+/.claude/skills/            @pulsepoint/qa-automation-maintainers
+/.claude/contracts/         @pulsepoint/qa-automation-maintainers
+/.claude/mcp-ci-*.json      @pulsepoint/qa-automation-maintainers
+/.claude/settings.ci.json   @pulsepoint/qa-automation-maintainers
+/.github/workflows/         @pulsepoint/qa-automation-maintainers
+/.github/CODEOWNERS         @pulsepoint/qa-automation-maintainers
+
+# Kavach's own learned-knowledge PRs (branch kavach/learned-patterns-run-*)
+# touch only these paths — a human must review what the bot has appended
+# before it merges to main.
+/kavach-data/               @pulsepoint/qa-automation-maintainers

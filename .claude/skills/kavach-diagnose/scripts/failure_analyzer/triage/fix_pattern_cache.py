@@ -2,13 +2,14 @@
 already proposed (and this run can verify is still applied) a concrete fix
 for the exact same scenario or failure group.
 
-Reads `fix-history.json` directly rather than `.claude/fix-patterns/*.md` —
-the per-feature markdown files are a separate, currently-empty knowledge
-layer; the JSON history is intact and has everything this cache needs.
+Reads `fix-history.json` directly rather than `kavach-data/fix-patterns/*.md`
+— the per-feature markdown files are a separate, human-curated knowledge
+layer (see the `kavach-knowledge` skill); the JSON history is intact and has
+everything this cache needs.
 
 Product-bug history entries are never a skip trigger — only a genuine,
-still-present fix diff is, per `.claude/commands/analyze-failure.md`'s
-existing rule that historical findings are hints, not evidence.
+still-present fix diff is, per the `live-replay-diagnosis` skill's existing
+rule that historical findings are hints, not evidence.
 """
 
 from __future__ import annotations

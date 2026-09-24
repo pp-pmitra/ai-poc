@@ -175,6 +175,34 @@ class ValidateReplayReceiptsTests(unittest.TestCase):
         self.assertEqual(verdict, "needs_investigation")
         self.assertIn("evidence was empty", problems)
 
+    def test_script_issue_fix_proposed_with_no_evidence_is_downgraded(self):
+        """Regression test: this verdict most directly leads to a real code
+        change via kavach-repair, but previously had zero mechanical gate at
+        all — a bare-minimum {"verdict": "script_issue_fix_proposed"} used to
+        pass straight through unchanged."""
+        receipt = {"verdict": "script_issue_fix_proposed", "recommendedAction": "fix it"}
+
+        verdict, problems = validate_receipt(receipt)
+
+        self.assertEqual(verdict, "needs_investigation")
+        self.assertIn("evidence was empty", problems)
+
+    def test_script_issue_fix_proposed_with_evidence_passes_without_live_replay(self):
+        # Deliberately NOT held to suspected_product_bug's liveReplayPerformed
+        # bar -- a genuine Tier-1 (no-browser) static resolution is a valid
+        # source for this verdict and must not be rejected for lacking a
+        # field that tier never sets.
+        receipt = {
+            "verdict": "script_issue_fix_proposed",
+            "evidence": ["Expected `Save` vs actual `save` differ only by case."],
+            "recommendedAction": "Update the literal expected text.",
+        }
+
+        verdict, problems = validate_receipt(receipt)
+
+        self.assertEqual(verdict, "script_issue_fix_proposed")
+        self.assertEqual(problems, [])
+
     def test_not_reproduced_passed_live_without_live_replay_is_downgraded(self):
         receipt = {"verdict": "not_reproduced_passed_live", "evidence": ["scenario completed"]}
 

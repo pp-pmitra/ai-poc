@@ -9,6 +9,7 @@
     "feature:formatter:test": "node --test scripts/format-feature.test.mjs"
   },
   "devDependencies": {
-    "@cucumber/gherkin-utils": "^12.0.2"
+    "@cucumber/gherkin-utils": "^12.0.2",
+    "@playwright/mcp": "0.0.82"
   }
 }

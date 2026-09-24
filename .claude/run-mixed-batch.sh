@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # .claude/run-mixed-batch.sh
 #
-# Ordered two-invocation kawach runner for batches that mix Life and Studio
+# Ordered two-invocation Kavach runner for batches that mix Life and Studio
 # failures.  Never starts both bootstraps simultaneously — a single Playwright
 # MCP server can only attach to one --cdp-endpoint at a time.
 #
 # Sequence enforced:
-#   1. Start Life bootstrap (port 9223) → run kawach (Life MCP config)
+#   1. Start Life bootstrap (port 9223) → run kavach-diagnose (Life MCP config)
 #      → touch .claude/auth/life-cdp-done → bootstrap exits
-#   2. Start Studio bootstrap (port 9224) → run kawach (Studio MCP config)
+#   2. Start Studio bootstrap (port 9224) → run kavach-diagnose (Studio MCP config)
 #      → touch .claude/auth/studio-cdp-done → bootstrap exits
 #
 # Usage:
@@ -25,7 +25,17 @@
 
 set -euo pipefail
 
-ALLOWED_TOOLS="Bash(*),Read,Write(*),Edit(*),Grep,Glob,\
+# kavach-diagnose is never meant to touch application/test source — both
+# Write and Edit are scoped to kavach-data/** here, matching the agent
+# definition's own tool list exactly (Write(kavach-data/**)), plus
+# Edit(kavach-data/**) for editing files this run already wrote. This
+# --allowedTools string is not the real enforcement boundary on its own
+# (Bash(*) is unrestricted and could write anywhere via shell redirection) —
+# unlike kavach.yml's CI job, this manual entry point has no compensating
+# "verify repository boundaries" step, so the Write/Edit scoping here is the
+# only safeguard that actually exists for this path. Do not widen it back to
+# Write(*)/Edit(*).
+ALLOWED_TOOLS="Bash(*),Read,Write(kavach-data/**),Edit(kavach-data/**),Grep,Glob,\
 mcp__playwright__browser_navigate,\
 mcp__playwright__browser_tabs,\
 mcp__playwright__browser_snapshot,\
@@ -101,9 +111,13 @@ if $RUN_LIFE; then
   }
 
   echo ""
-  echo "=== [3/4] Running kawach — Life failures ==="
+  echo "=== [3/4] Running kavach-diagnose — Life failures ==="
+  # There is no /analyze-failure or /kawach slash command anywhere in this
+  # repo — the only proven invocation is loading the kavach-diagnose agent
+  # directly, exactly as kavach.yml's CI job does.
   claude \
-    -p "/kawach" \
+    --agent kavach-diagnose \
+    --print "Diagnose the failures from the Cucumber run for the Life app (environment: ${ENVIRONMENT}, user type: ${USER_TYPE}). The auth bootstrap is already logged in and holding a browser open on CDP port 9223; the Playwright MCP server is already configured to attach to it — never attempt your own login. Run your full pipeline (failure-triage -> live-replay-diagnosis -> verdict-reporting) end to end and stop once the verdict report and combined-receipts.json are written and validated against .claude/contracts/kavach-verdict.schema.json." \
     --mcp-config .claude/mcp-ci-life.json \
     --strict-mcp-config \
     --permission-mode auto \
@@ -136,9 +150,10 @@ if $RUN_STUDIO; then
   }
 
   echo ""
-  echo "=== [3/4] Running kawach — Studio failures ==="
+  echo "=== [3/4] Running kavach-diagnose — Studio failures ==="
   claude \
-    -p "/kawach" \
+    --agent kavach-diagnose \
+    --print "Diagnose the failures from the Cucumber run for the Studio app (environment: ${ENVIRONMENT}, user type: ${USER_TYPE}). The auth bootstrap is already logged in and holding a browser open on CDP port 9224; the Playwright MCP server is already configured to attach to it — never attempt your own login. Run your full pipeline (failure-triage -> live-replay-diagnosis -> verdict-reporting) end to end and stop once the verdict report and combined-receipts.json are written and validated against .claude/contracts/kavach-verdict.schema.json." \
     --mcp-config .claude/mcp-ci-studio.json \
     --strict-mcp-config \
     --permission-mode auto \

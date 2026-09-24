@@ -1,6 +1,6 @@
 # Default fix patterns (all features)
 
-Cross-feature patterns consulted during every kawach run. Feature-specific pattern files
+Cross-feature patterns consulted during every kavach run. Feature-specific pattern files
 (e.g. `life-campaign.md`) supplement these; they never override them.
 
 ---
@@ -173,7 +173,7 @@ these selectors before diagnosing any individual test failure.
 ```
 CDP_ENDPOINT_DEAD: <port> — <error text>
 ```
-Do not attempt to reconnect, re-navigate, or fall back to a static-only diagnosis of the blocked groups. Then follow **Live replay blocked** in the `live-replay-diagnosis` skill's Phase 3: run the validator with `--blocked-reason "CDP_ENDPOINT_DEAD: <port> — <error text>"` and still write the verdict report (blocked groups listed as Needs Investigation with the reason). Ask the operator to restart the matching bootstrap and re-run kawach to diagnose them.
+Do not attempt to reconnect, re-navigate, or fall back to a static-only diagnosis of the blocked groups. Then follow **Live replay blocked** in the `live-replay-diagnosis` skill's Phase 3: run the validator with `--blocked-reason "CDP_ENDPOINT_DEAD: <port> — <error text>"` and still write the verdict report (blocked groups listed as Needs Investigation with the reason). Ask the operator to restart the matching bootstrap and re-run kavach-diagnose to diagnose them.
 
 - Life bootstrap uses port `9223`. Restart with `mvn test -Dtest=LifeAuthStateBootstrapTest -Dauth.environment=<env> -Dauth.userType=<type> -Dauth.holdSeconds=<budget>`.
 - Studio bootstrap uses port `9224`. Restart with `mvn test -Dtest=StudioAuthStateBootstrapTest -Dauth.holdForCdp=true -Dauth.holdSeconds=<budget>`.

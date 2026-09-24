@@ -165,79 +165,45 @@ def disposition(cause: str, failure: dict[str, Any], repo_root: Path) -> dict:
             "needsLiveReplay": False,
         }
 
-    if cause == "timeout":
+    # NOTE: `analyze_failure()`'s real cause vocabulary is
+    # environment-or-runner-failure | network-aborted | api-error |
+    # ui-value-missing | ui-value-present-timing | console-error | unknown |
+    # same-run-intermittent (see CAUSE_TO_CATEGORY in assertion_analyzer.py) —
+    # it never produces "timeout" or "assertion-error". The two branches
+    # below used to check for those non-existent cause values and were
+    # therefore permanently dead code; they're reconciled here with the
+    # real cause values that carry the same semantic intent (a locator/
+    # assertion timed out on a value that IS present in the DOM — a timing
+    # race, not a missing element).
+    if cause == "ui-value-present-timing":
         locator_text = extract_locator_text(failure.get("playwrightCallLog"))
-        if locator_text is not None:
-            if locator_text in page_text:
-                # Text IS in the DOM — timing race, not a missing element. Need live observation.
-                return {
-                    "resolved": False,
-                    "verdict": None,
-                    "confidence": None,
-                    "evidence": [
-                        f"Timed out waiting for locator text {locator_text!r}, "
-                        "but that text IS present in the captured page snapshot — "
-                        "suggests a timing/visibility race rather than a missing element.",
-                    ],
-                    "recommendedAction": None,
-                    "proposedChange": None,
-                    "needsLiveReplay": True,
-                }
-            else:
-                # Text NOT in the DOM — element genuinely absent. Escalate to live
-                # replay to distinguish product regression vs stale locator vs wrong
-                # page state; static analysis alone can't tell.
-                return {
-                    "resolved": False,
-                    "verdict": None,
-                    "confidence": None,
-                    "evidence": [
-                        f"Timed out waiting for locator text {locator_text!r}, "
-                        "and that text is NOT present in the captured page snapshot — "
-                        "the element was genuinely absent, not just slow to appear.",
-                    ],
-                    "recommendedAction": None,
-                    "proposedChange": None,
-                    "needsLiveReplay": True,
-                }
-        # No locator text extractable — fall through to escalate below.
+        detail = f"locator text {locator_text!r}" if locator_text else "the expected value"
+        # ui-value-present-timing is only assigned when analyze_failure()
+        # already confirmed the expected text IS present in the captured page
+        # snapshot, so there is no "text NOT in DOM" sub-case to branch on
+        # here — unlike the dead code this replaces.
+        return {
+            "resolved": False,
+            "verdict": None,
+            "confidence": None,
+            "evidence": [
+                f"Timed out or failed waiting for {detail}, but it IS present in the "
+                "captured page snapshot — suggests a timing/visibility race rather than "
+                "a missing element.",
+            ],
+            "recommendedAction": None,
+            "proposedChange": None,
+            "needsLiveReplay": True,
+        }
 
-    if cause == "assertion-error":
-        expected = failure.get("expectedValue") or ""
-        if expected:
-            if expected in page_text:
-                # Expected text IS on the page — stale assertion or wrong attribute, needs live look.
-                return {
-                    "resolved": False,
-                    "verdict": None,
-                    "confidence": None,
-                    "evidence": [
-                        f"Assertion expected {expected!r} but failed — yet that text IS present "
-                        "in the captured page snapshot. Likely a stale element reference, wrong "
-                        "attribute target, or transient DOM state at assertion time.",
-                    ],
-                    "recommendedAction": None,
-                    "proposedChange": None,
-                    "needsLiveReplay": True,
-                }
-            else:
-                # Expected text NOT on the page — escalate to live replay to
-                # distinguish product regression vs stale expectation vs wrong
-                # page state; static analysis alone can't tell.
-                return {
-                    "resolved": False,
-                    "verdict": None,
-                    "confidence": None,
-                    "evidence": [
-                        f"Assertion expected {expected!r} but that text is NOT present in the "
-                        "captured page snapshot — the content was genuinely absent from the page.",
-                    ],
-                    "recommendedAction": None,
-                    "proposedChange": None,
-                    "needsLiveReplay": True,
-                }
-        # No expectedValue to check against — fall through to escalate below.
-
+    # The former dead "assertion-error" branch's logic (escalate when
+    # expectedValue is/isn't present in the DOM) is fully superseded by the
+    # ui-value-missing handling directly below — that block's own final
+    # fallback already returns the equivalent "expected text not found in
+    # final page DOM — needs live confirmation" evidence for the not-present
+    # case, and analyze_failure() never leaves an ui-value-missing failure's
+    # expected text present (that combination is classified as
+    # ui-value-present-timing instead, handled above).
     if cause == "ui-value-missing":
         expected = failure.get("expectedValue")
         actual = failure.get("actualValue")

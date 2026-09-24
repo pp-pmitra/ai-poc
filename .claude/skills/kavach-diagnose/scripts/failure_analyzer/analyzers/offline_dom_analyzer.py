@@ -775,13 +775,18 @@ def analyze_offline(failure: dict[str, Any]) -> dict[str, Any] | None:
 
         else:
             # Multiple matches: most likely selector is too broad (script issue), but a
-            # product bug rendering duplicate elements cannot be ruled out from the snapshot.
+            # product bug rendering duplicate elements cannot be ruled out from the snapshot
+            # alone. This tier is structurally forbidden from confirming a product bug on
+            # its own, so this ambiguity must escalate to live replay rather than resolve
+            # as a confident script-issue fix — never emit script_issue_fix_proposed here,
+            # since the fix would only be verified against symptoms, not against whether
+            # the DOM itself is legitimately supposed to contain more than one match.
             evidence.append(
                 f"Multiple matches ({len(matches)}): selector is ambiguous. "
                 f"Likely too broad; product rendering duplicate elements cannot be ruled out. "
                 f"First: {_element_summary(matches[0])}"
             )
-            verdict = "script_issue_fix_proposed"
+            verdict = "needs_investigation"
             confidence = "medium"
             diagnosisKind = "ambiguous_selector"
 

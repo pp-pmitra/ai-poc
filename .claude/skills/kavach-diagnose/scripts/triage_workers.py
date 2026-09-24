@@ -18,7 +18,7 @@ work unmodified), plus `escalate-groups.json` listing the groupIds Tier 2
 
 No live browser is ever touched by this script. Run in SHADOW MODE first —
 i.e. just inspect this script's output against known-good live-replay runs —
-before wiring `.claude/commands/analyze-failure.md` to actually skip live
+before trusting the `failure-triage` skill's Phase 2.5 to actually skip live
 replay for the groups this script resolves.
 """
 
@@ -143,7 +143,7 @@ def _frequency_by_scenario(
     which is richer but reads from `failure-history.jsonl`, a separate
     rolling log this pipeline's live Phase 5 never writes to (confirmed: no
     caller of `record_history.py`/`append_to_history` exists in the current
-    `/analyze-failure` workflow) — reusing it here would silently regress to
+    kavach-diagnose pipeline) — reusing it here would silently regress to
     zero signal for every scenario instead of the real data fix-history.json
     already has.
 

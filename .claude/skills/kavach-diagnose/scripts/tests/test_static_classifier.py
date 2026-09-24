@@ -245,75 +245,47 @@ class DispositionStrictModeTests(unittest.TestCase):
 
     def test_strict_mode_check_is_case_insensitive(self):
         failure = {"errorMessage": "Strict Mode Violation: ..."}
-        result = disposition("timeout", failure, Path("."))
+        result = disposition("ui-value-present-timing", failure, Path("."))
         self.assertTrue(result["resolved"])
         self.assertEqual(result["verdict"], "script_issue_fix_proposed")
 
 
-class DispositionTimeoutPageTextTests(unittest.TestCase):
-    def test_timeout_text_absent_from_page_escalates_to_live_replay(self):
-        failure = {
-            "scenarioName": "s",
-            "errorMessage": "TimeoutError: waiting for locator",
-            "playwrightCallLog": "waiting for locator('text=Save Campaign')",
-            "pageText": "Welcome to the dashboard. No button here.",
-        }
-        result = disposition("timeout", failure, Path("."))
-        self.assertFalse(result["resolved"])
-        self.assertTrue(result["needsLiveReplay"])
+class DispositionUiValuePresentTimingTests(unittest.TestCase):
+    """`ui-value-present-timing` is the real cause analyze_failure() produces
+    when the expected value IS present in the captured page snapshot but the
+    step still failed (a timing/visibility race). Regression coverage for a
+    prior bug where this branch checked for a `cause` value ("timeout") that
+    analyze_failure() never actually emits, making the branch permanently
+    dead code — see static_classifier.py's disposition() for the reconciled
+    version."""
 
-    def test_timeout_text_present_in_page_escalates(self):
+    def test_extracts_locator_text_into_the_evidence_message(self):
         failure = {
             "scenarioName": "s",
             "errorMessage": "TimeoutError: waiting for locator",
             "playwrightCallLog": "waiting for locator('text=Save Campaign')",
             "pageText": "Here is the Save Campaign button on the page.",
         }
-        result = disposition("timeout", failure, Path("."))
+        result = disposition("ui-value-present-timing", failure, Path("."))
         self.assertFalse(result["resolved"])
         self.assertTrue(result["needsLiveReplay"])
+        self.assertTrue(any("Save Campaign" in e for e in result["evidence"]))
 
-    def test_timeout_non_extractable_locator_escalates(self):
+    def test_non_extractable_locator_still_escalates_with_generic_evidence(self):
         failure = {
             "scenarioName": "s",
             "errorMessage": "TimeoutError",
             "playwrightCallLog": "waiting for locator('#some-css-id')",
             "pageText": "irrelevant",
         }
-        result = disposition("timeout", failure, Path("."))
+        result = disposition("ui-value-present-timing", failure, Path("."))
         self.assertFalse(result["resolved"])
         self.assertTrue(result["needsLiveReplay"])
+        self.assertTrue(result["evidence"])
 
-    def test_timeout_no_call_log_escalates(self):
+    def test_no_call_log_still_escalates(self):
         failure = {"scenarioName": "s", "errorMessage": "TimeoutError", "playwrightCallLog": None, "pageText": "x"}
-        result = disposition("timeout", failure, Path("."))
-        self.assertTrue(result["needsLiveReplay"])
-
-
-class DispositionAssertionPageTextTests(unittest.TestCase):
-    def test_assertion_expected_absent_from_page_escalates_to_live_replay(self):
-        failure = {
-            "scenarioName": "s",
-            "expectedValue": "Campaign Created",
-            "pageText": "Error: something went wrong",
-        }
-        result = disposition("assertion-error", failure, Path("."))
-        self.assertFalse(result["resolved"])
-        self.assertTrue(result["needsLiveReplay"])
-
-    def test_assertion_expected_present_in_page_escalates(self):
-        failure = {
-            "scenarioName": "s",
-            "expectedValue": "Campaign Created",
-            "pageText": "Campaign Created successfully.",
-        }
-        result = disposition("assertion-error", failure, Path("."))
-        self.assertFalse(result["resolved"])
-        self.assertTrue(result["needsLiveReplay"])
-
-    def test_assertion_no_expected_value_escalates(self):
-        failure = {"scenarioName": "s", "pageText": "some text"}
-        result = disposition("assertion-error", failure, Path("."))
+        result = disposition("ui-value-present-timing", failure, Path("."))
         self.assertTrue(result["needsLiveReplay"])
 
 

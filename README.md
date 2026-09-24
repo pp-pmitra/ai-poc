@@ -99,6 +99,15 @@ npm run feature:format         # reformats files in place
 npm run feature:formatter:test # tests the project-specific formatting rule
 ```
 
+## Kavach — automated failure diagnosis and repair
+
+Kavach (`.claude/agents/kavach-diagnose.md`, `.claude/agents/kavach-repair.md`, `.github/workflows/kavach.yml`) may create branches, commit to them, push, and open pull requests against `main` — it never pushes to `main` directly, never merges its own PRs, and never bypasses required reviewers or status checks. That boundary is enforced by this repository's own configuration, not by Kavach's good behavior alone, so both of the following must actually be turned on for `main` under **Settings > Branches**:
+
+- **Require a pull request before merging**, with at least one required approving review.
+- **Require review from Code Owners** — `.github/CODEOWNERS` names the owners for `.claude/**` and `kavach-data/**`; without this setting enabled, that file is only documentation, not an enforced gate.
+
+`kavach.yml`'s PR-opening job authenticates as the default `GITHUB_TOKEN` (never an elevated PAT) and only runs `gh pr create`, so there is no code path in this repository that could merge or bypass review even with these settings off — but a human-reviewed PR is the intended approval boundary for everything Kavach changes, and that boundary only exists once these settings are confirmed.
+
 ## References
 
 For additional details on Approach, Roadmap, Documentation etc. refer to
