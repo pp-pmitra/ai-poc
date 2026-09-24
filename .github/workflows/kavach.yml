@@ -244,6 +244,7 @@ jobs:
           # kavach-diagnose is only ever allowed to write under target/ (build
           # output), its own scripts/history/ working directory, and
           # kavach-knowledge's fix-patterns/ — never application or test source.
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           changes=$(git status --porcelain --untracked-files=all -- . \
             ':(exclude)target/**' \
             ':(exclude)kavach-data/history/**' \
