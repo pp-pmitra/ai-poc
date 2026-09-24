@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import sys
 import tempfile
 from pathlib import Path
 
 import pytest
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from failure_analyzer.analyzers.offline_dom_analyzer import (
     analyze_offline,
@@ -370,3 +373,7 @@ class TestInvisibleCharTextMismatch:
         assert result is not None
         assert result["diagnosisKind"] != "invisible_char_text_mismatch"
 
+
+
+if __name__ == "__main__":
+    raise SystemExit(pytest.main([__file__]))

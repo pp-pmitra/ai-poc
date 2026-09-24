@@ -15,13 +15,13 @@ class FindCachedFixTests(unittest.TestCase):
         history = [
             {
                 "scenarioName": "s1",
-                "verdict": "Script Issue — Fix Proposed",
+                "verdict": "script_issue_fix_proposed",
                 "timestamp": "2026-08-01T00:00:00Z",
                 "change": {"file": "a.java", "line": 1, "after": "old"},
             },
             {
                 "scenarioName": "s1",
-                "verdict": "Script Issue — Fix Proposed",
+                "verdict": "script_issue_fix_proposed",
                 "timestamp": "2026-08-10T00:00:00Z",
                 "change": {"file": "a.java", "line": 1, "after": "new"},
             },
@@ -33,7 +33,7 @@ class FindCachedFixTests(unittest.TestCase):
         history = [{
             "scenarioName": "other-scenario",
             "groupId": "g1",
-            "verdict": "Script Issue — Fix Applied",
+            "verdict": "script_issue_fix_applied",
             "timestamp": "2026-08-01T00:00:00Z",
             "change": {"file": "a.java", "line": 1, "after": "x"},
         }]
@@ -43,7 +43,7 @@ class FindCachedFixTests(unittest.TestCase):
     def test_product_bug_history_is_never_a_cache_hit(self):
         history = [{
             "scenarioName": "s1",
-            "verdict": "Product Bug — Confirmed",
+            "verdict": "confirmed_product_bug",
             "timestamp": "2026-08-01T00:00:00Z",
             "change": None,
         }]
@@ -52,7 +52,7 @@ class FindCachedFixTests(unittest.TestCase):
     def test_entry_without_change_is_ignored(self):
         history = [{
             "scenarioName": "s1",
-            "verdict": "Script Issue — Fix Proposed",
+            "verdict": "script_issue_fix_proposed",
             "timestamp": "2026-08-01T00:00:00Z",
             "change": None,
         }]

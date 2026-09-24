@@ -20,7 +20,7 @@ from failure_analyzer.packet_utils import text_present_near_line
 
 __all__ = ["find_cached_fix", "verify_fix_still_present"]
 
-_FIX_VERDICTS = {"Script Issue — Fix Proposed", "Script Issue — Fix Applied"}
+_FIX_VERDICTS = {"script_issue_fix_proposed", "script_issue_fix_applied"}
 
 
 def find_cached_fix(

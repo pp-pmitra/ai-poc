@@ -47,6 +47,15 @@ jobs:
     timeout-minutes: 15
     env:
       CDP_PORT: ${{ inputs.app == 'studio' && '9224' || '9223' }}
+      # environment/user_type/headless/app are choice/boolean inputs GitHub
+      # restricts to fixed values, but hold_seconds is a freeform string —
+      # passed through env: rather than interpolated directly into run:
+      # script text, matching kavach.yml's own mitigation for the same
+      # class of input.
+      TARGET_ENVIRONMENT: ${{ inputs.environment }}
+      AUTH_USER_TYPE: ${{ inputs.user_type }}
+      AUTH_HOLD_SECONDS: ${{ inputs.hold_seconds }}
+      AUTH_HEADLESS: ${{ inputs.headless }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -67,10 +76,10 @@ jobs:
         if: ${{ inputs.app == 'life' }}
         run: |
           nohup mvn -B -ntp test -Dtest=LifeAuthStateBootstrapTest \
-            -Dauth.environment="${{ inputs.environment }}" \
-            -Dauth.userType="${{ inputs.user_type }}" \
-            -Dauth.holdSeconds="${{ inputs.hold_seconds }}" \
-            -Dauth.headless="${{ inputs.headless }}" \
+            -Dauth.environment="${TARGET_ENVIRONMENT}" \
+            -Dauth.userType="${AUTH_USER_TYPE}" \
+            -Dauth.holdSeconds="${AUTH_HOLD_SECONDS}" \
+            -Dauth.headless="${AUTH_HEADLESS}" \
             > life-bootstrap.log 2>&1 &
           echo "BOOTSTRAP_PID=$!" >> "$GITHUB_ENV"
 
@@ -79,8 +88,8 @@ jobs:
         run: |
           nohup mvn -B -ntp test -Dtest=StudioAuthStateBootstrapTest \
             -Dauth.holdForCdp=true \
-            -Dauth.holdSeconds="${{ inputs.hold_seconds }}" \
-            -Dauth.headless="${{ inputs.headless }}" \
+            -Dauth.holdSeconds="${AUTH_HOLD_SECONDS}" \
+            -Dauth.headless="${AUTH_HEADLESS}" \
             > studio-bootstrap.log 2>&1 &
           echo "BOOTSTRAP_PID=$!" >> "$GITHUB_ENV"
 
@@ -116,7 +125,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bootstrap-debug-logs
+          name: bootstrap-debug-logs-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             life-bootstrap.log
             studio-bootstrap.log

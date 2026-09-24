@@ -128,6 +128,16 @@ jobs:
           python -m pip install
           --requirement .claude/skills/kavach-diagnose/scripts/requirements.txt
 
+      - name: Run kavach-diagnose regression suite
+        run: |
+          # Must be genuine pytest, not `unittest discover`: several test
+          # files (e.g. test_offline_dom_analyzer.py) use plain pytest
+          # fixtures/classes rather than unittest.TestCase, so
+          # `unittest discover` silently collects and runs zero tests from
+          # them even when they import cleanly — pytest is the only runner
+          # that actually exercises the full suite.
+          python -m pytest .claude/skills/kavach-diagnose/scripts/tests/ -v
+
       - name: Install Claude subprocess sandbox
         run: apt-get update && apt-get install --yes bubblewrap socat
 
@@ -381,7 +391,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.run-kavach.outputs.kavach_data_artifact }}
-          path: .
+          # upload-artifact strips the common ancestor shared by every
+          # uploaded path (kavach-data/fix-patterns, kavach-data/history/*),
+          # so the artifact's own root is fix-patterns/ and history/, not
+          # kavach-data/fix-patterns/ and kavach-data/history/. Download
+          # into kavach-data/ to put that stripped prefix back, or the
+          # files land at the wrong location and git status never sees
+          # them as changes.
+          path: kavach-data
 
       - name: Open PR for kavach's learned fix patterns
         env:
