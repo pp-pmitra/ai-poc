@@ -1,0 +1,54 @@
+[
+  {
+    "timestamp": "2026-09-24T13:53:56Z",
+    "runDate": "2026-09-24",
+    "scenarioName": "Manage a Smart Pixel without associated Smart List (Create, Edit and Deactivate) (Example #1)",
+    "featureFile": "src/test/resources/features/life/Life_Pixels.feature",
+    "verdict": "script_issue_fix_proposed",
+    "confidence": "high",
+    "priority": "high_confidence_script_fix",
+    "groupId": "TimeoutError|when user deactivates the created pixel|locator=//span[text()='deactivate']|pageObject=SmartPixel.deactivatePixel|route=/buyer/|network=401 get /ssemanager/buyer/lifessehandler.ashx?token=ywrtawnxmtoxnzkwmzqzmjyzndcnojiyzwinnzinntexmdcx",
+    "isGroupRepresentative": true,
+    "attempts": 1,
+    "change": {
+      "file": "src/main/java/pages/life/SmartPixel.java",
+      "line": 36,
+      "description": "DEACTIVATE_PIXEL_BUTTON locator is stale: the Deactivation Confirmation modal's buttons were migrated to the ds-button design-system web component, whose label text lives in an open shadow root that XPath text() cannot match.",
+      "before": "this.DEACTIVATE_PIXEL_BUTTON = page.locator(\"//span[text()='Deactivate']\");",
+      "after": "this.DEACTIVATE_PIXEL_BUTTON = page.locator(\".popup-actions-footer ds-button[variant='primary'] button\");"
+    },
+    "liveVerification": {
+      "elementFound": true,
+      "scenarioContinuedPastFixPoint": true
+    },
+    "notes": "Live-replayed on smartpixels/15924 (same record as the original failing run's pageUrl). Old locator: count()=0. Corrected CSS locator (pierces the ds-button shadow root): count()=1, visible=true; clicking it produced the 'Pixel Deactivated successfully' toast and returned to the pixel list. Not applied to source yet — presented for user approval per live-replay-diagnosis Phase 3.4.",
+    "analysisTier": "tier2_live_replay",
+    "review": { "status": "unreviewed", "reviewedAt": null, "note": null }
+  },
+  {
+    "timestamp": "2026-09-24T13:53:56Z",
+    "runDate": "2026-09-24",
+    "scenarioName": "Manage a Conversion Pixel (Create, Edit and Remove) (Example #1)",
+    "featureFile": "src/test/resources/features/life/Life_Pixels.feature",
+    "verdict": "script_issue_fix_proposed",
+    "confidence": "high",
+    "priority": "high_confidence_script_fix",
+    "groupId": "TimeoutError|when user tries to save the conversion pixel without entering any details, an error message should be displayed|locator=//button[contains(@class,'cancel secondary button') and normalize-space(text())=|pageObject=Pixels.clickCancelButton|route=/buyer/|network=401 get /ssemanager/buyer/lifessehandler.ashx?token=ywrtawnxmtoxnzkwmzqzndennzknojlkowjlzdllmmnkmtrm",
+    "isGroupRepresentative": true,
+    "attempts": 1,
+    "change": {
+      "file": "src/main/java/pages/life/Pixels.java",
+      "line": 58,
+      "description": "CANCEL_BUTTON locator is stale: the New Conversion Pixel panel's Cancel control was migrated to the ds-button design-system web component, whose label text lives in an open shadow root that XPath text() cannot match.",
+      "before": "this.CANCEL_BUTTON = page.locator(\"//button[contains(@class,'cancel secondary button') and normalize-space(text())='Cancel']\");",
+      "after": "this.CANCEL_BUTTON = page.locator(\"app-ds-button-wrapper[label='Cancel'] button\");"
+    },
+    "liveVerification": {
+      "elementFound": true,
+      "scenarioContinuedPastFixPoint": true
+    },
+    "notes": "Live-replayed on .../conversionpixels/new (same pageUrl as the original failing run), reproducing the full mandatory-field validation sequence. Old locator: count()=0. Corrected CSS locator (pierces the ds-button shadow root): count()=1, visible=true; clicking it reset the form to a blank 'New Pixel' state with validation errors cleared. Not applied to source yet — presented for user approval per live-replay-diagnosis Phase 3.4.",
+    "analysisTier": "tier2_live_replay",
+    "review": { "status": "unreviewed", "reviewedAt": null, "note": null }
+  }
+]
