@@ -280,11 +280,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Kavach's Phase 5 only ever appends to these two bookkeeping files
-          # (fix-patterns/*.md, fix-history.json) — never application or test
-          # source. Those require human approval and go through kavach-imaintain's
-          # own PR instead. This just persists the pattern-cache learning that
-          # would otherwise be silently discarded when the runner is destroyed.
+          # Kavach only ever writes these three things (fix-patterns/*.md,
+          # fix-history.json, and its own timestamped verdict report) — never
+          # application or test source. Those require human approval and go
+          # through kavach-imaintain's own PR instead. This just persists the
+          # pattern-cache learning and verdict report that would otherwise be
+          # silently discarded when the runner is destroyed — committing the
+          # verdict report means it's readable directly on GitHub, no artifact
+          # download needed.
           if ! command -v git >/dev/null || ! command -v gh >/dev/null; then
             apt-get update
             command -v git >/dev/null || apt-get install -y git
@@ -302,17 +305,23 @@ jobs:
           git config --global user.name "kavach-bot"
           git config --global user.email "kavach-bot@users.noreply.github.com"
 
-          if git diff --quiet -- kavach-data/fix-patterns kavach-data/history/fix-history.json; then
-            echo "No fix-pattern/history changes to commit."
+          # git diff --quiet only sees tracked-file modifications — it misses
+          # a brand-new fix-pattern file for a feature seen for the first
+          # time, or this run's verdict report (always a new, untracked
+          # filename). git status --porcelain catches both.
+          changes=$(git status --porcelain --untracked-files=all -- \
+            kavach-data/fix-patterns kavach-data/history/fix-history.json kavach-data/history/replay-verdict-*.md)
+          if [ -z "${changes}" ]; then
+            echo "No fix-pattern/history/verdict changes to commit."
             exit 0
           fi
 
           BRANCH="kavach/learned-patterns-$(date -u +%Y%m%d-%H%M%S)"
           git checkout -b "$BRANCH"
-          git add kavach-data/fix-patterns kavach-data/history/fix-history.json
+          git add kavach-data/fix-patterns kavach-data/history/fix-history.json kavach-data/history/replay-verdict-*.md
           git commit -m "Kavach: update learned fix patterns from $(date -u +%Y-%m-%d) run"
           git push origin "$BRANCH"
 
           gh pr create --base main --head "$BRANCH" \
             --title "Kavach: update learned fix patterns ($(date -u +%Y-%m-%d))" \
-            --body "Automated update to \`kavach-data/fix-patterns/*.md\` and \`fix-history.json\` from this run's Phase 5. Bookkeeping only — no application or test source files are touched by this PR."
+            --body "Automated update to \`kavach-data/fix-patterns/*.md\`, \`fix-history.json\`, and this run's \`replay-verdict-*.md\` report. Bookkeeping only — no application or test source files are touched by this PR."
