@@ -243,8 +243,11 @@ jobs:
 
           # kavach-diagnose is never meant to touch application/test source —
           # both Write and Edit are scoped to kavach-data/** here, matching
-          # the agent definition's own tool list exactly (Write(kavach-data/**)),
-          # plus Edit(kavach-data/**) for editing files this run already wrote.
+          # the agent definition's own tool list exactly
+          # (Write(kavach-data/**), Edit(kavach-data/**)). Keep this string in
+          # lockstep with .claude/agents/kavach-diagnose.md's own `tools:`
+          # list -- that file, not this one, is the CODEOWNERS-reviewed
+          # source of truth for this agent's permissions.
           # This --allowedTools string is not the real enforcement boundary on
           # its own (Bash(*) is unrestricted and could write anywhere via shell
           # redirection) -- the "Verify repository boundaries" step later in

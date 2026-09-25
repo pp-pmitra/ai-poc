@@ -9,6 +9,7 @@ tools:
   - Glob
   - Bash
   - Write(kavach-data/**)
+  - Edit(kavach-data/**)
   - mcp__playwright__browser_navigate
   - mcp__playwright__browser_navigate_back
   - mcp__playwright__browser_snapshot
@@ -56,6 +57,7 @@ If the run produced no failures, or `target/cucumber-reports/cucumber.json` does
 ## Tools and permissions
 
 - Use the Playwright MCP tools, via the `live-replay-diagnosis` skill only, to replay failing scenarios live, attached to an already-authenticated CDP session — never decrypt or submit credentials yourself.
+- `browser_run_code_unsafe` is for read-only DOM/state inspection only (e.g. `.evaluate()`, `.count()`) to gather the observed artifacts `confirmed_product_bug` requires — never for submitting forms, triggering mutations, or navigating off the app under test.
 - Use `Bash` to run the analyzer scripts (`list_failures.py`, `triage_workers.py`, `replay_workers.py`, `validate_replay_receipts.py`, housed under `.claude/skills/kavach-diagnose/scripts/`) and Maven/git read commands.
 - Write only under `kavach-data/history/` (working files shared by all three preloaded skills) and `kavach-data/fix-patterns/` (the shared pattern library). Treat everything else as read-only.
 - Do not create or update `.feature` files, `src/test/java/stepdefinitions/`, or `src/main/java/pages/*` — proposing a change there is this agent's responsibility; applying one is kavach-repair's.

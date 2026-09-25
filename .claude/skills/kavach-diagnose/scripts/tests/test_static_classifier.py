@@ -232,22 +232,28 @@ class ExtractLocatorTextTests(unittest.TestCase):
 
 
 class DispositionStrictModeTests(unittest.TestCase):
-    def test_strict_mode_violation_finalizes_as_script_issue(self):
+    def test_strict_mode_violation_escalates_to_live_replay(self):
+        # A locator matching >1 element cannot be finalized without a
+        # proposedChange (enforce_tier1_verdict_constraints requires one for
+        # script_issue_fix_proposed, and this branch has none to offer), and
+        # a product bug rendering duplicate elements can't be ruled out from
+        # static evidence alone — matching offline_dom_analyzer.py's
+        # ambiguous_selector handling of the identical underlying symptom.
         failure = {
             "scenarioName": "s",
             "errorMessage": "Error: strict mode violation: locator('button') resolved to 3 elements",
         }
         result = disposition("any-cause", failure, Path("."))
-        self.assertTrue(result["resolved"])
-        self.assertEqual(result["verdict"], "script_issue_fix_proposed")
-        self.assertFalse(result["needsLiveReplay"])
+        self.assertFalse(result["resolved"])
+        self.assertIsNone(result["verdict"])
+        self.assertTrue(result["needsLiveReplay"])
         self.assertIsNone(result["proposedChange"])
 
     def test_strict_mode_check_is_case_insensitive(self):
         failure = {"errorMessage": "Strict Mode Violation: ..."}
         result = disposition("ui-value-present-timing", failure, Path("."))
-        self.assertTrue(result["resolved"])
-        self.assertEqual(result["verdict"], "script_issue_fix_proposed")
+        self.assertFalse(result["resolved"])
+        self.assertTrue(result["needsLiveReplay"])
 
 
 class DispositionUiValuePresentTimingTests(unittest.TestCase):

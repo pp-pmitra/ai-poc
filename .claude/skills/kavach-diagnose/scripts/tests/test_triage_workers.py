@@ -10,6 +10,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import triage_workers
 from triage_workers import _frequency_by_scenario
+from failure_analyzer.triage.static_classifier import disposition
+from failure_analyzer.triage.llm_static_triage import enforce_tier1_verdict_constraints
 
 _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 _REPO_ROOT = _SCRIPTS_DIR.parents[3]
@@ -38,6 +40,35 @@ class DocumentedCliInvocationTests(unittest.TestCase):
         # invocation never is.
         for path in (args.input, args.fix_history, args.out_root):
             self.assertTrue(path.is_absolute(), f"{path} must be an absolute, repo-root-anchored default")
+
+
+class StrictModeViolationPipelineTests(unittest.TestCase):
+    """Regression coverage for a real pipeline gap the review found:
+    disposition()'s strict-mode-violation branch used to claim
+    resolved=True/script_issue_fix_proposed with no proposedChange, which
+    enforce_tier1_verdict_constraints() below (the gate run_triage() always
+    applies before accepting a Tier-1 result) would silently downgrade
+    anyway -- but the unit tests for disposition() in isolation asserted the
+    pre-downgrade shape, certifying behavior the real pipeline could never
+    produce. This exercises both functions in the same sequence run_triage()
+    does, so a future change to either one can't silently reopen that gap
+    without a failing test here."""
+
+    def test_strict_mode_violation_is_escalated_not_finalized(self):
+        failure = {
+            "scenarioName": "s",
+            "errorMessage": "Error: strict mode violation: locator('button') resolved to 3 elements",
+        }
+        disp = disposition("any-cause", failure, Path("."))
+        if disp["resolved"]:
+            disp = enforce_tier1_verdict_constraints(disp, Path("."))
+
+        # This is the exact condition triage_workers.run_triage() gates
+        # receipt-finalization on -- it must be False here, i.e. the group
+        # gets escalated to live replay rather than finalized as a
+        # script-issue fix with no verifiable proposedChange behind it.
+        finalized = disp["resolved"] and not disp.get("needsLiveReplay")
+        self.assertFalse(finalized)
 
 
 class FrequencyByScenarioTests(unittest.TestCase):

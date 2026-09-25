@@ -27,7 +27,7 @@ description: >-
 - [Phase 6: Fix-history update and summary](#phase-6--fix-history-update-and-summary)
 
 
-**TOOL USE: Bash, Read, Edit (scoped to `.feature`/`src/test/java/stepdefinitions/**`/`src/main/java/pages/**` plus this skill's own `kavach-data/history/fix-history.json` and `kavach-data/fix-patterns/**`), Grep, and Glob are pre-approved. No Playwright browser tools are used in this skill — all verification is Maven-only. Never call `mcp__playwright__*` tools from kavach-repair.** Write access to `kavach-data/history/fix-history.json` is intentionally NOT part of this skill's own file-editing surface — that file is written only by piping through `append_fix_history.py` (Phase 6), never by a direct `Edit`/`Write` call, to avoid a concurrent-writer race with kavach-diagnose's own appends to the same file. This skill has no `utils.LocatorProbe` or equivalent live-disambiguation helper class available — see Phase 3.1 for the actual, Maven-only disambiguation approach.
+**TOOL USE: Bash, Read, Edit (scoped to `.feature`/`src/test/java/stepdefinitions/**`/`src/main/java/pages/**` plus this skill's own `kavach-data/fix-patterns/**`), Grep, and Glob are pre-approved. `kavach-data/history/fix-history.json` has no Edit/Write grant at all — see Phase 6 for the only sanctioned write path. No Playwright browser tools are used in this skill — all verification is Maven-only. Never call `mcp__playwright__*` tools from kavach-repair.** That file is written only by piping through `append_fix_history.py` (Phase 6), never by a direct `Edit`/`Write` call, to avoid a concurrent-writer race with kavach-diagnose's own appends to the same file. Bash may run git, mvn, and gh; pipe through `append_fix_history.py`/`append_fix_pattern.py`; and write scratch files under `/tmp` (Phase 5's PR body, Phase 0.5.2's Maven log capture). It must never create, write, or move a file inside the Edit-scoped paths (`.feature`, `src/test/java/stepdefinitions/**`, `src/main/java/pages/**`, `kavach-data/fix-patterns/**`, or any other repo source file) as a substitute for the scoped `Edit` grant — if a change is needed there, stop and report it as a blocker instead of writing it via Bash. This skill has no `utils.LocatorProbe` or equivalent live-disambiguation helper class available — see Phase 3.1 for the actual, Maven-only disambiguation approach.
 
 **NON-INTERACTIVE ABORT (runs before everything else, including mode detection):** If stdin is not a TTY or `CI=true` is set in the environment, print exactly:
 ```
@@ -82,7 +82,7 @@ Read `KAVACH_REPAIR_TARGET` (env var) or the `--target` CLI argument. Accept eit
 
 If neither is set, print `ISOLATION_NO_TARGET: set KAVACH_REPAIR_TARGET or pass --target` and exit 1.
 
-Derive `<module>`, `<featureTag>`, and `<scenarioTag>` using the same rules as Phase 2 step 4.
+Derive `<module>`, `<featureTag>`, and `<scenarioTag>` using the same rules as Phase 2 step 5 (including the root-`pom.xml`, no-submodule case: omit `-pl <module>` entirely).
 
 ### 0.5.2 Collect the live failure
 
@@ -197,7 +197,7 @@ For each candidate:
 4. Open `targetFile`. Confirm the broken locator or code pattern is still present at or near `targetLine`. If the file has changed and the pattern is gone, record as `source_drift` and skip — do not attempt the fix.
    **Note for `infrastructure_inconclusive` retry:** if a prior run left `targetFile` in its edited state (patch applied but not committed), the broken pattern may already be absent. In that case the patch is already applied — skip Phase 3.1 and proceed directly to Phase 3.2 spotless check with the file as-is. Do not re-apply the patch to a file that already has it.
 5. **Derive Maven coordinates** from `targetFile`'s path and the feature file:
-   - **`<module>`** — strip the repo root prefix and take the first directory segment that contains a `pom.xml`. For example, `automation-tests/src/test/java/com/...` → module is `automation-tests`. Confirm with `ls <module>/pom.xml`.
+   - **`<module>`** — strip the repo root prefix and take the first directory segment that contains a `pom.xml`. For example, `automation-tests/src/test/java/com/...` → module is `automation-tests`. Confirm with `ls <module>/pom.xml`. **If a `pom.xml` exists only at the repo root** (no submodule-level `pom.xml` below it — this is this repository's actual layout), there is no `<module>`: omit `-pl <module>` entirely from every Maven command this skill runs, in every phase (0.5, 2, 3, 3.5, 4) — not only Phases 2–3 — and run plain `mvn ...` from the repo root instead.
    - **`<featureTag>`** — the `@Tag` annotation on the top of the feature file (e.g. `@LifeCampaignDashboard`). Read the feature file header to find it.
    - **`<scenarioTag>`** — the `@Tag` annotation on the specific scenario line (e.g. `@TC_12345`). Read the scenario block. If no scenario-level tag is present, use `<featureTag>` and add `-Dcucumber.filter.name="<scenario name>"` to scope the run.
 6. Write down the concrete patch (the exact edit to make), the module path, and the tags before Phase 3 applies it.
@@ -302,7 +302,11 @@ Inspect the output. If any scenario that was **not** in the current candidate li
 **Cascade detected:**
 1. Print: `Cascade detected — <N> new failure(s) in <featureFile>: <scenarioNames>`.
 2. Offer to attempt a cascade fix (depth cap: 1 — one fix attempt, no further cascade check after it).
-3. Wait for user approval. On approval, apply fix and re-run the feature. On rejection or no response: record original fix as `applied_with_regression` and proceed to Phase 4 (the original fix stands; the user has been shown the regression).
+3. Wait for user approval.
+   - **On rejection or no response:** record the original fix as `applied_with_regression` and proceed to Phase 4 (the original fix stands; the user has been shown the regression).
+   - **On approval:** apply the cascade fix and re-run the full feature file.
+     - **Re-run now shows no unexpected failures:** record the original candidate's verdict as `applied` (not `applied_with_regression`), note the cascade fix in that candidate's `kavachRepairDetail.note`, and commit the cascade-fix file as a **separate** commit (`fix(<featureSlug>): cascade fix for <cascaded-scenario> [kavach-repair/<run-date>]`) immediately before the original fix's commit.
+     - **Re-run still shows the same or a different regression:** the depth cap (1) has been spent — revert the cascade-fix edit only (`git checkout -- <cascadeTargetFile>`), record the original fix as `applied_with_regression` exactly as the rejection branch does, and list the still-present regression in the PR's ⚠️ section.
 
 ---
 
@@ -313,6 +317,7 @@ For each candidate with verdict `passed` or `applied_with_regression`:
 1. Re-run `mvn spotless:check -pl <module> -q` to confirm the file is still clean after any cascade-fix edits.
 2. `git add <targetFile>`
 3. `git commit -m "fix(<featureSlug>): <fixDescription> [kavach-repair/<run-date>]"`
+4. If a `graphify` knowledge graph exists for this repo (`graphify-out/`), run `graphify update .` after the commit so the graph stays current with the applied fix. Skip silently if `graphify-out/` doesn't exist — this repo may not have one set up.
 
 **One commit per fix.** Do not batch multiple fixes into one commit — this keeps per-fix revert (`git revert <sha>`) practical for a reviewer who wants to drop one fix from the batch.
 
@@ -431,12 +436,14 @@ Every field below is required by `append_fix_history.py`'s validation — an ent
 
 ### Fix-pattern update
 
-For each `script_issue_fix_applied` entry: append the fix as a **Known good fix** block to the relevant fix-pattern file (same format kavach's Phase 5 uses), via the same lock-protected writer kavach's `verdict-reporting` skill uses — **never `Edit` the `.md` file directly**:
+For each `script_issue_fix_applied` entry: run `kavach-knowledge`'s dedup check (normalize locator + target file + fix expression, compare against every existing entry in that feature's file) against the candidate entry first. If it surfaces a same-locator/same-target-file match with a *different* fix expression, mark that earlier entry `**[superseded YYYY-MM-DD — see entry below]**` via a direct edit (see `kavach-knowledge`'s "Correcting a wrong entry" section) before appending the new one. If it's an exact duplicate, skip appending. Otherwise append the fix as a **Known good fix** block to the relevant fix-pattern file (same format kavach's Phase 5 uses), via the same lock-protected writer kavach's `verdict-reporting` skill uses — **never `Edit` the `.md` file directly**:
 
 ```bash
 echo "<the new dated block>" | \
-  python3 .claude/skills/kavach-diagnose/scripts/append_fix_pattern.py <feature-slug>
+  python3 .claude/skills/kavach-diagnose/scripts/append_fix_pattern.py <feature-slug> --feature-name "<the .feature file's own stem, e.g. Life_CampaignDashboard>"
 ```
+
+Always pass `--feature-name` — it only matters the first time this feature's file gets a header (a brand-new file or a tracked-but-still-empty placeholder both count as "no content yet"); the script ignores it once the file already has a header and entries, so it's always safe to include.
 
 kavach-diagnose can be appending to the same feature file at close to the same time (its `verdict-reporting` skill writes here too) — a direct `Edit` risks silently losing one writer's entry to a read-modify-write race, the same failure mode `fix-history.json` was fixed against. This closes the loop — kavach's Phase 2 cache-hit path will recognise the same locator pattern on the next run.
 

@@ -15,10 +15,16 @@ line, whether or not the file exists yet.
 
 Usage:
     echo '### 2026-09-25\n\n- some new fix pattern' | \
-        python3 append_fix_pattern.py life-campaign-dashboard --feature-name "Life Campaign Dashboard"
+        python3 append_fix_pattern.py life-campaign-dashboard --feature-name "Life_CampaignDashboard"
 
-    # _default.md (no --feature-name -- it already exists with its own header)
+    # _default.md (no --feature-name -- it already has content and its own header)
     cat block.md | python3 append_fix_pattern.py _default
+
+Pass --feature-name whenever the target file has no content yet, whether it's
+brand new or a tracked-but-still-empty placeholder (a 0-byte file that
+already exists on disk but has no header) -- path-existence alone does not
+mean a header was ever written. Omit it only once the file actually has
+content (a header plus at least one entry).
 
 Exit 0 and prints the path appended to on success. Exit 1 with a message if
 the block text on stdin is empty (nothing to append) or the target
@@ -70,9 +76,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dir", type=Path, default=DEFAULT_FIX_PATTERNS_DIR)
     parser.add_argument(
         "--feature-name", default=None,
-        help="Human-readable feature name, used only to bootstrap a brand-new file's header "
-             "(e.g. \"Life Campaign Dashboard\" -> \"# Life Campaign Dashboard fix patterns\"). "
-             "Omit for _default.md or any feature file that already exists.",
+        help="Feature name (use the .feature file's own stem, e.g. \"Life_CampaignDashboard\", "
+             "not a humanized form) used only to bootstrap a header when the target file has no "
+             "content yet -- either brand new or a tracked-but-still-empty placeholder. "
+             "Omit only for _default.md or a feature file that already has a header and entries.",
     )
     return parser.parse_args()
 

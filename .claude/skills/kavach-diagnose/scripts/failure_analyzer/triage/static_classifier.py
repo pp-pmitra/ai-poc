@@ -150,19 +150,33 @@ def disposition(cause: str, failure: dict[str, Any], repo_root: Path) -> dict:
     page_text = failure.get("pageText") or ""
 
     if "strict mode violation" in error_message.lower():
+        # Escalates rather than resolves: enforce_tier1_verdict_constraints()
+        # (llm_static_triage.py) already requires any script_issue_fix_proposed
+        # verdict to carry a proposedChange whose `before` text is mechanically
+        # re-verified against the real source file -- this branch has no
+        # proposedChange to offer, so triage_workers.py always downgrades a
+        # "resolved" result here to needs_investigation anyway. Matching that
+        # outcome here (instead of asserting a "resolved" shape the pipeline
+        # can never actually honor) keeps this module's own reasoning aligned
+        # with offline_dom_analyzer.py's ambiguous_selector handling, which
+        # treats the identical underlying symptom (a locator matching more
+        # than one element) the same way: a locator matching >1 element is
+        # likely too broad, but a product bug rendering duplicate elements
+        # cannot be ruled out from static evidence alone -- see
+        # offline_dom_analyzer's ambiguous_selector case for the same
+        # reasoning applied to a DOM snapshot instead of a Playwright error.
         return {
-            "resolved": True,
-            "verdict": "script_issue_fix_proposed",
-            "confidence": "high",
+            "resolved": False,
+            "verdict": None,
+            "confidence": None,
             "evidence": [
                 "Playwright strict-mode violation: the locator matched more than one element.",
-                "This is always a script issue — the locator is too broad and needs narrowing "
-                "(e.g. add a positional constraint, scope to a parent container, or use a more "
-                "specific attribute).",
+                "Likely a too-broad locator, but a product bug rendering duplicate elements "
+                "cannot be ruled out without live replay.",
             ],
-            "recommendedAction": "Narrow the locator in the page object so it matches exactly one element.",
+            "recommendedAction": None,
             "proposedChange": None,
-            "needsLiveReplay": False,
+            "needsLiveReplay": True,
         }
 
     # NOTE: `analyze_failure()`'s real cause vocabulary is

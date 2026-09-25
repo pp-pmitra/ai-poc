@@ -27,14 +27,13 @@ set -euo pipefail
 
 # kavach-diagnose is never meant to touch application/test source — both
 # Write and Edit are scoped to kavach-data/** here, matching the agent
-# definition's own tool list exactly (Write(kavach-data/**)), plus
-# Edit(kavach-data/**) for editing files this run already wrote. This
-# --allowedTools string is not the real enforcement boundary on its own
+# definition's own tool list exactly (Write(kavach-data/**), Edit(kavach-data/**)).
+# This --allowedTools string is not the real enforcement boundary on its own
 # (Bash(*) is unrestricted and could write anywhere via shell redirection) —
-# unlike kavach.yml's CI job, this manual entry point has no compensating
-# "verify repository boundaries" step, so the Write/Edit scoping here is the
-# only safeguard that actually exists for this path. Do not widen it back to
-# Write(*)/Edit(*).
+# the verify_boundaries() check below (mirroring kavach.yml's CI-only "verify
+# repository boundaries" step) is what actually detects and fails on an
+# out-of-scope write for this manual entry point. Do not widen ALLOWED_TOOLS
+# back to Write(*)/Edit(*), and do not remove the verify_boundaries() calls.
 ALLOWED_TOOLS="Bash(*),Read,Write(kavach-data/**),Edit(kavach-data/**),Grep,Glob,\
 mcp__playwright__browser_navigate,\
 mcp__playwright__browser_tabs,\
@@ -91,6 +90,26 @@ wait_for_port() {
   return 1
 }
 
+# Helper: fail loudly if kavach-diagnose wrote outside its allowed locations.
+# Mirrors kavach.yml's CI-only "Verify repository boundaries" step -- this is
+# the one invocation path for kavach-diagnose with no such check otherwise,
+# since ALLOWED_TOOLS's Write/Edit scoping isn't a real boundary on its own
+# (Bash(*) can write anywhere via shell redirection).
+verify_boundaries() {
+  local label="$1"
+  local changes
+  changes=$(git status --porcelain --untracked-files=all -- . \
+    ':(exclude)target/**' \
+    ':(exclude)kavach-data/history/**' \
+    ':(exclude)kavach-data/fix-patterns/**')
+  if [[ -n "$changes" ]]; then
+    echo "ERROR: kavach-diagnose ($label) modified files outside its allowed write locations:" >&2
+    printf '%s\n' "$changes" >&2
+    return 1
+  fi
+  return 0
+}
+
 # ── Phase A: Life failures ────────────────────────────────────────────────────
 if $RUN_LIFE; then
   echo ""
@@ -124,6 +143,8 @@ if $RUN_LIFE; then
     --allowedTools "$ALLOWED_TOOLS" \
     --verbose \
     --output-format text
+
+  verify_boundaries "Life" || { kill "$LIFE_BOOTSTRAP_PID" 2>/dev/null; exit 1; }
 
   echo ""
   echo "=== Releasing Life bootstrap ==="
@@ -160,6 +181,8 @@ if $RUN_STUDIO; then
     --allowedTools "$ALLOWED_TOOLS" \
     --verbose \
     --output-format text
+
+  verify_boundaries "Studio" || { kill "$STUDIO_BOOTSTRAP_PID" 2>/dev/null; exit 1; }
 
   echo ""
   echo "=== Releasing Studio bootstrap ==="

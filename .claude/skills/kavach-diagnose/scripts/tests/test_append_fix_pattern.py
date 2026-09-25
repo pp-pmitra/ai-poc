@@ -18,10 +18,10 @@ class AppendBlockTests(unittest.TestCase):
     def test_bootstraps_a_new_feature_file_with_header(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "life-campaign-dashboard.md"
-            append_block(path, "### 2026-09-25\n\n- fixed a stale locator", "Life Campaign Dashboard")
+            append_block(path, "### 2026-09-25\n\n- fixed a stale locator", "Life_CampaignDashboard")
 
             text = path.read_text(encoding="utf-8")
-            self.assertTrue(text.startswith("# Life Campaign Dashboard fix patterns\n\n## Run log\n"))
+            self.assertTrue(text.startswith("# Life_CampaignDashboard fix patterns\n\n## Run log\n"))
             self.assertIn("### 2026-09-25", text)
             self.assertIn("fixed a stale locator", text)
 
@@ -52,7 +52,7 @@ class AppendBlockTests(unittest.TestCase):
         # the same run -- the scenario the missing lock used to lose one of.
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "life-pmp.md"
-            append_block(path, "- first writer's entry", "Life PMP")
+            append_block(path, "- first writer's entry", "Life_PMP")
             append_block(path, "- second writer's entry", None)
 
             text = path.read_text(encoding="utf-8")
